@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="dc872779-3c4c-4146-9b89-35931d33490b" name="Default Changelist" comment="" />
+    <list default="true" id="dc872779-3c4c-4146-9b89-35931d33490b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Monitoring/Node_Js_Monitoring" beforeDir="false" afterPath="$PROJECT_DIR$/Monitoring/Node_Js_Monitoring" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PIR.iws" beforeDir="false" afterPath="$PROJECT_DIR$/PIR.iws" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,6 +20,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
@@ -35,6 +39,8 @@
       <option name="presentableId" value="Default" />
       <updated>1588593343068</updated>
       <workItem from="1588593344823" duration="242000" />
+      <workItem from="1588600230393" duration="553000" />
+      <workItem from="1588616913291" duration="522000" />
     </task>
     <servers />
   </component>
@@ -46,5 +52,9 @@
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state x="240" y="33" key="#Project_Structure/0.23.1280.777@0.23.1280.777" timestamp="1588593347912" />
+    <state x="319" y="224" key="com.intellij.ide.util.TipDialog" timestamp="1588616913487">
+      <screen x="0" y="23" width="1280" height="777" />
+    </state>
+    <state x="319" y="224" key="com.intellij.ide.util.TipDialog/0.23.1280.777@0.23.1280.777" timestamp="1588616913487" />
   </component>
 </project>
