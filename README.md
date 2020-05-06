@@ -15,7 +15,7 @@ On utilise actuellement le réseau "reseau_PIR", dont le mot de passe est "mdpPI
 Sur Linux, pour obtenir son adresse IP privée, taper dans la console : hostname -I.
 
 ## Liens utiles
-Ethereum yellow paper : https://ethereum.github.io/yellowpaper/paper.pdf
+Ethereum yellow paper : https://ethereum.github.io/yellowpaper/paper.pdf <br>
 Besu : https://besu.hyperledger.org/en/stable/
 Installer Besu : https://besu.hyperledger.org/en/stable/HowTo/Get-Started/Install-Binaries/
 Créer un réseau privé avec IBFT : https://besu.hyperledger.org/en/stable/Tutorials/Private-Network/Create-IBFT-Network/
