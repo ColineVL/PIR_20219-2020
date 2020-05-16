@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Connected Node List</title>
+    <style>
+        a {text-decoration: none; color: black;}
+    </style>
+</head>
+
+<body>
+<h1>Let's make a transaction!</h1>
+    <form action="/CreateTransaction" method="post">
+        <label for="sender">Sender:</label>
+        <select id="sender" name="sender">
+            <% nodelist.forEach(function(node) { %>
+                <option value="<%= node %>"> <%= node %> </option>
+            <% }); %>
+        </select>
+        <label for="receiver">Receiver:</label>
+        <select id="receiver" name="receiver">
+            <% nodelist.forEach(function(node) { %>
+                <option value="<%= node %>"> <%= node %> </option>
+            <% }); %>
+        </select>
+        <input type="submit">
+    </form>
+
+
+<!--<form action="/nodes/refresh/" method="get">-->
+<!--    <p>-->
+<!--        <label for="newtodo">Refresh</label>-->
+<!--        <input type="button" name="refr" id="refresh_nodes" autofocus />-->
+<!--        <input type="submit" />-->
+<!--    </p>-->
+<!--</form>-->
+</body>
+</html>
