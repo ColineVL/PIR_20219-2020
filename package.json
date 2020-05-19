@@ -1,0 +1,7 @@
+{
+  "name": "PIR",
+  "version": "1.0.0",
+  "dependencies": {
+    "ethereumjs-tx": "^2.1.2"
+  }
+}

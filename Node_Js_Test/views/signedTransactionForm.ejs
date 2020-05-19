@@ -2,7 +2,7 @@
 
 <html>
 <head>
-    <title>Connected Node List</title>
+    <title>Signed Transaction</title>
     <style>
         a {text-decoration: none; color: black;}
     </style>
@@ -10,20 +10,30 @@
 
 <body>
 <h1>Let's make a transaction!</h1>
-    <form action="/CreateTransaction" method="post">
+    <form action="/CreateTransaction/" method="get">
         <label for="sender">Sender:</label>
         <select id="sender" name="sender">
             <% nodelist.forEach(function(node) { %>
                 <option value="<%= node %>"> <%= node %> </option>
             <% }); %>
+                <option value="test1"> test1 </option>
+                <option value="test2"> test2 </option>
         </select>
+        <br>
+
         <label for="receiver">Receiver:</label>
         <select id="receiver" name="receiver">
             <% nodelist.forEach(function(node) { %>
                 <option value="<%= node %>"> <%= node %> </option>
             <% }); %>
+                <option value="test1"> test1 </option>
+                <option value="test2"> test2 </option>
         </select>
-        <input type="submit">
+        <br>
+        <label for="ammount">Ammount:</label>
+        <input id="ammount" name="ammount" type="number">
+
+        <input type="submit" value="Submit">
     </form>
 
 

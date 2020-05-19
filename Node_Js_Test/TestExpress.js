@@ -4,6 +4,8 @@ var bodyParser = require('body-parser'); // Charge le middleware de gestion des 
 const Web3 = require('web3');
 const Admin =require('web3-eth-admin').Admin;
 
+var SignedTransaction = require('./SignedTransactionModule');
+
 
 var provider = 'http://localhost:8545';
 var web3 = new Web3(new Web3.providers.HttpProvider(provider))
@@ -47,7 +49,7 @@ app.use(session({secret: 'todotopsecret'}))
         let peers = await admin.getPeers();
         req.session.nodelist =[];
         for(let i=0; i<PeerCount; i++) {
-            req.session.nodelist.push(peers[i].id);
+            req.session.nodelist.push(peers[i].name);
         }
         res.redirect('/nodes');
     })
@@ -55,8 +57,20 @@ app.use(session({secret: 'todotopsecret'}))
     .get('/SignedTransaction/', async (req, res) => {
         res.render('signedTransactionForm.ejs', {nodelist: req.session.nodelist});
     })
+    .get('/CreateTransaction/', async (req, res) => {
+        const sender = req.sender
+        const receiver = req.receiver
+        const ammount = req.ammount
 
-    /* On redirige vers la todolist si la page demandée n'est pas trouvée */
+        const r = await SignedTransaction.createAndSendSignedTransaction(provider);
+        console.log("Hey.......")
+        console.log("receipt:", r.from)
+        console.log("Hey....")
+        // const valueInEther = prompt("Value in Ether to send? (press enter for default)",'5');
+        res.render('resultTransaction.ejs',{sender: sender, receiver: receiver, ammount: ammount, r: r});
+    })
+
+    /* On redirige vers home si la page demandée n'est pas trouvée */
     .use(function(req, res, next){
         res.redirect('/nodes');
     })

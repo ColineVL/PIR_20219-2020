@@ -1,6 +1,9 @@
+
 const readline = require('readline');
 const Web3 = require('web3')
 var Tx = require('ethereumjs-tx');
+
+
 async function askQuestion(query) {
     const rl = readline.createInterface({
         input: process.stdin,
@@ -11,6 +14,8 @@ async function askQuestion(query) {
         resolve(ans);
     }))
 }
+
+
 const args = process.argv.slice(2);
 // web3 initialization - must point to the HTTP JSON-RPC endpoint
 var provider = args[0] || 'http://localhost:8545';
@@ -20,22 +25,25 @@ console.log("******************************************");
 var web3 = new Web3(new Web3.providers.HttpProvider(provider))
 web3.transactionConfirmationBlocks = 1;
 (async() => {
-    const valueInEther = await askQuestion("value in Ether to send? (press enter for default)") || 5;
+    const valueInEther = await askQuestion("value in Ether to send? (press enter for default)") || 0.0001;
     var privateKey = await askQuestion("Private Key of sender? (press enter for default)") || new Buffer.from('8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','hex');
     const addressFrom = await askQuestion("Sender Adress? (press enter for default)") ||'0xfe3b557e8fb62b89f4916b721be55ceb828dbd73';
     const addressTo = await askQuestion("Receiver Adress? (press enter for default)") ||'0xf17f52151EbEF6C7334FAD080c5704D77216b732';
     web3.eth.getTransactionCount(addressFrom, "pending").then((txnCount) => {
-        var rawTx = {
+        const rawTx = {
             nonce: web3.utils.numberToHex(txnCount),
             gasPrice: web3.utils.numberToHex(1500),
             gasLimit: web3.utils.numberToHex(4700000),
             to: addressTo,
-            value: web3.utils.numberToHex(10)//web3.utils.toWei(valueInEther.toString(), 'ether'))
+            value: web3.utils.numberToHex(web3.utils.toWei(valueInEther.toString(), 'ether')) //web3.utils.numberToHex(1)//web3.utils.toWei(valueInEther.toString(), 'ether'))
         };
-        var tx = new Tx(rawTx);
+        const tx = new Tx(rawTx);
         tx.sign(privateKey);
-        var serializedTx = tx.serialize();
-        var rawTxHex = '0x' + serializedTx.toString('hex');
+        const serializedTx = tx.serialize();
+        const rawTxHex = '0x' + serializedTx.toString('hex');
+
+        // log raw transaction data to the console so you can send it manually
+        console.log("Raw transaction data: " + rawTxHex);
         (async() => {
             const ans = await askQuestion("******************************************\n\
     Do you want to send the signed value transaction now ? (Y/N):");
