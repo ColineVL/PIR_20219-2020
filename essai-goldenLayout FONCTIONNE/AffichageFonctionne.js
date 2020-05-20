@@ -4,7 +4,7 @@ var config = {
         content: [
             {
                 type: 'component',
-                componentName: 'example',
+                componentName: 'Home',
                 componentState: {text: 'Component 3'}
             },
             {
@@ -34,7 +34,7 @@ myLayout.registerComponent('Noeuds', function (container, state) {
 myLayout.registerComponent('Blocks', function (container, state) {
     container.getElement().html('<h2>' + state.text + '</h2>' + '<h1>' + state.nombre + '</h1>');
 });
-myLayout.registerComponent('example', function (container, state) {
+myLayout.registerComponent('Home', function (container, state) {
     container.getElement().html('<h2>' + state.text + '</h2>');
 });
 myLayout.init();

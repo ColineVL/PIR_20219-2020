@@ -1,18 +1,72 @@
+/********************************
+ * Class StockDataRequest
+ ********************************/
+StockDataRequest = function( tickerSymbol, callback ) {
+    this._tickerSymbol = tickerSymbol;
+    this._callback = callback;
+    this._loadData();
+};
+
+StockDataRequest.prototype._createYqlQuery = function() {
+    var url =	'https://query.yahooapis.com/v1/public/yql?' +
+        'q=select * from yahoo.finance.historicaldata '+
+        'where symbol = "' + this._tickerSymbol + '" ' +
+        'and startDate = "2013-09-11" and endDate = "2014-03-10"&' +
+        'format=json&diagnostics=true&' +
+        'env=store://datatables.org/alltableswithkeys';
+
+    return encodeURI( url );
+};
+
+StockDataRequest.prototype._loadData = function() {
+    $.ajax({
+        url: this._createYqlQuery( this._tickerSymbol ),
+        success: this._onDataReceived.bind( this ),
+        cache: true,
+        dataType: 'jsonp'
+    });
+};
+
+StockDataRequest.prototype._onDataReceived = function( rawData ) {
+    var highchartsData = this._transformDataForHighCharts( rawData );
+    this._callback( highchartsData );
+};
+
+StockDataRequest.prototype._transformDataForHighCharts = function( rawData ) {
+    var quotes = rawData.query.results.quote,
+        data = [],
+        i;
+
+    for( i = quotes.length - 1; i >=0; i-- ) {
+        data.push([
+            ( new Date( quotes[ i ].Date ) ).getTime(),
+            parseFloat( quotes[ i ].Open )
+        ]);
+    }
+
+    return data;
+};
+
+/********************************
+ * Class StockChartComponent
+ ********************************/
 StockChartComponent = function( container, state ) {
+
     this._highChartsConfig = {
         title: { text: 'Historic prices for ' + state.companyName },
         series: [],
         plotOptions: { line: { marker: { enabled: false } } },
         xAxis:{ type: 'datetime' },
         yAxis:{ title: 'Price in USD' },
-        chart:{ renderTo: container.getElement()[ 0 ] }
+        chart:{
+            renderTo: container.getElement()[ 0 ]
+        }
     };
 
-    this._container = container;
-    this._state = state;
     this._chart = null;
-
+    this._container = container;
     this._container.setTitle( 'Chart for ' + state.companyName );
+    this._state = state;
     this._container.on( 'open', this._createChart.bind( this ) );
 };
 
@@ -42,75 +96,34 @@ StockChartComponent.prototype._setSize = function() {
     this._chart.setSize( this._container.width, this._container.height );
 };
 
-
-// TODO
-Highcharts.chart('container', {
-
-    title: {
-        text: 'Solar Employment Growth by Sector, 2010-2016'
-    },
-
-    plotOptions: {
-        series: {
-            label: {
-                connectorAllowed: false
-            },
-            pointStart: 2010
-        }
-    },
-
-    series: [{
-        name: 'Installation',
-        data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-    }, {
-        name: 'Manufacturing',
-        data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-    }],
-
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                legend: {
-                    layout: 'horizontal',
-                    align: 'center',
-                    verticalAlign: 'bottom'
+/********************************
+ * Initialise Layout
+ ********************************/
+$(function(){
+    var myLayout = new GoldenLayout({
+        content:[{
+            type: 'row',
+            content: [{
+                type: 'component',
+                componentName: 'stockChart',
+                componentState: {
+                    companyName: 'Google Inc.',
+                    tickerSymbol: 'GOOGL',
+                    color:'#7C7'
                 }
-            }
+            },{
+                type: 'component',
+                componentName: 'stockChart',
+                componentState: {
+                    companyName: 'Apple Inc.',
+                    tickerSymbol: 'AAPL',
+                    color: '#77C'
+                }
+            }]
         }]
-    }
+    });
 
+    myLayout.registerComponent( 'stockChart', StockChartComponent );
+    myLayout.init();
 });
-
-
-
-/* Golden Script */
-
-var config = {
-    content: [{
-        type: 'row',
-        content: [{
-            type: 'component',
-            componentName: 'Nom1',
-            componentState: {
-                companyName: 'Google',
-                tickerSymbol: 'Symb',
-                color: '#7C7'
-            }
-        }, {
-            type: 'component',
-            componentName: 'Name2',
-            componentState: {
-                companyName: 'Apple',
-                tickerSymbol: 'Symb2',
-                color: '#77C'
-            }
-        }]
-    }]
-};
-
-var myLayout = new GoldenLayout(config);
-myLayout.registerComponent('stockChart', StockChartComponent);
-myLayout.init();
+	
