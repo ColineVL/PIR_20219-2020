@@ -12,13 +12,17 @@
 <h1>Currently connected nodes</h1>
 
 <ul>
-    <% nodelist.forEach(function(node) { %>
-        <li> <%= node %> </li>
+    <% let i=0;nodelist.forEach(function(node) { %>
+        <li> <a href="/node/?id=<%= i %>"> <%= node.id %> </a> </li>
+        <% i++ ; %>
     <% }); %>
 </ul>
 
 <a href="/nodes/refresh">
     <button>Refresh</button>
+</a>
+<a href="/">
+    <button>Home</button>
 </a>
 
 <!--<form action="/nodes/refresh/" method="get">-->
