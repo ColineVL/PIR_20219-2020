@@ -16,18 +16,14 @@
             <% nodelist.forEach(function(node) { %>
                 <option value="<%= node %>"> <%= node %> </option>
             <% }); %>
-                <option value="test1"> test1 </option>
-                <option value="test2"> test2 </option>
         </select>
         <br>
 
         <label for="receiver">Receiver:</label>
         <select id="receiver" name="receiver">
             <% nodelist.forEach(function(node) { %>
-                <option value="<%= node %>"> <%= node %> </option>
+                <option value="<%= node.id %>"> <%= node.id %> </option>
             <% }); %>
-                <option value="test1"> test1 </option>
-                <option value="test2"> test2 </option>
         </select>
         <br>
         <label for="ammount">Ammount:</label>
@@ -35,6 +31,14 @@
 
         <input type="submit" value="Submit">
     </form>
+
+<br><br>
+<a href="/SignedTransaction/">
+    <button>Refresh</button>
+</a>
+<a href="/">
+    <button>Home</button>
+</a>
 
 
 <!--<form action="/nodes/refresh/" method="get">-->

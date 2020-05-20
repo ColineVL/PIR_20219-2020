@@ -34,9 +34,18 @@ app.use(session({secret: 'todotopsecret'}))
         next();
     })
 
-    /* On affiche la todolist et le formulaire */
+    /* On affiche la liste de noeuds */
     .get('/nodes', function(req, res) {
         res.render('nodes.ejs', {nodelist: req.session.nodelist});
+    })
+    /* On affiche les infos de'un noeud */
+    .get('/node/', async (req, res) => {
+
+        const id = req.query.id ;
+        const list = req.session.nodelist;
+        const node = list[id];
+        const info = node.id;
+        res.render('node.ejs', {node: node});
     })
     .get('', function(req, res) {
         res.render('home.ejs', {nodelist: req.session.nodelist});
@@ -49,12 +58,19 @@ app.use(session({secret: 'todotopsecret'}))
         let peers = await admin.getPeers();
         req.session.nodelist =[];
         for(let i=0; i<PeerCount; i++) {
-            req.session.nodelist.push(peers[i].name);
+            req.session.nodelist.push(peers[i]);
         }
         res.redirect('/nodes');
     })
     //fonction pour afficher les infos d'un noeud d'id: id
     .get('/SignedTransaction/', async (req, res) => {
+        let PeerCount = await web3.eth.net.getPeerCount();
+        console.log(PeerCount)
+        let peers = await admin.getPeers();
+        req.session.nodelist =[];
+        for(let i=0; i<PeerCount; i++) {
+            req.session.nodelist.push(peers[i]);
+        }
         res.render('signedTransactionForm.ejs', {nodelist: req.session.nodelist});
     })
     .get('/CreateTransaction/', async (req, res) => {
@@ -64,7 +80,7 @@ app.use(session({secret: 'todotopsecret'}))
 
         const r = await SignedTransaction.createAndSendSignedTransaction(provider);
         console.log("Hey.......")
-        console.log("receipt:", r.from)
+        console.log("receipt:", r)
         console.log("Hey....")
         // const valueInEther = prompt("Value in Ether to send? (press enter for default)",'5');
         res.render('resultTransaction.ejs',{sender: sender, receiver: receiver, ammount: ammount, r: r});
