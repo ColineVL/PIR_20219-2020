@@ -1,3 +1,49 @@
+StockChartComponent = function( container, state ) {
+    this._highChartsConfig = {
+        title: { text: 'Historic prices for ' + state.companyName },
+        series: [],
+        plotOptions: { line: { marker: { enabled: false } } },
+        xAxis:{ type: 'datetime' },
+        yAxis:{ title: 'Price in USD' },
+        chart:{ renderTo: container.getElement()[ 0 ] }
+    };
+
+    this._container = container;
+    this._state = state;
+    this._chart = null;
+
+    this._container.setTitle( 'Chart for ' + state.companyName );
+    this._container.on( 'open', this._createChart.bind( this ) );
+};
+
+StockChartComponent.prototype._createChart = function() {
+    this._chart = new Highcharts.Chart( this._highChartsConfig );
+    this._chart.showLoading( 'Loading data...' );
+    new StockDataRequest( this._state.tickerSymbol, this._onDataReady.bind( this ) );
+};
+
+StockChartComponent.prototype._onDataReady = function( highchartsData ) {
+    this._chart.addSeries({
+        color: this._state.color,
+        name: this._state.companyName,
+        data: highchartsData
+    });
+
+    this._chart.hideLoading();
+    this._bindContainerEvents();
+};
+
+StockChartComponent.prototype._bindContainerEvents = function() {
+    this._container.on( 'resize', this._setSize.bind( this ) );
+    this._container.on( 'destroy', this._chart.destroy.bind( this._chart ) );
+};
+
+StockChartComponent.prototype._setSize = function() {
+    this._chart.setSize( this._container.width, this._container.height );
+};
+
+
+// TODO
 Highcharts.chart('container', {
 
     title: {
@@ -46,16 +92,25 @@ var config = {
     content: [{
         type: 'row',
         content: [{
-                type: 'component',
-                componentName: 'example',
-                componentState: {text: 'Component 3'}
-            }]
+            type: 'component',
+            componentName: 'Nom1',
+            componentState: {
+                companyName: 'Google',
+                tickerSymbol: 'Symb',
+                color: '#7C7'
+            }
+        }, {
+            type: 'component',
+            componentName: 'Name2',
+            componentState: {
+                companyName: 'Apple',
+                tickerSymbol: 'Symb2',
+                color: '#77C'
+            }
+        }]
     }]
 };
 
 var myLayout = new GoldenLayout(config);
-myLayout.registerComponent('example', function (container, state) {
-
-    container.getElement().html('<h2>' + state.text + '</h2>'+ '<figure className="highcharts-figure"><div id="container"></div></figure>');
-});
+myLayout.registerComponent('stockChart', StockChartComponent);
 myLayout.init();
