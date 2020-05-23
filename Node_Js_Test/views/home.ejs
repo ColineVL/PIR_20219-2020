@@ -10,8 +10,26 @@
 
 <body>
 <h1>Welcome! you are home!</h1>
-<p> Do you want to see the <a href="/nodes/">nodes</a> ?</p>
+<p> Do you want to see the <a href="/nodes/" style="color: #8b0000">nodes</a> ?</p>
 <p> Or make a <a href="/SignedTransaction/" style="color: darkred">transaction</a> ?</p>
+<p> Or check a <a href="/balance/" style="color: lawngreen">balance</a> ?</p>
+<p id="g"> Hey!</p>
+
+
+<button onclick="geek()">
+    Click me!
+</button>
+<script>
+    function geek() {
+        var doc = prompt("Please enter some text",
+            "GeeksforGeeks");
+        if (doc != null) {
+            console.log(5);
+            document.getElementById("g").innerHTML =
+                "Welcome to " + doc;
+        }
+    }
+</script>
 
 
 

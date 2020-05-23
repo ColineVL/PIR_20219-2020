@@ -21,22 +21,38 @@ const options = {
 const admin = new Admin(provider, null, options);
 var app = express();
 
+let nodelist = [];
+
+
+
+
+async function CheckBalance() {
+    const account = prompt("Please enter an address",
+        "0");
+    if (account != null) {
+        const bal = await web3.eth.getBalance(address);
+        document.getElementById("balance").innerHTML = "Balance: " + bal;
+        document.getElementById("address").innerHTML = "For: " + account;
+    }
+
+}
 
 /* On utilise les sessions */
-app.use(session({secret: 'todotopsecret'}))
+// app.use(session({secret: 'todotopsecret'}))
+app.use(express.static('public'))
 
-    /* S'il n'y a pas de todolist dans la session,
+    /* S'il n'y a pas de nodelist dans la session,
     on en crée une vide sous forme d'array avant la suite */
-    .use(function(req, res, next){
-        if (typeof(req.session.nodelist) == 'undefined') {
-            req.session.nodelist = [];
-        }
-        next();
-    })
+    // .use(function(req, res, next){
+    //     if (typeof(nodelist) == 'undefined') {
+    //         nodelist = [];
+    //     }
+    //     // next();
+    // })
 
     /* On affiche la liste de noeuds */
     .get('/nodes', function(req, res) {
-        res.render('nodes.ejs', {nodelist: req.session.nodelist});
+        res.render('nodes.ejs', {nodelist: nodelist});
     })
     /* On affiche les infos de'un noeud */
     .get('/node/', async (req, res) => {
@@ -44,11 +60,14 @@ app.use(session({secret: 'todotopsecret'}))
         const id = req.query.id ;
         const list = req.session.nodelist;
         const node = list[id];
-        const info = node.id;
+
+        const account = await web3.eth.accounts.privateKeyToAccount("0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63");
+        const bal = await web3.eth.getBalance(account.address);
+        console.log(bal);
         res.render('node.ejs', {node: node});
     })
     .get('', function(req, res) {
-        res.render('home.ejs', {nodelist: req.session.nodelist});
+        res.render('home.ejs', {nodelist: nodelist});
     })
 
     /* Rafraichir la page pour voir si plus de noeuds sont presents */
@@ -56,13 +75,18 @@ app.use(session({secret: 'todotopsecret'}))
         let PeerCount = await web3.eth.net.getPeerCount();
         console.log(PeerCount)
         let peers = await admin.getPeers();
-        req.session.nodelist =[];
+        nodelist =[];
         for(let i=0; i<PeerCount; i++) {
-            req.session.nodelist.push(peers[i]);
+            nodelist.push(peers[i]);
         }
         res.redirect('/nodes');
     })
-    //fonction pour afficher les infos d'un noeud d'id: id
+    /* Vue pour afficher le balance d'une adresse */
+    .get('/balance/', async (req, res) => {
+
+        res.render('balance.ejs',);
+    })
+
     .get('/SignedTransaction/', async (req, res) => {
         let PeerCount = await web3.eth.net.getPeerCount();
         console.log(PeerCount)
@@ -73,6 +97,7 @@ app.use(session({secret: 'todotopsecret'}))
         }
         res.render('signedTransactionForm.ejs', {nodelist: req.session.nodelist});
     })
+
     .get('/CreateTransaction/', async (req, res) => {
         const sender = req.sender
         const receiver = req.receiver
