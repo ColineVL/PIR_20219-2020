@@ -25,13 +25,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dc872779-3c4c-4146-9b89-35931d33490b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/CURRENT" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/CURRENT" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/LOG" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/LOG" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/CURRENT" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/CURRENT" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/LOG" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/LOG" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Node_Js_Test/TestExpress.js" beforeDir="false" afterPath="$PROJECT_DIR$/Node_Js_Test/TestExpress.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Node_Js_Test/views/home.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/Node_Js_Test/views/home.ejs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Node_Js_Test/views/node.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/Node_Js_Test/views/node.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Node_Js_Test/views/balance.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/Node_Js_Test/views/balance.ejs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PIR.iws" beforeDir="false" afterPath="$PROJECT_DIR$/PIR.iws" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,6 +39,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="package.json" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -69,11 +66,11 @@
     <property name="project.structure.side.proportion" value="0.2" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/Node_Js_Test" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/Node_Js_Test/ModulesForFunctionsExpress" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Node_Js_Test" />
     </key>
   </component>
   <component name="SvnConfiguration">
@@ -92,7 +89,7 @@
       <workItem from="1588773706988" duration="1023000" />
       <workItem from="1589617669648" duration="4877000" />
       <workItem from="1589785691859" duration="14998000" />
-      <workItem from="1589968088862" duration="10220000" />
+      <workItem from="1589968088862" duration="12500000" />
     </task>
     <servers />
   </component>

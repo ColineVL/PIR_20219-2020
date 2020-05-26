@@ -16,10 +16,13 @@
 <p id="balance"> </p>
 
 
-<button onclick="CheckBalance()">
-    Check a balance!
-</button>
-<script src="/../TestExpress.js/"></script>
+
+<form action="/balance/" method="get">
+    <label for="account">Address to check:</label>
+    <input id="account" name="account" type="string">
+    <input type="submit" value="Submit">
+</form>
+
 
 
 

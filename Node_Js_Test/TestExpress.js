@@ -26,20 +26,10 @@ let nodelist = [];
 
 
 
-async function CheckBalance() {
-    const account = prompt("Please enter an address",
-        "0");
-    if (account != null) {
-        const bal = await web3.eth.getBalance(address);
-        document.getElementById("balance").innerHTML = "Balance: " + bal;
-        document.getElementById("address").innerHTML = "For: " + account;
-    }
-
-}
-
 /* On utilise les sessions */
 // app.use(session({secret: 'todotopsecret'}))
-app.use(express.static('public'))
+// app.use(express.static('public'))
+app.use('/public', express.static(__dirname + '/public'))
 
     /* S'il n'y a pas de nodelist dans la session,
     on en crée une vide sous forme d'array avant la suite */
@@ -84,6 +74,15 @@ app.use(express.static('public'))
     /* Vue pour afficher le balance d'une adresse */
     .get('/balance/', async (req, res) => {
 
+        // const account = prompt("Please enter an address",
+        //     "0");
+        const account = req.query.account;
+        console.log(account);
+        if (account != null) {
+            // const bal = await web3.eth.getBalance(address);
+            document.getElementById("balance").innerHTML =5;// "Balance: " + bal;
+            document.getElementById("address").innerHTML =5;// "For: " + account;
+        }
         res.render('balance.ejs',);
     })
 
@@ -102,6 +101,7 @@ app.use(express.static('public'))
         const sender = req.sender
         const receiver = req.receiver
         const ammount = req.ammount
+
 
         const r = await SignedTransaction.createAndSendSignedTransaction(provider);
         console.log("Hey.......")
