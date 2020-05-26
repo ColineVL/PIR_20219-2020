@@ -1,4 +1,4 @@
-Highcharts.chart('essai', {
+Highcharts.chart('stockChart', {
     title: {
         text: 'Chart reflow is set to true'
     },
