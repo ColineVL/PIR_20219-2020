@@ -26,8 +26,9 @@
   <component name="ChangeListManager">
     <list default="true" id="dc872779-3c4c-4146-9b89-35931d33490b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/LOG" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/LOG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Node_Js_Test/SignedTransactionModule.js" beforeDir="false" afterPath="$PROJECT_DIR$/Node_Js_Test/SignedTransactionModule.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Node_Js_Test/TestExpress.js" beforeDir="false" afterPath="$PROJECT_DIR$/Node_Js_Test/TestExpress.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Node_Js_Test/views/balance.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/Node_Js_Test/views/balance.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Node_Js_Test/views/signedTransactionForm.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/Node_Js_Test/views/signedTransactionForm.ejs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PIR.iws" beforeDir="false" afterPath="$PROJECT_DIR$/PIR.iws" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -90,6 +91,7 @@
       <workItem from="1589617669648" duration="4877000" />
       <workItem from="1589785691859" duration="14998000" />
       <workItem from="1589968088862" duration="12500000" />
+      <workItem from="1590477098332" duration="2433000" />
     </task>
     <servers />
   </component>

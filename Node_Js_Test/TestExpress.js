@@ -21,6 +21,11 @@ const options = {
 const admin = new Admin(provider, null, options);
 var app = express();
 
+// Parse URL-encoded bodies (as sent by HTML forms)
+app.use(express.urlencoded());
+// Parse JSON bodies (as sent by API clients)
+app.use(express.json());
+
 let nodelist = [];
 
 
@@ -48,7 +53,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/node/', async (req, res) => {
 
         const id = req.query.id ;
-        const list = req.session.nodelist;
+        const list = nodelist;
         const node = list[id];
 
         const account = await web3.eth.accounts.privateKeyToAccount("0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63");
@@ -90,23 +95,25 @@ app.use('/public', express.static(__dirname + '/public'))
         let PeerCount = await web3.eth.net.getPeerCount();
         console.log(PeerCount)
         let peers = await admin.getPeers();
-        req.session.nodelist =[];
+        nodelist =[];
         for(let i=0; i<PeerCount; i++) {
-            req.session.nodelist.push(peers[i]);
+            nodelist.push(peers[i]);
         }
-        res.render('signedTransactionForm.ejs', {nodelist: req.session.nodelist});
+        res.render('signedTransactionForm.ejs', {nodelist: nodelist});
     })
 
-    .get('/CreateTransaction/', async (req, res) => {
-        const sender = req.sender
-        const receiver = req.receiver
-        const ammount = req.ammount
+    .post('/CreateTransaction/', async (req, res) => {
+        const sender = req.body.sender
+        const privateKey = req.body.privateKey
+        const receiver = req.body.receiver
+        const ammount = req.body.ammount
+
+        console.log(sender);
+        console.log(privateKey);
 
 
-        const r = await SignedTransaction.createAndSendSignedTransaction(provider);
-        console.log("Hey.......")
+        const r = await SignedTransaction.createAndSendSignedTransaction(provider,ammount,privateKey,sender,receiver);//,0.001,'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','0xfe3b557e8fb62b89f4916b721be55ceb828dbd73','0xf17f52151EbEF6C7334FAD080c5704D77216b732');
         console.log("receipt:", r)
-        console.log("Hey....")
         // const valueInEther = prompt("Value in Ether to send? (press enter for default)",'5');
         res.render('resultTransaction.ejs',{sender: sender, receiver: receiver, ammount: ammount, r: r});
     })

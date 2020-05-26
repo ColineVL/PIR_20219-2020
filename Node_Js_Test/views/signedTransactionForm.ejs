@@ -10,24 +10,21 @@
 
 <body>
 <h1>Let's make a transaction!</h1>
-    <form action="/CreateTransaction/" method="get">
+    <form action="/CreateTransaction/" method="post">
         <label for="sender">Sender:</label>
-        <select id="sender" name="sender">
-            <% nodelist.forEach(function(node) { %>
-                <option value="<%= node %>"> <%= node %> </option>
-            <% }); %>
-        </select>
+        <input id="sender" name="sender" type="string">
+        <br>
+
+        <label for="privateKey">Private Key:</label>
+        <input id="privateKey" name="privateKey" type="string">
         <br>
 
         <label for="receiver">Receiver:</label>
-        <select id="receiver" name="receiver">
-            <% nodelist.forEach(function(node) { %>
-                <option value="<%= node.id %>"> <%= node.id %> </option>
-            <% }); %>
-        </select>
+        <input id="receiver" name="receiver" type="string">
         <br>
+
         <label for="ammount">Ammount:</label>
-        <input id="ammount" name="ammount" type="number">
+        <input id="ammount" name="ammount" type="double">
 
         <input type="submit" value="Submit">
     </form>

@@ -39,7 +39,7 @@ module.exports = {
     //         resolve(ans);
     //     }))
     // },
-    createAndSendSignedTransaction : async function(prov) {
+    createAndSendSignedTransaction : async function(prov, valueInEther, privateKey_notBuffered, addressFrom, addressTo) {
         // web3 initialization - must point to the HTTP JSON-RPC endpoint
         const provider = prov || 'http://localhost:8545';
         console.log("******************************************");
@@ -48,10 +48,10 @@ module.exports = {
         const web3 = new Web3(new Web3.providers.HttpProvider(provider));
         web3.transactionConfirmationBlocks = 1;
 
-        const valueInEther =  await askQuestion("value in Ether to send? (press enter for default)") || 0.0001;
-        const privateKey = await askQuestion("Private Key of sender? (press enter for default)") || new Buffer.from('8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','hex');
-        const addressFrom = await askQuestion("Sender Adress? (press enter for default)") ||'0xfe3b557e8fb62b89f4916b721be55ceb828dbd73';
-        const addressTo = await askQuestion("Receiver Adress? (press enter for default)") ||'0xf17f52151EbEF6C7334FAD080c5704D77216b732';
+        // const valueInEther =  await askQuestion("value in Ether to send? (press enter for default)") || 0.0001;
+        const privateKey = new Buffer.from(privateKey_notBuffered,'hex');//await askQuestion("Private Key of sender? (press enter for default)") || new Buffer.from('8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','hex');
+        // const addressFrom = await askQuestion("Sender Adress? (press enter for default)") ||'0xfe3b557e8fb62b89f4916b721be55ceb828dbd73';
+        // const addressTo = await askQuestion("Receiver Adress? (press enter for default)") ||'0xf17f52151EbEF6C7334FAD080c5704D77216b732';
         //prompt("Value in Ether to send? (press enter for default)",'5');
         // var privateKey = await prompt("Private Key of sender? (press enter for default)", new Buffer.from('8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63', 'hex'));
         // const addressFrom = prompt("Sender Adress? (press enter for default)",'0xfe3b557e8fb62b89f4916b721be55ceb828dbd73');
