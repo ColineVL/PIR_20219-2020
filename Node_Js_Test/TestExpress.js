@@ -61,11 +61,12 @@ app.use('/public', express.static(__dirname + '/public'))
         console.log(bal);
         res.render('node.ejs', {node: node});
     })
+
     .get('', function(req, res) {
         res.render('home.ejs', {nodelist: nodelist});
     })
 
-    /* Rafraichir la page pour voir si plus de noeuds sont presents */
+    /* Rafraichir la page pour voir si plus/moins de noeuds sont presents */
     .get('/nodes/refresh/', async (req, res) => {
         let PeerCount = await web3.eth.net.getPeerCount();
         console.log(PeerCount)
@@ -103,19 +104,18 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     .post('/CreateTransaction/', async (req, res) => {
-        const sender = req.body.sender
-        const privateKey = req.body.privateKey
-        const receiver = req.body.receiver
-        const ammount = req.body.ammount
+        const sender = req.body.sender;
+        const privateKey = req.body.privateKey;
+        const receiver = req.body.receiver;
+        const ammount = req.body.ammount;
 
-        console.log(sender);
-        console.log(privateKey);
+        info ={s:sender, r:receiver, a:ammount}
 
 
         const r = await SignedTransaction.createAndSendSignedTransaction(provider,ammount,privateKey,sender,receiver);//,0.001,'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','0xfe3b557e8fb62b89f4916b721be55ceb828dbd73','0xf17f52151EbEF6C7334FAD080c5704D77216b732');
         console.log("receipt:", r)
-        // const valueInEther = prompt("Value in Ether to send? (press enter for default)",'5');
-        res.render('resultTransaction.ejs',{sender: sender, receiver: receiver, ammount: ammount, r: r});
+        console.log(info.a);
+        res.render('resultTransaction.ejs',{sender, receiver, ammount, r, i:info});
     })
 
     /* On redirige vers home si la page demandée n'est pas trouvée */

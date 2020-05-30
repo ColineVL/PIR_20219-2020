@@ -25,11 +25,46 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dc872779-3c4c-4146-9b89-35931d33490b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/caches/logBloom-0.cache" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-1/data/caches/logBloom-0.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/000380.sst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/CURRENT" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/CURRENT" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/LOG" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/LOG" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Node_Js_Test/SignedTransactionModule.js" beforeDir="false" afterPath="$PROJECT_DIR$/Node_Js_Test/SignedTransactionModule.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/MANIFEST-000366" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/OPTIONS-000383" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/OPTIONS-000385" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-2/data/caches/logBloom-0.cache" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-2/data/caches/logBloom-0.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/000359.sst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/000369.sst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/000386.sst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/CURRENT" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/CURRENT" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/LOG" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/LOG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/MANIFEST-000384" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/OPTIONS-000400" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-2/data/database/OPTIONS-000402" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-3/data/caches/logBloom-0.cache" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-3/data/caches/logBloom-0.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-3/data/database/CURRENT" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-3/data/database/CURRENT" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-3/data/database/LOG" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-3/data/database/LOG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-3/data/database/MANIFEST-000284" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-3/data/database/OPTIONS-000300" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-3/data/database/OPTIONS-000302" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/caches/logBloom-0.cache" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-4/data/caches/logBloom-0.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/000156.sst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/000161.sst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/000169.sst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/000170.sst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/000186.sst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/000187.sst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/000203.sst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/000204.sst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/CURRENT" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/CURRENT" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/LOG" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/LOG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/MANIFEST-000202" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/OPTIONS-000217" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-4/data/database/OPTIONS-000219" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Node_Js_Test/TestExpress.js" beforeDir="false" afterPath="$PROJECT_DIR$/Node_Js_Test/TestExpress.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Node_Js_Test/views/signedTransactionForm.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/Node_Js_Test/views/signedTransactionForm.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Node_Js_Test/views/resultTransaction.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/Node_Js_Test/views/resultTransaction.ejs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PIR.iws" beforeDir="false" afterPath="$PROJECT_DIR$/PIR.iws" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Solidity/Depreciation_Contract.sol" beforeDir="false" afterPath="$PROJECT_DIR$/Solidity/Depreciation_Contract.sol" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +76,7 @@
       <list>
         <option value="package.json" />
         <option value="JavaScript File" />
+        <option value="Solidity Contract" />
       </list>
     </option>
   </component>
@@ -65,6 +101,7 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -91,7 +128,9 @@
       <workItem from="1589617669648" duration="4877000" />
       <workItem from="1589785691859" duration="14998000" />
       <workItem from="1589968088862" duration="12500000" />
-      <workItem from="1590477098332" duration="2433000" />
+      <workItem from="1590477098332" duration="4561000" />
+      <workItem from="1590847739553" duration="2179000" />
+      <workItem from="1590852111906" duration="5349000" />
     </task>
     <servers />
   </component>
@@ -119,10 +158,14 @@
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state x="414" y="304" key="DetectedRootsChooserDialog/0.23.1280.777@0.23.1280.777" timestamp="1589617972092" />
-    <state x="128" y="23" key="SettingsEditor" timestamp="1589786346733">
+    <state x="233" y="146" key="IDE.errors.dialog" timestamp="1590856252664">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="128" y="23" key="SettingsEditor/0.23.1280.777@0.23.1280.777" timestamp="1589786346733" />
+    <state x="233" y="146" key="IDE.errors.dialog/0.23.1280.777@0.23.1280.777" timestamp="1590856252664" />
+    <state x="128" y="23" key="SettingsEditor" timestamp="1590850668552">
+      <screen x="0" y="23" width="1280" height="777" />
+    </state>
+    <state x="128" y="23" key="SettingsEditor/0.23.1280.777@0.23.1280.777" timestamp="1590850668552" />
     <state x="319" y="224" key="com.intellij.ide.util.TipDialog" timestamp="1588773709361">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
