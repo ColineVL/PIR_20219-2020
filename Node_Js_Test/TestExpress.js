@@ -111,11 +111,18 @@ app.use('/public', express.static(__dirname + '/public'))
 
         info ={s:sender, r:receiver, a:ammount}
 
-
         const r = await SignedTransaction.createAndSendSignedTransaction(provider,ammount,privateKey,sender,receiver);//,0.001,'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','0xfe3b557e8fb62b89f4916b721be55ceb828dbd73','0xf17f52151EbEF6C7334FAD080c5704D77216b732');
         console.log("receipt:", r)
         console.log(info.a);
-        res.render('resultTransaction.ejs',{sender, receiver, ammount, r, i:info});
+        res.render('resultTransaction.ejs',{ r });
+    })
+
+    .get('/NewAccount/', async (req, res) => {
+        const info = await  web3.eth.accounts.create();
+        console.log(info);
+        console.log(info);
+        console.log(info["address"]);
+        res.render('NewAccountInfo.ejs', {info:info});
     })
 
     /* On redirige vers home si la page demandée n'est pas trouvée */
