@@ -9,25 +9,25 @@
 </head>
 
 <body>
-<p> Transaction from : <% i.s %></p>
+<p> Transaction from : <% r["sender"] %></p>
 <br>
-<p> to : <% receiver %></p>
+<p> to : <% r["receiver"] %></p>
 <br>
-<p> of : <% ammount %></p>
+<p> of : <% r["ammount"] %></p>
 <br>
 <p> has been made, here is your receipt:</p>
 <br>
 <p> blockhash : <% r['blockHash'] %></p>
 <br>
-<p> blockNumber : <%r.blockNumber%></p>
+<p> blockNumber : <%r["blockNumber"]%></p>
 <br>
-<p> cumulative Gas used : <%r.cumulativeGasUsed%></p>
+<p> cumulative Gas used : <%r["cumulativeGasUsed"]%></p>
 <br>
-<p> from : <%r.from%></p>
+<p> from : <%r["from"]%></p>
 <br>
-<p> status : <%r.status%></p>
+<p> status : <%r["status"]%></p>
 <br>
-<p> to : <%r.to%></p>
+<p> to : <%r["to"]%></p>
 
 
 </body>
