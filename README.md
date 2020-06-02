@@ -1,6 +1,6 @@
 # PIR
 Projet d'innovation recherche de 2A. <br>
-Développement d'une interface web pour interagir plus simplement avec une blockchain.*
+Développement d'une interface web pour interagir plus simplement avec une blockchain.
 
 ## Installation
 

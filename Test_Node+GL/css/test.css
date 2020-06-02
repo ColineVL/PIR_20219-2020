@@ -12,6 +12,12 @@ h1{
     text-align: center;
 }
 
+p{
+    font: 12px Arial, sans-serif;
+    color:#fff;
+    padding: 10px;
+}
+
 .highcharts-figure, .highcharts-data-table table {
     min-width: 360px;
     max-width: 800px;

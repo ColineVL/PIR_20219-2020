@@ -4,7 +4,6 @@ var bodyParser = require('body-parser'); // Charge le middleware de gestion des 
 const Web3 = require('web3');
 const Admin =require('web3-eth-admin').Admin;
 
-
 var provider = 'http://localhost:8545';
 var web3 = new Web3(new Web3.providers.HttpProvider(provider))
 const options = {
@@ -20,6 +19,7 @@ const options = {
 const admin = new Admin(provider, null, options);
 
 var app = express();
+app.use(express.static(__dirname + '/css'));
 
 
 /* On utilise les sessions */

@@ -3,23 +3,100 @@
 <html>
 <head>
     <title>Home</title>
+    <!-- JQuery -->
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!-- Golden Layout -->
+    <script type="text/javascript" src="//golden-layout.com/assets/js/goldenlayout.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="//golden-layout.com/assets/css/goldenlayout-base.css"/>
+    <link type="text/css" rel="stylesheet" href="//golden-layout.com/assets/css/goldenlayout-dark-theme.css"/>
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="test.css">
     <style>
-        a {text-decoration: none; color: black;}
+        a {text-decoration: none; color: red;}
     </style>
+
 </head>
 
 <body>
-<h1>Welcome! you are home!</h1>
-<p> Do you want to see the <a href="/nodes/" style="color: #8b0000">nodes</a> ?</p>
-<p> Or make a <a href="/SignedTransaction/" style="color: darkred">transaction</a> ?</p>
-<p> Or check a <a href="/balance/" style="color: lawngreen">balance</a> ?</p>
-<p> <a href="/NewAccount/"> Create new Account</a></p>
-<p id="g"> Hey!</p>
+<!--<p id="g"> Hey!</p>-->
 
 
-<button onclick="geek()">
-    Click me!
-</button>
+<!--<button onclick="geek()">-->
+<!--    Click me!-->
+<!--</button>-->
+
+
+
+
+<script>
+
+    // Creating the block for the list of nodes
+    let stateNodes = {
+        title: "Currently connected nodes",
+        text: 'List:',
+        nombre: 36
+    };
+    <!--let i=0;-->
+    <!--let nodelist = <%-nodelist%>;-->
+    <!--nodelist.forEach(function (node) {-->
+
+    <!--    stateNodes.text += '<br>' + node.id;-->
+    <!--    i++;-->
+
+    <!--});-->
+
+
+    //Begin the config
+    var config = {
+        content: [{
+            type: 'row',
+            content: [
+                {
+                    type: 'component',
+                    componentName: 'Home',
+                    componentState: {
+                        title: "Welcome! you are home!",
+                        text: "Do you want to see the <a href=\'/nodes/\'>nodes</a> ?" +
+                            "<br/>" + "Or make a <a href=\'/SignedTransaction/\'>transaction</a> ?" +
+                            "<br/>" + "Or check a <a href=\'/balance/\'>balance</a> ?" +
+                            "<br/>" + "To create a new account, click <a href=\'/NewAccount/\'>here</a>.",
+                    }
+                },
+                {
+                    type: 'column',
+                    content: [{
+                        type: 'component',
+                        componentName: 'Nodes',
+                        componentState: stateNodes
+                    }, {
+                        type: 'component',
+                        componentName: 'Noeuds',
+                        componentState: {text: 'Nombre de noeuds', nombre: '24'}
+                    }]
+                },
+            ]
+        }]
+    };
+
+
+
+    var myLayout = new GoldenLayout(config);
+
+    myLayout.registerComponent('Noeuds', function (container, state) {
+        container.getElement().html('<h2>' + state.text + '</h2>' + '<h1>' + state.nombre + '</h1>');
+    });
+    myLayout.registerComponent('Nodes', function (container, state) {
+        container.getElement().html('<h1>' + state.title + '</h1>' +
+            '<p>' + state.text + '</p>' + '<h1>' + state.nombre + '</h1>');
+    });
+    myLayout.registerComponent('Home', function (container, state) {
+        container.getElement().html('<h1>' + state.title + '</h1>'
+            + '<p>' + state.text + '</p>'
+        );
+    });
+    myLayout.init();
+</script>
+
 <script>
     function geek() {
         var doc = prompt("Please enter some text",

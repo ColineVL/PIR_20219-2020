@@ -20,6 +20,9 @@ const options = {
 };
 const admin = new Admin(provider, null, options);
 var app = express();
+// Load the css folder
+app.use(express.static(__dirname + '/css'));
+
 
 // Parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.urlencoded());
