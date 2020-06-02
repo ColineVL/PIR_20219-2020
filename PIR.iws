@@ -25,21 +25,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dc872779-3c4c-4146-9b89-35931d33490b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/besu.networks" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-1/data/besu.networks" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/besu.ports" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-1/data/besu.ports" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/000444.sst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/000455.sst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/000474.sst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/000491.sst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/CURRENT" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/CURRENT" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/LOG" beforeDir="false" afterPath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/LOG" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/MANIFEST-000489" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/OPTIONS-000504" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/IBFT-Network/Node-1/data/database/OPTIONS-000506" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/PIR.iws" beforeDir="false" afterPath="$PROJECT_DIR$/PIR.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test_Node+GL/views/testGL.html" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Node+GL/views/testGL.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/essai-HCetGL/testHCetGL.html" beforeDir="false" afterPath="$PROJECT_DIR$/essai-HCetGL/testHCetGL.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/essai-goldenLayout FONCTIONNE/testGL.html" beforeDir="false" afterPath="$PROJECT_DIR$/essai-goldenLayout FONCTIONNE/testGL.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +94,7 @@
       <workItem from="1590477098332" duration="4561000" />
       <workItem from="1590847739553" duration="2179000" />
       <workItem from="1590852111906" duration="7472000" />
-      <workItem from="1591106350926" duration="1068000" />
+      <workItem from="1591106350926" duration="2007000" />
     </task>
     <servers />
   </component>

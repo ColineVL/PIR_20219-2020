@@ -1,5 +1,10 @@
 .idea/
-PIR.iws
-PIR.ipr
-.iml
-.iws
+*.iws
+*.ipr
+*.iml
+*.json
+
+database
+caches
+besu.networks
+besu.ports
