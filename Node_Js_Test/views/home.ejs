@@ -26,21 +26,16 @@
 <!--<button onclick="geek()">-->
 <!--    Click me!-->
 <!--</button>-->
+<% listetest = ["un", "deux"]; %>
 
 <script>
-    let list2 = ["bouh"];
-    var getTest = "<%= bla %>";
-    console.log(getTest);
-    var list = "<%= liste[0] %>";
-    console.log(list);
-    list2.forEach(function(word) {
-        console.log(word);
-    });
 
+    var lt = <%-JSON.stringify(listetest)%>;
+    
     var listNodesItem = {
         title: "List of nodes",
         text: "Connected nodes list :",
-        list: "list",
+        list: lt,
         link: "<a href=\'/nodes/\'>Clic</a>",
     }
 
@@ -72,9 +67,18 @@
 
     var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
+    function displayList(list) {
+        let txt = "";
+        list.forEach(function (elt) {
+            txt += '<li>' + elt + '</li>';
+        });
+        return txt;
+    }
+
     myLayout.registerComponent('example', function (container, state) {
+        txt = displayList(state.list);
         container.getElement().html('<h2>' + state.text + '</h2>' +
-            '<li>' + state.list + '</li>' +
+            '<li>' + state.list + '</li>' + txt +
             '<p>' + state.link + '</p>');
     });
 

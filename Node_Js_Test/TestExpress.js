@@ -64,10 +64,11 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     .get('', function(req, res) {
-        var test=101;
-        var bla = "blablo";
-        let liste = ["yo", "bla"];
-        res.render('home.ejs', {bla:bla, liste:liste, nodelist: nodelist});
+        let liste = ["yo", "bla", "blu"];
+        let tailleListe = liste.length;
+        tailleListe = 3;
+
+        res.render('home.ejs', {liste:liste, tailleListe:tailleListe, nodelist: nodelist});
     })
 
     /* Rafraichir la page pour voir si plus/moins de noeuds sont presents */
