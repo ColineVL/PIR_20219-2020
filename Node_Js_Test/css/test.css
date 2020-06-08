@@ -18,6 +18,12 @@ p{
     padding: 10px;
 }
 
+li{
+    font: 12px Arial, sans-serif;
+    color:#fff;
+    padding: 10px;
+}
+
 a {
     text-decoration: none;
     color: red;

@@ -22,8 +22,6 @@ const admin = new Admin(provider, null, options);
 var app = express();
 // Load the css folder
 app.use(express.static(__dirname + '/css'));
-
-
 // Parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.urlencoded());
 // Parse JSON bodies (as sent by API clients)
@@ -66,7 +64,9 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     .get('', function(req, res) {
-        res.render('home.ejs', {nodelist: nodelist});
+        var test=101;
+        var bla = "blablo";
+        res.render('home.ejs', {bla:bla, nodelist: nodelist});
     })
 
     /* Rafraichir la page pour voir si plus/moins de noeuds sont presents */
@@ -122,7 +122,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/NewAccount/', async (req, res) => {
         const info = await  web3.eth.accounts.create();
-        console.log(info);
+        console.log("INFO NEW ACCOUNT");
         console.log(info);
         console.log(info["address"]);
         res.render('NewAccountInfo.ejs', {info:info});

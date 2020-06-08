@@ -16,6 +16,9 @@
 
 <body>
 
+<% let liste = ["yo", "bla"];%>
+<% let test = 101; %>
+
 <div id="wrapper">
     <ul id="menuContainer"></ul>
     <div id="layoutContainer"></div>
@@ -27,12 +30,18 @@
 <!--    Click me!-->
 <!--</button>-->
 
-
 <script>
+    // let list = ["bouh"];
+    var getTest = <%= test %>;
+    console.log(getTest);
+    var list = "<%= liste[0] %>";
+    console.log(list);
+
     var listNodesItem = {
         title: "List of nodes",
-        text: "Ici on doit afficher la liste des noeuds",
-        link: "<a href=\\'/nodes/\\'>Clic</a>"
+        text: "Connected nodes list :",
+        list: "list",
+        link: "<a href=\'/nodes/\'>Clic</a>",
     }
 
     var createTransactionItem = {
@@ -44,13 +53,13 @@
     var checkABalanceItem = {
         title: "Check a balance",
         text: "Hey",
-        link: "<a href=\\'/balance/\\'>Clic</a>"
+        link: "<a href=\'/balance/\'>Clic</a>"
     }
 
     var createAnAccountItem = {
         title: "Create an account",
         text: "Salut",
-        link: "<a href=\\'/NewAccount/\\'>Clic</a>",
+        link: "<a href=\'/NewAccount/\'>Clic</a>",
     }
 
     var config = {
@@ -64,7 +73,9 @@
     var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
     myLayout.registerComponent('example', function (container, state) {
-        container.getElement().html('<h2>' + state.text + '</h2>' + '<p>' + state.link + '</p>');
+        container.getElement().html('<h2>' + state.text + '</h2>' +
+            '<li>' + state.list + '</li>' +
+            '<p>' + state.link + '</p>');
     });
 
     myLayout.init();
