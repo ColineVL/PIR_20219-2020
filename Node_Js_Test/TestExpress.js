@@ -64,14 +64,12 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     .get('', function(req, res) {
-        let liste = ["yo", "bla", "blu"];
-        let tailleListe = liste.length;
-        tailleListe = 3;
-
-        res.render('home.ejs', {liste:liste, tailleListe:tailleListe, nodelist: nodelist});
+        let listetest = ["yo", "bla", "blu"];
+        res.render('home.ejs', {listetest:listetest, nodelist: nodelist});
     })
 
     /* Rafraichir la page pour voir si plus/moins de noeuds sont presents */
+    // Peut-on ne pas changer de page mais juste exécuter une fonction ?
     .get('/nodes/refresh/', async (req, res) => {
         let PeerCount = await web3.eth.net.getPeerCount();
         console.log(PeerCount)

@@ -26,15 +26,16 @@
 <!--<button onclick="geek()">-->
 <!--    Click me!-->
 <!--</button>-->
-<% listetest = ["un", "deux"]; %>
+
+<% var listetest = listetest; %>
 
 <script>
 
     var lt = <%-JSON.stringify(listetest)%>;
-    
+
     var listNodesItem = {
         title: "List of nodes",
-        text: "Connected nodes list :",
+        text: "Clic on a node to get more info.",
         list: lt,
         link: "<a href=\'/nodes/\'>Clic</a>",
     }
@@ -78,7 +79,7 @@
     myLayout.registerComponent('example', function (container, state) {
         txt = displayList(state.list);
         container.getElement().html('<h2>' + state.text + '</h2>' +
-            '<li>' + state.list + '</li>' + txt +
+            txt +
             '<p>' + state.link + '</p>');
     });
 
