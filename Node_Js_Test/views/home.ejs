@@ -16,9 +16,6 @@
 
 <body>
 
-<% let liste = ["yo", "bla"];%>
-<% let test = 101; %>
-
 <div id="wrapper">
     <ul id="menuContainer"></ul>
     <div id="layoutContainer"></div>
@@ -31,11 +28,14 @@
 <!--</button>-->
 
 <script>
-    // let list = ["bouh"];
-    var getTest = <%= test %>;
+    let list2 = ["bouh"];
+    var getTest = "<%= bla %>";
     console.log(getTest);
     var list = "<%= liste[0] %>";
     console.log(list);
+    list2.forEach(function(word) {
+        console.log(word);
+    });
 
     var listNodesItem = {
         title: "List of nodes",
