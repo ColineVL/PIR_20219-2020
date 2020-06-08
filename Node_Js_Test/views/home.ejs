@@ -37,7 +37,7 @@
         title: "List of nodes",
         text: "Clic on a node to get more info.",
         list: lt,
-        link: "<a href=\'/nodes/\'>Clic</a>",
+        link: "<a href=\'/nodes/refresh/\'><button>Refresh</button></a>",
         name: "withList",
     }
 
@@ -64,9 +64,10 @@
 
     var testItem = {
         title: "Test",
-        text: "Salut",
-        link: "<a href=\'/Test/\'><button onclick='geek()'>Test</button></a>",
-        name: "withoutList",
+        text: Date.now(),
+        list: ["<button onclick='geek()'>Test</button>"],
+        link: "<a href=\'/Test/\'>Test</a>",
+        name: "withList",
     }
 
 
@@ -91,7 +92,7 @@
 
     myLayout.registerComponent('withList', function (container, state) {
         txt = displayList(state.list);
-        container.getElement().html('<h2>' + state.text + '</h2>' +
+        container.getElement().html('<h2 id="g">' + state.text + '</h2>' +
             txt +
             '<p>' + state.link + '</p>');
     });
