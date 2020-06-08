@@ -2,7 +2,7 @@
 
 <html>
 <head>
-    <title>Balance</title>
+    <title>Test</title>
 
 </head>
 
@@ -14,6 +14,27 @@
 <a href="/">
     <button>Home</button>
 </a>
+
+<p id="g"> Hey!</p>
+
+<button onclick="geek()">
+    Click me!
+</button>
+
+<script>
+    function geek() {
+        var doc = prompt("Please enter some text",
+            "GeeksforGeeks");
+        if (doc != null) {
+            console.log(5);
+            document.getElementById("g").innerHTML =
+                "Welcome to " + doc;
+        }
+    }
+</script>
+
+<!--<script type="text/javascript" src="../UsefulFunctions.js"></script>-->
+
 
 </body>
 </html>

@@ -65,9 +65,10 @@
     var testItem = {
         title: "Test",
         text: "Salut",
-        link: "<a href=\'/Test/\'><button>Test</button></a>",
+        link: "<a href=\'/Test/\'><button onclick='geek()'>Test</button></a>",
         name: "withoutList",
     }
+
 
     var config = {
         content: [{
@@ -96,7 +97,7 @@
     });
 
     myLayout.registerComponent('withoutList', function (container, state) {
-        container.getElement().html('<h2>' + state.text + '</h2>' +
+        container.getElement().html('<h2 id="g">' + state.text + '</h2>' +
             '<p>' + state.link + '</p>');
     });
 

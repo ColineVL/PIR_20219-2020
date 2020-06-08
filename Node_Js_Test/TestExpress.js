@@ -50,6 +50,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/nodes', function(req, res) {
         res.render('nodes.ejs', {nodelist: nodelist});
     })
+
     /* On affiche les infos de'un noeud */
     .get('/node/', async (req, res) => {
 
@@ -131,12 +132,12 @@ app.use('/public', express.static(__dirname + '/public'))
     // TODO supprimer, c'est un test
     .get('/Test/', function(req, res) {
         let bla = "blabla";
-        res.render('test.ejs', {bla:bla});
+        // res.render('test.ejs', {bla:bla});
     })
 
     /* On redirige vers home si la page demandée n'est pas trouvée */
     .use(function(req, res, next){
-        res.redirect('/nodes');
+        res.redirect('/');
     })
 
     .listen(8080);
