@@ -38,24 +38,35 @@
         text: "Clic on a node to get more info.",
         list: lt,
         link: "<a href=\'/nodes/\'>Clic</a>",
+        name: "withList",
     }
 
     var createTransactionItem = {
         title: "Make a signed transaction",
         text: "Yo",
-        link: "<a href=\'/SignedTransaction/\'>Clic</a>"
+        link: "<a href=\'/SignedTransaction/\'>Clic</a>",
+        name: "withoutList",
     }
 
     var checkABalanceItem = {
         title: "Check a balance",
         text: "Hey",
-        link: "<a href=\'/balance/\'>Clic</a>"
+        link: "<a href=\'/balance/\'>Clic</a>",
+        name: "withoutList",
     }
 
     var createAnAccountItem = {
         title: "Create an account",
         text: "Salut",
         link: "<a href=\'/NewAccount/\'>Clic</a>",
+        name: "withoutList",
+    }
+
+    var testItem = {
+        title: "Test",
+        text: "Salut",
+        link: "<a href=\'/Test/\'><button>Test</button></a>",
+        name: "withoutList",
     }
 
     var config = {
@@ -65,6 +76,7 @@
             content: []
         }]
     };
+
 
     var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
@@ -76,10 +88,15 @@
         return txt;
     }
 
-    myLayout.registerComponent('example', function (container, state) {
+    myLayout.registerComponent('withList', function (container, state) {
         txt = displayList(state.list);
         container.getElement().html('<h2>' + state.text + '</h2>' +
             txt +
+            '<p>' + state.link + '</p>');
+    });
+
+    myLayout.registerComponent('withoutList', function (container, state) {
+        container.getElement().html('<h2>' + state.text + '</h2>' +
             '<p>' + state.link + '</p>');
     });
 
@@ -93,7 +110,7 @@
         var newItemConfig = {
             title: newItem.title,
             type: 'component',
-            componentName: 'example',
+            componentName: newItem.name,
             componentState: newItem
         };
 
@@ -107,6 +124,7 @@
     addMenuItem(checkABalanceItem);
     addMenuItem(createTransactionItem);
     addMenuItem(createAnAccountItem);
+    addMenuItem(testItem);
 
 </script>
 
