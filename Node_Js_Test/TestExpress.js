@@ -22,6 +22,8 @@ const admin = new Admin(provider, null, options);
 var app = express();
 // Load the css folder
 app.use(express.static(__dirname + '/css'));
+// Load the js files
+app.use(express.static(__dirname + '/js'));
 // Parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.urlencoded());
 // Parse JSON bodies (as sent by API clients)
@@ -131,8 +133,13 @@ app.use('/public', express.static(__dirname + '/public'))
 
     // TODO supprimer, c'est un test
     .get('/Test/', function(req, res) {
-        let bla = "blabla";
-        res.render('test.ejs', {bla:bla});
+        let bla = Date.now();
+        //res.render('test.ejs', {bla:bla});
+    })
+
+    .get('/Test2/:id', async(req, res) => {
+        res.json(req.params.id + 2);
+        //res.render('test.ejs', {bla:bla});
     })
 
     /* On redirige vers home si la page demandée n'est pas trouvée */
