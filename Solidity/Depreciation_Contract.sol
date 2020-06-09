@@ -14,7 +14,7 @@ contract Depreciation_Contract {
     // Import it later
 //    using SafeMath32 for uint32;
 
-    uint32 dataIdCounter = 0;
+    uint32 dataIdCounter = 10;
 
     struct DataReference{ // Contains reference ANd price
         uint32 dataId;
@@ -83,6 +83,15 @@ contract Depreciation_Contract {
         // !!!!!!!!!!!!! Maybe we will not use data ID counter
         dataIdCounter = dataIdCounter +1;
 
+    }
+    function  getDataReference () public view returns (uint32) {
+        // Creating new data reference
+        return dataIdCounter;
+    }
+
+    function  setId (uint32 i) public {
+        // Creating new data reference
+        dataIdCounter = i ;
     }
 
     // Give access to the provider only

@@ -22,7 +22,10 @@ var key1 =new Buffer.from('8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1
 // let contracts = JSON.parse(source)["contracts"];
 
 // ABI description as JSON structure
-let abi = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint32","name":"dataId","type":"uint32"},{"indexed":false,"internalType":"address","name":"provider","type":"address"},{"indexed":false,"internalType":"uint256","name":"price","type":"uint256"},{"indexed":false,"internalType":"uint64","name":"contractEndTime","type":"uint64"}],"name":"NewDataReference","type":"event"},{"inputs":[{"internalType":"uint256","name":"_price","type":"uint256"},{"internalType":"uint64","name":"_contractEndTime","type":"uint64"}],"name":"createDataReference","outputs":[],"stateMutability":"nonpayable","type":"function"}];//fs.readFileSync("/home/rsx14/IdeaProjects/PIR/Solidity/Depreciation_Contract_sol_Depreciation_Contract.abi");//JSON.parse(contracts.Depreciation_Contract.abi);
+let abi = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint32","name":"dataId","type":"uint32"},{"indexed":false,"internalType":"address","name":"provider","type":"address"},{"indexed":false,"internalType":"uint256","name":"price","type":"uint256"},{"indexed":false,"internalType":"uint64","name":"contractEndTime","type":"uint64"}],"name":"NewDataReference","type":"event"},{"inputs":[{"internalType":"uint256","name":"_price","type":"uint256"},{"internalType":"uint64","name":"_contractEndTime","type":"uint64"}],"name":"createDataReference","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getDataReference","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32","name":"i","type":"uint32"}],"name":"setId","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+
+
+
 
 // Smart contract EVM bytecode as hex
 let code = '0x' +fs.readFileSync("/home/rsx14/IdeaProjects/PIR/Solidity/Depreciation_Contract_sol_Depreciation_Contract.bin"); //contracts.SampleContract.bin;
@@ -55,6 +58,5 @@ const gasLimitHex = web3.utils.numberToHex(3000000);
 
     const receipt = await web3.eth.sendSignedTransaction('0x' + sTx.toString('hex')).on('receipt', function(receipt){
         console.log(receipt);
-
     });
 })();
