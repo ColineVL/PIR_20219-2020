@@ -4,7 +4,7 @@ var bodyParser = require('body-parser'); // Charge le middleware de gestion des 
 const Web3 = require('web3');
 const Admin =require('web3-eth-admin').Admin;
 
-var SignedTransaction = require('./SignedTransactionModule');
+var SignedTransaction = require('./js/SignedTransactionModule');
 
 
 var provider = 'http://localhost:8545';

@@ -1,10 +1,12 @@
-
+/********************************
+ * Items
+ ********************************/
 var listNodesItem = {
     title: "List of nodes",
     text: "Clic on a node to get more info.",
     list: lt,
-    link: "<a href=\'/nodes/refresh/\'><button>Refresh</button></a>",
-    name: "withList",
+    link: "<a href=\'/updatenodelist/\'><button>Refresh</button></a>",
+    name: "listNodesItem",
 }
 
 var createTransactionItem = {
@@ -31,21 +33,25 @@ var createAnAccountItem = {
 var testItem = {
     title: "Test",
     text: "Salut",
-    list: ["<button onclick='geek()'>Test</button>"],
-    link: "<a href=\'/Test/\'>Clic</a>",
+    list: ["<button onclick='geek()'>Geek</button>"],
+    link: "<a href=\'/Test/\'>Don't clic</a>",
     name: "withList",
 }
 
-
+var adresse = 'loadXMLDoc("test2/6")';
 var testItem2 = {
-    title: "Test",
+    title: "Test load XML",
     text: "Salut",
-    list: ["<button onclick='loadXMLDoc(6)'>Test</button>"],
-    link: "<a href=\'/Test/\'>Clic</a>",
-    name: "withList",
+    link: "<button onclick='testXML()'>Test XML</button>",
+    name: "withoutList",
 }
 
 
+
+
+/********************************
+ * Initialise Layout
+ ********************************/
 var config = {
     content: [{
         type: 'row',
@@ -54,26 +60,34 @@ var config = {
     }]
 };
 
-
 var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
-
+myLayout.registerComponent('listNodesItem', function (container, state) {
+    let listToDisplay = displayList(state.list);
+    container.getElement().html(
+        '<h2>' + state.text + '</h2>' +
+        '<div id="nodelist">' + listToDisplay + '</div>' +
+        '<p>' + state.link + '</p>'
+    );
+});
 
 myLayout.registerComponent('withList', function (container, state) {
     txt = displayList(state.list);
     container.getElement().html('<h2 id="g">' + state.text + '</h2>' +
         txt +
-        '<p>' + state.link + '</p>');
+        '<p id="date">' + state.link + '</p>');
 });
 
 myLayout.registerComponent('withoutList', function (container, state) {
-    container.getElement().html('<h2 id="g">' + state.text + '</h2>' +
+    container.getElement().html('<h2 id="result">' + state.text + '</h2>' +
         '<p>' + state.link + '</p>');
 });
 
 myLayout.init();
 
-
+/********************************
+ * Create menu
+ ********************************/
 var addMenuItem = function (newItem) {
     var element = $('<li>' + newItem.title + '</li>');
     $('#menuContainer').append(element);
@@ -90,7 +104,6 @@ var addMenuItem = function (newItem) {
     });
 };
 $('#menuContainer').append("<h1>Menu</h1>");
-
 addMenuItem(listNodesItem);
 addMenuItem(checkABalanceItem);
 addMenuItem(createTransactionItem);

@@ -1,6 +1,7 @@
 var express = require('express');
 var session = require('cookie-session'); // Charge le middleware de sessions
 var bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
+var bc = require('./js/blockchain');
 
 
 var app = express();
@@ -30,7 +31,18 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/Test2/:id', async(req, res) => {
         res.json(req.params.id + 2);
+        console.log("YESSS" + req.params.id + 2);
         //res.render('test.ejs', {bla:bla});
+    })
+
+    /** PROBLEME 2 **/
+    .get('/updatenodelist/', async(req, res) => {
+        res.json(bc.devraitSeMettreAJour);
+        console.log("ESSAI :");
+        console.log(bc.devraitSeMettreAJour);
+        console.log("FIN ESSAI");
+        // Dans la console linux, je n'observe pas qu'il s'est mis a joue : j'ai "yo", c'est la valeur initiale.
+
     })
 
     /* On redirige vers home si la page demandée n'est pas trouvée */
