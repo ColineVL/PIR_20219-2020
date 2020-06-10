@@ -18,10 +18,17 @@ var createTransactionItem = {
 
 var checkABalanceItem = {
     title: "Check a balance",
-    text: "Hey",
+    address: "No account given yet!",
+    balance: "Nothing to show",
+    form: '<form action="/balance/" method="get">\n' +
+        '<label for="account">Address to check:</label>\n' +
+        '<input id="account" name="account" type="string">\n' +
+        '<input type="submit" value="Submit">\n' +
+        '</form>',
     link: "<a href=\'/balance/\'>Clic</a>",
-    name: "withoutList",
+    name: "checkABalanceItem",
 }
+
 
 var createAnAccountItem = {
     title: "Create an account",
@@ -42,7 +49,7 @@ var adresse = 'loadXMLDoc("test2/6")';
 var testItem2 = {
     title: "Test load XML",
     text: "Salut",
-    link: "<button onclick='testXML()'>Test XML</button>",
+    link: "<button onclick='testXML(zecallback)'>Test XML</button>",
     name: "withoutList",
 }
 
@@ -67,6 +74,15 @@ myLayout.registerComponent('listNodesItem', function (container, state) {
     container.getElement().html(
         '<h2>' + state.text + '</h2>' +
         '<div id="nodelist">' + listToDisplay + '</div>' +
+        '<p>' + state.link + '</p>'
+    );
+});
+
+myLayout.registerComponent('checkABalanceItem', function (container, state) {
+    container.getElement().html(
+        '<h2 id="address">' + state.address + '</h2>' +
+        '<p id="balance">' + state.balance + '</p>' +
+        state.form +
         '<p>' + state.link + '</p>'
     );
 });

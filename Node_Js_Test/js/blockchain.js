@@ -56,17 +56,14 @@ async function createNewAccount() {
     return info;
 };
 
-/** PROBLEME 2 **/
-let devraitSeMettreAJour = "yo";
-var myTimerTest = setInterval(majTest, 2000);
-function majTest() {
-    devraitSeMettreAJour = Date.now();
-    console.log(devraitSeMettreAJour);
-    // J'observe bien dans la console linux que ça se met à jour : il s'affiche toutes les 2s, en changeant à chaque fois.
-};
+/********************************
+ * Exports
+ ********************************/
+
+function getNodelistIDS() {
+    return nodelistIDS;
+}
 
 module.exports = {
-    nodelistIDS,
-    devraitSeMettreAJour,
-    watch: true // J'ai lu que ça me permettait de mettre à jour automatiquement test, mais non...
+    getNodelistIDS,
 }

@@ -35,14 +35,9 @@ app.use('/public', express.static(__dirname + '/public'))
         //res.render('test.ejs', {bla:bla});
     })
 
-    /** PROBLEME 2 **/
     .get('/updatenodelist/', async(req, res) => {
-        res.json(bc.devraitSeMettreAJour);
-        console.log("ESSAI :");
-        console.log(bc.devraitSeMettreAJour);
-        console.log("FIN ESSAI");
-        // Dans la console linux, je n'observe pas qu'il s'est mis a joue : j'ai "yo", c'est la valeur initiale.
-
+        let liste = bc.getNodelistIDS();
+        res.json(liste);
     })
 
     /* On redirige vers home si la page demandée n'est pas trouvée */
