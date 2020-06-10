@@ -28,7 +28,7 @@ let abi = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint32"
 
 
 // Smart contract EVM bytecode as hex
-let code = '0x' +fs.readFileSync("/home/rsx14/IdeaProjects/PIR/Solidity/Depreciation_Contract_sol_Depreciation_Contract.bin"); //contracts.SampleContract.bin;
+let code = '0x' +fs.readFileSync("/Users/Happpyyyyyyy/deeplearning4j-examples-master/PIR/Solidity//Depreciation_Contract_sol_Depreciation_Contract.bin"); //contracts.SampleContract.bin;
 //
 // Create Contract proxy class
 let SampleContract = new web3.eth.Contract(abi);
