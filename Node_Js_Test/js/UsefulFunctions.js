@@ -1,3 +1,5 @@
+/** Just tests **/
+
 function geek() {
     var doc = prompt("Please enter some text",
         "GeeksforGeeks");
@@ -7,29 +9,24 @@ function geek() {
     }
 };
 
-/** DEBUT DU PROBLEME 1 **/
-// En cliquant sur un bouton sur le navigateur, j'exécute la fonction testXML.
-function zecallback(param) {
-    console.log("dans zecallback");
-    console.log("ICI ENSUITE " + param);
-    document.getElementById("result").innerHTML = param;
+var myVar = setInterval(myDateTimer, 2000);
+function myDateTimer() {
+    var d = new Date();
+    document.getElementById("date").innerHTML = d.toLocaleTimeString();
 };
 
-function testXML(callback) {
-    let res = loadXMLDoc("test2/6", callback);
-
-    // Ca m'affiche dans la console du navigateur : ICI ENSUITE undefined
-    // Et il l'affiche *avant* le RESULT D'ABORD, donc avant que la fonction loadXMLDOC ait fini de tourner et ait renvoyé le résultat.
-    //document.getElementById("result").innerHTML = res;
-};
+/** To get a response from the server **/
 
 function loadXMLDoc(page, callback) {
     var xhttp = new XMLHttpRequest();
+    xhttp.responseType = "json";
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             console.log("RESULT D'ABORD : " +this.responseText);
+            /** Je ne peux pas utiliser responseText si responseType est json **/
             // Ca m'affiche dans la console du navigateur : RESULT D'ABORD : "62"
             // Donc il arrive bien à avoir la réponse du serveur.
+            console.log("response : " + typeof this.responseText);
             callback(this.responseText);
             //return this.responseText;
         }
@@ -37,19 +34,21 @@ function loadXMLDoc(page, callback) {
     xhttp.open("GET", page, true);
     xhttp.send();
 };
-/** FIN DU PROBLEME 1 **/
 
 
+/** Test of callback functions **/
+// En cliquant sur un bouton sur le navigateur, j'exécute la fonction testXML.
+function zecallback(param) {
+    console.log("dans zecallback");
+    document.getElementById("result").innerHTML = param;
+};
 
-
-
-var myVar = setInterval(myDateTimer, 2000);
-function myDateTimer() {
-    var d = new Date();
-    document.getElementById("date").innerHTML = d.toLocaleTimeString();
+function testXML(callback) {
+    let res = loadXMLDoc("updatenodelist", callback);
 };
 
 
+/** To display a list with <li> **/
 
 function displayList(list) {
     let txt = "";
@@ -59,15 +58,26 @@ function displayList(list) {
     return txt;
 };
 
+
+/** Update of the nodelist **/
+function zecallback(param) {
+    console.log("dans zecallback");
+    document.getElementById("result").innerHTML = param;
+};
+
+function testXML(callback) {
+    let res = loadXMLDoc("updatenodelist", callback);
+};
+
+
 // Attention il va surement me falloir une autre fonction timée pour mettre à jour l'affichage !
 // var myTimer = setInterval(updateNodesList, 2000);
-// function updateNodesList() {
-//     let list = loadXMLDoc();
-//     list = displayList(list);
-//     document.getElementById("g").innerHTML = list;
-//}
+function callbackNodelist(param) {
+    console.log(typeof param);
+    //param = displayList(param);
+    document.getElementById("nodelist").innerHTML = param;
+};
+
 function updateNodesList() {
-    let list = loadXMLDoc("updatenodelist");
-    list = displayList(list);
-    document.getElementById("nodelist").innerHTML = list;
+    loadXMLDoc("updatenodelist", callbackNodelist);
 };

@@ -5,7 +5,8 @@ var listNodesItem = {
     title: "List of nodes",
     text: "Clic on a node to get more info.",
     list: lt,
-    link: "<a href=\'/updatenodelist/\'><button>Refresh</button></a>",
+    // link: "<a href=\'/updatenodelist/\'><button>Refresh</button></a>",
+    link: "<button onclick='updateNodesList()'>Update</button>",
     name: "listNodesItem",
 }
 

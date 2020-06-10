@@ -20,11 +20,9 @@ var SignedTransaction = require('./SignedTransactionModule');
 let nodelist = [];
 let nodelistIDS = ["test"];
 
-// Attention il va surement me falloir une autre fonction timée pour mettre à jour l'affichage !
 var myVar = setInterval(refreshNodesList, 2000);
 async function refreshNodesList() {
     let PeerCount = await web3.eth.net.getPeerCount();
-    console.log(PeerCount)
     let peers = await admin.getPeers();
     nodelist =[];
     nodelistIDS = [];
@@ -32,7 +30,6 @@ async function refreshNodesList() {
         nodelist.push(peers[i]);
         nodelistIDS.push(peers[i].id);
     }
-    console.log(nodelistIDS);
 };
 
 function getInfoNode(id) {
