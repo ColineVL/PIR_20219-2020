@@ -27,3 +27,11 @@ function myTimer() {
     var d = new Date();
     document.getElementById("g").innerHTML = d.toLocaleTimeString();
 }
+
+function displayList(list) {
+    let txt = "";
+    list.forEach(function (elt) {
+        txt += '<li>' + elt + '</li>';
+    });
+    return txt;
+}

@@ -1,5 +1,9 @@
-var SignedTransaction = require('./SignedTransactionModule');
+const Web3 = require('web3');
+var provider = 'http://localhost:8545';
+var web3 = new Web3(new Web3.providers.HttpProvider(provider))
 
+// TODO ce serait pas à supprimer ça ?
+const Admin =require('web3-eth-admin').Admin;
 const options = {
     defaultAccount: '0xfe3b557e8fb62b89f4916b721be55ceb828dbd73',
     defaultBlock: 'latest',
@@ -9,6 +13,9 @@ const options = {
     transactionConfirmationBlocks: 24,
     transactionPollingTimeout: 480,
 };
+const admin = new Admin(provider, null, options);
+
+var SignedTransaction = require('./SignedTransactionModule');
 
 let nodelist = [];
 

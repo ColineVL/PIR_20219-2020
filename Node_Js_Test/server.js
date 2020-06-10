@@ -1,14 +1,7 @@
 var express = require('express');
 var session = require('cookie-session'); // Charge le middleware de sessions
 var bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
-const Web3 = require('web3');
-const Admin =require('web3-eth-admin').Admin;
 
-
-var provider = 'http://localhost:8545';
-var web3 = new Web3(new Web3.providers.HttpProvider(provider))
-
-const admin = new Admin(provider, null, options);
 
 var app = express();
 // Load the css folder

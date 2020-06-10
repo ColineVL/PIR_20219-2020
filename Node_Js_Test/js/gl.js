@@ -57,13 +57,7 @@ var config = {
 
 var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
-function displayList(list) {
-    let txt = "";
-    list.forEach(function (elt) {
-        txt += '<li>' + elt + '</li>';
-    });
-    return txt;
-}
+
 
 myLayout.registerComponent('withList', function (container, state) {
     txt = displayList(state.list);
