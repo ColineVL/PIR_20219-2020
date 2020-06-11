@@ -10,6 +10,8 @@ console.log("******************************************");
 console.log("Using provider : " + provider);
 console.log("******************************************");
 var web3 = new Web3(new Web3.providers.HttpProvider(provider))
+// var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'))
+
 
 
 //////////////////////////////////Account Info///////////////////////////////////////////////////////
@@ -18,7 +20,7 @@ var key1 =new Buffer.from('8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1
 /////////////////////////////////////////////////////////////////////////////////////////:
 
 // ABI description as JSON structure
-let abi =[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint32","name":"dataId","type":"uint32"},{"indexed":false,"internalType":"address","name":"provider","type":"address"},{"indexed":false,"internalType":"uint256","name":"price","type":"uint256"},{"indexed":false,"internalType":"uint64","name":"contractEndTime","type":"uint64"}],"name":"NewDataReference","type":"event"},{"inputs":[{"internalType":"uint256","name":"_price","type":"uint256"},{"internalType":"uint64","name":"_contractEndTime","type":"uint64"}],"name":"createDataReference","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getDataReference","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32","name":"i","type":"uint32"}],"name":"setId","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+let abi = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint32","name":"data","type":"uint32"},{"indexed":false,"internalType":"address","name":"provider","type":"address"}],"name":"NewData","type":"event"},{"inputs":[{"internalType":"uint256","name":"key","type":"uint256"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"Setmaptest","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"data2","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getData","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"maptest","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32","name":"i","type":"uint32"}],"name":"setData","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 
 //
 // var subscription = web3.eth.subscribe('newBlockHeaders', function(error, result){
@@ -43,46 +45,42 @@ const gasPrice = 1000;//web3.eth.gasPrice;
 const gasPriceHex = web3.utils.numberToHex(gasPrice);
 const gasLimitHex = web3.utils.numberToHex(4000000);
 
-const contract = new web3.eth.Contract(abi,'0x42699A7612A82f1d9C36148af9C77354759b210b');
+const contract = new web3.eth.Contract(abi,'0x6023FF0A8203ea32E737819B301D1672Dd2ECBE0');
 const transactionObject = {
     from: account1,
     gas: web3.utils.numberToHex(3000000),
     gasPrice: gasPrice
 };
 
-const receiveDataRef = contract.methods.getDataReference().encodeABI();
-const setIdRef = contract.methods.setId(5).encodeABI();
+const receiveDataRef = contract.methods.getData().encodeABI();
+const setIdRef = contract.methods.setData(5).encodeABI();
 
-// const id1 = contract.methods.getDataReference().send(transactionObject);
-// // const results = contract.methods.createDataReference(5,10).send(transactionObject);
-// const result = contract.methods.setId(5).send(transactionObject);
-// const id2 = contract.methods.getDataReference().send(transactionObject);
-//
-// console.log("id before: " + id1);
-// console.log("id after: " + id2);
+const setMappingRef = contract.methods.Setmaptest(50,5).encodeABI();
+// const getMappingRef = contract.methods.maptest().encodeABI();
 
 
 (async () => {
     const nonceval = await web3.eth.getTransactionCount(account1, "pending"); //'0x' + new Date().getTime();
     var fTx1 = {
         nonce: nonceval,
-        to : "0x42699A7612A82f1d9C36148af9C77354759b210b",
+        to : '0x6023FF0A8203ea32E737819B301D1672Dd2ECBE0',
         gasPrice: gasPriceHex,
         gasLimit: gasLimitHex,
-        data:receiveDataRef ,
+        data:setMappingRef ,
         from: account1
     };
     var fTx2 = {
-        nonce: nonceval,
-        to : "0x42699A7612A82f1d9C36148af9C77354759b210b",
+        nonce: nonceval+1,
+        to : '0x6023FF0A8203ea32E737819B301D1672Dd2ECBE0',
         value:    web3.utils.toHex(web3.utils.toWei('0', 'ether')),
         gasPrice: gasPriceHex,
         gasLimit: gasLimitHex,
-        data:setIdRef
+        data:setIdRef,
+        value: 0
     };
     var fTx3 = {
-        nonce: nonceval,
-        to : "0x42699A7612A82f1d9C36148af9C77354759b210b",
+        nonce: nonceval+2,
+        to : '0x6023FF0A8203ea32E737819B301D1672Dd2ECBE0',
         gasPrice: gasPriceHex,
         gasLimit: gasLimitHex,
         data:receiveDataRef ,
@@ -100,29 +98,47 @@ const setIdRef = contract.methods.setId(5).encodeABI();
     var sTx2 =txx2.serialize();
     var sTx3 =txx3.serialize();
 
-
-    // const receipt1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex'))
-    // console.log(receipt1);
-    // const receipt2 = await web3.eth.sendTransaction('0x' + sTx2.toString('hex'))
-    const receipt2 = await web3.eth.sendSignedTransaction('0x' + sTx2.toString('hex')).on('receipt', function(receipt){
+    // const dataOld = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex'));
+    const dataOld = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
         console.log(receipt);
     }).on('error', function(error){
         console.log(error);
     });
-    // const receipt3 = await web3.eth.sendSignedTransaction('0x' + sTx3.toString('hex')).on('receipt', function(receipt){
+    // await web3.eth.sendSignedTransaction('0x' + sTx2.toString('hex')).on('receipt', function(receipt){
+    //     console.log(receipt);
+    // }).on('error', function(error){
+    //     console.log(error);
+    // });
+    // const dataNew = await web3.eth.sendSignedTransaction('0x' + sTx3.toString('hex')).on('receipt', function(receipt){
     //     console.log(receipt);
     // });
-    // console.log("*************************************");
-    const id1 = await contract.methods.getDataReference().call(transactionObject);
-    console.log(id1);
+    console.log("*************************************");
+    const map = await contract.methods.maptest(50).call(transactionObject);
+    const data2 = await contract.methods.data2().call(transactionObject);
+    console.log("data2 :" + data2);
+    console.log("map of 50 :" + map);
+
+    // console.log("data before :" + dataOld);
+    // console.log("data before :" +dataNew);
 })();
 
 
 
-// contract.events.NewDataReference()
-//     .on("data", function(event) {
-//         let values = event.returnValues;
-//         // We can access this event's 3 return values on the `event.returnValues` object:
-//         console.log("New data ref", values.dataId, values.provider, values.price, values.contractEndTime);
-//     }).on("error", console.error);
+
+//
+// contract.events.NewData({
+//     fromBlock: 2600
+// }, function(error, event){ console.log(event); })
+//     .on('data', function(event){
+//         console.log(event); // same results as the optional callback above
+//     })
+//     .on('changed', function(event){
+//         // remove event from local database
+//     })
+//     .on('error', console.error);
+//
+// //     // toBlock: 'latest'
+
+
+
 

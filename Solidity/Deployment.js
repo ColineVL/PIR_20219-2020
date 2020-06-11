@@ -2,6 +2,8 @@ const Web3 = require('web3');
 var Tx = require('ethereumjs-tx');
 let fs = require("fs");
 
+
+
 // Web3 Initialisation
 var provider = 'http://localhost:8545';
 console.log("******************************************");
@@ -22,13 +24,11 @@ var key1 =new Buffer.from('8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1
 // let contracts = JSON.parse(source)["contracts"];
 
 // ABI description as JSON structure
-let abi = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint32","name":"dataId","type":"uint32"},{"indexed":false,"internalType":"address","name":"provider","type":"address"},{"indexed":false,"internalType":"uint256","name":"price","type":"uint256"},{"indexed":false,"internalType":"uint64","name":"contractEndTime","type":"uint64"}],"name":"NewDataReference","type":"event"},{"inputs":[{"internalType":"uint256","name":"_price","type":"uint256"},{"internalType":"uint64","name":"_contractEndTime","type":"uint64"}],"name":"createDataReference","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getDataReference","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32","name":"i","type":"uint32"}],"name":"setId","outputs":[],"stateMutability":"nonpayable","type":"function"}]
-
-
+let abi = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint32","name":"data","type":"uint32"},{"indexed":false,"internalType":"address","name":"provider","type":"address"}],"name":"NewData","type":"event"},{"inputs":[{"internalType":"uint256","name":"key","type":"uint256"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"Setmaptest","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"data2","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getData","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"maptest","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32","name":"i","type":"uint32"}],"name":"setData","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 
 
 // Smart contract EVM bytecode as hex
-let code = '0x' +fs.readFileSync("/Users/Happpyyyyyyy/deeplearning4j-examples-master/PIR/Solidity//Depreciation_Contract_sol_Depreciation_Contract.bin"); //contracts.SampleContract.bin;
+let code = '0x' +fs.readFileSync("/home/rsx14/IdeaProjects/PIR/Solidity/SimpleContract_sol_SimpleContract.bin"); //contracts.SampleContract.bin;
 //
 // Create Contract proxy class
 let SampleContract = new web3.eth.Contract(abi);
