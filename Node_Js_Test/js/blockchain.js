@@ -46,11 +46,10 @@ function getInfoNode(id) {
 };
 
 /********************************
- * Refresh the balance from an account
+ * Get the balance of an account
  ********************************/
-
-async function getBalance(account) {
-    const balance = await web3.eth.getBalance(account.address);
+async function getBalance(addressToCheck) {
+    const balance = await web3.eth.getBalance(addressToCheck);
     return balance;
 };
 
@@ -76,11 +75,11 @@ async function createNewAccount() {
  * Blocks
  ********************************/
 
-async function queryBlock(i) {
-    var json = await web3.eth.getBlock(i);
-    console.log(json["number"]);
-    return json;
-}
+// async function queryBlock(i) {
+//     var json = await web3.eth.getBlock(i);
+//     console.log(json["number"]);
+//     return json;
+// }
 
 setInterval(refreshBlocksList, 2000);
 
@@ -98,7 +97,7 @@ function refreshBlocksList() {
         for(let i=n-nbBlocksToPrint+1; i<=n; i++) {
             web3.eth.getBlock(i).then( (json) => {
                 blockslistNUMBERS.push(json["number"]);
-                return callbackBlockslist();
+                callbackBlockslist();
             });
         }
     });
@@ -121,5 +120,6 @@ function getBlockslistNUMBERS() {
 module.exports = {
     getNodelistIDS,
     getBlockslistNUMBERS,
+    getBalance,
     createNewAccount,
 }

@@ -27,12 +27,7 @@ var checkABalanceItem = {
     title: "Check a balance",
     address: "No account given yet!",
     balance: "Nothing to show",
-    form: '<form action="/balance/" method="get">\n' +
-        '<label for="account">Address to check:</label>\n' +
-        '<input id="account" name="account" type="string">\n' +
-        '<input type="submit" value="Submit">\n' +
-        '</form>',
-    link: "<a href=\'/balance/\'>Clic</a>",
+    label: "Address to check",
     name: "checkABalanceItem",
 }
 
@@ -52,8 +47,6 @@ var testItem2 = {
     link: "<button onclick='testXML(zecallback)'>Test XML</button>",
     name: "withoutList",
 }
-
-
 
 
 /********************************
@@ -103,16 +96,18 @@ myLayout.registerComponent('checkABalanceItem', function (container, state) {
     container.getElement().html(
         '<h2 id="address">' + state.address + '</h2>' +
         '<p id="balance">' + state.balance + '</p>' +
-        state.form +
-        '<p>' + state.link + '</p>'
+        '<button onclick="getBalance()">Enter an address to get a balance</button>'
     );
 });
 
+
 myLayout.registerComponent('withList', function (container, state) {
     txt = displayList(state.list);
-    container.getElement().html('<h2 id="g">' + state.text + '</h2>' +
+    container.getElement().html(
+        '<h2 id="g">' + state.text + '</h2>' +
         txt +
-        '<p id="date">' + state.link + '</p>');
+        '<p id="date">' + state.link + '</p>'
+    );
 });
 
 myLayout.registerComponent('withoutList', function (container, state) {
@@ -139,8 +134,8 @@ var addMenuItem = function (newItem) {
     element.click(function () {
         myLayout.root.contentItems[0].addChild(newItemConfig);
     });
-    if (newItem.name=="newAccountItem") {
-        element.click(function() {
+    if (newItem.name == "newAccountItem") {
+        element.click(function () {
             createNewAccount();
         });
     }

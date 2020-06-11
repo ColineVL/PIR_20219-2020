@@ -64,3 +64,14 @@ function callbackBlockslist(param) {
 function updateBlocksList() {
     loadXMLDoc("updatelistBlocks", callbackBlockslist);
 };
+
+/** Get the balance of an account **/
+function callbackGetBalance(param) {
+    document.getElementById("balance").innerHTML = param;
+};
+
+function getBalance() {
+    let addressToCheck = prompt("Please enter an address");
+    loadXMLDoc("getbalance/" + addressToCheck, callbackGetBalance);
+    document.getElementById("address").innerHTML = addressToCheck;
+};
