@@ -70,10 +70,10 @@ function testXML(callback) {
 
 
 // Attention il va surement me falloir une autre fonction timée pour mettre à jour l'affichage !
-// var myTimer = setInterval(updateNodesList, 2000);
+var timerUpdateNodelist = setInterval(updateNodesList, 2000);
 function callbackNodelist(param) {
     console.log(typeof param);
-    //param = displayList(param);
+    param = displayList(param);
     document.getElementById("nodelist").innerHTML = param;
 };
 
