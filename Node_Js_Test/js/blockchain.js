@@ -18,7 +18,8 @@ const admin = new Admin(provider, null, options);
 var SignedTransaction = require('./SignedTransactionModule');
 
 let nodelist = [];
-let nodelistIDS = ["test"];
+let nodelistIDS = [];
+let blockslist = [];
 
 var myVar = setInterval(refreshNodesList, 2000);
 async function refreshNodesList() {
@@ -52,6 +53,26 @@ async function createNewAccount() {
     return await  web3.eth.accounts.create();
 };
 
+async function queryBlock(i) {
+    var json = await web3.eth.getBlock(i);
+    return json;
+}
+
+async function updateListBlocks() {
+    web3.eth.getBlockNumber().then((n) => {
+        console.log(n);
+        for(let i=0; i<n; i++) {
+            blockslist.push(queryBlock(i));
+        }
+        Promise.all(blockslist).then((value) =>{
+            console.log("Après Promise" + blockslist);
+        });
+    });
+    console.log("DANS BC" + blockslist);
+};
+
+
+
 /********************************
  * Exports
  ********************************/
@@ -60,7 +81,15 @@ function getNodelistIDS() {
     return nodelistIDS;
 }
 
+async function getBlockslist() {
+    await updateListBlocks();
+    return blockslist;
+}
+
 module.exports = {
     getNodelistIDS,
+    getBlockslist,
+
     createNewAccount,
+
 }

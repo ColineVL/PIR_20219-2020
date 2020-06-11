@@ -109,6 +109,20 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('signedTransactionForm.ejs', {nodelist: nodelist});
     })
 
+    // .get('/ListBlocks/', async (req, res) => {
+    //     var blocks = [];
+    //     w3.eth.getBlockNumber().then((n) => {
+    //         console.log(n);
+    //         let block;
+    //         for(let i=0; i<n; i++) {
+    //             block = await w3.eth.getBlock(i)
+    //             blocks.push(block);
+    //         }
+    //     });
+    //     res.JSON(blocks);
+    //     res.render('listBlocks.ejs', {blocks: blocks});
+    // })
+
     .post('/CreateTransaction/', async (req, res) => {
         const sender = req.body.sender;
         const privateKey = req.body.privateKey;

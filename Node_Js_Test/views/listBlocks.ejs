@@ -9,18 +9,16 @@
 </head>
 
 <body>
-<h1>Currently connected nodes</h1>
+<h1>Blocks</h1>
 
 <ul>
-    <% let i=0;nodelist.forEach(function(node) { %>
-        <li> <a href="/node/?id=<%= i %>"> <%= node.id %> </a> </li>
+    <% let i=0;blocks.forEach(function(block) { %>
+        <li>  <%= block.id %>  </li>
         <% i++ ; %>
     <% }); %>
 </ul>
 
-<a href="/nodes/refresh">
-    <button>Refresh</button>
-</a>
+
 <a href="/">
     <button>Home</button>
 </a>

@@ -117,9 +117,7 @@ var addMenuItem = function (newItem) {
     element.click(function () {
         myLayout.root.contentItems[0].addChild(newItemConfig);
     });
-    console.log("avant le if");
     if (newItem.name=="newAccountItem") {
-        console.log("dans la boucle if");
         element.click(function() {
             createNewAccount();
         });

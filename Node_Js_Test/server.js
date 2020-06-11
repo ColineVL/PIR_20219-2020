@@ -40,6 +40,11 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json([info["address"], info["privateKey"]]);
     })
 
+    .get('/listBlocks/', async(req, res) => {
+        let info = await bc.getBlockslist();
+        console.log("DANS SERVER" + info);
+    })
+
     /* On redirige vers home si la page demandée n'est pas trouvée */
     .use(function(req, res, next){
         res.redirect('/');
