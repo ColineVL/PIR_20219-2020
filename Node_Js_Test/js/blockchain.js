@@ -2,8 +2,7 @@ const Web3 = require('web3');
 var provider = 'http://localhost:8545';
 var web3 = new Web3(new Web3.providers.HttpProvider(provider))
 
-// TODO ce serait pas à supprimer ça ?
-const Admin =require('web3-eth-admin').Admin;
+const Admin = require('web3-eth-admin').Admin;
 const options = {
     defaultAccount: '0xfe3b557e8fb62b89f4916b721be55ceb828dbd73',
     defaultBlock: 'latest',
@@ -17,6 +16,9 @@ const admin = new Admin(provider, null, options);
 
 var SignedTransaction = require('./SignedTransactionModule');
 
+/********************************
+ * Variables
+ ********************************/
 let nodelist = [];
 let nodelistIDS = [];
 let blockslist = [];
@@ -24,7 +26,10 @@ let blockslistNUMBERS = [];
 // TODO let the user change this ?
 const nbBlocksToPrint = 5;
 
-var myVar = setInterval(refreshNodesList, 2000);
+/********************************
+ * Nodes
+ ********************************/
+setInterval(refreshNodesList, 2000);
 async function refreshNodesList() {
     let PeerCount = await web3.eth.net.getPeerCount();
     let peers = await admin.getPeers();
@@ -37,14 +42,21 @@ async function refreshNodesList() {
 };
 
 function getInfoNode(id) {
-    const node = nodelist[id];
-    return node;
+    return nodelist[id];
 };
+
+/********************************
+ * Refresh the balance from an account
+ ********************************/
 
 async function getBalance(account) {
     const balance = await web3.eth.getBalance(account.address);
     return balance;
 };
+
+/********************************
+ * Create a transaction
+ ********************************/
 
 async function createTransaction(sender, privateKey, receiver, ammount) {
     const r = await SignedTransaction.createAndSendSignedTransaction(provider,ammount,privateKey,sender,receiver);//,0.001,'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','0xfe3b557e8fb62b89f4916b721be55ceb828dbd73','0xf17f52151EbEF6C7334FAD080c5704D77216b732');
@@ -52,24 +64,25 @@ async function createTransaction(sender, privateKey, receiver, ammount) {
     console.log(info.a);
 };
 
+/********************************
+ * Create a new account
+ ********************************/
+
 async function createNewAccount() {
     return await  web3.eth.accounts.create();
 };
 
-
+/********************************
+ * Blocks
+ ********************************/
 
 async function queryBlock(i) {
     var json = await web3.eth.getBlock(i);
-    // console.log(json);
     console.log(json["number"]);
     return json;
 }
 
-
-/** PROBLEME **/
-
-
-var timerBlockslist = setInterval(refreshBlocksList, 2000);
+setInterval(refreshBlocksList, 2000);
 
 function callbackBlockslist() {
     if (nbBlocksToPrint==blockslistNUMBERS.length) {
@@ -108,7 +121,5 @@ function getBlockslistNUMBERS() {
 module.exports = {
     getNodelistIDS,
     getBlockslistNUMBERS,
-
     createNewAccount,
-
 }

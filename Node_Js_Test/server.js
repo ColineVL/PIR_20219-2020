@@ -3,7 +3,9 @@ var session = require('cookie-session'); // Charge le middleware de sessions
 var bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
 var bc = require('./js/blockchain');
 
-
+/********************************
+ * Create the app
+ ********************************/
 var app = express();
 // Load the css folder
 app.use(express.static(__dirname + '/css'));
@@ -14,20 +16,17 @@ app.use(express.urlencoded());
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
-
-/* On utilise les sessions */
+/********************************
+ * Register the URLs
+ ********************************/
 app.use('/public', express.static(__dirname + '/public'))
 
     .get('', function(req, res) {
-        let listetest = ["yo", "bla", "blu"];
-        res.render('home.ejs', {listetest:listetest});
+        res.render('home.ejs');
     })
-
 
     .get('/Test2/:id', async(req, res) => {
         res.json(req.params.id + 2);
-        console.log("YESSS" + req.params.id + 2);
-        //res.render('test.ejs', {bla:bla});
     })
 
     .get('/updatenodelist/', async(req, res) => {

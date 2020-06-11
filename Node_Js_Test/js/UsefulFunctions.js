@@ -1,5 +1,4 @@
 /** To get a response from the server **/
-
 function loadXMLDoc(page, callback) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -25,7 +24,6 @@ function testXML(callback) {
 
 
 /** To display a list with <li> **/
-
 function displayList(list) {
     let txt = "";
     list.forEach(function (elt) {
@@ -57,8 +55,7 @@ function createNewAccount() {
 };
 
 /** Update of the blocks list **/
-
-var timerUpdateBlockslist = setInterval(updateBlocksList, 2000);
+setInterval(updateBlocksList, 2000);
 function callbackBlockslist(param) {
     param = displayList(param);
     document.getElementById("blockslist").innerHTML = param;

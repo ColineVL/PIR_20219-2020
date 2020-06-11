@@ -1,6 +1,7 @@
 /********************************
  * Items
  ********************************/
+
 var listNodesItem = {
     title: "List of nodes",
     text: "Clic on a node to get more info.",
@@ -58,6 +59,7 @@ var testItem2 = {
 /********************************
  * Initialise Layout
  ********************************/
+
 var config = {
     content: [{
         type: 'row',
@@ -67,6 +69,11 @@ var config = {
 };
 
 var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
+
+
+/********************************
+ * Register components and init
+ ********************************/
 
 myLayout.registerComponent('listNodesItem', function (container, state) {
     let listToDisplay = displayList(state.list);
