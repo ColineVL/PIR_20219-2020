@@ -20,6 +20,9 @@ var SignedTransaction = require('./SignedTransactionModule');
 let nodelist = [];
 let nodelistIDS = [];
 let blockslist = [];
+let blockslistNUMBERS = [];
+// TODO let the user change this ?
+const nbBlocksToPrint = 5;
 
 var myVar = setInterval(refreshNodesList, 2000);
 async function refreshNodesList() {
@@ -53,22 +56,39 @@ async function createNewAccount() {
     return await  web3.eth.accounts.create();
 };
 
+
+
 async function queryBlock(i) {
     var json = await web3.eth.getBlock(i);
+    // console.log(json);
+    console.log(json["number"]);
     return json;
 }
 
-async function updateListBlocks() {
+
+/** PROBLEME **/
+
+
+var timerBlockslist = setInterval(refreshBlocksList, 2000);
+
+function callbackBlockslist() {
+    if (nbBlocksToPrint==blockslistNUMBERS.length) {
+        blockslistNUMBERS.sort();
+        blockslistNUMBERS.reverse();
+    }
+}
+
+function refreshBlocksList() {
+    blockslistNUMBERS = [];
+    blockslist = [];
     web3.eth.getBlockNumber().then((n) => {
-        console.log(n);
-        for(let i=0; i<n; i++) {
-            blockslist.push(queryBlock(i));
+        for(let i=n-nbBlocksToPrint+1; i<=n; i++) {
+            web3.eth.getBlock(i).then( (json) => {
+                blockslistNUMBERS.push(json["number"]);
+                return callbackBlockslist();
+            });
         }
-        Promise.all(blockslist).then((value) =>{
-            console.log("Après Promise" + blockslist);
-        });
     });
-    console.log("DANS BC" + blockslist);
 };
 
 
@@ -81,14 +101,13 @@ function getNodelistIDS() {
     return nodelistIDS;
 }
 
-async function getBlockslist() {
-    await updateListBlocks();
-    return blockslist;
-}
+function getBlockslistNUMBERS() {
+    return blockslistNUMBERS;
+};
 
 module.exports = {
     getNodelistIDS,
-    getBlockslist,
+    getBlockslistNUMBERS,
 
     createNewAccount,
 

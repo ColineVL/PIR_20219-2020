@@ -4,6 +4,8 @@ function loadXMLDoc(page, callback) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
+            // TODO la ligne suivante sert à des tests
+           // console.log(this.responseText);
             callback(JSON.parse(this.responseText));
         }
     };
@@ -34,16 +36,6 @@ function displayList(list) {
 
 
 /** Update of the nodelist **/
-function zecallback(param) {
-    document.getElementById("result").innerHTML = param;
-};
-
-function testXML(callback) {
-    let res = loadXMLDoc("updatenodelist", callback);
-};
-
-
-// Attention il va surement me falloir une autre fonction timée pour mettre à jour l'affichage !
 var timerUpdateNodelist = setInterval(updateNodesList, 2000);
 function callbackNodelist(param) {
     param = displayList(param);
@@ -62,4 +54,16 @@ function callbackNewAccount(param) {
 
 function createNewAccount() {
     loadXMLDoc("newaccount", callbackNewAccount);
+};
+
+/** Update of the blocks list **/
+
+var timerUpdateBlockslist = setInterval(updateBlocksList, 2000);
+function callbackBlockslist(param) {
+    param = displayList(param);
+    document.getElementById("blockslist").innerHTML = param;
+};
+
+function updateBlocksList() {
+    loadXMLDoc("updatelistBlocks", callbackBlockslist);
 };

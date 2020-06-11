@@ -8,6 +8,13 @@ var listNodesItem = {
     name: "listNodesItem",
 }
 
+var listBlocksItem = {
+    title: "List of last blocks",
+    text: "Clic on a block to get more info.",
+    list: [],
+    name: "listBlocksItem",
+}
+
 var createTransactionItem = {
     title: "Make a signed transaction",
     text: "Yo",
@@ -66,6 +73,14 @@ myLayout.registerComponent('listNodesItem', function (container, state) {
     container.getElement().html(
         '<h2>' + state.text + '</h2>' +
         '<ul id="nodelist">' + listToDisplay + '</ul>'
+    );
+});
+
+myLayout.registerComponent('listBlocksItem', function (container, state) {
+    let listToDisplay = displayList(state.list);
+    container.getElement().html(
+        '<h2>' + state.text + '</h2>' +
+        '<ul id="blockslist">' + listToDisplay + '</ul>'
     );
 });
 
@@ -129,3 +144,4 @@ addMenuItem(checkABalanceItem);
 addMenuItem(createTransactionItem);
 addMenuItem(newAccountItem);
 addMenuItem(testItem2);
+addMenuItem(listBlocksItem);
