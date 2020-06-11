@@ -74,7 +74,7 @@ myLayout.registerComponent('listNodesItem', function (container, state) {
     let listToDisplay = displayList(state.list);
     container.getElement().html(
         '<h2>' + state.text + '</h2>' +
-        '<div id="nodelist">' + listToDisplay + '</div>' +
+        '<ul id="nodelist">' + listToDisplay + '</ul>' +
         '<p>' + state.link + '</p>'
     );
 });

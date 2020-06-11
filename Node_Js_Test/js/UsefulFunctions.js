@@ -19,7 +19,6 @@ function myDateTimer() {
 
 function loadXMLDoc(page, callback) {
     var xhttp = new XMLHttpRequest();
-    xhttp.responseType = "json";
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             console.log("RESULT D'ABORD : " +this.responseText);
@@ -27,7 +26,7 @@ function loadXMLDoc(page, callback) {
             // Ca m'affiche dans la console du navigateur : RESULT D'ABORD : "62"
             // Donc il arrive bien à avoir la réponse du serveur.
             console.log("response : " + typeof this.responseText);
-            callback(this.responseText);
+            callback(JSON.parse(this.responseText));
             //return this.responseText;
         }
     };
