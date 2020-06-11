@@ -4,9 +4,7 @@
 var listNodesItem = {
     title: "List of nodes",
     text: "Clic on a node to get more info.",
-    list: lt,
-    // link: "<a href=\'/updatenodelist/\'><button>Refresh</button></a>",
-    link: "<button onclick='updateNodesList()'>Update</button>",
+    list: [],
     name: "listNodesItem",
 }
 
@@ -31,19 +29,12 @@ var checkABalanceItem = {
 }
 
 
-var createAnAccountItem = {
+var newAccountItem = {
     title: "Create an account",
-    text: "Salut",
-    link: "<a href=\'/NewAccount/\'>Clic</a>",
-    name: "withoutList",
-}
-
-var testItem = {
-    title: "Test",
-    text: "Salut",
-    list: ["<button onclick='geek()'>Geek</button>"],
-    link: "<a href=\'/Test/\'>Don't clic</a>",
-    name: "withList",
+    text: "Here is your new account info! Take care to note them somewhere, they CANNOT BE RECOVERED.",
+    address: "",
+    privateKey: "",
+    name: "newAccountItem",
 }
 
 var adresse = 'loadXMLDoc("test2/6")';
@@ -74,8 +65,15 @@ myLayout.registerComponent('listNodesItem', function (container, state) {
     let listToDisplay = displayList(state.list);
     container.getElement().html(
         '<h2>' + state.text + '</h2>' +
-        '<ul id="nodelist">' + listToDisplay + '</ul>' +
-        '<p>' + state.link + '</p>'
+        '<ul id="nodelist">' + listToDisplay + '</ul>'
+    );
+});
+
+myLayout.registerComponent('newAccountItem', function (container, state) {
+    container.getElement().html(
+        '<h2>' + state.text + '</h2>' +
+        '<p id="newaddress">' + state.address + '</p>' +
+        '<p id="newprivatekey">' + state.privateKey + '</p>'
     );
 });
 
@@ -119,11 +117,17 @@ var addMenuItem = function (newItem) {
     element.click(function () {
         myLayout.root.contentItems[0].addChild(newItemConfig);
     });
+    console.log("avant le if");
+    if (newItem.name=="newAccountItem") {
+        console.log("dans la boucle if");
+        element.click(function() {
+            createNewAccount();
+        });
+    }
 };
 $('#menuContainer').append("<h1>Menu</h1>");
 addMenuItem(listNodesItem);
 addMenuItem(checkABalanceItem);
 addMenuItem(createTransactionItem);
-addMenuItem(createAnAccountItem);
-addMenuItem(testItem);
+addMenuItem(newAccountItem);
 addMenuItem(testItem2);

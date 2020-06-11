@@ -23,11 +23,6 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('home.ejs', {listetest:listetest});
     })
 
-    // TODO supprimer, c'est un test
-    .get('/Test/', function(req, res) {
-        let bla = Date.now();
-        //res.render('test.ejs', {bla:bla});
-    })
 
     .get('/Test2/:id', async(req, res) => {
         res.json(req.params.id + 2);
@@ -38,6 +33,11 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/updatenodelist/', async(req, res) => {
         let liste = bc.getNodelistIDS();
         res.json(liste);
+    })
+
+    .get('/newaccount/', async(req, res) => {
+        let info = await bc.createNewAccount();
+        res.json([info["address"], info["privateKey"]]);
     })
 
     /* On redirige vers home si la page demandée n'est pas trouvée */

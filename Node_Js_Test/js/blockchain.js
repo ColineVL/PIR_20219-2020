@@ -49,8 +49,7 @@ async function createTransaction(sender, privateKey, receiver, ammount) {
 };
 
 async function createNewAccount() {
-    const info = await  web3.eth.accounts.create();
-    return info;
+    return await  web3.eth.accounts.create();
 };
 
 /********************************
@@ -63,4 +62,5 @@ function getNodelistIDS() {
 
 module.exports = {
     getNodelistIDS,
+    createNewAccount,
 }
