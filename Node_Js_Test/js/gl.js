@@ -2,48 +2,48 @@
  * Items
  ********************************/
 
-var listNodesItem = {
+const listNodesItem = {
     title: "List of nodes",
     text: "Clic on a node to get more info.",
     list: [],
     name: "listNodesItem",
 };
 
-var nodeInfoItem = {
+const nodeInfoItem = {
     title: "Node Info",
     text: "Here are the details about the node.",
     nodeinfo: "",
     name: "nodeInfoItem",
 };
 
-var listBlocksItem = {
+const listBlocksItem = {
     title: "List of last blocks",
     text: "Clic on a block to get more info.",
     list: [],
     name: "listBlocksItem",
 };
 
-var blockInfoItem = {
+const blockInfoItem = {
     title: "Block Info",
     text: "Here are the details about the block.",
     blockinfo: "",
     name: "blockInfoItem",
 };
 
-var createTransactionItem = {
+const createTransactionItem = {
     title: "Make a signed transaction",
     form: {sender: "Sender:", privateKey: "Private Key:", receiver: "Receiver:", amount: "Amount:"},
     name: "createTransactionItem",
 };
 
-var resultTransactionItem = {
+const resultTransactionItem = {
     title: "Transaction completed",
     text: "Here is your receipt.",
     receipt: "",
     name: "resultTransactionItem",
 };
 
-var checkABalanceItem = {
+const checkABalanceItem = {
     title: "Check a balance",
     address: "No account given yet!",
     balance: "Nothing to show",
@@ -52,7 +52,7 @@ var checkABalanceItem = {
 };
 
 
-var newAccountItem = {
+const newAccountItem = {
     title: "Create an account",
     text: "Here is your new account info! Take care to note them somewhere, they CANNOT BE RECOVERED.",
     address: "",
@@ -64,7 +64,7 @@ var newAccountItem = {
  * Initialise Layout
  ********************************/
 
-var config = {
+const config = {
     content: [{
         type: 'row',
         isClosable: false,
@@ -72,7 +72,7 @@ var config = {
     }]
 };
 
-var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
+const myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
 
 /********************************
@@ -80,7 +80,6 @@ var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
  ********************************/
 
 myLayout.registerComponent('listNodesItem', function (container, state) {
-    // let listToDisplay = displayList(state.list);
     container.getElement().html(
         '<h2>' + state.text + '</h2>' +
         '<ul id="nodelist">' + state.list + '</ul>'
@@ -153,11 +152,11 @@ myLayout.init();
 /********************************
  * Create menu
  ********************************/
-var addMenuItem = function (newItem) {
-    var element = $('<li>' + newItem.title + '</li>');
+function addMenuItem(newItem) {
+    const element = $('<li>' + newItem.title + '</li>');
     $('#menuContainer').append(element);
 
-    var newItemConfig = {
+    const newItemConfig = {
         title: newItem.title,
         type: 'component',
         componentName: newItem.name,
@@ -167,16 +166,16 @@ var addMenuItem = function (newItem) {
     element.click(function () {
         let items = myLayout.root.getComponentsByName(newItem.name);
         // If this block is already open, don't open another one
-        if (items.length == 0) {
+        if (items.length === 0) {
             myLayout.root.contentItems[0].addChild(newItemConfig);
         }
     });
-    if (newItem.name == "newAccountItem") {
+    if (newItem.name === "newAccountItem") {
         element.click(function () {
             createNewAccount();
         });
     }
-};
+}
 $('#menuContainer').append("<h1>Menu</h1>");
 addMenuItem(listNodesItem);
 addMenuItem(checkABalanceItem);
@@ -188,8 +187,8 @@ addMenuItem(listBlocksItem);
  * Create items out of the menu
  ********************************/
 
-var addItem = function (newItem) {
-    var newItemConfig = {
+function addItem(newItem) {
+    const newItemConfig = {
         title: newItem.title,
         type: 'component',
         componentName: newItem.name,
@@ -197,8 +196,8 @@ var addItem = function (newItem) {
     };
     let items = myLayout.root.getComponentsByName(newItem.name);
     // If this block is already open, don't open another one
-    if (items.length == 0) {
+    if (items.length === 0) {
         myLayout.root.contentItems[0].addChild(newItemConfig);
     }
-};
+}
 

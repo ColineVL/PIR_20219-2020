@@ -1,4 +1,3 @@
-
 const readline = require('readline');
 const Web3 = require('web3')
 var Tx = require('ethereumjs-tx');

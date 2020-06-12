@@ -1,12 +1,10 @@
-var express = require('express');
-var session = require('cookie-session'); // Charge le middleware de sessions
-var bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
-var bc = require('./js/blockchain');
+const express = require('express');
+const bc = require('./js/blockchain');
 
 /********************************
  * Create the app
  ********************************/
-var app = express();
+const app = express();
 // Load the css folder
 app.use(express.static(__dirname + '/css'));
 // Load the js files
@@ -60,8 +58,7 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(receipt);
     })
 
-
-    /* On redirige vers home si la page demandée n'est pas trouvée */
+    /* Redirection to home if the page is not found */
     .use(function (req, res, next) {
         res.redirect('/');
     })
