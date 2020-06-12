@@ -25,10 +25,6 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('home.ejs');
     })
 
-    .get('/Test2/:id', async(req, res) => {
-        res.json(req.params.id + 2);
-    })
-
     .get('/updatenodelist/', async(req, res) => {
         let liste = bc.getNodelistIDS();
         res.json(liste);

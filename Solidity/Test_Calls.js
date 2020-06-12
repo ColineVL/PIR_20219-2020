@@ -45,7 +45,7 @@ const gasPrice = 1000;//web3.eth.gasPrice;
 const gasPriceHex = web3.utils.numberToHex(gasPrice);
 const gasLimitHex = web3.utils.numberToHex(4000000);
 
-const contract = new web3.eth.Contract(abi,'0x6023FF0A8203ea32E737819B301D1672Dd2ECBE0');
+const contract = new web3.eth.Contract(abi,'0x42699A7612A82f1d9C36148af9C77354759b210b');
 const transactionObject = {
     from: account1,
     gas: web3.utils.numberToHex(3000000),
@@ -63,7 +63,7 @@ const setMappingRef = contract.methods.Setmaptest(50,5).encodeABI();
     const nonceval = await web3.eth.getTransactionCount(account1, "pending"); //'0x' + new Date().getTime();
     var fTx1 = {
         nonce: nonceval,
-        to : '0x6023FF0A8203ea32E737819B301D1672Dd2ECBE0',
+        to : '0x42699A7612A82f1d9C36148af9C77354759b210b',
         gasPrice: gasPriceHex,
         gasLimit: gasLimitHex,
         data:setMappingRef ,
@@ -71,7 +71,7 @@ const setMappingRef = contract.methods.Setmaptest(50,5).encodeABI();
     };
     var fTx2 = {
         nonce: nonceval+1,
-        to : '0x6023FF0A8203ea32E737819B301D1672Dd2ECBE0',
+        to : '0x42699A7612A82f1d9C36148af9C77354759b210b',
         value:    web3.utils.toHex(web3.utils.toWei('0', 'ether')),
         gasPrice: gasPriceHex,
         gasLimit: gasLimitHex,
@@ -80,7 +80,7 @@ const setMappingRef = contract.methods.Setmaptest(50,5).encodeABI();
     };
     var fTx3 = {
         nonce: nonceval+2,
-        to : '0x6023FF0A8203ea32E737819B301D1672Dd2ECBE0',
+        to : '0x42699A7612A82f1d9C36148af9C77354759b210b',
         gasPrice: gasPriceHex,
         gasLimit: gasLimitHex,
         data:receiveDataRef ,

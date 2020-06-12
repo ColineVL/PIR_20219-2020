@@ -40,15 +40,6 @@ var newAccountItem = {
     name: "newAccountItem",
 }
 
-var adresse = 'loadXMLDoc("test2/6")';
-var testItem2 = {
-    title: "Test load XML",
-    text: "Salut",
-    link: "<button onclick='testXML(zecallback)'>Test XML</button>",
-    name: "withoutList",
-}
-
-
 /********************************
  * Initialise Layout
  ********************************/
@@ -101,15 +92,6 @@ myLayout.registerComponent('checkABalanceItem', function (container, state) {
 });
 
 
-myLayout.registerComponent('withList', function (container, state) {
-    txt = displayList(state.list);
-    container.getElement().html(
-        '<h2 id="g">' + state.text + '</h2>' +
-        txt +
-        '<p id="date">' + state.link + '</p>'
-    );
-});
-
 myLayout.registerComponent('withoutList', function (container, state) {
     container.getElement().html('<h2 id="result">' + state.text + '</h2>' +
         '<p>' + state.link + '</p>');
@@ -145,5 +127,4 @@ addMenuItem(listNodesItem);
 addMenuItem(checkABalanceItem);
 addMenuItem(createTransactionItem);
 addMenuItem(newAccountItem);
-addMenuItem(testItem2);
 addMenuItem(listBlocksItem);

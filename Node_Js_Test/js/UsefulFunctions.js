@@ -12,17 +12,6 @@ function loadXMLDoc(page, callback) {
     xhttp.send();
 };
 
-
-/** Test of callback functions **/
-function zecallback(param) {
-    document.getElementById("result").innerHTML = param;
-};
-
-function testXML(callback) {
-    let res = loadXMLDoc("updatenodelist", callback);
-};
-
-
 /** To display a list with <li> **/
 function displayList(list) {
     let txt = "";
