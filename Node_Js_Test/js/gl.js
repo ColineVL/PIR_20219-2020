@@ -16,6 +16,13 @@ var listBlocksItem = {
     name: "listBlocksItem",
 }
 
+var blockInfoItem = {
+    title: "Block Info",
+    text: "Here are the details about the block.",
+    blockinfo: "",
+    name: "blockInfoItem",
+}
+
 var createTransactionItem = {
     title: "Make a signed transaction",
     text: "Yo",
@@ -75,6 +82,13 @@ myLayout.registerComponent('listBlocksItem', function (container, state) {
     );
 });
 
+myLayout.registerComponent('blockInfoItem', function (container, state) {
+    container.getElement().html(
+        '<h2>' + state.text + '</h2>' +
+        '<div id="blockinfo">' + state.blockinfo + '</div>'
+    );
+});
+
 myLayout.registerComponent('newAccountItem', function (container, state) {
     container.getElement().html(
         '<h2>' + state.text + '</h2>' +
@@ -121,6 +135,11 @@ var addMenuItem = function (newItem) {
             createNewAccount();
         });
     }
+    if (newItem.name == "blockInfoItem") {
+        element.click(function () {
+            getBlockInfo(354);
+        });
+    }
 };
 $('#menuContainer').append("<h1>Menu</h1>");
 addMenuItem(listNodesItem);
@@ -128,3 +147,4 @@ addMenuItem(checkABalanceItem);
 addMenuItem(createTransactionItem);
 addMenuItem(newAccountItem);
 addMenuItem(listBlocksItem);
+addMenuItem(blockInfoItem);

@@ -1,10 +1,9 @@
 /** To get a response from the server **/
 function loadXMLDoc(page, callback) {
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
+    xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             // TODO la ligne suivante sert à des tests
-           // console.log(this.responseText);
             callback(JSON.parse(this.responseText));
         }
     };
@@ -12,18 +11,35 @@ function loadXMLDoc(page, callback) {
     xhttp.send();
 };
 
-/** To display a list with <li> **/
+/** Display functions **/
 function displayList(list) {
-    let txt = "";
+    let html = "";
     list.forEach(function (elt) {
-        txt += '<li>' + elt + '</li>';
+        html += '<li>' + elt + '</li>';
     });
-    return txt;
+    return html;
 };
+
+String.prototype.capitalize = function () {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
+function displayDict(dict) {
+    let html = "<table><tbody>";
+    for (let key in dict) {
+        html += "<tr>";
+        html += "<td>" + key.capitalize() + "</td>";
+        html += "<td>" + dict[key] + "</td>";
+        html += "</tr>";
+    }
+    html += "</tbody></table>";
+    return html;
+}
 
 
 /** Update of the nodelist **/
 var timerUpdateNodelist = setInterval(updateNodesList, 2000);
+
 function callbackNodelist(param) {
     param = displayList(param);
     document.getElementById("nodelist").innerHTML = param;
@@ -45,6 +61,7 @@ function createNewAccount() {
 
 /** Update of the blocks list **/
 setInterval(updateBlocksList, 2000);
+
 function callbackBlockslist(param) {
     param = displayList(param);
     document.getElementById("blockslist").innerHTML = param;
@@ -56,11 +73,12 @@ function updateBlocksList() {
 
 /** Info about one block **/
 function callbackBlockInfo(param) {
-    console.log(param);
+    param = displayDict(param);
+    document.getElementById("blockinfo").innerHTML = param;
 };
 
 function getBlockInfo(blocknumber) {
-    loadXMLDoc("getblockinfo" + blocknumber, callbackBlockInfo);
+    loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo);
 };
 
 /** Get the balance of an account **/

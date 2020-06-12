@@ -75,12 +75,6 @@ async function createNewAccount() {
  * Blocks
  ********************************/
 
-// async function queryBlock(i) {
-//     var json = await web3.eth.getBlock(i);
-//     console.log(json["number"]);
-//     return json;
-// }
-
 // Update of the list of last blocks numbers
 setInterval(refreshBlocksNUMBERSList, 2000);
 
@@ -106,7 +100,6 @@ function refreshBlocksNUMBERSList() {
 
 async function getBlockInfo(blocknumber) {
     var json = await web3.eth.getBlock(blocknumber);
-    console.log(json);
     return json;
 };
 
