@@ -77,7 +77,7 @@ myLayout.registerComponent('listNodesItem', function (container, state) {
 myLayout.registerComponent('listBlocksItem', function (container, state) {
     let listToDisplay = displayList(state.list);
     container.getElement().html(
-        '<h2>' + state.text + '</h2>' +
+        '<h2 id="text">' + state.text + '</h2>' +
         '<ul id="blockslist">' + listToDisplay + '</ul>'
     );
 });
@@ -135,11 +135,6 @@ var addMenuItem = function (newItem) {
             createNewAccount();
         });
     }
-    if (newItem.name == "blockInfoItem") {
-        element.click(function () {
-            getBlockInfo(354);
-        });
-    }
 };
 $('#menuContainer').append("<h1>Menu</h1>");
 addMenuItem(listNodesItem);
@@ -147,4 +142,15 @@ addMenuItem(checkABalanceItem);
 addMenuItem(createTransactionItem);
 addMenuItem(newAccountItem);
 addMenuItem(listBlocksItem);
-addMenuItem(blockInfoItem);
+
+var addBlockInfoItem = function () {
+    newItem = blockInfoItem;
+    var newItemConfig = {
+        title: newItem.title,
+        type: 'component',
+        componentName: newItem.name,
+        componentState: newItem
+    };
+    // TODO si il y en a déjà un, ne pas en ouvrir un autre
+    myLayout.root.contentItems[0].addChild(newItemConfig);
+};

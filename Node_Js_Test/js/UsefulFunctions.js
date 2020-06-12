@@ -20,6 +20,18 @@ function displayList(list) {
     return html;
 };
 
+function testclick() {
+    document.getElementById("text").innerHTML = "clic !";
+}
+
+function displayListBlocks(list) {
+    let html = "";
+    list.forEach(function (blockNumber) {
+        html += "<div onclick=displayBlockInfo(" + blockNumber + ")>" + '<li>' + blockNumber + '</li>' + "</div>";
+    });
+    return html;
+}
+
 String.prototype.capitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
@@ -63,7 +75,7 @@ function createNewAccount() {
 setInterval(updateBlocksList, 2000);
 
 function callbackBlockslist(param) {
-    param = displayList(param);
+    param = displayListBlocks(param);
     document.getElementById("blockslist").innerHTML = param;
 };
 
@@ -77,9 +89,10 @@ function callbackBlockInfo(param) {
     document.getElementById("blockinfo").innerHTML = param;
 };
 
-function getBlockInfo(blocknumber) {
+function displayBlockInfo(blocknumber) {
+    addBlockInfoItem();
     loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo);
-};
+}
 
 /** Get the balance of an account **/
 function callbackGetBalance(param) {
