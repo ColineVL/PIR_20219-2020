@@ -33,9 +33,13 @@ let Account = undefined;
 app.use('/public', express.static(__dirname + '/public'))
 
     /* Home view */
-    .get('', function(req, res) {
-        console.log(Account);
-        res.render('homeClient.ejs',{account : Account});
+    .get('', async (req, res) => {
+        if (Account) {
+            funds = await web3.eth.getBalance(Account.address)
+            res.render('homeClient.ejs',{account : Account, funds: funds});
+        } else{
+            res.render('homeClient.ejs',{account : Account});
+        }
     })
 
     /* Form view to connect with private key*/

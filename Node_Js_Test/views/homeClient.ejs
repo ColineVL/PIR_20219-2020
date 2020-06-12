@@ -13,12 +13,14 @@
     <a href="/ConnexionForm">Login</a>
 <% } else { %>
     <h1>Welcome to the client interaction!</h1>
+    <p>Current account connected : <%= account.address %> </p>
     <p>what are we doing today?</p>
     <ul>
-        <li>Buy</li>
-        <li>Read info</li>
-        <li>Search?</li>
+        <li>Buyer menu</li>
+        <li>Sell menu</li>
+        <li>What else?</li>
     </ul>
+    <p>Current funds : <%= funds %> SupaeroETH</p>
 <% }  %>
 </body>
 </html>
