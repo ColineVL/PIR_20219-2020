@@ -47,11 +47,6 @@ contract Depreciation_Contract is Ownable{
         // Needed for contesting for false key or ask for a refund in case provider did not submit key
         address[] clientsDispute;
 
-        /*
-        !!!!!!!!!!!!! Check later if it is better to pack booleans in one structure (gas and storage wise)
-        !!!!!!!!!!!!! Check later about public mappings
-        */
-
         // Needed to give access for a client to call dispute function or recall funds
         mapping (address => bool) isClient;
         // Needed so a client does not raise multiple disputes so he claims his money as well as others if he is right
@@ -59,6 +54,15 @@ contract Depreciation_Contract is Ownable{
         // Needed to check if dispute is resolved or not to not claim same dispute multiple times
         mapping (address => bool) resolvedDispute;
         mapping (address => uint) timeOfDispute;
+        // !!!!!!!!!! Needs to be sent in private channel
+        // !!!!!!!!!! mapping (address => bytes32) encryptedKey;
+
+        /*
+            The client provides the encryptedKey's hash that would allow the provided to provider the decoding key
+            Also this is used to compare this hash with the real key later provided publicly by the provider
+        */
+        mapping (address => bytes32) encryptedKeyHash;
+        mapping (address => uint) keyDecoder;
     }
 
 
