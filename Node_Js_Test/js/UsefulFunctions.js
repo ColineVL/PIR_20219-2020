@@ -54,6 +54,15 @@ function updateBlocksList() {
     loadXMLDoc("updatelistBlocks", callbackBlockslist);
 };
 
+/** Info about one block **/
+function callbackBlockInfo(param) {
+    console.log(param);
+};
+
+function getBlockInfo(blocknumber) {
+    loadXMLDoc("getblockinfo" + blocknumber, callbackBlockInfo);
+};
+
 /** Get the balance of an account **/
 function callbackGetBalance(param) {
     document.getElementById("balance").innerHTML = param;

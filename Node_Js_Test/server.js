@@ -35,6 +35,12 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(info);
     })
 
+    .get('/getblockinfo/:blocknumber', async (req, res) => {
+        let info = await bc.getBlockInfo(req.params.blocknumber);
+        console.log(info);
+        res.json(info);
+    })
+
     .get('/getbalance/:addressToCheck', async (req, res) => {
         let bal = await bc.getBalance(req.params.addressToCheck);
         res.json(bal);
