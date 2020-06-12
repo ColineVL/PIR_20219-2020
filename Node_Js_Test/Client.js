@@ -45,10 +45,26 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /* Handler to process the connection */
     .post('/Connexion/', async (req, res) => {
-        Account = web3.eth.accounts.privateKeyToAccount(req.body.prKey);
-        console.log("attempt to connect");
-        console.log(Account);
-        res.redirect('');
+        try {
+            account = web3.eth.accounts.privateKeyToAccount(req.body.prKey);
+            Account = account;
+            console.log("attempt to connect");
+            console.log(Account);
+            res.redirect('');
+        }
+            // .then( (account) => {
+            //     Account =account;
+            //     console.log("attempt to connect");
+            //     console.log(Account);
+            //     res.redirect('');
+            // })
+            catch(err) {
+                console.log(typeof err)
+                console.log(typeof err == "object")
+                console.log(Object.keys(err))
+                 res.render('ConnexionForm.ejs', {error : err, account : Account});
+            };
+
     })
 
 
