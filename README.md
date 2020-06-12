@@ -55,6 +55,16 @@ On utilise actuellement le réseau "reseau_PIR", dont le mot de passe est "mdpPI
 
 Sur Linux, pour obtenir son adresse IP privée, taper dans la console : hostname -I.
 
+## Packages nécessaires
+web3
+web3-eth-admin
+readline
+ethereumjs-tx
+express
+cookie-session
+body-parser
+
+
 ## Liens utiles
 Ethereum yellow paper : https://ethereum.github.io/yellowpaper/paper.pdf <br>
 Besu : https://besu.hyperledger.org/en/stable/ <br>
