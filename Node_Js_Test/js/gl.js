@@ -9,6 +9,13 @@ var listNodesItem = {
     name: "listNodesItem",
 }
 
+var nodeInfoItem = {
+    title: "Node Info",
+    text: "Here are the details about the node.",
+    nodeinfo: "",
+    name: "nodeInfoItem",
+}
+
 var listBlocksItem = {
     title: "List of last blocks",
     text: "Clic on a block to get more info.",
@@ -67,18 +74,25 @@ var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
  ********************************/
 
 myLayout.registerComponent('listNodesItem', function (container, state) {
-    let listToDisplay = displayList(state.list);
+    // let listToDisplay = displayList(state.list);
     container.getElement().html(
         '<h2>' + state.text + '</h2>' +
-        '<ul id="nodelist">' + listToDisplay + '</ul>'
+        '<ul id="nodelist">' + state.list + '</ul>'
+    );
+});
+
+myLayout.registerComponent('nodeInfoItem', function (container, state) {
+    container.getElement().html(
+        '<h2>' + state.text + '</h2>' +
+        '<div id="nodeinfo">' + state.nodeinfo + '</div>'
     );
 });
 
 myLayout.registerComponent('listBlocksItem', function (container, state) {
-    let listToDisplay = displayList(state.list);
+    // let listToDisplay = displayList(state.list);
     container.getElement().html(
         '<h2 id="text">' + state.text + '</h2>' +
-        '<ul id="blockslist">' + listToDisplay + '</ul>'
+        '<ul id="blockslist">' + state.list + '</ul>'
     );
 });
 
@@ -128,7 +142,11 @@ var addMenuItem = function (newItem) {
     };
 
     element.click(function () {
-        myLayout.root.contentItems[0].addChild(newItemConfig);
+        let items = myLayout.root.getComponentsByName(newItem.name);
+        // If this block is already open, don't open another one
+        if (items.length == 0) {
+            myLayout.root.contentItems[0].addChild(newItemConfig);
+        }
     });
     if (newItem.name == "newAccountItem") {
         element.click(function () {
@@ -143,8 +161,11 @@ addMenuItem(createTransactionItem);
 addMenuItem(newAccountItem);
 addMenuItem(listBlocksItem);
 
-var addBlockInfoItem = function () {
-    newItem = blockInfoItem;
+/********************************
+ * Create items out of the menu
+ ********************************/
+
+var addItem = function (newItem) {
     var newItemConfig = {
         title: newItem.title,
         type: 'component',
@@ -156,6 +177,5 @@ var addBlockInfoItem = function () {
     if (items.length == 0) {
         myLayout.root.contentItems[0].addChild(newItemConfig);
     }
-
 };
 

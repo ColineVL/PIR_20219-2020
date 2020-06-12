@@ -12,22 +12,26 @@ function loadXMLDoc(page, callback) {
 };
 
 /** Display functions **/
-function displayList(list) {
-    let html = "";
-    list.forEach(function (elt) {
-        html += '<li>' + elt + '</li>';
-    });
-    return html;
-};
-
-function testclick() {
-    document.getElementById("text").innerHTML = "clic !";
-}
+// function displayList(list) {
+//     let html = "";
+//     list.forEach(function (elt) {
+//         html += '<li>' + elt + '</li>';
+//     });
+//     return html;
+// };
 
 function displayListBlocks(list) {
     let html = "";
     list.forEach(function (blockNumber) {
         html += "<div onclick=displayBlockInfo(" + blockNumber + ")>" + '<li>' + blockNumber + '</li>' + "</div>";
+    });
+    return html;
+}
+
+function displayListNodes(list) {
+    let html = "";
+    list.forEach(function (nodeID) {
+        html += "<div onclick=displayNodeInfo(" + nodeID + ")>" + '<li>' + nodeID + '</li>' + "</div>";
     });
     return html;
 }
@@ -53,13 +57,24 @@ function displayDict(dict) {
 var timerUpdateNodelist = setInterval(updateNodesList, 2000);
 
 function callbackNodelist(param) {
-    param = displayList(param);
+    param = displayListNodes(param);
     document.getElementById("nodelist").innerHTML = param;
 };
 
 function updateNodesList() {
     loadXMLDoc("updatenodelist", callbackNodelist);
 };
+
+/** Info about one node **/
+function callbackNodeInfo(param) {
+    param = displayDict(param);
+    document.getElementById("nodeinfo").innerHTML = param;
+};
+
+function displayNodeInfo(nodeID) {
+    addItem(nodeInfoItem);
+    loadXMLDoc("getnodeinfo/" + nodeID, callbackNodeInfo);
+}
 
 /** Creation of a new account **/
 function callbackNewAccount(param) {
@@ -90,7 +105,7 @@ function callbackBlockInfo(param) {
 };
 
 function displayBlockInfo(blocknumber) {
-    addBlockInfoItem();
+    addItem(blockInfoItem);
     loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo);
 }
 

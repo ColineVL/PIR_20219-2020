@@ -41,8 +41,8 @@ async function refreshNodesList() {
     }
 };
 
-function getInfoNode(id) {
-    return nodelist[id];
+function getNodeInfo(nodeID) {
+    return nodelist[nodeID];
 };
 
 /********************************
@@ -120,6 +120,7 @@ module.exports = {
     getNodelistIDS,
     getBlockslistNUMBERS,
     getBlockInfo,
+    getNodeInfo,
     getBalance,
     createNewAccount,
 }

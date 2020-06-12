@@ -30,6 +30,11 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(liste);
     })
 
+    .get('/getnodeinfo/:nodeID', async (req, res) => {
+        let info = await bc.getNodeInfo(req.params.nodeID);
+        res.json(info);
+    })
+
     .get('/updatelistBlocks/', async (req, res) => {
         let info = bc.getBlockslistNUMBERS();
         res.json(info);
