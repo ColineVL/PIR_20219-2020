@@ -25,17 +25,23 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('home.ejs');
     })
 
-    .get('/Test2/:id', async(req, res) => {
-        res.json(req.params.id + 2);
-    })
-
     .get('/updatenodelist/', async(req, res) => {
         let liste = bc.getNodelistIDS();
         res.json(liste);
     })
 
+    .get('/getnodeinfo/:nodeID', async (req, res) => {
+        let info = await bc.getNodeInfo(req.params.nodeID);
+        res.json(info);
+    })
+
     .get('/updatelistBlocks/', async (req, res) => {
         let info = bc.getBlockslistNUMBERS();
+        res.json(info);
+    })
+
+    .get('/getblockinfo/:blocknumber', async (req, res) => {
+        let info = await bc.getBlockInfo(req.params.blocknumber);
         res.json(info);
     })
 
@@ -49,9 +55,39 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json([info["address"], info["privateKey"]]);
     })
 
+    // TEST
+    .get('/test/', async(req, res) => {
+        let info = displayDict(dict);
+    })
+
     /* On redirige vers home si la page demandée n'est pas trouvée */
     .use(function(req, res, next){
         res.redirect('/');
     })
 
     .listen(8080);
+
+
+/********************************
+ * Zone de tests
+ ********************************/
+
+var dict = {
+    key1: "value1",
+    key2: "value2",
+};
+
+function displayDict(dict) {
+    let thead = "<thead><tr>";
+    let tbody = "<tbody><tr>";
+
+    for (let key in dict) {
+        thead += "</th>" + key + "</th>";
+        tbody += "</th>" + dict[key] + "</th>";
+    }
+    thead += "</tr></thead>";
+    tbody += "</tr></tbody>";
+
+    let html = "<table>" + thead + tbody + "</table>";
+    return html;
+}

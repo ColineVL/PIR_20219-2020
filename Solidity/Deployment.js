@@ -29,7 +29,7 @@ let abi = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint32"
 
 
 // Smart contract EVM bytecode as hex
-let code = '0x' +fs.readFileSync("/home/rsx14/IdeaProjects/PIR/Solidity/SimpleContract_sol_SimpleContract.bin"); //contracts.SampleContract.bin;
+let code = '0x' +fs.readFileSync("/home/rsx11/Documents/PIR/Solidity/SimpleContract_sol_SimpleContract.bin"); //contracts.SampleContract.bin;
 //
 // Create Contract proxy class
 let SampleContract = new web3.eth.Contract(abi);

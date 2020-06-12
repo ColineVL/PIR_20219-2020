@@ -21,7 +21,6 @@ var SignedTransaction = require('./SignedTransactionModule');
  ********************************/
 let nodelist = [];
 let nodelistIDS = [];
-let blockslist = [];
 let blockslistNUMBERS = [];
 // TODO let the user change this ?
 const nbBlocksToPrint = 5;
@@ -29,20 +28,27 @@ const nbBlocksToPrint = 5;
 /********************************
  * Nodes
  ********************************/
-setInterval(refreshNodesList, 2000);
+setInterval(refreshNodesList, 4000);
+
 async function refreshNodesList() {
     let PeerCount = await web3.eth.net.getPeerCount();
     let peers = await admin.getPeers();
-    nodelist =[];
+    nodelist = [];
     nodelistIDS = [];
-    for(let i=0; i<PeerCount; i++) {
+    for (let i = 0; i < PeerCount; i++) {
         nodelist.push(peers[i]);
         nodelistIDS.push(peers[i].id);
     }
 };
 
-function getInfoNode(id) {
-    return nodelist[id];
+// function getNodeInfo(nodeID) {
+//     return nodelist[nodeID];
+// };
+
+function getNodeInfo(nodeID) {
+    let index = nodelistIDS.indexOf(nodeID);
+    let node = nodelist[index];
+    return node;
 };
 
 /********************************
@@ -58,7 +64,7 @@ async function getBalance(addressToCheck) {
  ********************************/
 
 async function createTransaction(sender, privateKey, receiver, ammount) {
-    const r = await SignedTransaction.createAndSendSignedTransaction(provider,ammount,privateKey,sender,receiver);//,0.001,'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','0xfe3b557e8fb62b89f4916b721be55ceb828dbd73','0xf17f52151EbEF6C7334FAD080c5704D77216b732');
+    const r = await SignedTransaction.createAndSendSignedTransaction(provider, ammount, privateKey, sender, receiver);//,0.001,'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','0xfe3b557e8fb62b89f4916b721be55ceb828dbd73','0xf17f52151EbEF6C7334FAD080c5704D77216b732');
     console.log("receipt:", r)
     console.log(info.a);
 };
@@ -68,41 +74,40 @@ async function createTransaction(sender, privateKey, receiver, ammount) {
  ********************************/
 
 async function createNewAccount() {
-    return await  web3.eth.accounts.create();
+    return await web3.eth.accounts.create();
 };
 
 /********************************
  * Blocks
  ********************************/
 
-// async function queryBlock(i) {
-//     var json = await web3.eth.getBlock(i);
-//     console.log(json["number"]);
-//     return json;
-// }
+// Update of the list of last blocks numbers
+setInterval(refreshBlocksNUMBERSList, 2000);
 
-setInterval(refreshBlocksList, 2000);
-
-function callbackBlockslist() {
-    if (nbBlocksToPrint==blockslistNUMBERS.length) {
+function callbackBlocksNUMBERSlist() {
+    if (nbBlocksToPrint == blockslistNUMBERS.length) {
         blockslistNUMBERS.sort();
         blockslistNUMBERS.reverse();
     }
 }
 
-function refreshBlocksList() {
+function refreshBlocksNUMBERSList() {
     blockslistNUMBERS = [];
     blockslist = [];
     web3.eth.getBlockNumber().then((n) => {
-        for(let i=n-nbBlocksToPrint+1; i<=n; i++) {
-            web3.eth.getBlock(i).then( (json) => {
+        for (let i = n - nbBlocksToPrint + 1; i <= n; i++) {
+            web3.eth.getBlock(i).then((json) => {
                 blockslistNUMBERS.push(json["number"]);
-                callbackBlockslist();
+                callbackBlocksNUMBERSlist();
             });
         }
     });
 };
 
+async function getBlockInfo(blocknumber) {
+    var json = await web3.eth.getBlock(blocknumber);
+    return json;
+};
 
 
 /********************************
@@ -120,6 +125,8 @@ function getBlockslistNUMBERS() {
 module.exports = {
     getNodelistIDS,
     getBlockslistNUMBERS,
+    getBlockInfo,
+    getNodeInfo,
     getBalance,
     createNewAccount,
 }
