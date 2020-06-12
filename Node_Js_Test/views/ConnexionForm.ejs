@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Home Client</title>
+
+</head>
+
+<body>
+<% if (account === undefined) { %>
+    <h1> Sign in to access the functionalities</h1>
+    <form action="/Connexion" method="post">
+        <label for="prKey">Private Key</label>
+        <input type="text" id="prKey" name="prKey"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+<% } else { %>
+    <h1>You seem to already be connected..</h1>
+    <a href="/">Home</a>
+<% }  %>
+</body>
+</html>

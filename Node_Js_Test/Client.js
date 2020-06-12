@@ -28,19 +28,29 @@ app.use(express.urlencoded());
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
-let Account =web3.eth.accounts.privateKeyToAccount('0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63');// undefined;
+let Account = undefined;
 
 app.use('/public', express.static(__dirname + '/public'))
 
-    /* Fonction d'accueille */
+    /* Home view */
     .get('', function(req, res) {
         console.log(Account);
         res.render('homeClient.ejs',{account : Account});
     })
 
+    /* Form view to connect with private key*/
     .get('/ConnexionForm', function(req, res) {
-        res.render('connexionForm.ejs', {account : Account});
+        res.render('ConnexionForm.ejs', {account : Account});
     })
+
+    /* Handler to process the connection */
+    .post('/Connexion/', async (req, res) => {
+        Account = web3.eth.accounts.privateKeyToAccount(req.body.prKey);
+        console.log("attempt to connect");
+        console.log(Account);
+        res.redirect('');
+    })
+
 
     /* On redirige vers home si la page demandée n'est pas trouvée */
     .use(function(req, res, next){
