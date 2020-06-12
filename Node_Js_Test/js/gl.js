@@ -9,11 +9,25 @@ var listNodesItem = {
     name: "listNodesItem",
 }
 
+var nodeInfoItem = {
+    title: "Node Info",
+    text: "Here are the details about the node.",
+    nodeinfo: "",
+    name: "nodeInfoItem",
+}
+
 var listBlocksItem = {
     title: "List of last blocks",
     text: "Clic on a block to get more info.",
     list: [],
     name: "listBlocksItem",
+}
+
+var blockInfoItem = {
+    title: "Block Info",
+    text: "Here are the details about the block.",
+    blockinfo: "",
+    name: "blockInfoItem",
 }
 
 var createTransactionItem = {
@@ -40,15 +54,6 @@ var newAccountItem = {
     name: "newAccountItem",
 }
 
-var adresse = 'loadXMLDoc("test2/6")';
-var testItem2 = {
-    title: "Test load XML",
-    text: "Salut",
-    link: "<button onclick='testXML(zecallback)'>Test XML</button>",
-    name: "withoutList",
-}
-
-
 /********************************
  * Initialise Layout
  ********************************/
@@ -69,18 +74,32 @@ var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
  ********************************/
 
 myLayout.registerComponent('listNodesItem', function (container, state) {
-    let listToDisplay = displayList(state.list);
+    // let listToDisplay = displayList(state.list);
     container.getElement().html(
         '<h2>' + state.text + '</h2>' +
-        '<ul id="nodelist">' + listToDisplay + '</ul>'
+        '<ul id="nodelist">' + state.list + '</ul>'
+    );
+});
+
+myLayout.registerComponent('nodeInfoItem', function (container, state) {
+    container.getElement().html(
+        '<h2>' + state.text + '</h2>' +
+        '<div id="nodeinfo">' + state.nodeinfo + '</div>'
     );
 });
 
 myLayout.registerComponent('listBlocksItem', function (container, state) {
-    let listToDisplay = displayList(state.list);
+    // let listToDisplay = displayList(state.list);
+    container.getElement().html(
+        '<h2 id="text">' + state.text + '</h2>' +
+        '<ul id="blockslist">' + state.list + '</ul>'
+    );
+});
+
+myLayout.registerComponent('blockInfoItem', function (container, state) {
     container.getElement().html(
         '<h2>' + state.text + '</h2>' +
-        '<ul id="blockslist">' + listToDisplay + '</ul>'
+        '<div id="blockinfo">' + state.blockinfo + '</div>'
     );
 });
 
@@ -100,15 +119,6 @@ myLayout.registerComponent('checkABalanceItem', function (container, state) {
     );
 });
 
-
-myLayout.registerComponent('withList', function (container, state) {
-    txt = displayList(state.list);
-    container.getElement().html(
-        '<h2 id="g">' + state.text + '</h2>' +
-        txt +
-        '<p id="date">' + state.link + '</p>'
-    );
-});
 
 myLayout.registerComponent('withoutList', function (container, state) {
     container.getElement().html('<h2 id="result">' + state.text + '</h2>' +
@@ -132,7 +142,11 @@ var addMenuItem = function (newItem) {
     };
 
     element.click(function () {
-        myLayout.root.contentItems[0].addChild(newItemConfig);
+        let items = myLayout.root.getComponentsByName(newItem.name);
+        // If this block is already open, don't open another one
+        if (items.length == 0) {
+            myLayout.root.contentItems[0].addChild(newItemConfig);
+        }
     });
     if (newItem.name == "newAccountItem") {
         element.click(function () {
@@ -145,5 +159,23 @@ addMenuItem(listNodesItem);
 addMenuItem(checkABalanceItem);
 addMenuItem(createTransactionItem);
 addMenuItem(newAccountItem);
-addMenuItem(testItem2);
 addMenuItem(listBlocksItem);
+
+/********************************
+ * Create items out of the menu
+ ********************************/
+
+var addItem = function (newItem) {
+    var newItemConfig = {
+        title: newItem.title,
+        type: 'component',
+        componentName: newItem.name,
+        componentState: newItem
+    };
+    let items = myLayout.root.getComponentsByName(newItem.name);
+    // If this block is already open, don't open another one
+    if (items.length == 0) {
+        myLayout.root.contentItems[0].addChild(newItemConfig);
+    }
+};
+

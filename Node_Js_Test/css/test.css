@@ -23,6 +23,12 @@ li{
     padding: 10px;
 }
 
+td{
+    color:#fff;
+    padding: 3px;
+
+}
+
 a {
     text-decoration: none;
     color: red;

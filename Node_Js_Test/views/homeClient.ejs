@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Home Client</title>
+
+</head>
+
+<body>
+<% if (account === undefined) { %>
+    <h1>Welcome to the client interaction!</h1>
+    <p>You are not connected yet, please do so to access the service</p>
+    <a href="/ConnexionForm">Login</a>
+<% } else { %>
+    <h1>Welcome to the client interaction!</h1>
+    <p>what are we doing today?</p>
+    <ul>
+        <li>Buy</li>
+        <li>Read info</li>
+        <li>Search?</li>
+    </ul>
+<% }  %>
+</body>
+</html>
