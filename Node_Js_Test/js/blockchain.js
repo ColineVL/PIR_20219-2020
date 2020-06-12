@@ -28,7 +28,7 @@ const nbBlocksToPrint = 5;
 /********************************
  * Nodes
  ********************************/
-setInterval(refreshNodesList, 2000);
+setInterval(refreshNodesList, 4000);
 
 async function refreshNodesList() {
     let PeerCount = await web3.eth.net.getPeerCount();
@@ -41,8 +41,14 @@ async function refreshNodesList() {
     }
 };
 
+// function getNodeInfo(nodeID) {
+//     return nodelist[nodeID];
+// };
+
 function getNodeInfo(nodeID) {
-    return nodelist[nodeID];
+    let index = nodelistIDS.indexOf(nodeID);
+    let node = nodelist[index];
+    return node;
 };
 
 /********************************

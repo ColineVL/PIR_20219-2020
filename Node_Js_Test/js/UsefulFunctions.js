@@ -12,14 +12,6 @@ function loadXMLDoc(page, callback) {
 };
 
 /** Display functions **/
-// function displayList(list) {
-//     let html = "";
-//     list.forEach(function (elt) {
-//         html += '<li>' + elt + '</li>';
-//     });
-//     return html;
-// };
-
 function displayListBlocks(list) {
     let html = "";
     list.forEach(function (blockNumber) {
@@ -33,6 +25,8 @@ function displayListNodes(list) {
     list.forEach(function (nodeID) {
         html += "<div onclick=displayNodeInfo(" + nodeID + ")>" + '<li>' + nodeID + '</li>' + "</div>";
     });
+    // Ici nodeID est bien sous la forme 0x50295... en string
+
     return html;
 }
 
@@ -54,7 +48,7 @@ function displayDict(dict) {
 
 
 /** Update of the nodelist **/
-var timerUpdateNodelist = setInterval(updateNodesList, 2000);
+setInterval(updateNodesList, 1000);
 
 function callbackNodelist(param) {
     param = displayListNodes(param);
@@ -72,9 +66,11 @@ function callbackNodeInfo(param) {
 };
 
 function displayNodeInfo(nodeID) {
+    console.log(typeof nodeID + " "  + nodeID);
+    // Ici nodeID est sous la forme number 4.98e+153
     addItem(nodeInfoItem);
     loadXMLDoc("getnodeinfo/" + nodeID, callbackNodeInfo);
-}
+};
 
 /** Creation of a new account **/
 function callbackNewAccount(param) {
@@ -87,7 +83,7 @@ function createNewAccount() {
 };
 
 /** Update of the blocks list **/
-setInterval(updateBlocksList, 2000);
+setInterval(updateBlocksList, 1000);
 
 function callbackBlockslist(param) {
     param = displayListBlocks(param);
