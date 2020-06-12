@@ -66,7 +66,7 @@ function callbackNodeInfo(param) {
 };
 
 function displayNodeInfo(nodeID) {
-    console.log(typeof nodeID + " "  + nodeID);
+    console.log(typeof nodeID + " " + nodeID);
     // Ici nodeID est sous la forme number 4.98e+153
     addItem(nodeInfoItem);
     loadXMLDoc("getnodeinfo/" + nodeID, callbackNodeInfo);
@@ -96,6 +96,7 @@ function updateBlocksList() {
 
 /** Info about one block **/
 function callbackBlockInfo(param) {
+    console.log(param);
     param = displayDict(param);
     document.getElementById("blockinfo").innerHTML = param;
 };
@@ -114,4 +115,33 @@ function getBalance() {
     let addressToCheck = prompt("Please enter an address");
     loadXMLDoc("getbalance/" + addressToCheck, callbackGetBalance);
     document.getElementById("address").innerHTML = addressToCheck;
+};
+
+/** Make a transaction **/
+function callbackMakeTransaction(param) {
+    console.log(param);
+    addItem(resultTransactionItem);
+    param = displayDict(param);
+    document.getElementById("receipt").innerHTML = param;
+};
+
+function makeTransaction() {
+    let sender = document.getElementById("sender").value;
+    let receiver = document.getElementById("receiver").value;
+    let privateKey = document.getElementById("privateKey").value;
+    let amount = document.getElementById("amount").value;
+    if (sender === "" || receiver === "" || privateKey === "" || amount === "") {
+        document.getElementById("message").innerHTML = "Please complete the whole form.";
+    } else {
+        // Faire la transaction, appeler un callback de succès
+        // TODO si la transaction échoue ?
+        document.getElementById("message").innerHTML = "Transaction completed!";
+        let json = {
+            sender: sender,
+            receiver: receiver,
+            privateKey: privateKey,
+            amount: amount,
+        }
+        loadXMLDoc("maketransaction/" + JSON.stringify(json), callbackMakeTransaction);
+    }
 };

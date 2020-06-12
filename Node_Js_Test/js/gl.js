@@ -7,35 +7,41 @@ var listNodesItem = {
     text: "Clic on a node to get more info.",
     list: [],
     name: "listNodesItem",
-}
+};
 
 var nodeInfoItem = {
     title: "Node Info",
     text: "Here are the details about the node.",
     nodeinfo: "",
     name: "nodeInfoItem",
-}
+};
 
 var listBlocksItem = {
     title: "List of last blocks",
     text: "Clic on a block to get more info.",
     list: [],
     name: "listBlocksItem",
-}
+};
 
 var blockInfoItem = {
     title: "Block Info",
     text: "Here are the details about the block.",
     blockinfo: "",
     name: "blockInfoItem",
-}
+};
 
 var createTransactionItem = {
     title: "Make a signed transaction",
-    text: "Yo",
-    link: "<a href=\'/SignedTransaction/\'>Clic</a>",
-    name: "withoutList",
-}
+    form: {sender: "Sender:", privateKey: "Private Key:", receiver: "Receiver:", amount: "Amount:"},
+    name: "createTransactionItem",
+};
+
+var resultTransactionItem = {
+    title: "Transaction completed",
+    text: "Here is your receipt.",
+    receipt: "",
+    name: "resultTransactionItem",
+};
 
 var checkABalanceItem = {
     title: "Check a balance",
@@ -43,7 +49,7 @@ var checkABalanceItem = {
     balance: "Nothing to show",
     label: "Address to check",
     name: "checkABalanceItem",
-}
+};
 
 
 var newAccountItem = {
@@ -52,7 +58,7 @@ var newAccountItem = {
     address: "",
     privateKey: "",
     name: "newAccountItem",
-}
+};
 
 /********************************
  * Initialise Layout
@@ -120,10 +126,27 @@ myLayout.registerComponent('checkABalanceItem', function (container, state) {
 });
 
 
-myLayout.registerComponent('withoutList', function (container, state) {
-    container.getElement().html('<h2 id="result">' + state.text + '</h2>' +
-        '<p>' + state.link + '</p>');
+myLayout.registerComponent('createTransactionItem', function (container, state) {
+    let htmlform = "";
+    for (let value in state.form) {
+        htmlform += "<label for=" + value + ">" + state.form[value] + "</label>";
+        htmlform += "<input id=" + value + " type='string'>";
+        htmlform += "<br>";
+    }
+    htmlform += "<button onclick='makeTransaction()'>Submit</button>";
+    container.getElement().html(
+        '<div id="message"></div>' +
+        '<div id="form">' + htmlform + '</div>'
+    );
 });
+
+myLayout.registerComponent('resultTransactionItem', function (container, state) {
+    container.getElement().html(
+        '<h2>' + state.text + '</h2>' +
+        '<div id="receipt">' + state.receipt + '</div>'
+    );
+});
+
 
 myLayout.init();
 

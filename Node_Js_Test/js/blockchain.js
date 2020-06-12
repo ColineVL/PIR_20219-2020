@@ -63,10 +63,11 @@ async function getBalance(addressToCheck) {
  * Create a transaction
  ********************************/
 
-async function createTransaction(sender, privateKey, receiver, ammount) {
-    const r = await SignedTransaction.createAndSendSignedTransaction(provider, ammount, privateKey, sender, receiver);//,0.001,'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','0xfe3b557e8fb62b89f4916b721be55ceb828dbd73','0xf17f52151EbEF6C7334FAD080c5704D77216b732');
-    console.log("receipt:", r)
-    console.log(info.a);
+async function createTransaction(jsonInfo) {
+    jsonInfo = JSON.parse(jsonInfo);
+    const r = await SignedTransaction.createAndSendSignedTransaction(provider, jsonInfo["amount"], jsonInfo["privateKey"], jsonInfo["sender"], jsonInfo["receiver"]);
+    //,0.001,'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','0xfe3b557e8fb62b89f4916b721be55ceb828dbd73','0xf17f52151EbEF6C7334FAD080c5704D77216b732');
+    return r;
 };
 
 /********************************
@@ -129,4 +130,5 @@ module.exports = {
     getNodeInfo,
     getBalance,
     createNewAccount,
+    createTransaction,
 }

@@ -1,32 +1,26 @@
-h2{
-     font: 20px Arial, sans-serif;
-     color:#fff;
-     padding: 12px;
- }
+h2 {
+    font: 20px Arial, sans-serif;
+    padding: 12px;
+}
 
-h1{
+h1 {
     font: 28px Arial, sans-serif;
-    color:#fff;
     padding: 10px;
     text-align: center;
 }
 
-p{
+p {
     font: 12px Arial, sans-serif;
-    color:#fff;
     padding: 10px;
 }
 
-li{
+li {
     font: 12px Arial, sans-serif;
-    color:#fff;
     padding: 10px;
 }
 
-td{
-    color:#fff;
+td {
     padding: 3px;
-
 }
 
 a {
@@ -35,33 +29,33 @@ a {
 }
 
 
-html, body{
+html, body {
     height: 100%;
 }
 
-*{
+* {
     margin: 0;
     padding: 0;
-    list-style-type:none;
+    list-style-type: none;
 }
 
-#wrapper{
+#wrapper {
     height: 100%;
     position: relative;
     width: 100%;
     overflow: hidden;
 }
 
-#menuContainer{
+#menuContainer {
     width: 20%;
     height: 100%;
-    position:absolute;
+    position: absolute;
     top: 0;
     left: 0;
     background: #222;
 }
 
-#menuContainer h1{
+#menuContainer h1 {
     border-bottom: 1px solid #000;
     border-top: 1px solid #333;
     cursor: pointer;
@@ -72,7 +66,7 @@ html, body{
     text-align: center;
 }
 
-#menuContainer li{
+#menuContainer li {
     border-bottom: 1px solid #000;
     border-top: 1px solid #333;
     cursor: pointer;
@@ -82,16 +76,17 @@ html, body{
     font: 12px Arial, sans-serif;
 }
 
-#menuContainer li:hover{
+#menuContainer li:hover {
     background: #111;
     color: #CCC;
 }
 
-#layoutContainer{
+#layoutContainer {
+    color: #fff;
     width: 80%;
     height: 100%;
-    position:absolute;
+    position: absolute;
     top: 0;
     left: 20%;
-    box-shadow: -3px 0px 9px 0px rgba( 0, 0, 0, 0.4 );
+    box-shadow: -3px 0px 9px 0px rgba(0, 0, 0, 0.4);
 }
