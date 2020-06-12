@@ -151,6 +151,11 @@ var addBlockInfoItem = function () {
         componentName: newItem.name,
         componentState: newItem
     };
-    // TODO si il y en a déjà un, ne pas en ouvrir un autre
-    myLayout.root.contentItems[0].addChild(newItemConfig);
+    let items = myLayout.root.getComponentsByName(newItem.name);
+    // If this block is already open, don't open another one
+    if (items.length == 0) {
+        myLayout.root.contentItems[0].addChild(newItemConfig);
+    }
+
 };
+
