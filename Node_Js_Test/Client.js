@@ -35,7 +35,7 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Home view */
     .get('', async (req, res) => {
         if (Account) {
-            funds = await web3.eth.getBalance(Account.address)
+            let funds = await web3.eth.getBalance(Account.address)
             res.render('homeClient.ejs',{account : Account, funds: funds});
         } else{
             res.render('homeClient.ejs',{account : Account});
@@ -50,29 +50,37 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Handler to process the connection */
     .post('/Connexion/', async (req, res) => {
         try {
-            account = web3.eth.accounts.privateKeyToAccount(req.body.prKey);
+            let account = web3.eth.accounts.privateKeyToAccount(req.body.prKey);
             Account = account;
             console.log("attempt to connect");
             console.log(Account);
-            res.redirect('');
+            res.redirect(''); // Redirecting home to confirm connection
         }
-            // .then( (account) => {
-            //     Account =account;
-            //     console.log("attempt to connect");
-            //     console.log(Account);
-            //     res.redirect('');
-            // })
-            catch(err) {
+            catch(err) { // If an error is raised, try reconnecting
                 console.log(typeof err)
                 console.log(typeof err == "object")
                 console.log(Object.keys(err))
                  res.render('ConnexionForm.ejs', {error : err, account : Account});
             };
-
     })
 
+    /* Interface for a buyer */
+    .get('/BuyerMenu', async (req, res) => {
+        if (Account) {
+            let funds = await web3.eth.getBalance(Account.address)
+            res.render('BuyerMenu.ejs',{account : Account, funds: funds});
+        } else{
+            res.render('BuyerMenu.ejs',{account : Account});
+        }
+    })
 
-    /* On redirige vers home si la page demandée n'est pas trouvée */
+    /* Availabe References to buy */
+    .get('/ForSale', async (req, res) => {
+        let Ids =[] // CODE FUNCTION HERE TO GET REFERENCES
+        res.render('ForSale.ejs',{account : Account, Ids: Ids});
+    })
+
+    /* If user asks for an innexistant view, we redirect him to the homepage */
     .use(function(req, res, next){
         res.redirect('/');
     })
