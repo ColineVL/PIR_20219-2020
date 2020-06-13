@@ -6,9 +6,9 @@ module.exports = {
         provider = provider || "*";
         const options = {
             fromBlock: 0,
-            filter: {price: [0,priceMax], provider: provider, contractEndTime: [0,ontractEndTime]}
+            filter: {price: [0,priceMax], provider: provider, contractEndTime: [0,endTime]}
         }
-        contractws.events.NewDataReference({options}, function(error, event){ console.log("**********" + event); })
+        contractws.events.NewDataReference({options})
         .on('data', function(event){
             result.push(event);
         })

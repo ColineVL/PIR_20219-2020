@@ -5,6 +5,7 @@ const Web3 = require('web3');
 const Admin =require('web3-eth-admin').Admin;
 
 const SignedTransaction = require('./js/SignedTransactionModule');
+const EventsModule = require('./js/EventsModule');
 /* Providers */
 const provider = 'http://localhost:8545';
 const web3 = new Web3(new Web3.providers.HttpProvider(provider));
@@ -12,8 +13,8 @@ const web3ws = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:854
 
 /*Loading contract */
 let abi = [] ; //TODO: Abi to be filled when available
-//const contract = new web3.eth.Contract(abi,'0x42699A7612A82f1d9C36148af9C77354759b210b'); //TODO give correct address when available
-//const contractws = new web3ws.eth.Contract(abi,'0x6023FF0A8203ea32E737819B301D1672Dd2ECBE0'); //TODO give correct address when available
+const contract = new web3.eth.Contract(abi,'0x42699A7612A82f1d9C36148af9C77354759b210b'); //TODO give correct address when available
+const contractws = new web3ws.eth.Contract(abi,'0x6023FF0A8203ea32E737819B301D1672Dd2ECBE0'); //TODO give correct address when available
 
 
 
@@ -85,7 +86,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
-        let Ids =[]; // TODO: CODE FUNCTION HERE TO GET REFERENCES
+        let Ids =EventsModule.GetAvailableRefs(contractws); // TODO: Verify FUNCTION HERE TO GET REFERENCES
         res.render('ForSale.ejs',{account : Account, Ids: Ids});
     })
 
