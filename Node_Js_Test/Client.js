@@ -1,13 +1,22 @@
-var express = require('express');
-var session = require('cookie-session'); // Charge le middleware de sessions
-var bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
+const express = require('express');
+const session = require('cookie-session'); // Charge le middleware de sessions
+const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
 const Web3 = require('web3');
 const Admin =require('web3-eth-admin').Admin;
 
-var SignedTransaction = require('./js/SignedTransactionModule');
+const SignedTransaction = require('./js/SignedTransactionModule');
+/* Providers */
+const provider = 'http://localhost:8545';
+const web3 = new Web3(new Web3.providers.HttpProvider(provider));
+const web3ws = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
 
-var provider = 'http://localhost:8545';
-var web3 = new Web3(new Web3.providers.HttpProvider(provider))
+/*Loading contract */
+let abi = [] ; //TODO: Abi to be filled when available
+//const contract = new web3.eth.Contract(abi,'0x42699A7612A82f1d9C36148af9C77354759b210b'); //TODO give correct address when available
+//const contractws = new web3ws.eth.Contract(abi,'0x6023FF0A8203ea32E737819B301D1672Dd2ECBE0'); //TODO give correct address when available
+
+
+
 const options = {
     defaultAccount: '0xfe3b557e8fb62b89f4916b721be55ceb828dbd73',
     defaultBlock: 'latest',
@@ -18,7 +27,7 @@ const options = {
     transactionPollingTimeout: 480,
 };
 const admin = new Admin(provider, null, options);
-var app = express();
+const app = express();
 // Load the css folder
 app.use(express.static(__dirname + '/css'));
 // Load the js files
@@ -76,7 +85,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
-        let Ids =[] // CODE FUNCTION HERE TO GET REFERENCES
+        let Ids =[]; // TODO: CODE FUNCTION HERE TO GET REFERENCES
         res.render('ForSale.ejs',{account : Account, Ids: Ids});
     })
 
