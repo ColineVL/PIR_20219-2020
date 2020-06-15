@@ -19,9 +19,9 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     ---------------------------------------------
     */
 
-    event NewClient(uint referenceId, address client);
+    event NewClient(uint referenceId, address client, uint publicKey);
 
-    function buy_reference(uint _referenceId) payable external {
+    function buy_reference(uint _referenceId, uint _publicKey) payable external {
         // Checks if referenceId is valid
         // !!!!!!!!!!!! Check if < or <= Maybe remove line if it will automatically give index out of bound
         require(_referenceId <= dataReferences.length);
@@ -36,10 +36,11 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         dataReferences[_referenceId].clients.push(msg.sender);
         dataReferences[_referenceId].isClient[msg.sender] = true;
 
-        emit NewClient(_referenceId, msg.sender);
+        emit NewClient(_referenceId, msg.sender, _publicKey);
     }
 
     event encryptedKeyHash(uint referenceId, address client, bytes32 encryptedKeyHash);
+
 
     function setEncryptedHashedKey(uint _referenceId, bytes32 _encryptedKeyHash) external isClient {
 
@@ -66,6 +67,8 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     event raiseDispute(uint referenceId, address client, uint time);
 
     function raiseDispute(uint _referenceId) payable external isClient {
+        // Checks if provider hasn't already withdrew funds
+        require(withdrawnFunds == false);
 
         // Checks if the dispute fee is payed
         require(msg.value == disputePrice);
@@ -78,7 +81,10 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         // Sets true to avoid raising same dispute may times and paying more than once
         dataReferences[_referenceId].raisedDispute[msg.sender] = true;
 
-        emit raiseDispute(_referenceId, msg.sender, now);
+        // Adds the number of disputes
+        dataReferences[_referenceId].clientsDispute = dataReferences[_referenceId].clientsDispute.add(1);
+
+    emit raiseDispute(_referenceId, msg.sender, now);
     }
 
 

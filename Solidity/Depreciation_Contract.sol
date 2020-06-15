@@ -36,6 +36,8 @@ contract Depreciation_Contract is Ownable{
         uint contractEndTime;
 
         address provider;
+        // Necessary to check if the provider withdrew undisputed funds so he does not withdraw other's funds
+        bool withdrawnFunds;
 
         /*
             Client parameters
@@ -44,8 +46,8 @@ contract Depreciation_Contract is Ownable{
         // List of clients that bought the contract
         address[] clients;
 
-        // Needed for contesting for false key or ask for a refund in case provider did not submit key
-        address[] clientsDispute;
+        // Needed to track how many funds are undisputed and what can the provider withdraw
+        uint clientsDispute;
 
         // Needed to give access for a client to call dispute function or recall funds
         mapping (address => bool) isClient;
@@ -77,68 +79,9 @@ contract Depreciation_Contract is Ownable{
     }
 
     /*
-    ---------------------------------------------
-    TODO functions
-    ---------------------------------------------
-
-    No comments for the moment
-
+    TODO FUNCTIONS
+    Settle dispute
     */
-
-    /*
-
-    ---------------------------------------------
-    Provider functions
-    ---------------------------------------------
-    */
-
-    event NewDataReference(uint referenceId, address provider, uint price, uint contractEndTime);
-
-    //function createDataReference
-    function createDataReference (uint _price, uint _contractEndTime) public {
-        // Creating new data reference
-
-        DataReference memory newReference;
-
-        newReference.referenceId = referenceIdCounter;
-
-        // convert price to ether
-        newReference.price = 0 ether;
-
-        // setting price in ether. Provider won't be able to change it later.
-        newReference.price = _price;
-
-        newReference.contractEndTime=_contractEndTime;
-
-        newReference.provider = msg.sender;
-
-        // Adding reference to the blockchain's storage
-        dataReferences.push(newReference);
-
-        emit NewDataReference(referenceIdCounter, msg.sender, _price, _contractEndTime);
-
-        // !!!!!!!!!!!!! Maybe we will not use data ID counter also use SafeMath to add the counter
-        referenceIdCounter = referenceIdCounter.add(1);
-
-    }
-
-    // Give access to the provider only
-    modifier onlyProvider(uint _referenceId) {
-        require(msg.sender == dataReferences[_referenceId].provider);
-        _;
-    }
-
-    // Allows the provider to submit the data's unencrypted key for later verification
-    //    function submitReferenceKey (uint32 _referenceId, uint64 _referenceKey) external onlyProvider {
-    //
-    //        // !!!!!!!!!!!!! check uint compatibility and casting
-    //        require(time.now < contractEndTime);
-    //        dataReferences[_referenceId].referenceKey = _referenceKey;
-    //
-    //        // Debate whether it should automatically check for every client the correctness of the _referenceKey
-    //
-    //        // Add pay function after key submission
-    //    }
 
 
 }
