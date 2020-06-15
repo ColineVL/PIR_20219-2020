@@ -50,7 +50,9 @@ function getNodeInfo(nodeID) {
  * Get the balance of an account
  ********************************/
 async function getBalance(addressToCheck) {
-    return web3.eth.getBalance(addressToCheck);
+    let bal = await web3.eth.getBalance(addressToCheck);
+    bal = web3.utils.fromWei(bal, 'ether');
+    return bal;
 }
 
 /********************************

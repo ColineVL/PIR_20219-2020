@@ -110,9 +110,14 @@ function callbackGetBalance(param) {
 }
 
 function getBalance() {
-    let addressToCheck = prompt("Please enter an address");
-    loadXMLDoc("getbalance/" + addressToCheck, callbackGetBalance);
-    document.getElementById("address").innerHTML = addressToCheck;
+    let addressToCheck = document.getElementById("addressToCheck").value;
+    if (addressToCheck === "") {
+        document.getElementById("messageBalance").innerHTML = "Please enter an address";
+    } else {
+        document.getElementById("messageBalance").innerHTML = "";
+        loadXMLDoc("getbalance/" + addressToCheck, callbackGetBalance);
+        document.getElementById("address").innerHTML = addressToCheck;
+    }
 }
 
 /** Make a transaction **/
