@@ -34,7 +34,7 @@ const transactionObject = {
     gasPrice: gasPrice
 };
 
-const setuint1ref = contract.methods.buy_reference(0,50250).encodeABI();
+const setuint1ref = contract.methods.createDataReference(7,7,50111150).encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0).encodeABI();
 
 
@@ -50,7 +50,7 @@ const setuint1ref = contract.methods.buy_reference(0,50250).encodeABI();
         gasLimit: gasLimitHex,
         data:setuint1ref ,
         from: account1,
-        value: 3//web3.utils.toWei('1', 'ether'),
+        //value: 3//web3.utils.toWei('1', 'ether'),
     };
 
 
@@ -67,11 +67,11 @@ const setuint1ref = contract.methods.buy_reference(0,50250).encodeABI();
 
 
     // const dataOld = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex'));
-    const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
-        console.log(receipt);
-    }).on('error', function(error){
-        console.log(error);
-    });
+    // const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
+    //     console.log(receipt);
+    // }).on('error', function(error){
+    //     console.log(error);
+    // });
     // console.log("..........." + Object.keys(dataOld1))
     // const dataOld2 = await web3.eth.sendSignedTransaction('0x' + sTx2.toString('hex')).on('receipt', function(receipt){
     //     console.log(receipt);
@@ -103,6 +103,26 @@ const setuint1ref = contract.methods.buy_reference(0,50250).encodeABI();
 
     // console.log("data before :" + dataOld);
     // console.log("data before :" +dataNew);
+
+
+
+    const contractws = new web3ws.eth.Contract(abi,'0x9B8397f1B0FEcD3a1a40CdD5E8221Fa461898517');
+    // const events = await contractws.events.NewClient({
+    //     fromBlock: 0
+    // })
+    //     .on('data', function(event){
+    //         console.log(event); // same results as the optional callback above
+    //     })
+    //
+    // console.log(events.callback())
+    // console.log("**********************************");
+    contractws.getPastEvents("NewClient", {
+        fromBlock: 0,
+        toBlock: 'latest'
+    }, function(error, events){ console.log(events); })
+        .then(function(events){
+            console.log(events) // same results as the optional callback above
+        });
 })();
 
 
@@ -111,18 +131,19 @@ const setuint1ref = contract.methods.buy_reference(0,50250).encodeABI();
 
 // console.log('**********************************Events*************************************************')
 // //
-const contractws = new web3ws.eth.Contract(abi,'0x9B8397f1B0FEcD3a1a40CdD5E8221Fa461898517');
-contractws.events.NewClient({
-    fromBlock: 0
-}, function(error, event){ console.log("**********" + event); })
-    .on('data', function(event){
-        console.log(event); // same results as the optional callback above
-    })
-    .on('changed', function(event){
-        // remove event from local database
-    })
-    .on('error', console.error);
-
+// const contractws = new web3ws.eth.Contract(abi,'0x9B8397f1B0FEcD3a1a40CdD5E8221Fa461898517');
+// events = contractws.events.NewClient({
+//     fromBlock: 0
+// }, function(error, event){ console.log("**********" + event); })
+//     .on('data', function(event){
+//         // console.log(event); // same results as the optional callback above
+//     })
+//     .on('changed', function(event){
+//         // remove event from local database
+//     })
+//     .on('error', console.error);
+//
+// console.log(typeof events[0])
 // //     // toBlock: 'latest'
 
 
