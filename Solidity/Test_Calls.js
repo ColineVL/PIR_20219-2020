@@ -5,12 +5,12 @@ let fs = require("fs");
 
 
 // Web3 Initialisation
-var provider = 'http://localhost:8545';
+var provider = 'http://192.168.33.115:8545';
 console.log("******************************************");
 console.log("Using provider : " + provider);
 console.log("******************************************");
 var web3 = new Web3(new Web3.providers.HttpProvider(provider))
-var web3ws = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'))
+var web3ws = new Web3(new Web3.providers.WebsocketProvider('ws://192.168.33.115:8546'))
 //
 
 

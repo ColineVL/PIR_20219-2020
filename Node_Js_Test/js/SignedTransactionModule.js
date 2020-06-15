@@ -15,7 +15,7 @@ async function askQuestion(query) {
 module.exports = {
     createAndSendSignedTransaction: async function (prov, valueInEther, privateKey_notBuffered, addressFrom, addressTo) {
         // web3 initialization - must point to the HTTP JSON-RPC endpoint
-        const provider = prov || 'http://localhost:8545';
+        const provider = prov || 'http://192.168.33.115:8545';
         const web3 = new Web3(new Web3.providers.HttpProvider(provider));
         web3.transactionConfirmationBlocks = 1;
 

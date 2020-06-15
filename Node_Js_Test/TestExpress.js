@@ -7,7 +7,7 @@ const Admin =require('web3-eth-admin').Admin;
 var SignedTransaction = require('./js/SignedTransactionModule');
 
 
-var provider = 'http://localhost:8545';
+var provider = 'http://192.168.33.115:8545';
 var web3 = new Web3(new Web3.providers.HttpProvider(provider))
 const options = {
     defaultAccount: '0xfe3b557e8fb62b89f4916b721be55ceb828dbd73',

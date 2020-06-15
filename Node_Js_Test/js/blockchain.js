@@ -1,5 +1,5 @@
 const Web3 = require('web3');
-const provider = 'http://localhost:8545';
+const provider = 'http://192.168.33.115:8545';
 const web3 = new Web3(new Web3.providers.HttpProvider(provider))
 
 const Admin = require('web3-eth-admin').Admin;
