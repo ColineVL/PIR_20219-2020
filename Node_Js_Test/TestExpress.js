@@ -145,17 +145,6 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('NewAccountInfo.ejs', {info:info});
     })
 
-    // TODO supprimer, c'est un test
-    .get('/Test/', function(req, res) {
-        let bla = Date.now();
-        //res.render('test.ejs', {bla:bla});
-    })
-
-    .get('/Test2/:id', async(req, res) => {
-        res.json(req.params.id + 2);
-        //res.render('test.ejs', {bla:bla});
-    })
-
     /* On redirige vers home si la page demandée n'est pas trouvée */
     .use(function(req, res, next){
         res.redirect('/');
