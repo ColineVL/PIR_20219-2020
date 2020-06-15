@@ -1,5 +1,5 @@
 /********************************
- * Items
+ * Main Items
  ********************************/
 
 const myAccountItem = {
@@ -47,6 +47,32 @@ const newAccountItem = {
     title: "Create an account",
     name: "newAccountItem",
 };
+
+/********************************
+ * Buy Items
+ ********************************/
+
+const forSaleItem = {
+    title: "See products for sale",
+    name: "forSaleItem",
+};
+
+const ongoingTransactionsItem = {
+    title: "Ongoing transactions",
+    name: "ongoingTransactionsItem"
+};
+
+const boughtDataItem = {
+    title: "Bought data",
+    name: "boughtDataItem"
+};
+
+
+/********************************
+ * Sell Items
+ ********************************/
+
+
 
 /********************************
  * Initialise Layout
