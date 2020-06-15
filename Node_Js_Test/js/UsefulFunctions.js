@@ -74,7 +74,7 @@ function displayNodeInfo(nodeID) {
 }
 
 /** Update of the blocks list **/
-setInterval(updateBlocksList, 1000);
+setInterval(updateBlocksList, 2000);
 
 function callbackBlockslist(param) {
     param = displayListBlocks(param);
