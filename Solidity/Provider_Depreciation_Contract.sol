@@ -66,7 +66,9 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     }
 
     /*
-    Dispute functions
+    ---------------------------------------------
+    Provider dispute functions
+    ---------------------------------------------
     */
 
     function getClientDisputes(uint _referenceId) onlyProvider(_referenceId) view external
@@ -92,6 +94,37 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
             }
         }
         return (clientDisputes, resolvedStatus);
+    }
+
+
+    event settledDispute(uint referenceId, address winner, address loser, uint funds);
+
+    function settleDispute(uint _referenceId, address payable client) onlyProvider(_referenceId) payable external {
+        require(msg.value == disputePrice);
+        // Checks that the client raised a dispute so that the provider won't pay for no reason
+        require(dataReferences[_referenceId].raisedDispute[client] == true);
+        // Checks that provider didn't already set the dispute so he does not withdraw same funds many times
+        require(dataReferences[_referenceId].resolvedDispute[client] == false);
+        dataReferences[_referenceId].resolvedDispute[client] = true;
+
+        // Total funds to be transferred to the rightful owner
+        uint funds = dataReferences[_referenceId].price + (disputePrice * 2);
+
+        // Computes the hashes of the encrypted key given by the provider
+        bytes32 checkEncryptedKeyHash = keccak256(abi.encodePacked(
+                dataReferences[_referenceId].referenceKey ^ dataReferences[_referenceId].keyDecoder[client]));
+
+        if(checkEncryptedKeyHash == dataReferences[_referenceId].encryptedKeyHash[client]){
+            // Sends funds to the provider
+            (msg.sender).transfer(funds);
+            emit settledDispute(_referenceId, msg.sender, client, funds);
+        }
+        else{
+            // Sends funds to the client
+            client.transfer(funds);
+            emit settledDispute(_referenceId, client, msg.sender, funds);
+        }
+
     }
 
 }

@@ -80,7 +80,9 @@ contract Depreciation_Contract is Ownable{
 
     /*
     TODO FUNCTIONS
-    Settle dispute
+    Settle dispute and
+    Provider send keys
+    Provider set public key
     */
 
 
