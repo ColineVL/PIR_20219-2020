@@ -64,11 +64,11 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     */
 
 
-    event raiseDispute(uint referenceId, address client, uint time);
+    event raiseDisputeEvent(uint referenceId, address client, uint time);
 
     function raiseDispute(uint _referenceId) payable external isClient {
         // Checks if provider hasn't already withdrew funds
-        require(withdrawnFunds == false);
+        require(dataReferences[_referenceId].withdrawnFunds == false);
 
         // Checks if the dispute fee is payed
         require(msg.value == disputePrice);
@@ -84,7 +84,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         // Adds the number of disputes
         dataReferences[_referenceId].clientsDispute = dataReferences[_referenceId].clientsDispute.add(1);
 
-    emit raiseDispute(_referenceId, msg.sender, now);
+    emit raiseDisputeEvent(_referenceId, msg.sender, now);
     }
 
 
