@@ -23,6 +23,8 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('home.ejs');
     })
 
+    /** Main gets **/
+
     .get('/connect/:privateKey', async (req, res) => {
         let account = await bc.getAccount(req.params.privateKey);
         res.json(account);
@@ -63,9 +65,23 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(receipt);
     })
 
-    /* Redirection to home if the page is not found */
+    /** Buy gets **/
+
+    .get('/getreferences/', async (req, res) => {
+        // Interroger la blockchain
+        let references = "salut";
+        res.json(references);
+    })
+
+    /** Sell gets **/
+
+
+
+    /** Redirection to home if the page is not found **/
     .use(function (req, res, next) {
         res.redirect('/');
     })
+
+
 
     .listen(8081);

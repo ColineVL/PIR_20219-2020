@@ -48,10 +48,15 @@ function displayTable(dict) {
     return html;
 }
 
+/********************************
+ * Accounts
+ ********************************/
+
 /** Load my account **/
 function callbackGetMyBalance(param) {
     $("#myAccount_value").html(param);
 }
+
 function loadMyAccount() {
     if (myAccount === "notConnected") {
         $('#myAccount_connected').hide();
@@ -70,11 +75,11 @@ function callbackConnect(account) {
         $('#myAccount_message').html(account["error"]);
     } else {
         let address = document.getElementById("myAccount_connection_address").value;
-        if (account.address == '0x' + address) {
+        if (account.address == address) {
             myAccount = account;
             loadMyAccount();
         } else {
-            $('#myAccount_message').html("Address and private key don't match.");
+            $('#myAccount_message').html("Address and private key don't match. Make sure your address begins with 0x.");
         }
     }
 }
@@ -87,62 +92,6 @@ function connect() {
 function disconnect() {
     myAccount = "notConnected";
     loadMyAccount();
-}
-
-/** Update of the nodelist **/
-setInterval(updateNodesList, 1000);
-
-function callbackNodelist(param) {
-    param = displayListNodes(param);
-    // document.getElementById("nodes_nodelist").innerHTML = param;
-    $("#nodes_list").html(param);
-}
-
-function updateNodesList() {
-    loadXMLDoc("updatenodelist", callbackNodelist);
-}
-
-/** Info about one node **/
-function callbackNodeInfo(param) {
-    param = displayTable(param);
-    $("#node_info").html(param);
-}
-
-function displayNodeInfo(nodeID) {
-    // TODO ici j'ai un problème
-    console.log(typeof nodeID + " " + nodeID);
-    // Ici nodeID est sous la forme number 4.98e+153
-    addItem(nodeInfoItem);
-    loadXMLDoc("getnodeinfo/" + nodeID, callbackNodeInfo);
-}
-
-/** Update of the blocks list **/
-setInterval(updateBlocksList, 2000);
-
-function callbackBlockslist(param) {
-    param = displayListBlocks(param);
-    $("#blocks_list").html(param);
-}
-
-function updateBlocksList() {
-    loadXMLDoc("updatelistBlocks", callbackBlockslist);
-}
-
-/** Info about one block **/
-function callbackBlockInfo(param) {
-    param = displayTable(param);
-    $("#block_info").html(param);
-}
-
-function displayBlockInfo(blocknumber) {
-    if (blocknumber === -1) {
-        blocknumber = document.getElementById("blocks_blockNumber").value;
-        blocknumber = Number(blocknumber);
-    }
-    if (blocknumber > 0) {
-        addItem(blockInfoItem);
-        loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo);
-    }
 }
 
 /** Creation of a new account **/
@@ -171,6 +120,71 @@ function getBalance() {
     }
 }
 
+/********************************
+ * Nodes
+ ********************************/
+
+/** Update of the nodelist **/
+setInterval(updateNodesList, 5000);
+function callbackNodelist(param) {
+    param = displayListNodes(param);
+    $("#nodes_list").html(param);
+}
+
+function updateNodesList() {
+    loadXMLDoc("updatenodelist", callbackNodelist);
+}
+
+/** Info about one node **/
+function callbackNodeInfo(param) {
+    param = displayTable(param);
+    $("#node_info").html(param);
+}
+
+function displayNodeInfo(nodeID) {
+    // TODO ici j'ai un problème
+    console.log(typeof nodeID + " " + nodeID);
+    // Ici nodeID est sous la forme number 4.98e+153
+    addItem(nodeInfoItem);
+    loadXMLDoc("getnodeinfo/" + nodeID, callbackNodeInfo);
+}
+
+/********************************
+ * Blocks
+ ********************************/
+
+/** Update of the blocks list **/
+setInterval(updateBlocksList, 2000);
+function callbackBlockslist(param) {
+    param = displayListBlocks(param);
+    $("#blocks_list").html(param);
+}
+
+function updateBlocksList() {
+    loadXMLDoc("updatelistBlocks", callbackBlockslist);
+}
+
+/** Info about one block **/
+function callbackBlockInfo(param) {
+    param = displayTable(param);
+    $("#block_info").html(param);
+}
+
+function displayBlockInfo(blocknumber) {
+    if (blocknumber === -1) {
+        blocknumber = document.getElementById("blocks_blockNumber").value;
+        blocknumber = Number(blocknumber);
+    }
+    if (blocknumber > 0) {
+        addItem(blockInfoItem);
+        loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo);
+    }
+}
+
+/********************************
+ * Transaction
+ ********************************/
+
 /** Make a transaction **/
 function callbackMakeTransaction(param) {
     addItem(resultTransactionItem);
@@ -183,9 +197,6 @@ function makeTransaction() {
     let receiver = document.getElementById("transaction_receiver").value;
     let privateKey = document.getElementById("transaction_privateKey").value;
     let amount = document.getElementById("transaction_amount").value;
-    console.log(receiver);
-    console.log(privateKey);
-    console.log(amount);
 
     if (sender === "" || receiver === "" || privateKey === "" || amount === "") {
         $("#transaction_message").html("Please complete the whole form.");
@@ -200,4 +211,19 @@ function makeTransaction() {
         };
         loadXMLDoc("maketransaction/" + JSON.stringify(json), callbackMakeTransaction);
     }
+}
+
+/********************************
+ * Buy menu
+ ********************************/
+
+/** Get references **/
+function callbackGetReferences(param) {
+    // Les mettre sous la bonne forme, les noms par ex, avec des liens
+    let references = param;
+    $("#forSale_list").html(references);
+}
+
+function getReferences() {
+    loadXMLDoc("getreferences", callbackGetReferences);
 }

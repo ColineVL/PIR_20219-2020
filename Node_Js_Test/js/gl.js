@@ -73,7 +73,6 @@ const boughtDataItem = {
  ********************************/
 
 
-
 /********************************
  * Initialise Layout
  ********************************/
@@ -92,6 +91,8 @@ const myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 /********************************
  * Register components and init
  ********************************/
+
+/** Main items **/
 
 myLayout.registerComponent('myAccountItem', function (container, state) {
     container.getElement().html(
@@ -207,6 +208,29 @@ myLayout.registerComponent('resultTransactionItem', function (container, state) 
     );
 });
 
+/** Buy items **/
+// myLayout.registerComponent('forSaleItem', function (container, state) {
+//     container.getElement().html(
+//         '<h2>Available products:</h2>' +
+//         '<ul id="forSale_list"></ul>'
+//     );
+// });
+//
+// myLayout.registerComponent('ongoingTransactionsItem', function (container, state) {
+//     container.getElement().html(
+//         '<h2>Transactions:</h2>' +
+//         '<ul id="ongoing_list"></ul>'
+//     );
+// });
+//
+// myLayout.registerComponent('boughtDataItem', function (container, state) {
+//     container.getElement().html(
+//         '<h2>Bought data:</h2>' +
+//         '<ul id="boughtData_list"></ul>'
+//     );
+// });
+
+/** Sell items **/
 
 myLayout.init();
 
@@ -231,15 +255,15 @@ function addMenuItem(newItem) {
             myLayout.root.contentItems[0].addChild(newItemConfig);
         }
     });
+
     if (newItem.name === "newAccountItem") {
-        element.click(function () {
-            createNewAccount();
-        });
+        element.click(createNewAccount);
     }
     if (newItem.name === "myAccountItem") {
-        element.click(function () {
-            loadMyAccount();
-        });
+        element.click(loadMyAccount);
+    }
+    if (newItem.name === "forSaleItem") {
+        element.click(getReferences);
     }
 }
 
@@ -248,11 +272,13 @@ addMenuItem(myAccountItem);
 addMenuItem(listBlocksItem);
 addMenuItem(listNodesItem);
 addMenuItem(checkABalanceItem);
-$('#menuContainer').append("<h2>Buy</h2>");
 addMenuItem(newAccountItem);
+$('#menuContainer').append("<h2>Buy</h2>");
+// addMenuItem(forSaleItem);
+// addMenuItem(ongoingTransactionsItem);
+// addMenuItem(boughtDataItem);
 $('#menuContainer').append("<h2>Sell</h2>");
 addMenuItem(createTransactionItem);
-
 
 
 /********************************
