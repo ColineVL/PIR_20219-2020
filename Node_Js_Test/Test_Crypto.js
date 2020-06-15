@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const assert = require('assert');
 
 // Generate Alice's keys...
-const alice = crypto.createDiffieHellman(2048);
+const alice = crypto.createDiffieHellman(1024);
 const aliceKey = alice.generateKeys();
 
 // Generate Bob's keys...
@@ -13,35 +13,37 @@ const bobKey = bob.generateKeys();
 const aliceSecret = alice.computeSecret(bobKey);
 const bobSecret = bob.computeSecret(aliceKey);
 
-console.log(bobKey.length)
-console.log(bobSecret.toString('hex').length)
-console.log(toBinary(bobSecret.toString('hex')).length);
-
-///////////////////////////////////////////////////////
-function toBinary(input) {
-    var result = "";
-    for (var i = 0; i < input.length; i++) {
-        var bin = input[i].charCodeAt().toString(2);
-        result += Array(8 - bin.length + 1).join("0") + bin;
-    }
-    return result;
-}
-
-function toAscii(input) {
-    var result = "";
-    var arr = input.match(/.{1,8}/g);
-    for (var i = 0; i < arr.length; i++) {
-        result += String.fromCharCode(parseInt(arr[i], 2).toString(10));
-    }
-    return result;
-}
-function OTP(key, message) {
-    var res = "";
-    for (let i = 0; i < message.length ; i++) {
-        res += key[i] ^ message[i];
-    }
-    return res;
-}
+console.log(alice);
+console.log(aliceKey);
+// console.log(bobKey.length)
+// console.log(bobSecret.toString('hex').length)
+// console.log(toBinary(bobSecret.toString('hex')).length);
+//
+// ///////////////////////////////////////////////////////
+// function toBinary(input) {
+//     var result = "";
+//     for (var i = 0; i < input.length; i++) {
+//         var bin = input[i].charCodeAt().toString(2);
+//         result += Array(8 - bin.length + 1).join("0") + bin;
+//     }
+//     return result;
+// }
+//
+// function toAscii(input) {
+//     var result = "";
+//     var arr = input.match(/.{1,8}/g);
+//     for (var i = 0; i < arr.length; i++) {
+//         result += String.fromCharCode(parseInt(arr[i], 2).toString(10));
+//     }
+//     return result;
+// }
+// function OTP(key, message) {
+//     var res = "";
+//     for (let i = 0; i < message.length ; i++) {
+//         res += key[i] ^ message[i];
+//     }
+//     return res;
+// }
 // let message = "This is a simple test. 2.5.2" ;
 // let m_bin = toBinary(message);
 // console.log(message);

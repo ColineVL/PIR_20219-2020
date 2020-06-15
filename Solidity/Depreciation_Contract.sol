@@ -71,7 +71,7 @@ contract Depreciation_Contract is Ownable{
     // Public will set up getters for each (easier for web3js call/send functions)
     DataReference[] public dataReferences;
 
-    uint disputePrice = 0.02 ether;
+    uint internal disputePrice = 0.02 ether;
 
     // Gives access to the smart contract's owner to change disputePrice since ether/USD pair is not stable
     function setDisputePrice(uint _price) onlyOwner external{
