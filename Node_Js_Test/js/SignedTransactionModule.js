@@ -25,7 +25,7 @@ module.exports = {
             nonce: web3.utils.numberToHex(txnCount),
             gasPrice: web3.utils.numberToHex(1500),
             gasLimit: web3.utils.numberToHex(4700000),
-            to: addressTo,
+            to: '0x' + addressTo,
             value: web3.utils.numberToHex(web3.utils.toWei(valueInEther.toString(), 'ether'))
         };
         const tx = new Tx(rawTx);

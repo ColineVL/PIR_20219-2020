@@ -50,7 +50,9 @@ function getNodeInfo(nodeID) {
  * Get the balance of an account
  ********************************/
 async function getBalance(addressToCheck) {
-    return web3.eth.getBalance(addressToCheck);
+    let bal = await web3.eth.getBalance(addressToCheck);
+    bal = web3.utils.fromWei(bal, 'ether');
+    return bal;
 }
 
 /********************************
@@ -59,8 +61,9 @@ async function getBalance(addressToCheck) {
 
 async function createTransaction(jsonInfo) {
     jsonInfo = JSON.parse(jsonInfo);
-    return SignedTransaction.createAndSendSignedTransaction(provider, jsonInfo["amount"], jsonInfo["privateKey"], jsonInfo["sender"], jsonInfo["receiver"]);
+    const receipt = await SignedTransaction.createAndSendSignedTransaction(provider, jsonInfo["amount"], jsonInfo["privateKey"], jsonInfo["sender"], jsonInfo["receiver"]);
     //,0.001,'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','0xfe3b557e8fb62b89f4916b721be55ceb828dbd73','0xf17f52151EbEF6C7334FAD080c5704D77216b732');
+    return receipt;
 }
 
 /********************************

@@ -2,9 +2,9 @@
 
 pragma solidity >=0.5.0 <0.7.0;
 
-import "./Depreciation_Contract.sol";
+import "./Client_Depreciation_Contract.sol";
 
-contract Provider_Depreciation_Contract is Depreciation_Contract {
+contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
 
     event NewDataReference(uint referenceId, address provider, uint price, uint contractEndTime, uint publicKey);
 

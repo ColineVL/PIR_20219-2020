@@ -4,59 +4,42 @@
 
 const listNodesItem = {
     title: "List of nodes",
-    text: "Clic on a node to get more info.",
-    list: [],
     name: "listNodesItem",
 };
 
 const nodeInfoItem = {
     title: "Node Info",
-    text: "Here are the details about the node.",
-    nodeinfo: "",
     name: "nodeInfoItem",
 };
 
 const listBlocksItem = {
     title: "List of last blocks",
-    text: "Clic on a block to get more info.",
-    list: [],
     name: "listBlocksItem",
 };
 
 const blockInfoItem = {
     title: "Block Info",
-    text: "Here are the details about the block.",
-    blockinfo: "",
     name: "blockInfoItem",
 };
 
 const createTransactionItem = {
     title: "Make a signed transaction",
-    form: {sender: "Sender:", privateKey: "Private Key:", receiver: "Receiver:", amount: "Amount:"},
     name: "createTransactionItem",
 };
 
 const resultTransactionItem = {
     title: "Transaction completed",
-    text: "Here is your receipt.",
-    receipt: "",
     name: "resultTransactionItem",
 };
 
 const checkABalanceItem = {
     title: "Check a balance",
-    address: "No account given yet!",
-    balance: "Nothing to show",
-    label: "Address to check",
     name: "checkABalanceItem",
 };
 
 
 const newAccountItem = {
     title: "Create an account",
-    text: "Here is your new account info! Take care to note them somewhere, they CANNOT BE RECOVERED.",
-    address: "",
-    privateKey: "",
     name: "newAccountItem",
 };
 
@@ -81,68 +64,83 @@ const myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
 myLayout.registerComponent('listNodesItem', function (container, state) {
     container.getElement().html(
-        '<h2>' + state.text + '</h2>' +
-        '<ul id="nodelist">' + state.list + '</ul>'
+        '<h2>Clic on a node to get more info.</h2>' +
+        '<ul id="nodes_list"></ul>'
     );
 });
 
 myLayout.registerComponent('nodeInfoItem', function (container, state) {
     container.getElement().html(
-        '<h2>' + state.text + '</h2>' +
-        '<div id="nodeinfo">' + state.nodeinfo + '</div>'
+        '<h2>Here are the details about the node.</h2>' +
+        '<div id="node_info"></div>'
     );
 });
 
 myLayout.registerComponent('listBlocksItem', function (container, state) {
-    // let listToDisplay = displayList(state.list);
     container.getElement().html(
-        '<h2 id="text">' + state.text + '</h2>' +
-        '<ul id="blockslist">' + state.list + '</ul>'
+        '<h2>Clic on a block to get more info.</h2>' +
+        '<ul id="blocks_list"></ul>' +
+        '<p>Search by block number.</p>' +
+        '<input id="blocks_blockNumber" type="string">' +
+        '<button onclick="displayBlockInfo(-1)">Search block</button>'
     );
 });
 
 myLayout.registerComponent('blockInfoItem', function (container, state) {
     container.getElement().html(
-        '<h2>' + state.text + '</h2>' +
-        '<div id="blockinfo">' + state.blockinfo + '</div>'
+        '<h2>Here are the details about the block.</h2>' +
+        '<div id="block_info"></div>'
     );
 });
 
 myLayout.registerComponent('newAccountItem', function (container, state) {
     container.getElement().html(
-        '<h2>' + state.text + '</h2>' +
-        '<p id="newaddress">' + state.address + '</p>' +
-        '<p id="newprivatekey">' + state.privateKey + '</p>'
+        '<h2>Here is your new account info! Take care to note them somewhere, they CANNOT BE RECOVERED.</h2>' +
+        '<p>Your address:</p>' +
+        '<p id="newAccount_address"></p>' +
+        '<p>Your private key:</p>' +
+        '<p id="newAccount_privatekey"></p>'
     );
 });
 
 myLayout.registerComponent('checkABalanceItem', function (container, state) {
     container.getElement().html(
-        '<h2 id="address">' + state.address + '</h2>' +
-        '<p id="balance">' + state.balance + '</p>' +
-        '<button onclick="getBalance()">Enter an address to get a balance</button>'
+        '<h2>Enter an address to get a balance.</h2>' +
+        '<input id="balance_addressAsked" type="string">' +
+        '<button onclick="getBalance()">Check balance</button>' +
+        '<p id="balance_message"></p>' +
+        '<table id="balance_table">' +
+        '<tr>' +
+        '<td>Address</td>' +
+        '<td id="balance_address">/</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Balance (in Ether)</td>' +
+        '<td id="balance_value">/</td>' +
+        '</tr>' +
+        '</table>'
     );
 });
 
-
 myLayout.registerComponent('createTransactionItem', function (container, state) {
     let htmlform = "";
-    for (let value in state.form) {
-        htmlform += "<label for=" + value + ">" + state.form[value] + "</label>";
+    const form = {transaction_sender: "Sender:", transaction_privateKey: "Private Key:", transaction_receiver: "Receiver:", transaction_amount: "Amount:"};
+    for (let value in form) {
+        htmlform += "<label for=" + value + ">" + form[value] + "</label>";
         htmlform += "<input id=" + value + " type='string'>";
         htmlform += "<br>";
     }
     htmlform += "<button onclick='makeTransaction()'>Submit</button>";
     container.getElement().html(
-        '<div id="message"></div>' +
-        '<div id="form">' + htmlform + '</div>'
+        '<p id="transaction_message"></p>' +
+        '<div>' + htmlform + '</div>'
     );
 });
 
 myLayout.registerComponent('resultTransactionItem', function (container, state) {
     container.getElement().html(
-        '<h2>' + state.text + '</h2>' +
-        '<div id="receipt">' + state.receipt + '</div>'
+        '<h2>Here is your receipt.</h2>' +
+        '<div id="resultTransaction_receipt"></div>'
     );
 });
 
@@ -176,12 +174,14 @@ function addMenuItem(newItem) {
         });
     }
 }
+
 $('#menuContainer').append("<h1>Menu</h1>");
+addMenuItem(listBlocksItem);
 addMenuItem(listNodesItem);
 addMenuItem(checkABalanceItem);
 addMenuItem(createTransactionItem);
 addMenuItem(newAccountItem);
-addMenuItem(listBlocksItem);
+
 
 /********************************
  * Create items out of the menu
