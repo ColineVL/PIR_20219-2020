@@ -47,7 +47,7 @@ contract Depreciation_Contract is Ownable{
         address[] clients;
 
         // Needed to track how many funds are undisputed and what can the provider withdraw
-        uint clientsDispute;
+        uint clientDisputes;
 
         // Needed to give access for a client to call dispute function or recall funds
         mapping (address => bool) isClient;
@@ -80,7 +80,9 @@ contract Depreciation_Contract is Ownable{
 
     /*
     TODO FUNCTIONS
-    Settle dispute
+    Settle dispute and
+    Provider send keys
+    Provider set public key
     */
 
 
