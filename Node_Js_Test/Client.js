@@ -74,6 +74,8 @@ app.use('/public', express.static(__dirname + '/public'))
             };
     })
 
+    /************************************  BUYER PART ***************************/
+
     /* Interface for a buyer */
     .get('/BuyerMenu', async (req, res) => {
         if (Account) {
@@ -90,6 +92,13 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('ForSale.ejs',{account : Account, Ids: Ids});
     })
 
+    // .get('/Buy', async (req, res) => {
+    //     let Id = []; // TODO: put correct Id
+    //     res.render('ForSale.ejs',{account : Account, Ids: Ids});
+    // })
+
+
+    /************************************  SELLER PART ***************************/
     /* If user asks for an innexistant view, we redirect him to the homepage */
     .use(function(req, res, next){
         res.redirect('/');
