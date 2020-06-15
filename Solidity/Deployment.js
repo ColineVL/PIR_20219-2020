@@ -5,7 +5,7 @@ let fs = require("fs");
 
 
 // Web3 Initialisation
-var provider = 'http://192.168.33.115:8545';
+var provider = 'http://192.168.33.102:8545';
 console.log("******************************************");
 console.log("Using provider : " + provider);
 console.log("******************************************");

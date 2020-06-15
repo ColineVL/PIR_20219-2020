@@ -3,10 +3,9 @@ module.exports = {
         const result = [];
         endTime = endTime || 0; //TODO Talk about endtime
         priceMax =priceMax || 0;
-        provider = provider || "*";
         const options = {
             fromBlock: 0,
-            filter: {price: [0,priceMax], provider: provider, contractEndTime: [0,endTime]}
+            filter: {price: [0,priceMax], contractEndTime: [0,endTime]}
         }
         contractws.events.NewDataReference({options})
         .on('data', function(event){
