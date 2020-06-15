@@ -209,26 +209,26 @@ myLayout.registerComponent('resultTransactionItem', function (container, state) 
 });
 
 /** Buy items **/
-// myLayout.registerComponent('forSaleItem', function (container, state) {
-//     container.getElement().html(
-//         '<h2>Available products:</h2>' +
-//         '<ul id="forSale_list"></ul>'
-//     );
-// });
-//
-// myLayout.registerComponent('ongoingTransactionsItem', function (container, state) {
-//     container.getElement().html(
-//         '<h2>Transactions:</h2>' +
-//         '<ul id="ongoing_list"></ul>'
-//     );
-// });
-//
-// myLayout.registerComponent('boughtDataItem', function (container, state) {
-//     container.getElement().html(
-//         '<h2>Bought data:</h2>' +
-//         '<ul id="boughtData_list"></ul>'
-//     );
-// });
+myLayout.registerComponent('forSaleItem', function (container, state) {
+    container.getElement().html(
+        '<h2>Available products:</h2>' +
+        '<ul id="forSale_list"></ul>'
+    );
+});
+
+myLayout.registerComponent('ongoingTransactionsItem', function (container, state) {
+    container.getElement().html(
+        '<h2>Transactions:</h2>' +
+        '<ul id="ongoing_list"></ul>'
+    );
+});
+
+myLayout.registerComponent('boughtDataItem', function (container, state) {
+    container.getElement().html(
+        '<h2>Bought data:</h2>' +
+        '<ul id="boughtData_list"></ul>'
+    );
+});
 
 /** Sell items **/
 
@@ -274,9 +274,9 @@ addMenuItem(listNodesItem);
 addMenuItem(checkABalanceItem);
 addMenuItem(newAccountItem);
 $('#menuContainer').append("<h2>Buy</h2>");
-// addMenuItem(forSaleItem);
-// addMenuItem(ongoingTransactionsItem);
-// addMenuItem(boughtDataItem);
+addMenuItem(forSaleItem);
+addMenuItem(ongoingTransactionsItem);
+addMenuItem(boughtDataItem);
 $('#menuContainer').append("<h2>Sell</h2>");
 addMenuItem(createTransactionItem);
 
