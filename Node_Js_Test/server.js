@@ -23,6 +23,11 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('home.ejs');
     })
 
+    .get('/connect/:privateKey', async (req, res) => {
+        let account = await bc.getAccount(req.params.privateKey);
+        res.json(account);
+    })
+
     .get('/updatenodelist/', async (req, res) => {
         let liste = bc.getNodelistIDS();
         res.json(liste);

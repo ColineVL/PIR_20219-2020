@@ -26,6 +26,30 @@ let blockslistNUMBERS = [];
 const nbBlocksToPrint = 5;
 
 /********************************
+ * Accounts
+ ********************************/
+
+async function getBalance(addressToCheck) {
+    let bal = await web3.eth.getBalance(addressToCheck);
+    bal = web3.utils.fromWei(bal, 'ether');
+    return bal;
+}
+
+async function createNewAccount() {
+    return web3.eth.accounts.create();
+}
+
+async function getAccount(privateKey) {
+    try {
+        let account = web3.eth.accounts.privateKeyToAccount(privateKey);
+        return account;
+    }
+    catch(err) {
+        return {error:"Bad private key."};
+    }
+}
+
+/********************************
  * Nodes
  ********************************/
 setInterval(refreshNodesList, 2000);
@@ -47,15 +71,6 @@ function getNodeInfo(nodeID) {
 }
 
 /********************************
- * Get the balance of an account
- ********************************/
-async function getBalance(addressToCheck) {
-    let bal = await web3.eth.getBalance(addressToCheck);
-    bal = web3.utils.fromWei(bal, 'ether');
-    return bal;
-}
-
-/********************************
  * Create a transaction
  ********************************/
 
@@ -64,14 +79,6 @@ async function createTransaction(jsonInfo) {
     const receipt = await SignedTransaction.createAndSendSignedTransaction(provider, jsonInfo["amount"], jsonInfo["privateKey"], jsonInfo["sender"], jsonInfo["receiver"]);
     //,0.001,'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','0xfe3b557e8fb62b89f4916b721be55ceb828dbd73','0xf17f52151EbEF6C7334FAD080c5704D77216b732');
     return receipt;
-}
-
-/********************************
- * Create a new account
- ********************************/
-
-async function createNewAccount() {
-    return web3.eth.accounts.create();
 }
 
 /********************************
@@ -123,6 +130,7 @@ module.exports = {
     getBlockInfo,
     getNodeInfo,
     getBalance,
+    getAccount,
     createNewAccount,
     createTransaction,
 };

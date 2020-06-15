@@ -2,6 +2,11 @@
  * Items
  ********************************/
 
+const myAccountItem = {
+    title: "My account",
+    name: "myAccountItem",
+};
+
 const listNodesItem = {
     title: "List of nodes",
     name: "listNodesItem",
@@ -62,6 +67,33 @@ const myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
  * Register components and init
  ********************************/
 
+myLayout.registerComponent('myAccountItem', function (container, state) {
+    container.getElement().html(
+        '<div id="myAccount_connected">' +
+        '<h2>Current account connected:</h2>' +
+        '<table id="myAccount_table">' +
+        '<tr>' +
+        '<td>Address</td>' +
+        '<td id="myAccount_address">/</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Funds (in ETH)</td>' +
+        '<td id="myAccount_value">/</td>' +
+        '</tr>' +
+        '</table>' +
+        '<button onclick="disconnect()">Sign out</button>' +
+        '</div>' +
+        '<div id="myAccount_notConnected">' +
+        '<p id="myAccount_message">You are not connected.</p>' +
+        '<p>Your address</p>' +
+        '<input id="myAccount_connection_address" type="string">' +
+        '<p>Your private key</p>' +
+        '<input id="myAccount_connection_privateKey" type="string">' +
+        '<button onclick="connect()">Sign in</button>' +
+        '</div>'
+    );
+});
+
 myLayout.registerComponent('listNodesItem', function (container, state) {
     container.getElement().html(
         '<h2>Clic on a node to get more info.</h2>' +
@@ -115,7 +147,7 @@ myLayout.registerComponent('checkABalanceItem', function (container, state) {
         '<td id="balance_address">/</td>' +
         '</tr>' +
         '<tr>' +
-        '<td>Balance (in Ether)</td>' +
+        '<td>Balance (in ETH)</td>' +
         '<td id="balance_value">/</td>' +
         '</tr>' +
         '</table>'
@@ -124,7 +156,12 @@ myLayout.registerComponent('checkABalanceItem', function (container, state) {
 
 myLayout.registerComponent('createTransactionItem', function (container, state) {
     let htmlform = "";
-    const form = {transaction_sender: "Sender:", transaction_privateKey: "Private Key:", transaction_receiver: "Receiver:", transaction_amount: "Amount:"};
+    const form = {
+        transaction_sender: "Sender:",
+        transaction_privateKey: "Private Key:",
+        transaction_receiver: "Receiver:",
+        transaction_amount: "Amount:"
+    };
     for (let value in form) {
         htmlform += "<label for=" + value + ">" + form[value] + "</label>";
         htmlform += "<input id=" + value + " type='string'>";
@@ -173,14 +210,23 @@ function addMenuItem(newItem) {
             createNewAccount();
         });
     }
+    if (newItem.name === "myAccountItem") {
+        element.click(function () {
+            loadMyAccount();
+        });
+    }
 }
 
 $('#menuContainer').append("<h1>Menu</h1>");
+addMenuItem(myAccountItem);
 addMenuItem(listBlocksItem);
 addMenuItem(listNodesItem);
 addMenuItem(checkABalanceItem);
-addMenuItem(createTransactionItem);
+$('#menuContainer').append("<h2>Buy</h2>");
 addMenuItem(newAccountItem);
+$('#menuContainer').append("<h2>Sell</h2>");
+addMenuItem(createTransactionItem);
+
 
 
 /********************************

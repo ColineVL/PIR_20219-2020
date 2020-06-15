@@ -1,3 +1,6 @@
+/** Variables **/
+let myAccount = "notConnected";
+
 /** To get a response from the server **/
 function loadXMLDoc(page, callback) {
     const xhttp = new XMLHttpRequest();
@@ -14,7 +17,7 @@ function loadXMLDoc(page, callback) {
 function displayListBlocks(list) {
     let html = "";
     list.forEach(function (blockNumber) {
-        html += "<div onclick=displayBlockInfo(" + blockNumber + ")>" + '<li>' + blockNumber + '</li>' + "</div>";
+        html += "<li onclick=displayBlockInfo(" + blockNumber + ")>" + blockNumber + "</li>";
     });
     return html;
 }
@@ -22,7 +25,7 @@ function displayListBlocks(list) {
 function displayListNodes(list) {
     let html = "";
     list.forEach(function (nodeID) {
-        html += "<div onclick=displayNodeInfo(" + nodeID + ")>" + '<li>' + nodeID + '</li>' + "</div>";
+        html += "<li onclick=displayNodeInfo(" + nodeID + ")>" + nodeID + "</li>";
     });
     // Ici nodeID est bien sous la forme 0x50295... en string
 
@@ -45,6 +48,46 @@ function displayTable(dict) {
     return html;
 }
 
+/** Load my account **/
+function callbackGetMyBalance(param) {
+    $("#myAccount_value").html(param);
+}
+function loadMyAccount() {
+    if (myAccount === "notConnected") {
+        $('#myAccount_connected').hide();
+        $('#myAccount_notConnected').show();
+    } else {
+        $('#myAccount_notConnected').hide();
+        $('#myAccount_connected').show();
+        $('#myAccount_address').html(myAccount.address);
+        loadXMLDoc("getbalance/" + myAccount.address, callbackGetMyBalance);
+    }
+}
+
+/** Connection **/
+function callbackConnect(account) {
+    if (account["error"]) {
+        $('#myAccount_message').html(account["error"]);
+    } else {
+        let address = document.getElementById("myAccount_connection_address").value;
+        if (account.address == '0x' + address) {
+            myAccount = account;
+            loadMyAccount();
+        } else {
+            $('#myAccount_message').html("Address and private key don't match.");
+        }
+    }
+}
+
+function connect() {
+    let privateKey = document.getElementById("myAccount_connection_privateKey").value;
+    loadXMLDoc("connect/" + privateKey, callbackConnect);
+}
+
+function disconnect() {
+    myAccount = "notConnected";
+    loadMyAccount();
+}
 
 /** Update of the nodelist **/
 setInterval(updateNodesList, 1000);
