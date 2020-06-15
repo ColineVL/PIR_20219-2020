@@ -91,7 +91,15 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/ForSale', async (req, res) => {
         let Ids =await EventsModule.GetAvailableRefs(contractws); // TODO: Verify FUNCTION HERE TO GET REFERENCES
         console.log(Object.keys(Ids[0].returnValues));
-        res.render('ForSale.ejs',{account : Account, Ids: Ids[0].returnValues});
+        res.render('ForSale.ejs',{account : Account, Ids: Ids[0].returnValues.referenceId});
+    })
+
+    .get('/ProductId//', async (req, res) => {
+
+        const id = req.query.id ;
+
+        console.log(bal);
+        res.render('node.ejs', {node: node});
     })
 
     // .get('/Buy', async (req, res) => {
