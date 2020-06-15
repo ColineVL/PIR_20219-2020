@@ -82,7 +82,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         dataReferences[_referenceId].raisedDispute[msg.sender] = true;
 
         // Adds the number of disputes
-        dataReferences[_referenceId].clientsDispute = dataReferences[_referenceId].clientsDispute.add(1);
+        dataReferences[_referenceId].clientDisputes = dataReferences[_referenceId].clientDisputes.add(1);
 
     emit raiseDisputeEvent(_referenceId, msg.sender, now);
     }
