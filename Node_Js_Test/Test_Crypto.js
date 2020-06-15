@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const assert = require('assert');
 
 // Generate Alice's keys...
-const alice = crypto.createDiffieHellman(1024);
+const alice = crypto.createDiffieHellman(2048);
 const aliceKey = alice.generateKeys();
 
 // Generate Bob's keys...
@@ -13,57 +13,11 @@ const bobKey = bob.generateKeys();
 const aliceSecret = alice.computeSecret(bobKey);
 const bobSecret = bob.computeSecret(aliceKey);
 
-console.log(bobSecret.toString());
-// // OK
-// // console.log(assert.strictEqual(aliceSecret.toString('hex'), bobSecret.toString('hex')));
-//
-//
-// /////////////////////////////////////:
-// // Defining key
-// const key = crypto.randomBytes(32);
-//
-// // Defining iv
-// const iv = crypto.randomBytes(16);
-// const iv2 = crypto.randomBytes(16);
-//
-// // An encrypt function
-// function encrypt(text) {
-//     // Creating Cipheriv with its parameter
-//     let cipher = crypto.createCipheriv(
-//         'aes-256-cbc', Buffer.from(key), iv);
-//     // Updating text
-//     let encrypted = cipher.update(text);
-//     // Using concatenation
-//     encrypted = Buffer.concat([encrypted, cipher.final()]);
-//     // Returning iv and encrypted data
-//     return { iv: iv.toString('hex'),
-//         encryptedData: encrypted.toString('hex') };
-// }
-// // A decrypt function
-// function decrypt(text) {
-//
-//     let iv = Buffer.from(text.iv, 'hex');
-//     let encryptedText =
-//         Buffer.from(text.encryptedData, 'hex');
-//
-//     // Creating Decipher
-//     let decipher = crypto.createDecipheriv(
-//         'aes-256-cbc', Buffer.from(key), iv);
-//
-//     // Updating encrypted text
-//     let decrypted = decipher.update(encryptedText);
-//     decrypted = Buffer.concat([decrypted, decipher.final()]);
-//
-//     // returns data after decryption
-//     return decrypted.toString();
-// }
-//
-// // Displays output
-// var output = encrypt("GeeksforGeeks");
-// console.log(output);
-// var de = decrypt(output);
-// console.log(de);
+console.log(bobKey.length)
+console.log(bobSecret.toString('hex').length)
+console.log(toBinary(bobSecret.toString('hex')).length);
 
+///////////////////////////////////////////////////////
 function toBinary(input) {
     var result = "";
     for (var i = 0; i < input.length; i++) {
@@ -81,14 +35,6 @@ function toAscii(input) {
     }
     return result;
 }
-
-function slice(input, len) {
-    var res = "";
-    for (let i = 0; i < len ; i++) {
-        res += input[i];
-    }
-    return res;
-}
 function OTP(key, message) {
     var res = "";
     for (let i = 0; i < message.length ; i++) {
@@ -96,21 +42,21 @@ function OTP(key, message) {
     }
     return res;
 }
-let message = "This is a simple test. 2.5.2" ;
-let m_bin = toBinary(message);
-console.log(message);
-console.log(m_bin.length);
-
-console.log(bobSecret.toString().length)
-let OTPKey = toBinary(bobSecret.toString('hex'));
-let sliced = slice(OTPKey,m_bin.length)
-
-let crypted_m = OTP(OTPKey, m_bin);
-
-// console.log("key :" + OTPKey);
-console.log("crypted :" + toAscii(crypted_m))
-
-let decrypted_m = OTP(OTPKey, crypted_m);
-
-console.log("decrypted :" + toAscii(decrypted_m))
+// let message = "This is a simple test. 2.5.2" ;
+// let m_bin = toBinary(message);
+// console.log(message);
+// console.log(m_bin.length);
+//
+// console.log(bobSecret.toString().length)
+// let OTPKey = toBinary(bobSecret.toString('hex'));
+//
+//
+// let crypted_m = OTP(OTPKey, m_bin);
+//
+// // console.log("key :" + OTPKey);
+// console.log("crypted :" + toAscii(crypted_m))
+//
+// let decrypted_m = OTP(OTPKey, crypted_m);
+//
+// console.log("decrypted :" + toAscii(decrypted_m))
 
