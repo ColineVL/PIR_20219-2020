@@ -42,15 +42,15 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     event encryptedKeyHash(uint referenceId, address client, bytes32 encryptedKeyHash);
 
 
-    function setEncryptedHashedKey(uint _referenceId, bytes32 _encryptedKeyHash) external isClient {
+    function setEncryptedHashedKey(uint _referenceId, bytes32 _encryptedKeyHash) external isClient (_referenceId) {
 
         /*
         Condition to allow the client to provide once the hash of the encrypted key
         Necessary to avoid confusion for the provider or changing the value after the provider has posted the decoder
         */
 
-        if (dataReferences[msg.sender].encryptedKeyHash == 0) {
-            dataReferences[msg.sender].encryptedKeyHash == _encryptedKeyHash;
+        if (dataReferences[_referenceId].encryptedKeyHash[msg.sender] == 0) {
+            dataReferences[_referenceId].encryptedKeyHash[msg.sender] == _encryptedKeyHash;
         }
 
         emit encryptedKeyHash(_referenceId, msg.sender, _encryptedKeyHash);
@@ -64,11 +64,11 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     */
 
 
-    event raiseDispute(uint referenceId, address client, uint time);
+    event raiseDisputeEvent(uint referenceId, address client, uint time);
 
-    function raiseDispute(uint _referenceId) payable external isClient {
+    function raiseDispute(uint _referenceId) payable external isClient(_referenceId) {
         // Checks if provider hasn't already withdrew funds
-        require(withdrawnFunds == false);
+        require(dataReferences[_referenceId].withdrawnFunds == false);
 
         // Checks if the dispute fee is payed
         require(msg.value == disputePrice);
@@ -84,7 +84,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         // Adds the number of disputes
         dataReferences[_referenceId].clientsDispute = dataReferences[_referenceId].clientsDispute.add(1);
 
-    emit raiseDispute(_referenceId, msg.sender, now);
+    emit raiseDisputeEvent(_referenceId, msg.sender, now);
     }
 
 
@@ -96,7 +96,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         require(dataReferences[_referenceId].raisedDispute[msg.sender] == true);
 
         // Checks if the time delay for the provider to respond is respected
-        require(now > dataReferences[_referenceId].timeOfDispute + 3 days);
+        require(now > dataReferences[_referenceId].timeOfDispute[msg.sender] + 3 days);
 
         // Checks if the client or provider hasn't withdrew funds
         require(dataReferences[_referenceId].resolvedDispute[msg.sender] == false);
@@ -105,7 +105,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         dataReferences[_referenceId].resolvedDispute[msg.sender] = true;
 
         // Refunding to client
-        uint funds = dataReferences[_referenceId].price + this.disputePrice;
+        uint funds = dataReferences[_referenceId].price + disputePrice;
         (msg.sender).transfer(funds);
 
         emit withdrawRefund(_referenceId, msg.sender, funds);
