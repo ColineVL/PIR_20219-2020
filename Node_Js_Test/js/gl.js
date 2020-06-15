@@ -65,28 +65,31 @@ const myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 myLayout.registerComponent('listNodesItem', function (container, state) {
     container.getElement().html(
         '<h2>Clic on a node to get more info.</h2>' +
-        '<ul id="nodelist"></ul>'
+        '<ul id="nodes_list"></ul>'
     );
 });
 
 myLayout.registerComponent('nodeInfoItem', function (container, state) {
     container.getElement().html(
         '<h2>Here are the details about the node.</h2>' +
-        '<div id="nodeinfo"></div>'
+        '<div id="node_info"></div>'
     );
 });
 
 myLayout.registerComponent('listBlocksItem', function (container, state) {
     container.getElement().html(
-        '<h2 id="text">Clic on a block to get more info.</h2>' +
-        '<ul id="blockslist"></ul>'
+        '<h2>Clic on a block to get more info.</h2>' +
+        '<ul id="blocks_list"></ul>' +
+        '<p>Search by block number.</p>' +
+        '<input id="blocks_blockNumber" type="string">' +
+        '<button onclick="displayBlockInfo(-1)">Search block</button>'
     );
 });
 
 myLayout.registerComponent('blockInfoItem', function (container, state) {
     container.getElement().html(
         '<h2>Here are the details about the block.</h2>' +
-        '<div id="blockinfo"></div>'
+        '<div id="block_info"></div>'
     );
 });
 
@@ -94,26 +97,26 @@ myLayout.registerComponent('newAccountItem', function (container, state) {
     container.getElement().html(
         '<h2>Here is your new account info! Take care to note them somewhere, they CANNOT BE RECOVERED.</h2>' +
         '<p>Your address:</p>' +
-        '<p id="newaddress"></p>' +
+        '<p id="newAccount_address"></p>' +
         '<p>Your private key:</p>' +
-        '<p id="newprivatekey"></p>'
+        '<p id="newAccount_privatekey"></p>'
     );
 });
 
 myLayout.registerComponent('checkABalanceItem', function (container, state) {
     container.getElement().html(
         '<h2>Enter an address to get a balance.</h2>' +
-        '<input id="addressToCheck" type="string">' +
+        '<input id="balance_addressAsked" type="string">' +
         '<button onclick="getBalance()">Check balance</button>' +
-        '<p id="messageBalance"></p>' +
-        '<table>' +
+        '<p id="balance_message"></p>' +
+        '<table id="balance_table">' +
         '<tr>' +
         '<td>Address</td>' +
-        '<td id="address"></td>' +
+        '<td id="balance_address">/</td>' +
         '</tr>' +
         '<tr>' +
         '<td>Balance (in Ether)</td>' +
-        '<td id="balance"></td>' +
+        '<td id="balance_value">/</td>' +
         '</tr>' +
         '</table>'
     );
@@ -121,7 +124,7 @@ myLayout.registerComponent('checkABalanceItem', function (container, state) {
 
 myLayout.registerComponent('createTransactionItem', function (container, state) {
     let htmlform = "";
-    const form = {sender: "Sender:", privateKey: "Private Key:", receiver: "Receiver:", amount: "Amount:"};
+    const form = {transaction_sender: "Sender:", transaction_privateKey: "Private Key:", transaction_receiver: "Receiver:", transaction_amount: "Amount:"};
     for (let value in form) {
         htmlform += "<label for=" + value + ">" + form[value] + "</label>";
         htmlform += "<input id=" + value + " type='string'>";
@@ -129,15 +132,15 @@ myLayout.registerComponent('createTransactionItem', function (container, state) 
     }
     htmlform += "<button onclick='makeTransaction()'>Submit</button>";
     container.getElement().html(
-        '<p id="message"></p>' +
-        '<div id="form">' + htmlform + '</div>'
+        '<p id="transaction_message"></p>' +
+        '<div>' + htmlform + '</div>'
     );
 });
 
 myLayout.registerComponent('resultTransactionItem', function (container, state) {
     container.getElement().html(
         '<h2>Here is your receipt.</h2>' +
-        '<div id="receipt"></div>'
+        '<div id="resultTransaction_receipt"></div>'
     );
 });
 
@@ -173,11 +176,12 @@ function addMenuItem(newItem) {
 }
 
 $('#menuContainer').append("<h1>Menu</h1>");
+addMenuItem(listBlocksItem);
 addMenuItem(listNodesItem);
 addMenuItem(checkABalanceItem);
 addMenuItem(createTransactionItem);
 addMenuItem(newAccountItem);
-addMenuItem(listBlocksItem);
+
 
 /********************************
  * Create items out of the menu

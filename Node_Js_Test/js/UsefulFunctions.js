@@ -33,7 +33,7 @@ String.prototype.capitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
-function displayDict(dict) {
+function displayTable(dict) {
     let html = "<table><tbody>";
     for (let key in dict) {
         html += "<tr>";
@@ -51,7 +51,8 @@ setInterval(updateNodesList, 1000);
 
 function callbackNodelist(param) {
     param = displayListNodes(param);
-    document.getElementById("nodelist").innerHTML = param;
+    // document.getElementById("nodes_nodelist").innerHTML = param;
+    $("#nodes_list").html(param);
 }
 
 function updateNodesList() {
@@ -60,25 +61,16 @@ function updateNodesList() {
 
 /** Info about one node **/
 function callbackNodeInfo(param) {
-    param = displayDict(param);
-    document.getElementById("nodeinfo").innerHTML = param;
+    param = displayTable(param);
+    $("#node_info").html(param);
 }
 
 function displayNodeInfo(nodeID) {
+    // TODO ici j'ai un problème
     console.log(typeof nodeID + " " + nodeID);
     // Ici nodeID est sous la forme number 4.98e+153
     addItem(nodeInfoItem);
     loadXMLDoc("getnodeinfo/" + nodeID, callbackNodeInfo);
-}
-
-/** Creation of a new account **/
-function callbackNewAccount(param) {
-    document.getElementById("newaddress").innerHTML = param[0];
-    document.getElementById("newprivatekey").innerHTML = param[1];
-}
-
-function createNewAccount() {
-    loadXMLDoc("newaccount", callbackNewAccount);
 }
 
 /** Update of the blocks list **/
@@ -86,7 +78,7 @@ setInterval(updateBlocksList, 1000);
 
 function callbackBlockslist(param) {
     param = displayListBlocks(param);
-    document.getElementById("blockslist").innerHTML = param;
+    $("#blocks_list").html(param);
 }
 
 function updateBlocksList() {
@@ -95,48 +87,68 @@ function updateBlocksList() {
 
 /** Info about one block **/
 function callbackBlockInfo(param) {
-    param = displayDict(param);
-    document.getElementById("blockinfo").innerHTML = param;
+    param = displayTable(param);
+    $("#block_info").html(param);
 }
 
 function displayBlockInfo(blocknumber) {
-    addItem(blockInfoItem);
-    loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo);
+    if (blocknumber === -1) {
+        blocknumber = document.getElementById("blocks_blockNumber").value;
+        blocknumber = Number(blocknumber);
+    }
+    if (blocknumber > 0) {
+        addItem(blockInfoItem);
+        loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo);
+    }
+}
+
+/** Creation of a new account **/
+function callbackNewAccount(param) {
+    $("#newAccount_address").html(param[0]);
+    $("#newAccount_privatekey").html(param[1]);
+}
+
+function createNewAccount() {
+    loadXMLDoc("newaccount", callbackNewAccount);
 }
 
 /** Get the balance of an account **/
 function callbackGetBalance(param) {
-    document.getElementById("balance").innerHTML = param;
+    $("#balance_value").html(param);
 }
 
 function getBalance() {
-    let addressToCheck = document.getElementById("addressToCheck").value;
+    let addressToCheck = document.getElementById("balance_addressAsked").value;
     if (addressToCheck === "") {
-        document.getElementById("messageBalance").innerHTML = "Please enter an address";
+        $("#balance_message").html("Please enter an address");
     } else {
-        document.getElementById("messageBalance").innerHTML = "";
+        $("#balance_message").hide();
         loadXMLDoc("getbalance/" + addressToCheck, callbackGetBalance);
-        document.getElementById("address").innerHTML = addressToCheck;
+        $("#balance_address").html(addressToCheck);
     }
 }
 
 /** Make a transaction **/
 function callbackMakeTransaction(param) {
     addItem(resultTransactionItem);
-    param = displayDict(param);
-    document.getElementById("receipt").innerHTML = param;
+    param = displayTable(param);
+    $("#resultTransaction_receipt").html(param);
 }
 
 function makeTransaction() {
-    let sender = document.getElementById("sender").value;
-    let receiver = document.getElementById("receiver").value;
-    let privateKey = document.getElementById("privateKey").value;
-    let amount = document.getElementById("amount").value;
+    let sender = document.getElementById("transaction_sender").value;
+    let receiver = document.getElementById("transaction_receiver").value;
+    let privateKey = document.getElementById("transaction_privateKey").value;
+    let amount = document.getElementById("transaction_amount").value;
+    console.log(receiver);
+    console.log(privateKey);
+    console.log(amount);
+
     if (sender === "" || receiver === "" || privateKey === "" || amount === "") {
-        document.getElementById("message").innerHTML = "Please complete the whole form.";
+        $("#transaction_message").html("Please complete the whole form.");
     } else {
         // TODO si la transaction échoue ?
-        document.getElementById("message").innerHTML = "Transaction completed!";
+        $("#transaction_message").html("Transaction completed!");
         let json = {
             sender: sender,
             receiver: receiver,
