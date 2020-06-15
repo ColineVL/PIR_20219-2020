@@ -1,6 +1,11 @@
 const express = require('express');
 const session = require('cookie-session'); // Charge le middleware de sessions
 const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
+const bc = require('./js/blockchain');
+
+/********************************
+ * Goal : delete this
+ ********************************/
 const Web3 = require('web3');
 const Admin =require('web3-eth-admin').Admin;
 
@@ -28,6 +33,10 @@ const options = {
     transactionPollingTimeout: 480,
 };
 const admin = new Admin(provider, null, options);
+
+/********************************
+ * Create the app
+ ********************************/
 const app = express();
 // Load the css folder
 app.use(express.static(__dirname + '/css'));
@@ -45,7 +54,7 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Home view */
     .get('', async (req, res) => {
         if (Account) {
-            let funds = await web3.eth.getBalance(Account.address)
+            let funds = await bc.(Account.address);
             res.render('homeClient.ejs',{account : Account, funds: funds});
         } else{
             res.render('homeClient.ejs',{account : Account});
