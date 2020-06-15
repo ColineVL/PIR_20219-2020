@@ -82,12 +82,35 @@ function toAscii(input) {
     return result;
 }
 
-function slice(input) {
-
+function slice(input, len) {
+    var res = "";
+    for (let i = 0; i < len ; i++) {
+        res += input[i];
+    }
+    return res;
+}
+function OTP(key, message) {
+    var res = "";
+    for (let i = 0; i < message.length ; i++) {
+        res += key[i] ^ message[i];
+    }
+    return res;
 }
 let message = "This is a simple test. 2.5.2" ;
 let m_bin = toBinary(message);
 console.log(message);
 console.log(m_bin.length);
 
-let OTPKey = toBinary(bobSecret.toString());
+console.log(bobSecret.toString().length)
+let OTPKey = toBinary(bobSecret.toString('hex'));
+let sliced = slice(OTPKey,m_bin.length)
+
+let crypted_m = OTP(OTPKey, m_bin);
+
+// console.log("key :" + OTPKey);
+console.log("crypted :" + toAscii(crypted_m))
+
+let decrypted_m = OTP(OTPKey, crypted_m);
+
+console.log("decrypted :" + toAscii(decrypted_m))
+
