@@ -103,13 +103,12 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
         let Ids =await EventsModule.GetAvailableRefs(contractws); // TODO: Verify FUNCTION HERE TO GET REFERENCES
-        console.log(Ids);
         res.render('ForSale.ejs',{account : Account, Ids: Ids});
     })
 
     .get('/ProductId/', async (req, res) => {
         const id = req.query.id ;
-        let product = await EventsModule.GetAvailableRefs(contractws,)
+        let product = await EventsModule.GetRef(contractws,id)
         console.log(id);
         res.render('Product.ejs', {product: product});
     })

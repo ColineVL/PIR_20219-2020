@@ -12,12 +12,12 @@ module.exports = {
             fromBlock: 0,
             toBlock: 'latest'
         }, function(error, events){ }) // TODO Eventually do something here
-        console.log(res1)
         return res1;
     },
     GetRef: async function (contractws, refId) {
+        console.log(refId)
         let res1 = await contractws.getPastEvents("NewDataReference", {
-            filter : {referenceId: refId},
+            filter : {referenceId: refId.toString()},
             fromBlock: 0,
             toBlock: 'latest'
         }, function(error, events){ }) // TODO Eventually do something here
