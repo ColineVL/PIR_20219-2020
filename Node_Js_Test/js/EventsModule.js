@@ -2,7 +2,6 @@
 
 module.exports = {
     GetAvailableRefs: async function (contractws, endTime, priceMax, provider) {
-        let res = [];
         endTime = endTime || 0; //TODO Talk about endtime
         priceMax =priceMax || 0;
         const options = {
@@ -14,6 +13,14 @@ module.exports = {
             toBlock: 'latest'
         }, function(error, events){ }) // TODO Eventually do something here
         console.log(res1)
+        return res1;
+    },
+    GetRef: async function (contractws, refId) {
+        let res1 = await contractws.getPastEvents("NewDataReference", {
+            filter : {referenceId: refId},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function(error, events){ }) // TODO Eventually do something here
         return res1;
     },
 
