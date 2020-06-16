@@ -60,9 +60,12 @@ function callbackGetMyBalance(param) {
 
 function loadMyAccount() {
     if (myAccount === "notConnected") {
+        console.log("pas connecté");
         $('#myAccount_connected').hide();
+        console.log(document.getElementById("myAccount_connected"));
         $('#myAccount_notConnected').show();
     } else {
+        console.log("connecté");
         $('#myAccount_notConnected').hide();
         $('#myAccount_connected').show();
         $('#myAccount_address').html(myAccount.address);
