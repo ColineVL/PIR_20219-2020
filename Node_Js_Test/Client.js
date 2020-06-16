@@ -110,11 +110,11 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/ProductId/', async (req, res) => {
         const id = req.query.id ;
 
-        // let product = await EventsModule.GetRef(contractws,id) //TODO should be done like this.. but filters not working?
-        let Ids =await EventsModule.GetAvailableRefs();
-        const product = Ids[id];
+        let product = await EventsModule.GetRef(id)
 
-        res.render('Product.ejs', {product: product});
+        console.log(product)
+
+        res.render('Product.ejs', {product: product[0]});
     })
 
     /* Buy a specific reference */

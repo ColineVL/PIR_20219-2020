@@ -34,7 +34,8 @@ const transactionObject = {
     gasPrice: gasPrice
 };
 
-const setuint1ref = contract.methods.buy_reference(1,27).encodeABI();
+const setuint1ref = contract.methods.buy_reference(5,270).encodeABI();
+// const setuint1ref = contract.methods.createDataReference(100000,277,510,"Description bogus x2").encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0)5encodeABI();
 
 
@@ -50,7 +51,7 @@ const setuint1ref = contract.methods.buy_reference(1,27).encodeABI();
         gasLimit: gasLimitHex,
         data:setuint1ref ,
         from: account1,
-        value: 1//web3.utils.toWei('1', 'ether'),
+        value: 100000//web3.utils.toWei('1', 'ether'),
     };
 
 
@@ -67,11 +68,11 @@ const setuint1ref = contract.methods.buy_reference(1,27).encodeABI();
 
 
     // const dataOld = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex'));
-    // const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
-    //     console.log(receipt);
-    // }).on('error', function(error){
-    //     console.log(error);
-    // });
+    const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
+        console.log(receipt);
+    }).on('error', function(error){
+        console.log(error);
+    });
     // console.log("..........." + Object.keys(dataOld1))
     // const dataOld2 = await web3.eth.sendSignedTransaction('0x' + sTx2.toString('hex')).on('receipt', function(receipt){
     //     console.log(receipt);
@@ -106,13 +107,13 @@ const setuint1ref = contract.methods.buy_reference(1,27).encodeABI();
 
 
 
-    const contractws = new web3ws.eth.Contract(abi,'0xa50a51c09a5c451C52BB714527E1974b686D8e77');
-    const events = await contractws.events.NewClient({
-        fromBlock: 0
-    })
-        .on('data', function(event){
-            console.log(event); // same results as the optional callback above
-        })
+    // const contractws = new web3ws.eth.Contract(abi,'0xa50a51c09a5c451C52BB714527E1974b686D8e77');
+    // const events = await contractws.events.NewClient({
+    //     fromBlock: 0
+    // })
+    //     .on('data', function(event){
+    //         console.log(event); // same results as the optional callback above
+    //     })
     //
     // console.log(events.callback())
     // console.log("**********************************");
