@@ -56,12 +56,12 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('', async (req, res) => {
         if (Account) {
             let funds = await bc.getBalance(Account.address);
-            // res.render('homeClient.ejs',{account : Account, funds: funds});
-            res.render('homeClient_withGL.ejs',{account : Account, funds: funds});
+            res.render('homeClient.ejs',{account : Account, funds: funds});
+            // res.render('homeClient_withGL.ejs',{account : Account, funds: funds});
 
         } else{
-            // res.render('homeClient.ejs',{account : Account});
-            res.render('homeClient_withGL.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : Account});
+            // res.render('homeClient_withGL.ejs',{account : Account});
 
         }
     })
@@ -103,7 +103,7 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
         let Ids =await EventsModule.GetAvailableRefs(contractws); // TODO: Verify FUNCTION HERE TO GET REFERENCES
-        console.log(Object.keys(Ids[0].returnValues));
+        console.log(Ids);
         res.render('ForSale.ejs',{account : Account, Ids: Ids[0].returnValues.referenceId});
     })
 

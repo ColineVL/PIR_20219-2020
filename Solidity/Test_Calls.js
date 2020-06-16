@@ -15,8 +15,8 @@ var web3ws = new Web3(new Web3.providers.WebsocketProvider('ws://192.168.33.115:
 
 
 //////////////////////////////////Account Info///////////////////////////////////////////////////////
-var account1= "0xfe3b557e8fb62b89f4916b721be55ceb828dbd73";
-var key1 =new Buffer.from('8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','hex');
+var account1= "0x627306090abaB3A6e1400e9345bC60c78a8BEf57";//"0xfe3b557e8fb62b89f4916b721be55ceb828dbd73";
+var key1 =new Buffer.from('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3','hex');//'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','hex');
 /////////////////////////////////////////////////////////////////////////////////////////:
 
 // ABI description as JSON structure
@@ -34,7 +34,7 @@ const transactionObject = {
     gasPrice: gasPrice
 };
 
-const setuint1ref = contract.methods.createDataReference(7,7,50111150).encodeABI();
+const setuint1ref = contract.methods.createDataReference(2,9,5).encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0).encodeABI();
 
 
@@ -107,22 +107,22 @@ const setuint1ref = contract.methods.createDataReference(7,7,50111150).encodeABI
 
 
     const contractws = new web3ws.eth.Contract(abi,'0x9B8397f1B0FEcD3a1a40CdD5E8221Fa461898517');
-    // const events = await contractws.events.NewClient({
-    //     fromBlock: 0
-    // })
-    //     .on('data', function(event){
-    //         console.log(event); // same results as the optional callback above
-    //     })
+    const events = await contractws.events.NewDataReference({
+        fromBlock: 0
+    })
+        .on('data', function(event){
+            console.log(event); // same results as the optional callback above
+        })
     //
     // console.log(events.callback())
     // console.log("**********************************");
-    contractws.getPastEvents("NewClient", {
-        fromBlock: 0,
-        toBlock: 'latest'
-    }, function(error, events){ console.log(events); })
-        .then(function(events){
-            console.log(events) // same results as the optional callback above
-        });
+    // contractws.getPastEvents("NewClient", {
+    //     fromBlock: 0,
+    //     toBlock: 'latest'
+    // }, function(error, events){ console.log(events); })
+    //     .then(function(events){
+    //         console.log(events) // same results as the optional callback above
+    //     });
 })();
 
 
