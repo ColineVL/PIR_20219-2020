@@ -44,7 +44,6 @@ module.exports = {
         }) // TODO Eventually do something here
         return res1;
     },
-    // GetRef: async function (contractws, refId) {
     GetRef: async function (refId) {
         console.log(refId)
         let res1 = await contractws.getPastEvents("NewDataReference", {
@@ -54,7 +53,15 @@ module.exports = {
         }, function (error, events) {}) // TODO Eventually do something here
         return res1;
     },
-
+    GetBoughtRef: async function (account) {
+        console.log(refId)
+        let res1 = await contractws.getPastEvents("NewClient", {
+            filter: {address: account.address},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1;
+    },
 }
 
 // event NewDataReference(uint referenceId, address provider, uint price, uint contractEndTime);

@@ -98,6 +98,8 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /************ Buy ************/
+
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
         let Ids =await EventsModule.GetAvailableRefs(); // TODO: Verify FUNCTION HERE TO GET REFERENCES
@@ -131,6 +133,13 @@ app.use('/public', express.static(__dirname + '/public'))
             res.render('homeClient.ejs',{account : Account});
         }
 
+    })
+    /************ Bought ************/
+    /* Interface for a buyer */
+    .get('/Bought', async (req, res) => {
+        let Ids =await EventsModule.GetBoughtRefs(Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+
+        res.render('BoughtInfo.ejs',{account : Account, Ids: Ids});
     })
 
 
