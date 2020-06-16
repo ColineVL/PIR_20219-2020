@@ -49,11 +49,9 @@ module.exports = {
         console.log(refId)
         let res1 = await contractws.getPastEvents("NewDataReference", {
             filter: {referenceId: refId.toString()},
-
             fromBlock: 0,
             toBlock: 'latest'
-        }, function (error, events) {
-        }) // TODO Eventually do something here
+        }, function (error, events) {}) // TODO Eventually do something here
         return res1;
     },
 

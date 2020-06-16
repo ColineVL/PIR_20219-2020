@@ -2,7 +2,7 @@ const express = require('express');
 const session = require('cookie-session'); // Charge le middleware de sessions
 const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
 const bc = require('./js/blockchain');
-
+const transactions = require('./js/SignedTransactionModule');
 const crypto = require('./js/CryptoModule');
 const EventsModule = require('./js/EventsModule');
 
@@ -116,16 +116,17 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Buy a specific reference */
     .get('/Buy/', async (req, res) => {
         const id = req.query.id ;
-        // let product = await EventsModule.GetRef(id)
+
+        console.log(id)
+
+        let product = await EventsModule.GetRef(id)
         // TODO Generate Pubkey
-        BuyReference(Account,product,pubKey,ContractAddress)
+        const DH = crypto.DiffieHellmanGenerate(64);
+        const pubKey = crypto.DiffieHellmanGetPublicKey(DH);
+        const receipt = await transactions.BuyReference(Account,product[0],pubKey);
+        console.log(receipt);
         res.render('Product.ejs', {product: product[0]});
     })
-
-    // .get('/Buy', async (req, res) => {
-    //     let Id = []; // TODO: put correct Id
-    //     res.render('ForSale.ejs',{account : Account, Ids: Ids});
-    // })
 
 
     /************************************  SELLER PART ***************************/
@@ -154,4 +155,4 @@ app.use('/public', express.static(__dirname + '/public'))
         res.redirect('/');
     })
 
-    .listen(8085);
+    .listen(8086);
