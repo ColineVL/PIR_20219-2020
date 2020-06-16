@@ -17,7 +17,7 @@ async function askQuestion(query) {
 
 const args = process.argv.slice(2);
 // web3 initialization - must point to the HTTP JSON-RPC endpoint
-var provider = args[0] || 'http://localhost:8545';
+var provider = args[0] || 'http://192.168.33.115:8545';
 console.log("******************************************");
 console.log("Using provider : " + provider);
 console.log("******************************************");

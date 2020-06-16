@@ -7,7 +7,7 @@ const Admin =require('web3-eth-admin').Admin;
 var SignedTransaction = require('./js/SignedTransactionModule');
 
 
-var provider = 'http://localhost:8545';
+var provider = 'http://192.168.33.115:8545';
 var web3 = new Web3(new Web3.providers.HttpProvider(provider))
 const options = {
     defaultAccount: '0xfe3b557e8fb62b89f4916b721be55ceb828dbd73',
@@ -143,17 +143,6 @@ app.use('/public', express.static(__dirname + '/public'))
         console.log(info);
         console.log(info["address"]);
         res.render('NewAccountInfo.ejs', {info:info});
-    })
-
-    // TODO supprimer, c'est un test
-    .get('/Test/', function(req, res) {
-        let bla = Date.now();
-        //res.render('test.ejs', {bla:bla});
-    })
-
-    .get('/Test2/:id', async(req, res) => {
-        res.json(req.params.id + 2);
-        //res.render('test.ejs', {bla:bla});
     })
 
     /* On redirige vers home si la page demandée n'est pas trouvée */

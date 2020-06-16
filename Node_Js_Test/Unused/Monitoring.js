@@ -12,7 +12,7 @@ async function askQuestion(query) {
     }))
 }
 // Web3 Initialisation
-var provider = 'http://localhost:8545';
+var provider = 'http://192.168.33.115:8545';
 console.log("******************************************");
 console.log("Using provider : " + provider);
 console.log("******************************************");

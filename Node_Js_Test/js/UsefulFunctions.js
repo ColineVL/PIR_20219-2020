@@ -1,3 +1,7 @@
+/** Variables **/
+let myAccount = "notConnected";
+let references;
+
 /** To get a response from the server **/
 function loadXMLDoc(page, callback) {
     const xhttp = new XMLHttpRequest();
@@ -14,7 +18,7 @@ function loadXMLDoc(page, callback) {
 function displayListBlocks(list) {
     let html = "";
     list.forEach(function (blockNumber) {
-        html += "<div onclick=displayBlockInfo(" + blockNumber + ")>" + '<li>' + blockNumber + '</li>' + "</div>";
+        html += "<li onclick=displayBlockInfo(" + blockNumber + ")>" + blockNumber + "</li>";
     });
     return html;
 }
@@ -22,7 +26,7 @@ function displayListBlocks(list) {
 function displayListNodes(list) {
     let html = "";
     list.forEach(function (nodeID) {
-        html += "<div onclick=displayNodeInfo(" + nodeID + ")>" + '<li>' + nodeID + '</li>' + "</div>";
+        html += "<li onclick=displayNodeInfo(" + nodeID + ")>" + nodeID + "</li>";
     });
     // Ici nodeID est bien sous la forme 0x50295... en string
 
@@ -33,7 +37,7 @@ String.prototype.capitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
-function displayDict(dict) {
+function displayTable(dict) {
     let html = "<table><tbody>";
     for (let key in dict) {
         html += "<tr>";
@@ -45,13 +49,91 @@ function displayDict(dict) {
     return html;
 }
 
+/********************************
+ * Accounts
+ ********************************/
+
+/** Load my account **/
+function callbackGetMyBalance(param) {
+    $("#myAccount_value").html(param);
+}
+
+function loadMyAccount() {
+    if (myAccount === "notConnected") {
+        console.log("pas connecté");
+        $('#myAccount_connected').hide();
+        console.log(document.getElementById("myAccount_connected"));
+        $('#myAccount_notConnected').show();
+    } else {
+        console.log("connecté");
+        $('#myAccount_notConnected').hide();
+        $('#myAccount_connected').show();
+        $('#myAccount_address').html(myAccount.address);
+        loadXMLDoc("getbalance/" + myAccount.address, callbackGetMyBalance);
+    }
+}
+
+/** Connection **/
+function callbackConnect(account) {
+    if (account["error"]) {
+        $('#myAccount_message').html(account["error"]);
+    } else {
+        let address = document.getElementById("myAccount_connection_address").value;
+        if (account.address == address) {
+            myAccount = account;
+            loadMyAccount();
+        } else {
+            $('#myAccount_message').html("Address and private key don't match. Make sure your address begins with 0x.");
+        }
+    }
+}
+
+function connect() {
+    let privateKey = document.getElementById("myAccount_connection_privateKey").value;
+    loadXMLDoc("connect/" + privateKey, callbackConnect);
+}
+
+function disconnect() {
+    myAccount = "notConnected";
+    loadMyAccount();
+}
+
+/** Creation of a new account **/
+function callbackNewAccount(param) {
+    $("#newAccount_address").html(param[0]);
+    $("#newAccount_privatekey").html(param[1]);
+}
+
+function createNewAccount() {
+    loadXMLDoc("newaccount", callbackNewAccount);
+}
+
+/** Get the balance of an account **/
+function callbackGetBalance(param) {
+    $("#balance_value").html(param);
+}
+
+function getBalance() {
+    let addressToCheck = document.getElementById("balance_addressAsked").value;
+    if (addressToCheck === "") {
+        $("#balance_message").html("Please enter an address");
+    } else {
+        $("#balance_message").hide();
+        loadXMLDoc("getbalance/" + addressToCheck, callbackGetBalance);
+        $("#balance_address").html(addressToCheck);
+    }
+}
+
+/********************************
+ * Nodes
+ ********************************/
 
 /** Update of the nodelist **/
-setInterval(updateNodesList, 1000);
+setInterval(updateNodesList, 5000);
 
 function callbackNodelist(param) {
     param = displayListNodes(param);
-    document.getElementById("nodelist").innerHTML = param;
+    $("#nodes_list").html(param);
 }
 
 function updateNodesList() {
@@ -60,33 +142,28 @@ function updateNodesList() {
 
 /** Info about one node **/
 function callbackNodeInfo(param) {
-    param = displayDict(param);
-    document.getElementById("nodeinfo").innerHTML = param;
+    param = displayTable(param);
+    $("#node_info").html(param);
 }
 
 function displayNodeInfo(nodeID) {
+    // TODO ici j'ai un problème
     console.log(typeof nodeID + " " + nodeID);
     // Ici nodeID est sous la forme number 4.98e+153
     addItem(nodeInfoItem);
     loadXMLDoc("getnodeinfo/" + nodeID, callbackNodeInfo);
 }
 
-/** Creation of a new account **/
-function callbackNewAccount(param) {
-    document.getElementById("newaddress").innerHTML = param[0];
-    document.getElementById("newprivatekey").innerHTML = param[1];
-}
-
-function createNewAccount() {
-    loadXMLDoc("newaccount", callbackNewAccount);
-}
+/********************************
+ * Blocks
+ ********************************/
 
 /** Update of the blocks list **/
-setInterval(updateBlocksList, 1000);
+setInterval(updateBlocksList, 2000);
 
 function callbackBlockslist(param) {
     param = displayListBlocks(param);
-    document.getElementById("blockslist").innerHTML = param;
+    $("#blocks_list").html(param);
 }
 
 function updateBlocksList() {
@@ -95,43 +172,43 @@ function updateBlocksList() {
 
 /** Info about one block **/
 function callbackBlockInfo(param) {
-    param = displayDict(param);
-    document.getElementById("blockinfo").innerHTML = param;
+    param = displayTable(param);
+    $("#block_info").html(param);
 }
 
 function displayBlockInfo(blocknumber) {
-    addItem(blockInfoItem);
-    loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo);
+    if (blocknumber === -1) {
+        blocknumber = document.getElementById("blocks_blockNumber").value;
+        blocknumber = Number(blocknumber);
+    }
+    if (blocknumber > 0) {
+        addItem(blockInfoItem);
+        loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo);
+    }
 }
 
-/** Get the balance of an account **/
-function callbackGetBalance(param) {
-    document.getElementById("balance").innerHTML = param;
-}
-
-function getBalance() {
-    let addressToCheck = prompt("Please enter an address");
-    loadXMLDoc("getbalance/" + addressToCheck, callbackGetBalance);
-    document.getElementById("address").innerHTML = addressToCheck;
-}
+/********************************
+ * Transaction
+ ********************************/
 
 /** Make a transaction **/
 function callbackMakeTransaction(param) {
     addItem(resultTransactionItem);
-    param = displayDict(param);
-    document.getElementById("receipt").innerHTML = param;
+    param = displayTable(param);
+    $("#resultTransaction_receipt").html(param);
 }
 
 function makeTransaction() {
-    let sender = document.getElementById("sender").value;
-    let receiver = document.getElementById("receiver").value;
-    let privateKey = document.getElementById("privateKey").value;
-    let amount = document.getElementById("amount").value;
+    let sender = document.getElementById("transaction_sender").value;
+    let receiver = document.getElementById("transaction_receiver").value;
+    let privateKey = document.getElementById("transaction_privateKey").value;
+    let amount = document.getElementById("transaction_amount").value;
+
     if (sender === "" || receiver === "" || privateKey === "" || amount === "") {
-        document.getElementById("message").innerHTML = "Please complete the whole form.";
+        $("#transaction_message").html("Please complete the whole form.");
     } else {
         // TODO si la transaction échoue ?
-        document.getElementById("message").innerHTML = "Transaction completed!";
+        $("#transaction_message").html("Transaction completed!");
         let json = {
             sender: sender,
             receiver: receiver,
@@ -140,4 +217,38 @@ function makeTransaction() {
         };
         loadXMLDoc("maketransaction/" + JSON.stringify(json), callbackMakeTransaction);
     }
+}
+
+/********************************
+ * Buy menu
+ ********************************/
+
+/** Get references **/
+function callbackGetReferences(param) {
+    references = param;
+    let html = "";
+    references.forEach(function (reference) {
+        html += "<li onclick=getRefInfo(" + reference.returnValues["referenceId"] + ")>" + reference.returnValues["referenceId"] + "</li>";
+    });
+    $("#forSale_list").html(html);
+}
+
+function getReferences() {
+    loadXMLDoc("getreferences", callbackGetReferences);
+}
+
+/** Reference info **/
+function getRefInfo(id) {
+    product = references[id].returnValues;
+    ["contractEndTime"]
+    let keysToDisplay = ["contractEndTime", "price", "public key", "referenceId"];
+    let html = "<table><tbody>";
+    for (let key in keysToDisplay) {
+        html += "<tr>";
+        html += "<td>" + key.capitalize() + "</td>";
+        html += "<td>" + product[key] + "</td>";
+        html += "</tr>";
+    }
+    html += "</tbody></table>";
+    return html;
 }
