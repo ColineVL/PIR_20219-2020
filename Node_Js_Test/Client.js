@@ -100,7 +100,6 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
-        // let Ids =await EventsModule.GetAvailableRefs(contractws); // TODO: Verify FUNCTION HERE TO GET REFERENCES
         let Ids =await EventsModule.GetAvailableRefs(); // TODO: Verify FUNCTION HERE TO GET REFERENCES
 
         res.render('ForSale.ejs',{account : Account, Ids: Ids});
@@ -109,10 +108,7 @@ app.use('/public', express.static(__dirname + '/public'))
     /* See a specific reference */
     .get('/ProductId/', async (req, res) => {
         const id = req.query.id ;
-
         let product = await EventsModule.GetRef(id)
-
-        console.log(product)
 
         res.render('Product.ejs', {product: product[0]});
     })
