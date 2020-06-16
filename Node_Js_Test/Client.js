@@ -17,10 +17,11 @@ const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 const web3ws = new Web3(new Web3.providers.WebsocketProvider('ws://192.168.33.115:8546'));
 
 /*Loading contract */
+const ContractAddress = '0x9B8397f1B0FEcD3a1a40CdD5E8221Fa461898517'
 let abi = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":false,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"uint256","name":"publicKey","type":"uint256"}],"name":"NewClient","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":false,"internalType":"address","name":"provider","type":"address"},{"indexed":false,"internalType":"uint256","name":"price","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"contractEndTime","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"publicKey","type":"uint256"}],"name":"NewDataReference","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":false,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"bytes32","name":"encryptedKeyHash","type":"bytes32"}],"name":"encryptedKeyHash","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":false,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"uint256","name":"time","type":"uint256"}],"name":"raiseDisputeEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":false,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"uint256","name":"funds","type":"uint256"}],"name":"withdrawRefund","type":"event"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"uint256","name":"_publicKey","type":"uint256"}],"name":"buy_reference","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_price","type":"uint256"},{"internalType":"uint256","name":"_contractEndTime","type":"uint256"},{"internalType":"uint256","name":"_publicKey","type":"uint256"}],"name":"createDataReference","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"dataReferences","outputs":[{"internalType":"uint256","name":"referenceId","type":"uint256"},{"internalType":"uint256","name":"price","type":"uint256"},{"internalType":"uint256","name":"referenceKey","type":"uint256"},{"internalType":"uint256","name":"contractEndTime","type":"uint256"},{"internalType":"address","name":"provider","type":"address"},{"internalType":"bool","name":"withdrawnFunds","type":"bool"},{"internalType":"uint256","name":"clientsDispute","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"raiseDispute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_price","type":"uint256"}],"name":"setDisputePrice","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"bytes32","name":"_encryptedKeyHash","type":"bytes32"}],"name":"setEncryptedHashedKey","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"withdrawDisputeFunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"withdrawFunds","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 ; //TODO: current abi :Provider
-const contract = new web3.eth.Contract(abi,'0x9B8397f1B0FEcD3a1a40CdD5E8221Fa461898517'); //TODO give correct address when available
-const contractws = new web3ws.eth.Contract(abi,'0x9B8397f1B0FEcD3a1a40CdD5E8221Fa461898517');; //TODO give correct address when available
+const contract = new web3.eth.Contract(abi,ContractAddress); //TODO give correct address when available
+const contractws = new web3ws.eth.Contract(abi,ContractAddress);; //TODO give correct address when available
 
 
 
@@ -106,22 +107,26 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('ForSale.ejs',{account : Account, Ids: Ids});
     })
 
+    /* See a specific reference */
     .get('/ProductId/', async (req, res) => {
         const id = req.query.id ;
         // let product = await EventsModule.GetRef(contractws,id) //TODO should be done like this.. but filters not working?
         let Ids =await EventsModule.GetAvailableRefs(contractws);
         const product = Ids[id];
-        console.log(product)
-        console.log(id);
+
         res.render('Product.ejs', {product: product});
     })
+
+    /* Buy a specific reference */
     .get('/Buy/', async (req, res) => {
         const id = req.query.id ;
         // let product = await EventsModule.GetRef(contractws,id) //TODO should be done like this.. but filters not working?
         let Ids =await EventsModule.GetAvailableRefs(contractws);
         const product = Ids[id];
-        console.log(product)
-        console.log(id);
+        // TODO Generate Pubkey
+
+        BuyReference(Account,product,pubKey,ContractAddress)
+
         res.render('Product.ejs', {product: product});
     })
 
