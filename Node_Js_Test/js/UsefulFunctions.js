@@ -1,5 +1,6 @@
 /** Variables **/
 let myAccount = "notConnected";
+let references;
 
 /** To get a response from the server **/
 function loadXMLDoc(page, callback) {
@@ -126,6 +127,7 @@ function getBalance() {
 
 /** Update of the nodelist **/
 setInterval(updateNodesList, 5000);
+
 function callbackNodelist(param) {
     param = displayListNodes(param);
     $("#nodes_list").html(param);
@@ -155,6 +157,7 @@ function displayNodeInfo(nodeID) {
 
 /** Update of the blocks list **/
 setInterval(updateBlocksList, 2000);
+
 function callbackBlockslist(param) {
     param = displayListBlocks(param);
     $("#blocks_list").html(param);
@@ -218,12 +221,31 @@ function makeTransaction() {
  ********************************/
 
 /** Get references **/
-function callbackGetReferences(param) {
-    // Les mettre sous la bonne forme, les noms par ex, avec des liens
-    let references = param;
-    $("#forSale_list").html(references);
+function callbackGetReferences(Ids) {
+    // Ids est sous la forme d'une liste de 5 Objects.
+    // Pour chaque Objects, .returnValues
+    // ["contractEndTime"]
+    // ["price"]
+    // ["provider"]
+    // ["public key"]
+    // ["referenceId"]
+    // let keysToDisplay = ["contractEndTime", "price", "public key", "referenceId"];
+
+    let html = "";
+    Ids.forEach(function (reference) {
+        html += "<li onclick=getRefInfo(" + reference.returnValues["referenceId"] + ")>" + reference.returnValues["referenceId"] + "</li>";
+    });
+    $("#forSale_list").html(html);
 }
 
 function getReferences() {
     loadXMLDoc("getreferences", callbackGetReferences);
+}
+
+/** Reference info **/
+function callbackGetRefInfo(product) {
+    console.log(product);
+}
+function getRefInfo(id) {
+    loadXMLDoc("getrefinfo/"+id, callbackGetRefInfo);
 }

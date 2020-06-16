@@ -9,12 +9,13 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     event NewDataReference(
         uint indexed referenceId,
         address indexed provider,
-        uint indexed price,
+        uint price,
         uint contractEndTime,
-        uint publicKey);
+        uint publicKey,
+        string indexed description);
 
     //function createDataReference
-    function createDataReference(uint _price, uint _contractEndTime, uint _publicKey) public {
+    function createDataReference(uint _price, uint _contractEndTime, uint _publicKey, string memory _description) public {
         // Creating new data reference
 
         DataReference memory newReference;
@@ -34,7 +35,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         // Adding reference to the blockchain's storage
         dataReferences.push(newReference);
 
-        emit NewDataReference(referenceIdCounter, msg.sender, _price, _contractEndTime, _publicKey);
+        emit NewDataReference(referenceIdCounter, msg.sender, _price, _contractEndTime, _publicKey, _description);
 
         // !!!!!!!!!!!!! Maybe we will not use data ID counter also use SafeMath to add the counter
         referenceIdCounter = referenceIdCounter.add(1);
@@ -64,6 +65,26 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         // Sending funds
         dataReferences[_referenceId].withdrawnFunds = true;
         (msg.sender).transfer(funds);
+    }
+
+    event referenceKey(uint indexed referenceId, uint referenceKey);
+
+    function setReferenceKey(uint _referenceId, uint _referenceKey) onlyProvider(_referenceId) external {
+        // The key once set cannot be modified to avoid scams
+        if (dataReferences[_referenceId].referenceKey != 0) {
+            dataReferences[_referenceId].referenceKey = _referenceKey;
+            emit referenceKey(_referenceId, _referenceKey);
+        }
+    }
+
+    event keyDecoder(uint indexed referenceId, address indexed client, uint keyDecoder);
+
+    function setKeyDecoder(uint _referenceId, address _client, uint _keyDecoder) onlyProvider(_referenceId) external {
+        // The key once set cannot be modified to avoid scams
+        if (dataReferences[_referenceId].keyDecoder[_client] != 0) {
+            dataReferences[_referenceId].keyDecoder[_client] = _keyDecoder;
+            emit keyDecoder(_referenceId, _client, _keyDecoder);
+        }
     }
 
     function getClients(uint _referenceId) onlyProvider(_referenceId) external view returns (address[] memory){
@@ -102,36 +123,36 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     }
 
 
-    event settledDispute(
+    event settleDisputeEvent(
         uint indexed referenceId,
         address indexed winner,
         address indexed loser,
         uint funds);
 
-    function settleDispute(uint _referenceId, address payable client) onlyProvider(_referenceId) payable external {
+    function settleDispute(uint _referenceId, address payable _client) onlyProvider(_referenceId) payable external {
         require(msg.value == disputePrice);
         // Checks that the client raised a dispute so that the provider won't pay for no reason
-        require(dataReferences[_referenceId].raisedDispute[client] == true);
+        require(dataReferences[_referenceId].raisedDispute[_client] == true);
         // Checks that provider didn't already set the dispute so he does not withdraw same funds many times
-        require(dataReferences[_referenceId].resolvedDispute[client] == false);
-        dataReferences[_referenceId].resolvedDispute[client] = true;
+        require(dataReferences[_referenceId].resolvedDispute[_client] == false);
+        dataReferences[_referenceId].resolvedDispute[_client] = true;
 
         // Total funds to be transferred to the rightful owner
         uint funds = dataReferences[_referenceId].price + (disputePrice * 2);
 
         // Computes the hashes of the encrypted key given by the provider
         bytes32 checkEncryptedKeyHash = keccak256(abi.encodePacked(
-                dataReferences[_referenceId].referenceKey ^ dataReferences[_referenceId].keyDecoder[client]));
+                dataReferences[_referenceId].referenceKey ^ dataReferences[_referenceId].keyDecoder[_client]));
 
-        if(checkEncryptedKeyHash == dataReferences[_referenceId].encryptedKeyHash[client]){
+        if (checkEncryptedKeyHash == dataReferences[_referenceId].encryptedKeyHash[_client]) {
             // Sends funds to the provider
             (msg.sender).transfer(funds);
-            emit settledDispute(_referenceId, msg.sender, client, funds);
+            emit settleDisputeEvent(_referenceId, msg.sender, _client, funds);
         }
-        else{
+        else {
             // Sends funds to the client
-            client.transfer(funds);
-            emit settledDispute(_referenceId, client, msg.sender, funds);
+            _client.transfer(funds);
+            emit settleDisputeEvent(_referenceId, _client, msg.sender, funds);
         }
 
     }
