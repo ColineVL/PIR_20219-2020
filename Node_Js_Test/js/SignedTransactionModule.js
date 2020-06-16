@@ -66,7 +66,7 @@ module.exports = {
     BuyReference: async function (account, product, pubKey) {
         web3.transactionConfirmationBlocks = 1;
 
-        const privateKey = new Buffer.from(account.privateKey, 'hex');
+        const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
         const dataref = contract.methods.buy_reference(product.returnValues.referenceId,pubKey).encodeABI();
         const rawTx = {

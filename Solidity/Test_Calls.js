@@ -34,7 +34,7 @@ const transactionObject = {
     gasPrice: gasPrice
 };
 
-const setuint1ref = contract.methods.buy_reference(5,270).encodeABI();
+const setuint1ref = contract.methods.buy_reference(4,270).encodeABI();
 // const setuint1ref = contract.methods.createDataReference(100000,277,510,"Description bogus x2").encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0)5encodeABI();
 

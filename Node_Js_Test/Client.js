@@ -121,7 +121,9 @@ app.use('/public', express.static(__dirname + '/public'))
             let product = await EventsModule.GetRef(id)
             // TODO Generate Pubkey
             const DH = crypto.DiffieHellmanGenerate(64);
-            const pubKey = crypto.DiffieHellmanGetPublicKey(DH);
+            const pubKey = 2545874578//;crypto.DiffieHellmanGetPublicKey(DH);
+            console.log(pubKey);
+            console.log(Object.keys(pubKey));
             const receipt = await transactions.BuyReference(Account,product[0],pubKey);
             console.log(receipt);
             res.render('Product.ejs', {product: product[0]});
