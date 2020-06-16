@@ -117,15 +117,18 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/Buy/', async (req, res) => {
         const id = req.query.id ;
 
-        console.log(id)
+        if (Account) {
+            let product = await EventsModule.GetRef(id)
+            // TODO Generate Pubkey
+            const DH = crypto.DiffieHellmanGenerate(64);
+            const pubKey = crypto.DiffieHellmanGetPublicKey(DH);
+            const receipt = await transactions.BuyReference(Account,product[0],pubKey);
+            console.log(receipt);
+            res.render('Product.ejs', {product: product[0]});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
 
-        let product = await EventsModule.GetRef(id)
-        // TODO Generate Pubkey
-        const DH = crypto.DiffieHellmanGenerate(64);
-        const pubKey = crypto.DiffieHellmanGetPublicKey(DH);
-        const receipt = await transactions.BuyReference(Account,product[0],pubKey);
-        console.log(receipt);
-        res.render('Product.ejs', {product: product[0]});
     })
 
 
