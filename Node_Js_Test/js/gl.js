@@ -74,7 +74,7 @@ const boughtDataItem = {
 
 
 /********************************
- * Initialise Layout
+ * Create Layout
  ********************************/
 
 const config = {
@@ -89,36 +89,14 @@ const myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
 
 /********************************
- * Register components and init
+ * Register components
  ********************************/
 
 /** Main items **/
 
 myLayout.registerComponent('myAccountItem', function (container, state) {
-    container.getElement().html(
-        '<div id="myAccount_connected">' +
-        '<h2>Current account connected:</h2>' +
-        '<table id="myAccount_table">' +
-        '<tr>' +
-        '<td>Address</td>' +
-        '<td id="myAccount_address">/</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Funds (in ETH)</td>' +
-        '<td id="myAccount_value">/</td>' +
-        '</tr>' +
-        '</table>' +
-        '<button onclick="disconnect()">Sign out</button>' +
-        '</div>' +
-        '<div id="myAccount_notConnected">' +
-        '<p id="myAccount_message">You are not connected.</p>' +
-        '<p>Your address</p>' +
-        '<input id="myAccount_connection_address" type="string">' +
-        '<p>Your private key</p>' +
-        '<input id="myAccount_connection_privateKey" type="string">' +
-        '<button onclick="connect()">Sign in</button>' +
-        '</div>'
-    );
+    container.getElement().html('<div id="myAccount">');
+    loadXMLDocHTML("myAccount.html", callbackLoadHTMLMyAccount);
 });
 
 myLayout.registerComponent('listNodesItem', function (container, state) {
@@ -232,7 +210,18 @@ myLayout.registerComponent('boughtDataItem', function (container, state) {
 
 /** Sell items **/
 
+
+/********************************
+ * Initialize Layout
+ ********************************/
+
 myLayout.init();
+myLayout.on('initialised', () => {
+    addItem(myAccountItem);
+    //setTimeout(loadMyAccount, 500);
+    // loadMyAccount();
+    addItem(listBlocksItem);
+});
 
 /********************************
  * Create menu
@@ -299,3 +288,18 @@ function addItem(newItem) {
     }
 }
 
+function callbackLoadHTMLMyAccount(html) {
+    $("#myAccount").html(html);
+    loadMyAccount();
+}
+
+function loadXMLDocHTML(page, callback) {
+    const xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            callback(this.responseText);
+        }
+    };
+    xhttp.open("GET", page, true);
+    xhttp.send();
+}

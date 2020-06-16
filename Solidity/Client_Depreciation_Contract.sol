@@ -24,7 +24,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         address indexed client,
         uint indexed publicKey);
 
-    function buy_reference(uint _referenceId, uint _publicKey) payable external {
+    function buyReference(uint _referenceId, uint _publicKey) payable external {
         // Checks if referenceId is valid
         // !!!!!!!!!!!! Check if < or <= Maybe remove line if it will automatically give index out of bound
         require(_referenceId <= dataReferences.length);

@@ -10,6 +10,8 @@ const app = express();
 app.use(express.static(__dirname + '/css'));
 // Load the js files
 app.use(express.static(__dirname + '/js'));
+// Load the html files
+app.use(express.static(__dirname + '/html'));
 // Parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.urlencoded());
 // Parse JSON bodies (as sent by API clients)
@@ -74,7 +76,7 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     .get('/getrefinfo/:id', async (req, res) => {
-        let product = await EventsModule.GetRef(req.params.id);
+        let product = Ids[id];
         console.log("Product ")
         console.log(product);
         res.json(product);

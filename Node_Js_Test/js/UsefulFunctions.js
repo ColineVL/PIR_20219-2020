@@ -60,9 +60,12 @@ function callbackGetMyBalance(param) {
 
 function loadMyAccount() {
     if (myAccount === "notConnected") {
+        console.log("pas connecté");
         $('#myAccount_connected').hide();
+        console.log(document.getElementById("myAccount_connected"));
         $('#myAccount_notConnected').show();
     } else {
+        console.log("connecté");
         $('#myAccount_notConnected').hide();
         $('#myAccount_connected').show();
         $('#myAccount_address').html(myAccount.address);
@@ -221,18 +224,10 @@ function makeTransaction() {
  ********************************/
 
 /** Get references **/
-function callbackGetReferences(Ids) {
-    // Ids est sous la forme d'une liste de 5 Objects.
-    // Pour chaque Objects, .returnValues
-    // ["contractEndTime"]
-    // ["price"]
-    // ["provider"]
-    // ["public key"]
-    // ["referenceId"]
-    // let keysToDisplay = ["contractEndTime", "price", "public key", "referenceId"];
-
+function callbackGetReferences(param) {
+    references = param;
     let html = "";
-    Ids.forEach(function (reference) {
+    references.forEach(function (reference) {
         html += "<li onclick=getRefInfo(" + reference.returnValues["referenceId"] + ")>" + reference.returnValues["referenceId"] + "</li>";
     });
     $("#forSale_list").html(html);
@@ -243,9 +238,17 @@ function getReferences() {
 }
 
 /** Reference info **/
-function callbackGetRefInfo(product) {
-    console.log(product);
-}
 function getRefInfo(id) {
-    loadXMLDoc("getrefinfo/"+id, callbackGetRefInfo);
+    product = references[id].returnValues;
+    ["contractEndTime"]
+    let keysToDisplay = ["contractEndTime", "price", "public key", "referenceId"];
+    let html = "<table><tbody>";
+    for (let key in keysToDisplay) {
+        html += "<tr>";
+        html += "<td>" + key.capitalize() + "</td>";
+        html += "<td>" + product[key] + "</td>";
+        html += "</tr>";
+    }
+    html += "</tbody></table>";
+    return html;
 }
