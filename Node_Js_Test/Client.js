@@ -35,6 +35,7 @@ const EventsModule = require('./js/EventsModule');
 // };
 // const admin = new Admin(provider, null, options);
 
+
 /********************************
  * Create the app
  ********************************/
@@ -103,11 +104,25 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('ForSale.ejs',{account : Account, Ids: Ids});
     })
 
+    /* See a specific reference */
     .get('/ProductId/', async (req, res) => {
         const id = req.query.id ;
-        // let product = await EventsModule.GetRef(contractws,id)
-        let product = await EventsModule.GetRef(id)
-        console.log(id);
+
+        // let product = await EventsModule.GetRef(contractws,id) //TODO should be done like this.. but filters not working?
+        let Ids =await EventsModule.GetAvailableRefs();
+        const product = Ids[id];
+
+        res.render('Product.ejs', {product: product});
+    })
+
+    /* Buy a specific reference */
+    .get('/Buy/', async (req, res) => {
+        const id = req.query.id ;
+        // let product = await EventsModule.GetRef(contractws,id) //TODO should be done like this.. but filters not working?
+        let Ids =await EventsModule.GetAvailableRefs();
+        const product = Ids[id];
+        // TODO Generate Pubkey
+        BuyReference(Account,product,pubKey,ContractAddress)
         res.render('Product.ejs', {product: product});
     })
 
@@ -143,4 +158,4 @@ app.use('/public', express.static(__dirname + '/public'))
         res.redirect('/');
     })
 
-    .listen(8080);
+    .listen(8085);

@@ -2,18 +2,25 @@
 
 <html>
 <head>
-    <title>Product <%= product[0].returnValues.referenceId %>></title>
+    <title>Product <%= product.returnValues.referenceId %> </title>
 
 </head>
 
 <body>
     <h1>Overview of the product : </h1>
     <ul>
-        <li> Id : <%= product[0].returnValues.referenceId %>  </li>
-        <li> Provider : <%= product[0].returnValues.provider %>  </li>
-        <li> Price : <%= product[0].returnValues.price %>  </li>
-        <li> End Time : <%= product[0].returnValues.contractEndTime %>  </li>
+        <li> Id : <%= product.returnValues.referenceId %>  </li>
+        <li> Provider : <%= product.returnValues.provider %>  </li>
+        <li> Price : <%= product.returnValues.price %>  </li>
+        <li> End Time : <%= product.returnValues.contractEndTime %>  </li>
     </ul>
+
+    <form action="/ForSale">
+        <input type="submit" value="Back" />
+    </form>
+    <form action="/buy/?id=<%= product.returnValues.referenceId%>">
+        <input type="submit" value="Buy this reference" />
+    </form>
 </body>
 </html>
 
