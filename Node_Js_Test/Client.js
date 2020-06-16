@@ -56,12 +56,10 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('', async (req, res) => {
         if (Account) {
             let funds = await bc.getBalance(Account.address);
-            // res.render('homeClient.ejs',{account : Account, funds: funds});
-            res.render('homeClient_withGL.ejs',{account : Account, funds: funds});
+            res.render('homeClient.ejs',{account : Account, funds: funds});
 
         } else{
-            // res.render('homeClient.ejs',{account : Account});
-            res.render('homeClient_withGL.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : Account});
 
         }
     })
