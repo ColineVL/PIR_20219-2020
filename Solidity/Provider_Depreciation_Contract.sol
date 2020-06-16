@@ -9,9 +9,9 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     event NewDataReference(
         uint indexed referenceId,
         address indexed provider,
-        uint price,
+        uint indexed price,
         uint contractEndTime,
-        uint indexed publicKey);
+        uint publicKey);
 
     //function createDataReference
     function createDataReference(uint _price, uint _contractEndTime, uint _publicKey) public {
