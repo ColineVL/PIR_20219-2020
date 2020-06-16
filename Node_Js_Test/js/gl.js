@@ -211,7 +211,7 @@ myLayout.registerComponent('resultTransactionItem', function (container, state) 
 /** Buy items **/
 myLayout.registerComponent('forSaleItem', function (container, state) {
     container.getElement().html(
-        '<h2>Available products:</h2>' +
+        '<h2>Clic on a product to get more info.</h2>' +
         '<ul id="forSale_list"></ul>'
     );
 });

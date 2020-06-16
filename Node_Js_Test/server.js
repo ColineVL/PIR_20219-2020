@@ -1,5 +1,6 @@
 const express = require('express');
 const bc = require('./js/blockchain');
+const EventsModule = require('./js/EventsModule');
 
 /********************************
  * Create the app
@@ -68,10 +69,17 @@ app.use('/public', express.static(__dirname + '/public'))
     /** Buy gets **/
 
     .get('/getreferences/', async (req, res) => {
-        // Interroger la blockchain
-        let references = "salut";
-        res.json(references);
+        let Ids = await EventsModule.GetAvailableRefs();
+        res.json(Ids);
     })
+
+    .get('/getrefinfo/:id', async (req, res) => {
+        let product = await EventsModule.GetRef(req.params.id);
+        console.log("Product ")
+        console.log(product);
+        res.json(product);
+    })
+
 
     /** Sell gets **/
 
