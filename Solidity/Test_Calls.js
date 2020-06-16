@@ -34,7 +34,7 @@ const transactionObject = {
     gasPrice: gasPrice
 };
 
-const setuint1ref = contract.methods.createDataReference(2,29,9,"4th test example, invalid info").encodeABI();
+const setuint1ref = contract.methods.buy_reference(1,27).encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0)5encodeABI();
 
 
@@ -50,7 +50,7 @@ const setuint1ref = contract.methods.createDataReference(2,29,9,"4th test exampl
         gasLimit: gasLimitHex,
         data:setuint1ref ,
         from: account1,
-        //value: 3//web3.utils.toWei('1', 'ether'),
+        value: 1//web3.utils.toWei('1', 'ether'),
     };
 
 
@@ -107,7 +107,7 @@ const setuint1ref = contract.methods.createDataReference(2,29,9,"4th test exampl
 
 
     const contractws = new web3ws.eth.Contract(abi,'0xa50a51c09a5c451C52BB714527E1974b686D8e77');
-    const events = await contractws.events.NewDataReference({
+    const events = await contractws.events.NewClient({
         fromBlock: 0
     })
         .on('data', function(event){
