@@ -57,10 +57,8 @@ app.use('/public', express.static(__dirname + '/public'))
         if (Account) {
             let funds = await bc.getBalance(Account.address);
             res.render('homeClient.ejs',{account : Account, funds: funds});
-
         } else{
             res.render('homeClient.ejs',{account : Account});
-
         }
     })
 
@@ -101,16 +99,14 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
         let Ids =await EventsModule.GetAvailableRefs(contractws); // TODO: Verify FUNCTION HERE TO GET REFERENCES
-        console.log(Object.keys(Ids[0].returnValues));
-        res.render('ForSale.ejs',{account : Account, Ids: Ids[0].returnValues.referenceId});
+        res.render('ForSale.ejs',{account : Account, Ids: Ids});
     })
 
-    .get('/ProductId//', async (req, res) => {
-
+    .get('/ProductId/', async (req, res) => {
         const id = req.query.id ;
-
-        console.log(bal);
-        res.render('node.ejs', {node: node});
+        let product = await EventsModule.GetRef(contractws,id)
+        console.log(id);
+        res.render('Product.ejs', {product: product});
     })
 
     // .get('/Buy', async (req, res) => {
