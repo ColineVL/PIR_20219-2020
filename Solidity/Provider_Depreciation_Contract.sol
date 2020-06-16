@@ -9,12 +9,13 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     event NewDataReference(
         uint indexed referenceId,
         address indexed provider,
-        uint indexed price,
+        uint price,
         uint contractEndTime,
-        uint publicKey);
+        uint publicKey,
+        string indexed description);
 
     //function createDataReference
-    function createDataReference(uint _price, uint _contractEndTime, uint _publicKey) public {
+    function createDataReference(uint _price, uint _contractEndTime, uint _publicKey, string memory _description) public {
         // Creating new data reference
 
         DataReference memory newReference;
@@ -31,10 +32,12 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
 
         newReference.provider = msg.sender;
 
+        newReference.description = _description;
+
         // Adding reference to the blockchain's storage
         dataReferences.push(newReference);
 
-        emit NewDataReference(referenceIdCounter, msg.sender, _price, _contractEndTime, _publicKey);
+        emit NewDataReference(referenceIdCounter, msg.sender, _price, _contractEndTime, _publicKey, _description);
 
         // !!!!!!!!!!!!! Maybe we will not use data ID counter also use SafeMath to add the counter
         referenceIdCounter = referenceIdCounter.add(1);

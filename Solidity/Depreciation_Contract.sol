@@ -35,6 +35,8 @@ contract Depreciation_Contract is Ownable{
         */
         uint contractEndTime;
 
+        string description;
+
         address provider;
         // Necessary to check if the provider withdrew undisputed funds so he does not withdraw other's funds
         bool withdrawnFunds;
@@ -74,15 +76,15 @@ contract Depreciation_Contract is Ownable{
     uint internal disputePrice = 0.02 ether;
 
     // Gives access to the smart contract's owner to change disputePrice since ether/USD pair is not stable
-    function setDisputePrice(uint _price) onlyOwner external{
-        disputePrice = _price;
-    }
+//    function setDisputePrice(uint _price) onlyOwner external{
+//        disputePrice = _price;
+//    }
 
     /*
     TODO FUNCTIONS
     Settle dispute and
     Provider send keys
-    Provider set public key
+    Provider set reference key
     */
 
 
