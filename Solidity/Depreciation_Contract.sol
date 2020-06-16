@@ -35,8 +35,6 @@ contract Depreciation_Contract is Ownable{
         */
         uint contractEndTime;
 
-        string description;
-
         address provider;
         // Necessary to check if the provider withdrew undisputed funds so he does not withdraw other's funds
         bool withdrawnFunds;

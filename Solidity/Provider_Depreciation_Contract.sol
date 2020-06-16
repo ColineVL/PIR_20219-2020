@@ -32,8 +32,6 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
 
         newReference.provider = msg.sender;
 
-        newReference.description = _description;
-
         // Adding reference to the blockchain's storage
         dataReferences.push(newReference);
 
