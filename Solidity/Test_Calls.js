@@ -37,7 +37,7 @@ const transactionObject = {
 };
 
 // const setuint1ref = contract.methods.buy_reference(4,270).encodeABI();
-const setuint1ref = contract.methods.set(bytes,"Description bogus x2").encodeABI();
+const setuint1ref = contract.methods.set("Description bogus x2").encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0)5encodeABI();
 
 
@@ -70,11 +70,11 @@ const setuint1ref = contract.methods.set(bytes,"Description bogus x2").encodeABI
 
 
     // const dataOld = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex'));
-    const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
-        console.log(receipt);
-    }).on('error', function(error){
-        console.log(error);
-    });
+    // const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
+    //     console.log(receipt);
+    // }).on('error', function(error){
+    //     console.log(error);
+    // });
     // console.log("..........." + Object.keys(dataOld1))
     // const dataOld2 = await web3.eth.sendSignedTransaction('0x' + sTx2.toString('hex')).on('receipt', function(receipt){
     //     console.log(receipt);
@@ -109,14 +109,15 @@ const setuint1ref = contract.methods.set(bytes,"Description bogus x2").encodeABI
 
 
 
-    // const contractws = new web3ws.eth.Contract(abi,c);
-    // const events = await contractws.events.NewClient({
-    //     fromBlock: 0
-    // })
-    //     .on('data', function(event){
-    //         console.log(event); // same results as the optional callback above
-    //     })
-    //
+    const contractws = new web3ws.eth.Contract(abi,contract_address);
+    const events = await contractws.events.Event({
+        filter:{testString:"Descriptiuvknv;on bogus x2"},
+        fromBlock: 0
+    })
+        .on('data', function(event){
+            console.log(event.returnValues); // same results as the optional callback above
+        })
+
     // console.log(events.callback())
     // console.log("**********************************");
     // contractws.getPastEvents("NewClient", {
