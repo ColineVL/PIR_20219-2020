@@ -120,12 +120,10 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Buy a specific reference */
     .get('/Buy/', async (req, res) => {
         const id = req.query.id ;
-        // let product = await EventsModule.GetRef(contractws,id) //TODO should be done like this.. but filters not working?
-        let Ids =await EventsModule.GetAvailableRefs();
-        const product = Ids[id];
+        // let product = await EventsModule.GetRef(id)
         // TODO Generate Pubkey
         BuyReference(Account,product,pubKey,ContractAddress)
-        res.render('Product.ejs', {product: product});
+        res.render('Product.ejs', {product: product[0]});
     })
 
     // .get('/Buy', async (req, res) => {
