@@ -96,6 +96,7 @@ const myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
 myLayout.registerComponent('myAccountItem', function (container, state) {
     container.getElement().html(
+        '<div class="container">' +
         '<div id="myAccount_connected">' +
         '<h2>Current account connected:</h2>' +
         '<table id="myAccount_table">' +
@@ -117,6 +118,7 @@ myLayout.registerComponent('myAccountItem', function (container, state) {
         '<p>Your private key</p>' +
         '<input id="myAccount_connection_privateKey" type="string">' +
         '<button onclick="connect()">Sign in</button>' +
+        '</div>' +
         '</div>'
     );
 });

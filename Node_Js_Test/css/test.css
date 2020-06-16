@@ -101,3 +101,8 @@ html, body {
 #layoutContainer td {
     padding: 3px;
 }
+
+#layoutContainer .container {
+    padding: 3px;
+    background-color: red;
+}
