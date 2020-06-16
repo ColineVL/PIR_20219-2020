@@ -2,6 +2,7 @@ const express = require('express');
 const session = require('cookie-session'); // Charge le middleware de sessions
 const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
 const bc = require('./js/blockchain');
+const crypto = require('./js/CryptoModule');
 
 /********************************
  * Goal : delete this
