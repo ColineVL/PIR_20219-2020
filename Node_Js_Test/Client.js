@@ -108,7 +108,19 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/ProductId/', async (req, res) => {
         const id = req.query.id ;
-        let product = await EventsModule.GetRef(contractws,id)
+        // let product = await EventsModule.GetRef(contractws,id) //TODO should be done like this.. but filters not working?
+        let Ids =await EventsModule.GetAvailableRefs(contractws);
+        const product = Ids[id];
+        console.log(product)
+        console.log(id);
+        res.render('Product.ejs', {product: product});
+    })
+    .get('/Buy/', async (req, res) => {
+        const id = req.query.id ;
+        // let product = await EventsModule.GetRef(contractws,id) //TODO should be done like this.. but filters not working?
+        let Ids =await EventsModule.GetAvailableRefs(contractws);
+        const product = Ids[id];
+        console.log(product)
         console.log(id);
         res.render('Product.ejs', {product: product});
     })
@@ -125,4 +137,4 @@ app.use('/public', express.static(__dirname + '/public'))
         res.redirect('/');
     })
 
-    .listen(8080);
+    .listen(8085);
