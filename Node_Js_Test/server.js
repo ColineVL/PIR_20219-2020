@@ -74,7 +74,7 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     .get('/getrefinfo/:id', async (req, res) => {
-        let product = await EventsModule.GetRef(req.params.id);
+        let product = Ids[id];
         console.log("Product ")
         console.log(product);
         res.json(product);

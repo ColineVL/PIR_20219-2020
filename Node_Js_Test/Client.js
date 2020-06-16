@@ -122,7 +122,7 @@ app.use('/public', express.static(__dirname + '/public'))
         let Ids =await EventsModule.GetAvailableRefs();
         const product = Ids[id];
         // TODO Generate Pubkey
-        BuyReference(Account,product,pubKey,ContractAddress)
+        // BuyReference(Account,product,pubKey,ContractAddress)
         res.render('Product.ejs', {product: product});
     })
 

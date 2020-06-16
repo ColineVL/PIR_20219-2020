@@ -74,7 +74,7 @@ const boughtDataItem = {
 
 
 /********************************
- * Initialise Layout
+ * Create Layout
  ********************************/
 
 const config = {
@@ -89,7 +89,7 @@ const myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
 
 /********************************
- * Register components and init
+ * Register components
  ********************************/
 
 /** Main items **/
@@ -232,7 +232,17 @@ myLayout.registerComponent('boughtDataItem', function (container, state) {
 
 /** Sell items **/
 
+
+/********************************
+ * Initialize Layout
+ ********************************/
+
 myLayout.init();
+myLayout.on('initialised', () => {
+    addItem(myAccountItem);
+    loadMyAccount();
+    addItem(listBlocksItem);
+});
 
 /********************************
  * Create menu
