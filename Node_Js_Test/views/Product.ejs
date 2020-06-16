@@ -13,14 +13,11 @@
         <li> Provider : <%= product.returnValues.provider %>  </li>
         <li> Price : <%= product.returnValues.price %>  </li>
         <li> End Time : <%= product.returnValues.contractEndTime %>  </li>
+        <li> Description : <%= product.returnValues.description %>  </li>
     </ul>
 
-    <form action="/ForSale">
-        <input type="submit" value="Back" />
-    </form>
-    <form action="/buy/?id=<%= product.returnValues.referenceId%>">
-        <input type="submit" value="Buy this reference" />
-    </form>
+    <a href="/ForSale">Back</a>
+    <a href="/buy/?id=<%= product.returnValues.referenceId %> "> Buy </a>
 </body>
 </html>
 

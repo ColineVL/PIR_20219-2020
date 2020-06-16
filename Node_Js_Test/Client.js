@@ -2,6 +2,8 @@ const express = require('express');
 const session = require('cookie-session'); // Charge le middleware de sessions
 const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
 const bc = require('./js/blockchain');
+const transactions = require('./js/SignedTransactionModule');
+const crypto = require('./js/CryptoModule');
 const EventsModule = require('./js/EventsModule');
 
 /********************************
@@ -98,7 +100,6 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
-        // let Ids =await EventsModule.GetAvailableRefs(contractws); // TODO: Verify FUNCTION HERE TO GET REFERENCES
         let Ids =await EventsModule.GetAvailableRefs(); // TODO: Verify FUNCTION HERE TO GET REFERENCES
 
         res.render('ForSale.ejs',{account : Account, Ids: Ids});
@@ -107,12 +108,9 @@ app.use('/public', express.static(__dirname + '/public'))
     /* See a specific reference */
     .get('/ProductId/', async (req, res) => {
         const id = req.query.id ;
+        let product = await EventsModule.GetRef(id)
 
-        // let product = await EventsModule.GetRef(contractws,id) //TODO should be done like this.. but filters not working?
-        let Ids =await EventsModule.GetAvailableRefs();
-        const product = Ids[id];
-
-        res.render('Product.ejs', {product: product});
+        res.render('Product.ejs', {product: product[0]});
     })
 
     /* Buy a specific reference */
@@ -126,10 +124,22 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('Product.ejs', {product: product});
     })
 
-    // .get('/Buy', async (req, res) => {
-    //     let Id = []; // TODO: put correct Id
-    //     res.render('ForSale.ejs',{account : Account, Ids: Ids});
-    // })
+
+        if (Account) {
+            let product = await EventsModule.GetRef(id)
+            // TODO Generate Pubkey
+            const DH = crypto.DiffieHellmanGenerate(64);
+            const pubKey = 2545874578//;crypto.DiffieHellmanGetPublicKey(DH);
+            console.log(pubKey);
+            console.log(Object.keys(pubKey));
+            const receipt = await transactions.BuyReference(Account,product[0],pubKey);
+            console.log(receipt);
+            res.render('Product.ejs', {product: product[0]});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+
+    })
 
 
     /************************************  SELLER PART ***************************/
@@ -158,4 +168,4 @@ app.use('/public', express.static(__dirname + '/public'))
         res.redirect('/');
     })
 
-    .listen(8085);
+    .listen(8086);

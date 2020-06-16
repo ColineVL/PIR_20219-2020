@@ -1,4 +1,14 @@
 const crypto = require('crypto');
+
+function toBinary(input) {
+    var result = "";
+    for (var i = 0; i < input.length; i++) {
+        var bin = input[i].charCodeAt().toString(2);
+        result += Array(8 - bin.length + 1).join("0") + bin;
+    }
+    return result;
+}
+
 module.exports = {
     toBinary: function(input) {
         var result = "";
@@ -30,7 +40,8 @@ module.exports = {
     },
     DiffieHellmanGetPublicKey : function(DH) {
         const key = DH.generateKeys();
-        return key;
+        const k_int = parseInt(toBinary(key.toString('hex')),2);
+        return k_int;
     },
     DiffieHellmanComputeSecret : function(DH,key) {
         const secret = DH.generateKeys(key);
