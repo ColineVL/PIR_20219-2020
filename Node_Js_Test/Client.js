@@ -137,9 +137,12 @@ app.use('/public', express.static(__dirname + '/public'))
     /************ Bought ************/
     /* Interface for a buyer */
     .get('/Bought', async (req, res) => {
-        let Ids =await EventsModule.GetBoughtRefs(Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
-
-        res.render('BoughtInfo.ejs',{account : Account, Ids: Ids});
+        if (Account) {
+            let Ids =await EventsModule.GetBoughtRefs(Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+            res.render('BoughtInfo.ejs',{Ids: Ids});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
     })
 
 

@@ -53,8 +53,7 @@ module.exports = {
         }, function (error, events) {}) // TODO Eventually do something here
         return res1;
     },
-    GetBoughtRef: async function (account) {
-        console.log(refId)
+    GetBoughtRefs: async function (account) {
         let res1 = await contractws.getPastEvents("NewClient", {
             filter: {address: account.address},
             fromBlock: 0,
