@@ -6,7 +6,12 @@ import "./Client_Depreciation_Contract.sol";
 
 contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
 
-    event NewDataReference(uint referenceId, address provider, uint price, uint contractEndTime, uint publicKey);
+    event NewDataReference(
+        uint indexed referenceId,
+        address indexed provider,
+        uint price,
+        uint contractEndTime,
+        uint indexed publicKey);
 
     //function createDataReference
     function createDataReference(uint _price, uint _contractEndTime, uint _publicKey) public {
@@ -97,7 +102,11 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     }
 
 
-    event settledDispute(uint referenceId, address winner, address loser, uint funds);
+    event settledDispute(
+        uint indexed referenceId,
+        address indexed winner,
+        address indexed loser,
+        uint funds);
 
     function settleDispute(uint _referenceId, address payable client) onlyProvider(_referenceId) payable external {
         require(msg.value == disputePrice);

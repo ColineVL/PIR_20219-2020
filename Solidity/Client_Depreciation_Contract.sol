@@ -19,7 +19,10 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     ---------------------------------------------
     */
 
-    event NewClient(uint referenceId, address client, uint publicKey);
+    event NewClient(
+        uint indexed referenceId,
+        address indexed client,
+        uint indexed publicKey);
 
     function buy_reference(uint _referenceId, uint _publicKey) payable external {
         // Checks if referenceId is valid
@@ -39,7 +42,10 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         emit NewClient(_referenceId, msg.sender, _publicKey);
     }
 
-    event encryptedKeyHash(uint referenceId, address client, bytes32 encryptedKeyHash);
+    event encryptedKeyHash(
+        uint indexed referenceId,
+        address indexed client,
+        bytes32 indexed encryptedKeyHash);
 
 
     function setEncryptedHashedKey(uint _referenceId, bytes32 _encryptedKeyHash) external isClient (_referenceId) {
@@ -64,7 +70,10 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     */
 
 
-    event raiseDisputeEvent(uint referenceId, address client, uint time);
+    event raiseDisputeEvent(
+        uint indexed referenceId,
+        address indexed client,
+        uint indexed time);
 
     function raiseDispute(uint _referenceId) payable external isClient(_referenceId) {
         // Checks if provider hasn't already withdrew funds
@@ -88,7 +97,10 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     }
 
 
-    event withdrawRefund (uint referenceId, address client, uint funds);
+    event withdrawRefund (
+        uint indexed referenceId,
+        address indexed client,
+        uint indexed funds);
 
     function withdrawDisputeFunds(uint _referenceId) external {
 
