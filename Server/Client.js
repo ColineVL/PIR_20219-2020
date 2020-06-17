@@ -5,7 +5,9 @@ const bc = require('./js/blockchain');
 const transactions = require('./js/SignedTransactionModule');
 const crypto = require('./js/CryptoModule');
 const EventsModule = require('./js/EventsModule');
-const mongoose = require('mongoose');
+const readwrite = require('./js/ReadWriteModule');
+
+
 
 /********************************
  * Goal : delete this
@@ -42,11 +44,11 @@ const mongoose = require('mongoose');
  * Defining Database N.B : will destruct if server is closed...
  ********************************/
 var DiffieSchema = { // Schema for storing Diffie-H keys
-    public_key:  String, // User ethereum public key
-    refId: String, // Id of the reference for which this applies
-    PubDH:   String, // Public key of Diffie-h
-    PrivDH: String, // Private key of Diffie-h
-    Pub_Other: String, // Public key of other individual
+    public_key:  "", // User ethereum public key
+    refId: "", // Id of the reference for which this applies
+    PubDH:   "", // Public key of Diffie-h
+    PrivDH: "", // Private key of Diffie-h
+    Pub_Other: "", // Public key of other individual
 };
 var Reference_ClientSchema = { // Schema for storing reference information for a Client (keys and messages.)
     public_key: "", // User ethereum public key
@@ -54,10 +56,7 @@ var Reference_ClientSchema = { // Schema for storing reference information for a
     KxorK2 :   "", // KxorK2 provided by the seller
     K2: "", // K2 provided later by the seller
 };
-var K2 = { // Object used in
-    address: "",
-    Key: "",
-};
+
 var Reference_SellerSchema = { // Schema for storing reference information for a Seller (keys and messages.)
     public_key:  "", // User ethereum public key
     refId: "", // Id of the reference for which this applies
