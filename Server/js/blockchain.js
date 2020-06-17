@@ -19,7 +19,6 @@ const SignedTransaction = require('./SignedTransactionModule');
 /********************************
  * Variables
  ********************************/
-let nodelist = [];
 let nodelistIDS = [];
 let blockslistNUMBERS = [];
 // TODO let the user change this ?
@@ -53,21 +52,13 @@ async function getAccount(privateKey) {
  * Nodes
  ********************************/
 setInterval(refreshNodesList, 2000);
-
 async function refreshNodesList() {
     let PeerCount = await web3.eth.net.getPeerCount();
     let peers = await admin.getPeers();
-    nodelist = [];
     nodelistIDS = [];
     for (let i = 0; i < PeerCount; i++) {
-        nodelist.push(peers[i]);
         nodelistIDS.push(peers[i].id);
     }
-}
-
-function getNodeInfo(nodeID) {
-    let index = nodelistIDS.indexOf(nodeID);
-    return nodelist[index];
 }
 
 /********************************
@@ -128,7 +119,6 @@ module.exports = {
     getNodelistIDS,
     getBlockslistNUMBERS,
     getBlockInfo,
-    getNodeInfo,
     getBalance,
     getAccount,
     createNewAccount,

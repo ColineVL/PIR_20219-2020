@@ -12,11 +12,6 @@ const listNodesItem = {
     name: "listNodesItem",
 };
 
-const nodeInfoItem = {
-    title: "Node Info",
-    name: "nodeInfoItem",
-};
-
 const listBlocksItem = {
     title: "List of last blocks",
     name: "listBlocksItem",
@@ -41,7 +36,6 @@ const checkABalanceItem = {
     title: "Check a balance",
     name: "checkABalanceItem",
 };
-
 
 const newAccountItem = {
     title: "Create an account",
@@ -96,20 +90,15 @@ const myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
 myLayout.registerComponent('myAccountItem', function (container, state) {
     container.getElement().html('<div id="myAccount">');
-    loadXMLDocHTML("myAccount.html", callbackLoadHTMLMyAccount);
+    loadHTMLDoc("myAccount.html", callbackLoadHTMLMyAccount);
 });
 
 myLayout.registerComponent('listNodesItem', function (container, state) {
     container.getElement().html(
-        '<h2>Clic on a node to get more info.</h2>' +
-        '<ul id="nodes_list"></ul>'
-    );
-});
-
-myLayout.registerComponent('nodeInfoItem', function (container, state) {
-    container.getElement().html(
-        '<h2>Here are the details about the node.</h2>' +
-        '<div id="node_info"></div>'
+        '<div class="container">' +
+        '<p>The list updates regularly.</p>' +
+        '<ol id="nodes_list"></ol>' +
+        '</div>'
     );
 });
 
@@ -187,6 +176,7 @@ myLayout.registerComponent('resultTransactionItem', function (container, state) 
 });
 
 /** Buy items **/
+
 myLayout.registerComponent('forSaleItem', function (container, state) {
     container.getElement().html(
         '<h2>Clic on a product to get more info.</h2>' +
@@ -218,14 +208,14 @@ myLayout.registerComponent('boughtDataItem', function (container, state) {
 myLayout.init();
 myLayout.on('initialised', () => {
     addItem(myAccountItem);
-    //setTimeout(loadMyAccount, 500);
-    // loadMyAccount();
     addItem(listBlocksItem);
 });
+
 
 /********************************
  * Create menu
  ********************************/
+
 function addMenuItem(newItem) {
     const element = $('<li>' + newItem.title + '</li>');
     $('#menuContainer').append(element);
@@ -248,9 +238,9 @@ function addMenuItem(newItem) {
     if (newItem.name === "newAccountItem") {
         element.click(createNewAccount);
     }
-    if (newItem.name === "myAccountItem") {
-        element.click(loadMyAccount);
-    }
+    // if (newItem.name === "myAccountItem") {
+    //     element.click(loadMyAccount);
+    // }
     if (newItem.name === "forSaleItem") {
         element.click(getReferences);
     }
@@ -286,20 +276,4 @@ function addItem(newItem) {
     if (items.length === 0) {
         myLayout.root.contentItems[0].addChild(newItemConfig);
     }
-}
-
-function callbackLoadHTMLMyAccount(html) {
-    $("#myAccount").html(html);
-    loadMyAccount();
-}
-
-function loadXMLDocHTML(page, callback) {
-    const xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-            callback(this.responseText);
-        }
-    };
-    xhttp.open("GET", page, true);
-    xhttp.send();
 }

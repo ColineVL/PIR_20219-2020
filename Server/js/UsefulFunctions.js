@@ -26,10 +26,8 @@ function displayListBlocks(list) {
 function displayListNodes(list) {
     let html = "";
     list.forEach(function (nodeID) {
-        html += "<li onclick=displayNodeInfo(" + nodeID + ")>" + nodeID + "</li>";
+        html += "<li>" + nodeID + "</li>";
     });
-    // Ici nodeID est bien sous la forme 0x50295... en string
-
     return html;
 }
 
@@ -60,12 +58,9 @@ function callbackGetMyBalance(param) {
 
 function loadMyAccount() {
     if (myAccount === "notConnected") {
-        console.log("pas connecté");
         $('#myAccount_connected').hide();
-        console.log(document.getElementById("myAccount_connected"));
         $('#myAccount_notConnected').show();
     } else {
-        console.log("connecté");
         $('#myAccount_notConnected').hide();
         $('#myAccount_connected').show();
         $('#myAccount_address').html(myAccount.address);
@@ -138,20 +133,6 @@ function callbackNodelist(param) {
 
 function updateNodesList() {
     loadXMLDoc("updatenodelist", callbackNodelist);
-}
-
-/** Info about one node **/
-function callbackNodeInfo(param) {
-    param = displayTable(param);
-    $("#node_info").html(param);
-}
-
-function displayNodeInfo(nodeID) {
-    // TODO ici j'ai un problème
-    console.log(typeof nodeID + " " + nodeID);
-    // Ici nodeID est sous la forme number 4.98e+153
-    addItem(nodeInfoItem);
-    loadXMLDoc("getnodeinfo/" + nodeID, callbackNodeInfo);
 }
 
 /********************************
