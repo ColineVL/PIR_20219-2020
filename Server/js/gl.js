@@ -139,10 +139,11 @@ myLayout.registerComponent('newAccountItem', function (container, state) {
 
 myLayout.registerComponent('checkABalanceItem', function (container, state) {
     container.getElement().html(
+        '<div class="container">' +
         '<h1>Enter an address to get a balance.</h1>' +
-        '<input id="balance_addressAsked" type="string">' +
+        '<p class="message" id="balance_message"></p>' +
+        '<input id="balance_addressAsked" type="text">' +
         '<button onclick="getBalance()">Check balance</button>' +
-        '<p id="balance_message"></p>' +
         '<table id="balance_table">' +
         '<tr>' +
         '<td>Address</td>' +
@@ -152,12 +153,13 @@ myLayout.registerComponent('checkABalanceItem', function (container, state) {
         '<td>Balance (in ETH)</td>' +
         '<td id="balance_value">/</td>' +
         '</tr>' +
-        '</table>'
+        '</table>' +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('createTransactionItem', function (container, state) {
-    let htmlform = "";
+    let htmlform = '';
     const form = {
         transaction_sender: "Sender:",
         transaction_privateKey: "Private Key:",
@@ -166,20 +168,25 @@ myLayout.registerComponent('createTransactionItem', function (container, state) 
     };
     for (let value in form) {
         htmlform += "<label for=" + value + ">" + form[value] + "</label>";
-        htmlform += "<input id=" + value + " type='string'>";
+        htmlform += "<input id=" + value + " type='text'>";
         htmlform += "<br>";
     }
     htmlform += "<button onclick='makeTransaction()'>Submit</button>";
     container.getElement().html(
+        '<div class="container">' +
+        '<h1>Fill in the form to make a transaction</h1>' +
         '<p id="transaction_message"></p>' +
-        '<div>' + htmlform + '</div>'
+        htmlform +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('resultTransactionItem', function (container, state) {
     container.getElement().html(
+        '<div class="container">' +
         '<h1>Here is your receipt.</h1>' +
-        '<div id="resultTransaction_receipt"></div>'
+        '<div id="resultTransaction_receipt"></div>' +
+        '</div>'
     );
 });
 
@@ -246,9 +253,6 @@ function addMenuItem(newItem) {
     if (newItem.name === "newAccountItem") {
         element.click(createNewAccount);
     }
-    // if (newItem.name === "myAccountItem") {
-    //     element.click(loadMyAccount);
-    // }
     if (newItem.name === "forSaleItem") {
         element.click(getReferences);
     }
@@ -258,14 +262,15 @@ $('#menuContainer').append("<h1>Menu</h1>");
 addMenuItem(myAccountItem);
 addMenuItem(listBlocksItem);
 addMenuItem(listNodesItem);
-addMenuItem(checkABalanceItem);
 addMenuItem(newAccountItem);
 $('#menuContainer').append("<h2>Buy</h2>");
 addMenuItem(forSaleItem);
 addMenuItem(ongoingTransactionsItem);
 addMenuItem(boughtDataItem);
 $('#menuContainer').append("<h2>Sell</h2>");
+$('#menuContainer').append("<h2>Debug</h2>");
 addMenuItem(createTransactionItem);
+addMenuItem(checkABalanceItem);
 
 
 /********************************

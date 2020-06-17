@@ -125,6 +125,7 @@ function callbackGetBalance(param) {
 function getBalance() {
     let addressToCheck = $("#balance_addressAsked").val();
     if (addressToCheck === "") {
+        $("#balance_message").show();
         $("#balance_message").html("Please enter an address");
     } else {
         $("#balance_message").hide();

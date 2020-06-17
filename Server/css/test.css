@@ -131,7 +131,8 @@ html, body {
 /* Style inputs, select elements and textareas */
 #layoutContainer input[type=text], select, textarea {
     width: 100%;
-    padding: 12px;
+    padding: 5px;
+    margin: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
@@ -141,7 +142,7 @@ html, body {
 #layoutContainer input[type=number] {
     width: 150px;
     margin: 10px;
-    padding: 12px;
+    padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
