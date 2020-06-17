@@ -103,6 +103,20 @@ function createNewAccount() {
     loadXMLDoc("newaccount", callbackNewAccount);
 }
 
+function callbackConnectNewAccount(account) {
+    if (account["error"]) {
+        $('#myAccount_message').html(account["error"]);
+    } else {
+        myAccount = account;
+        loadMyAccount();
+    }
+}
+
+function logInWithNewAccount() {
+    let privateKey = document.getElementById("newAccount_privatekey").innerText;
+    loadXMLDoc("connect/" + privateKey, callbackConnectNewAccount);
+}
+
 /** Get the balance of an account **/
 function callbackGetBalance(param) {
     $("#balance_value").html(param);

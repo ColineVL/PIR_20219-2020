@@ -104,34 +104,42 @@ myLayout.registerComponent('listNodesItem', function (container, state) {
 
 myLayout.registerComponent('listBlocksItem', function (container, state) {
     container.getElement().html(
-        '<h2>Clic on a block to get more info.</h2>' +
+        '<div class="container">' +
+        '<h1>Clic on a block to get more info</h1>' +
         '<ul id="blocks_list"></ul>' +
-        '<p>Search by block number.</p>' +
-        '<input id="blocks_blockNumber" type="string">' +
-        '<button onclick="displayBlockInfo(-1)">Search block</button>'
+        '<h2>Or search by block number</h2>' +
+        '<input id="blocks_blockNumber" type="number">' +
+        '<button onclick="displayBlockInfo(-1)">Search block</button>' +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('blockInfoItem', function (container, state) {
     container.getElement().html(
-        '<h2>Here are the details about the block.</h2>' +
-        '<div id="block_info"></div>'
+        '<div class="container">' +
+        '<h1>Here are the details about the block.</h1>' +
+        '<div id="block_info"></div>' +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('newAccountItem', function (container, state) {
     container.getElement().html(
-        '<h2>Here is your new account info! Take care to note them somewhere, they CANNOT BE RECOVERED.</h2>' +
+        '<div class="container">' +
+        '<h1>Here is your new account info!</h2>' +
+        '<h2>Take care to note them somewhere, they CANNOT BE RECOVERED.</h2>' +
         '<p>Your address:</p>' +
         '<p id="newAccount_address"></p>' +
         '<p>Your private key:</p>' +
-        '<p id="newAccount_privatekey"></p>'
+        '<p id="newAccount_privatekey"></p>' +
+        '<button onclick="logInWithNewAccount()">Sign in with this account</button>' +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('checkABalanceItem', function (container, state) {
     container.getElement().html(
-        '<h2>Enter an address to get a balance.</h2>' +
+        '<h1>Enter an address to get a balance.</h1>' +
         '<input id="balance_addressAsked" type="string">' +
         '<button onclick="getBalance()">Check balance</button>' +
         '<p id="balance_message"></p>' +
@@ -170,7 +178,7 @@ myLayout.registerComponent('createTransactionItem', function (container, state) 
 
 myLayout.registerComponent('resultTransactionItem', function (container, state) {
     container.getElement().html(
-        '<h2>Here is your receipt.</h2>' +
+        '<h1>Here is your receipt.</h1>' +
         '<div id="resultTransaction_receipt"></div>'
     );
 });
@@ -179,21 +187,21 @@ myLayout.registerComponent('resultTransactionItem', function (container, state) 
 
 myLayout.registerComponent('forSaleItem', function (container, state) {
     container.getElement().html(
-        '<h2>Clic on a product to get more info.</h2>' +
+        '<h1>Clic on a product to get more info.</h1>' +
         '<ul id="forSale_list"></ul>'
     );
 });
 
 myLayout.registerComponent('ongoingTransactionsItem', function (container, state) {
     container.getElement().html(
-        '<h2>Transactions:</h2>' +
+        '<h1>Transactions:</h1>' +
         '<ul id="ongoing_list"></ul>'
     );
 });
 
 myLayout.registerComponent('boughtDataItem', function (container, state) {
     container.getElement().html(
-        '<h2>Bought data:</h2>' +
+        '<h1>Bought data:</h1>' +
         '<ul id="boughtData_list"></ul>'
     );
 });
