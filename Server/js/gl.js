@@ -95,7 +95,7 @@ myLayout.registerComponent('myAccountItem', function (container, state) {
 
 myLayout.registerComponent('listNodesItem', function (container, state) {
     container.getElement().html(
-        '<div class="container">' +
+        '<div class="container" id="listNodesItem">' +
         '<p>The list updates regularly.</p>' +
         '<ol id="nodes_list"></ol>' +
         '</div>'
@@ -104,7 +104,7 @@ myLayout.registerComponent('listNodesItem', function (container, state) {
 
 myLayout.registerComponent('listBlocksItem', function (container, state) {
     container.getElement().html(
-        '<div class="container">' +
+        '<div class="container" id="listBlocksItem">' +
         '<h1>Clic on a block to get more info</h1>' +
         '<ul id="blocks_list"></ul>' +
         '<h2>Or search by block number</h2>' +

@@ -139,7 +139,7 @@ function getBalance() {
  ********************************/
 
 /** Update of the nodelist **/
-setInterval(updateNodesList, 5000);
+setInterval(updateNodesList, 2000);
 
 function callbackNodelist(param) {
     param = displayListNodes(param);
@@ -147,7 +147,10 @@ function callbackNodelist(param) {
 }
 
 function updateNodesList() {
-    loadXMLDoc("updatenodelist", callbackNodelist);
+    // We only update the list if the item is displayed on the screen
+    if ($("#listNodesItem").text()) {
+        loadXMLDoc("updatenodelist", callbackNodelist);
+    }
 }
 
 /********************************
@@ -163,7 +166,10 @@ function callbackBlockslist(param) {
 }
 
 function updateBlocksList() {
-    loadXMLDoc("updatelistBlocks", callbackBlockslist);
+    // We only update the list if the item is displayed on the screen
+    if ($("#listBlocksItem").text()) {
+        loadXMLDoc("updatelistBlocks", callbackBlockslist);
+    }
 }
 
 /** Info about one block **/
