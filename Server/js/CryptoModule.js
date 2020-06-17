@@ -59,8 +59,8 @@ module.exports = {
     },
 
     GetPrime : function(l){
-        const DH = crypto.createDiffieHellman(int);
-        return DH.getPrime();
+       // const DH = crypto.createDiffieHellman(l);
+        return 0; //DH.getPrime();
     }
 
 }

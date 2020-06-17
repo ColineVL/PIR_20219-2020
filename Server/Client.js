@@ -6,7 +6,6 @@ const transactions = require('./js/SignedTransactionModule');
 const crypto = require('./js/CryptoModule');
 const EventsModule = require('./js/EventsModule');
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
 /********************************
  * Goal : delete this
@@ -40,32 +39,35 @@ const Schema = mongoose.Schema;
 // const admin = new Admin(provider, null, options);
 
 /********************************
- * Defining Database
+ * Defining Database N.B : will destruct if server is closed...
  ********************************/
-var DiffieSchema = new Schema({ // Schema for storing Diffie-H keys
+var DiffieSchema = { // Schema for storing Diffie-H keys
     public_key:  String, // User ethereum public key
     refId: String, // Id of the reference for which this applies
     PubDH:   String, // Public key of Diffie-h
     PrivDH: String, // Private key of Diffie-h
     Pub_Other: String, // Public key of other individual
-});
-var Reference_ClientSchema = new Schema({ // Schema for storing reference information for a Client (keys and messages.)
-    public_key:  String, // User ethereum public key
-    refId: String, // Id of the reference for which this applies
-    KxorK2 :   String, // KxorK2 provided by the seller
-    K2: String, // K2 provided later by the seller
-});
-var Reference_SellerSchema = new Schema({ // Schema for storing reference information for a Seller (keys and messages.)
-    public_key:  String, // User ethereum public key
-    refId: String, // Id of the reference for which this applies
-    K: String, // Primary key used to encrypt the info
-    K2:  {     // a mapping between client addresses and the hashes to send them
-        type: Map,
-        of: String},
-});
-let Diffie = mongoose.model('Diffie', DiffieSchema);
-let Reference_Client = mongoose.model('Reference_ClientSchema', Reference_ClientSchema);
-let Reference_Seller = mongoose.model('Reference_SellerSchema', Reference_SellerSchema);
+};
+var Reference_ClientSchema = { // Schema for storing reference information for a Client (keys and messages.)
+    public_key: "", // User ethereum public key
+    refId: "", // Id of the reference for which this applies
+    KxorK2 :   "", // KxorK2 provided by the seller
+    K2: "", // K2 provided later by the seller
+};
+var K2 = { // Object used in
+    address: "",
+    Key: "",
+};
+var Reference_SellerSchema = { // Schema for storing reference information for a Seller (keys and messages.)
+    public_key:  "", // User ethereum public key
+    refId: "", // Id of the reference for which this applies
+    K: "", // Primary key used to encrypt the info
+    K2:  [],     // a mapping between client addresses and the hashes to send them
+};
+
+let Reference_Seller = [];
+let Reference_Buyer = [];
+let Diffie = []
 
 /********************************
  * Create the app
