@@ -33,16 +33,19 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(account);
     })
 
+    // TODO ne faire ça que si l'onglet est ouvert
     .get('/updatenodelist/', async (req, res) => {
         let liste = bc.getNodelistIDS();
         res.json(liste);
     })
 
+    // TODO Suppr
     .get('/getnodeinfo/:nodeID', async (req, res) => {
         let info = await bc.getNodeInfo(req.params.nodeID);
         res.json(info);
     })
 
+    // TODO Ne faire ça que si l'onglet est ouvert
     .get('/updatelistBlocks/', async (req, res) => {
         let info = bc.getBlockslistNUMBERS();
         res.json(info);
@@ -63,6 +66,7 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json([info["address"], info["privateKey"]]);
     })
 
+    // TODO à supprimer avant de publier, c'est pouor du debug
     .get('/maketransaction/:jsonInfo', async (req, res) => {
         let receipt = await bc.createTransaction(req.params.jsonInfo);
         res.json(receipt);
