@@ -12,11 +12,6 @@ const listNodesItem = {
     name: "listNodesItem",
 };
 
-const nodeInfoItem = {
-    title: "Node Info",
-    name: "nodeInfoItem",
-};
-
 const listBlocksItem = {
     title: "List of last blocks",
     name: "listBlocksItem",
@@ -41,7 +36,6 @@ const checkABalanceItem = {
     title: "Check a balance",
     name: "checkABalanceItem",
 };
-
 
 const newAccountItem = {
     title: "Create an account",
@@ -96,56 +90,60 @@ const myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
 myLayout.registerComponent('myAccountItem', function (container, state) {
     container.getElement().html('<div id="myAccount">');
-    loadXMLDocHTML("myAccount.html", callbackLoadHTMLMyAccount);
+    loadHTMLDoc("myAccount.html", callbackLoadHTMLMyAccount);
 });
 
 myLayout.registerComponent('listNodesItem', function (container, state) {
     container.getElement().html(
-        '<h2>Clic on a node to get more info.</h2>' +
-        '<ul id="nodes_list"></ul>'
-    );
-});
-
-myLayout.registerComponent('nodeInfoItem', function (container, state) {
-    container.getElement().html(
-        '<h2>Here are the details about the node.</h2>' +
-        '<div id="node_info"></div>'
+        '<div class="container" id="listNodesItem">' +
+        '<p>The list updates regularly.</p>' +
+        '<ol id="nodes_list"></ol>' +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('listBlocksItem', function (container, state) {
     container.getElement().html(
-        '<h2>Clic on a block to get more info.</h2>' +
+        '<div class="container" id="listBlocksItem">' +
+        '<h1>Clic on a block to get more info</h1>' +
         '<ul id="blocks_list"></ul>' +
-        '<p>Search by block number.</p>' +
-        '<input id="blocks_blockNumber" type="string">' +
-        '<button onclick="displayBlockInfo(-1)">Search block</button>'
+        '<h2>Or search by block number</h2>' +
+        '<input id="blocks_blockNumber" type="number">' +
+        '<button onclick="displayBlockInfo(-1)">Search block</button>' +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('blockInfoItem', function (container, state) {
     container.getElement().html(
-        '<h2>Here are the details about the block.</h2>' +
-        '<div id="block_info"></div>'
+        '<div class="container">' +
+        '<h1>Here are the details about the block.</h1>' +
+        '<div id="block_info"></div>' +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('newAccountItem', function (container, state) {
     container.getElement().html(
-        '<h2>Here is your new account info! Take care to note them somewhere, they CANNOT BE RECOVERED.</h2>' +
+        '<div class="container">' +
+        '<h1>Here is your new account info!</h2>' +
+        '<h2>Take care to note them somewhere, they CANNOT BE RECOVERED.</h2>' +
         '<p>Your address:</p>' +
         '<p id="newAccount_address"></p>' +
         '<p>Your private key:</p>' +
-        '<p id="newAccount_privatekey"></p>'
+        '<p id="newAccount_privatekey"></p>' +
+        '<button onclick="logInWithNewAccount()">Sign in with this account</button>' +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('checkABalanceItem', function (container, state) {
     container.getElement().html(
-        '<h2>Enter an address to get a balance.</h2>' +
-        '<input id="balance_addressAsked" type="string">' +
+        '<div class="container">' +
+        '<h1>Enter an address to get a balance.</h1>' +
+        '<p class="message" id="balance_message"></p>' +
+        '<input id="balance_addressAsked" type="text">' +
         '<button onclick="getBalance()">Check balance</button>' +
-        '<p id="balance_message"></p>' +
         '<table id="balance_table">' +
         '<tr>' +
         '<td>Address</td>' +
@@ -155,12 +153,13 @@ myLayout.registerComponent('checkABalanceItem', function (container, state) {
         '<td>Balance (in ETH)</td>' +
         '<td id="balance_value">/</td>' +
         '</tr>' +
-        '</table>'
+        '</table>' +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('createTransactionItem', function (container, state) {
-    let htmlform = "";
+    let htmlform = '';
     const form = {
         transaction_sender: "Sender:",
         transaction_privateKey: "Private Key:",
@@ -169,41 +168,47 @@ myLayout.registerComponent('createTransactionItem', function (container, state) 
     };
     for (let value in form) {
         htmlform += "<label for=" + value + ">" + form[value] + "</label>";
-        htmlform += "<input id=" + value + " type='string'>";
+        htmlform += "<input id=" + value + " type='text'>";
         htmlform += "<br>";
     }
     htmlform += "<button onclick='makeTransaction()'>Submit</button>";
     container.getElement().html(
+        '<div class="container">' +
+        '<h1>Fill in the form to make a transaction</h1>' +
         '<p id="transaction_message"></p>' +
-        '<div>' + htmlform + '</div>'
+        htmlform +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('resultTransactionItem', function (container, state) {
     container.getElement().html(
-        '<h2>Here is your receipt.</h2>' +
-        '<div id="resultTransaction_receipt"></div>'
+        '<div class="container">' +
+        '<h1>Here is your receipt.</h1>' +
+        '<div id="resultTransaction_receipt"></div>' +
+        '</div>'
     );
 });
 
 /** Buy items **/
+
 myLayout.registerComponent('forSaleItem', function (container, state) {
     container.getElement().html(
-        '<h2>Clic on a product to get more info.</h2>' +
+        '<h1>Clic on a product to get more info.</h1>' +
         '<ul id="forSale_list"></ul>'
     );
 });
 
 myLayout.registerComponent('ongoingTransactionsItem', function (container, state) {
     container.getElement().html(
-        '<h2>Transactions:</h2>' +
+        '<h1>Transactions:</h1>' +
         '<ul id="ongoing_list"></ul>'
     );
 });
 
 myLayout.registerComponent('boughtDataItem', function (container, state) {
     container.getElement().html(
-        '<h2>Bought data:</h2>' +
+        '<h1>Bought data:</h1>' +
         '<ul id="boughtData_list"></ul>'
     );
 });
@@ -218,14 +223,14 @@ myLayout.registerComponent('boughtDataItem', function (container, state) {
 myLayout.init();
 myLayout.on('initialised', () => {
     addItem(myAccountItem);
-    //setTimeout(loadMyAccount, 500);
-    // loadMyAccount();
     addItem(listBlocksItem);
 });
+
 
 /********************************
  * Create menu
  ********************************/
+
 function addMenuItem(newItem) {
     const element = $('<li>' + newItem.title + '</li>');
     $('#menuContainer').append(element);
@@ -248,9 +253,6 @@ function addMenuItem(newItem) {
     if (newItem.name === "newAccountItem") {
         element.click(createNewAccount);
     }
-    if (newItem.name === "myAccountItem") {
-        element.click(loadMyAccount);
-    }
     if (newItem.name === "forSaleItem") {
         element.click(getReferences);
     }
@@ -260,14 +262,15 @@ $('#menuContainer').append("<h1>Menu</h1>");
 addMenuItem(myAccountItem);
 addMenuItem(listBlocksItem);
 addMenuItem(listNodesItem);
-addMenuItem(checkABalanceItem);
 addMenuItem(newAccountItem);
 $('#menuContainer').append("<h2>Buy</h2>");
 addMenuItem(forSaleItem);
 addMenuItem(ongoingTransactionsItem);
 addMenuItem(boughtDataItem);
 $('#menuContainer').append("<h2>Sell</h2>");
+$('#menuContainer').append("<h2>Debug</h2>");
 addMenuItem(createTransactionItem);
+addMenuItem(checkABalanceItem);
 
 
 /********************************
@@ -286,20 +289,4 @@ function addItem(newItem) {
     if (items.length === 0) {
         myLayout.root.contentItems[0].addChild(newItemConfig);
     }
-}
-
-function callbackLoadHTMLMyAccount(html) {
-    $("#myAccount").html(html);
-    loadMyAccount();
-}
-
-function loadXMLDocHTML(page, callback) {
-    const xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-            callback(this.responseText);
-        }
-    };
-    xhttp.open("GET", page, true);
-    xhttp.send();
 }

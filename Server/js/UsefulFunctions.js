@@ -26,10 +26,8 @@ function displayListBlocks(list) {
 function displayListNodes(list) {
     let html = "";
     list.forEach(function (nodeID) {
-        html += "<li onclick=displayNodeInfo(" + nodeID + ")>" + nodeID + "</li>";
+        html += "<li>" + nodeID + "</li>";
     });
-    // Ici nodeID est bien sous la forme 0x50295... en string
-
     return html;
 }
 
@@ -60,12 +58,9 @@ function callbackGetMyBalance(param) {
 
 function loadMyAccount() {
     if (myAccount === "notConnected") {
-        console.log("pas connecté");
         $('#myAccount_connected').hide();
-        console.log(document.getElementById("myAccount_connected"));
         $('#myAccount_notConnected').show();
     } else {
-        console.log("connecté");
         $('#myAccount_notConnected').hide();
         $('#myAccount_connected').show();
         $('#myAccount_address').html(myAccount.address);
@@ -78,7 +73,7 @@ function callbackConnect(account) {
     if (account["error"]) {
         $('#myAccount_message').html(account["error"]);
     } else {
-        let address = document.getElementById("myAccount_connection_address").value;
+        let address = $("#myAccount_connection_address").val();
         if (account.address == address) {
             myAccount = account;
             loadMyAccount();
@@ -89,7 +84,7 @@ function callbackConnect(account) {
 }
 
 function connect() {
-    let privateKey = document.getElementById("myAccount_connection_privateKey").value;
+    let privateKey = $("#myAccount_connection_privateKey").val();
     loadXMLDoc("connect/" + privateKey, callbackConnect);
 }
 
@@ -108,14 +103,29 @@ function createNewAccount() {
     loadXMLDoc("newaccount", callbackNewAccount);
 }
 
+function callbackConnectNewAccount(account) {
+    if (account["error"]) {
+        $('#myAccount_message').html(account["error"]);
+    } else {
+        myAccount = account;
+        loadMyAccount();
+    }
+}
+
+function logInWithNewAccount() {
+    let privateKey = $("#newAccount_privatekey").text();
+    loadXMLDoc("connect/" + privateKey, callbackConnectNewAccount);
+}
+
 /** Get the balance of an account **/
 function callbackGetBalance(param) {
     $("#balance_value").html(param);
 }
 
 function getBalance() {
-    let addressToCheck = document.getElementById("balance_addressAsked").value;
+    let addressToCheck = $("#balance_addressAsked").val();
     if (addressToCheck === "") {
+        $("#balance_message").show();
         $("#balance_message").html("Please enter an address");
     } else {
         $("#balance_message").hide();
@@ -129,7 +139,7 @@ function getBalance() {
  ********************************/
 
 /** Update of the nodelist **/
-setInterval(updateNodesList, 5000);
+setInterval(updateNodesList, 2000);
 
 function callbackNodelist(param) {
     param = displayListNodes(param);
@@ -137,21 +147,10 @@ function callbackNodelist(param) {
 }
 
 function updateNodesList() {
-    loadXMLDoc("updatenodelist", callbackNodelist);
-}
-
-/** Info about one node **/
-function callbackNodeInfo(param) {
-    param = displayTable(param);
-    $("#node_info").html(param);
-}
-
-function displayNodeInfo(nodeID) {
-    // TODO ici j'ai un problème
-    console.log(typeof nodeID + " " + nodeID);
-    // Ici nodeID est sous la forme number 4.98e+153
-    addItem(nodeInfoItem);
-    loadXMLDoc("getnodeinfo/" + nodeID, callbackNodeInfo);
+    // We only update the list if the item is displayed on the screen
+    if ($("#listNodesItem").text()) {
+        loadXMLDoc("updatenodelist", callbackNodelist);
+    }
 }
 
 /********************************
@@ -167,7 +166,10 @@ function callbackBlockslist(param) {
 }
 
 function updateBlocksList() {
-    loadXMLDoc("updatelistBlocks", callbackBlockslist);
+    // We only update the list if the item is displayed on the screen
+    if ($("#listBlocksItem").text()) {
+        loadXMLDoc("updatelistBlocks", callbackBlockslist);
+    }
 }
 
 /** Info about one block **/
@@ -178,7 +180,7 @@ function callbackBlockInfo(param) {
 
 function displayBlockInfo(blocknumber) {
     if (blocknumber === -1) {
-        blocknumber = document.getElementById("blocks_blockNumber").value;
+        blocknumber = $("blocks_blockNumber").val();
         blocknumber = Number(blocknumber);
     }
     if (blocknumber > 0) {
@@ -199,10 +201,10 @@ function callbackMakeTransaction(param) {
 }
 
 function makeTransaction() {
-    let sender = document.getElementById("transaction_sender").value;
-    let receiver = document.getElementById("transaction_receiver").value;
-    let privateKey = document.getElementById("transaction_privateKey").value;
-    let amount = document.getElementById("transaction_amount").value;
+    let sender = $("#transaction_sender").val();
+    let receiver = $("#transaction_receiver").val();
+    let privateKey = $("#transaction_privateKey").val();
+    let amount = $("#transaction_amount").val();
 
     if (sender === "" || receiver === "" || privateKey === "" || amount === "") {
         $("#transaction_message").html("Please complete the whole form.");
