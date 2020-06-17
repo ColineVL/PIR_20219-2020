@@ -22,9 +22,9 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     event NewClient(
         uint indexed referenceId,
         address indexed client,
-        uint indexed publicKey);
+        bytes32 publicKeyDH);
 
-    function buyReference(uint _referenceId, uint _publicKey) payable external {
+    function buyReference(uint _referenceId, bytes32 _publicKeyDH) payable external {
         // Checks if referenceId is valid
         // !!!!!!!!!!!! Check if < or <= Maybe remove line if it will automatically give index out of bound
         require(_referenceId <= dataReferences.length);
@@ -39,13 +39,13 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         dataReferences[_referenceId].clients.push(msg.sender);
         dataReferences[_referenceId].isClient[msg.sender] = true;
 
-        emit NewClient(_referenceId, msg.sender, _publicKey);
+        emit NewClient(_referenceId, msg.sender, _publicKeyDH);
     }
 
     event encryptedKeyHash(
         uint indexed referenceId,
         address indexed client,
-        bytes32 indexed encryptedKeyHash);
+        bytes32 encryptedKeyHash);
 
 
     function setEncryptedHashedKey(uint _referenceId, bytes32 _encryptedKeyHash) external isClient (_referenceId) {
