@@ -73,7 +73,7 @@ function callbackConnect(account) {
     if (account["error"]) {
         $('#myAccount_message').html(account["error"]);
     } else {
-        let address = document.getElementById("myAccount_connection_address").value;
+        let address = $("#myAccount_connection_address").val();
         if (account.address == address) {
             myAccount = account;
             loadMyAccount();
@@ -84,7 +84,7 @@ function callbackConnect(account) {
 }
 
 function connect() {
-    let privateKey = document.getElementById("myAccount_connection_privateKey").value;
+    let privateKey = $("#myAccount_connection_privateKey").val();
     loadXMLDoc("connect/" + privateKey, callbackConnect);
 }
 
@@ -113,7 +113,7 @@ function callbackConnectNewAccount(account) {
 }
 
 function logInWithNewAccount() {
-    let privateKey = document.getElementById("newAccount_privatekey").innerText;
+    let privateKey = $("#newAccount_privatekey").text();
     loadXMLDoc("connect/" + privateKey, callbackConnectNewAccount);
 }
 
@@ -123,7 +123,7 @@ function callbackGetBalance(param) {
 }
 
 function getBalance() {
-    let addressToCheck = document.getElementById("balance_addressAsked").value;
+    let addressToCheck = $("#balance_addressAsked").val();
     if (addressToCheck === "") {
         $("#balance_message").html("Please enter an address");
     } else {
@@ -173,7 +173,7 @@ function callbackBlockInfo(param) {
 
 function displayBlockInfo(blocknumber) {
     if (blocknumber === -1) {
-        blocknumber = document.getElementById("blocks_blockNumber").value;
+        blocknumber = $("blocks_blockNumber").val();
         blocknumber = Number(blocknumber);
     }
     if (blocknumber > 0) {
@@ -194,10 +194,10 @@ function callbackMakeTransaction(param) {
 }
 
 function makeTransaction() {
-    let sender = document.getElementById("transaction_sender").value;
-    let receiver = document.getElementById("transaction_receiver").value;
-    let privateKey = document.getElementById("transaction_privateKey").value;
-    let amount = document.getElementById("transaction_amount").value;
+    let sender = $("#transaction_sender").val();
+    let receiver = $("#transaction_receiver").val();
+    let privateKey = $("#transaction_privateKey").val();
+    let amount = $("#transaction_amount").val();
 
     if (sender === "" || receiver === "" || privateKey === "" || amount === "") {
         $("#transaction_message").html("Please complete the whole form.");
