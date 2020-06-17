@@ -101,7 +101,6 @@ html, body {
 
 #layoutContainer .container {
     margin: 15px 10px 10px 10px;
-    background-color: red;
 }
 
 #layoutContainer .message {
@@ -109,12 +108,8 @@ html, body {
     font-style: italic;
 }
 
-#layoutContainer input {
-    width: 80%;
-}
-
 /* Style inputs, select elements and textareas */
-input[type=string], select, textarea {
+input[type=text], select, textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid #ccc;
@@ -159,13 +154,15 @@ label {
 }
 
 #layoutContainer button {
-    /*margin: .5rem;*/
-    width: 100%;
+    width: 20%;
+    padding: 0.2rem;
+    display: inline-block;
+    margin-top: 6px;
 }
 
 
-.testbox {
-    background-color: aqua;
-    width: 100% border-box;
-    height: 40px;
+
+body .lm_content{
+    overflow: scroll;
 }
+
