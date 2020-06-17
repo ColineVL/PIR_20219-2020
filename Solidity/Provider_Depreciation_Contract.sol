@@ -11,11 +11,14 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         address indexed provider,
         uint price,
         uint contractEndTime,
-        uint publicKey,
-        string indexed description);
+        bytes32 publicKeyDH,
+        string description);
 
     //function createDataReference
-    function createDataReference(uint _price, uint _contractEndTime, uint _publicKey, string memory _description) public {
+    function createDataReference(uint _price,
+        uint _contractEndTime,
+        bytes32 _publicKeyDH,
+        string memory _description) public {
         // Creating new data reference
 
         DataReference memory newReference;
@@ -35,7 +38,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         // Adding reference to the blockchain's storage
         dataReferences.push(newReference);
 
-        emit NewDataReference(referenceIdCounter, msg.sender, _price, _contractEndTime, _publicKey, _description);
+        emit NewDataReference(referenceIdCounter, msg.sender, _price, _contractEndTime, _publicKeyDH, _description);
 
         // !!!!!!!!!!!!! Maybe we will not use data ID counter also use SafeMath to add the counter
         referenceIdCounter = referenceIdCounter.add(1);
@@ -46,6 +49,21 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     modifier onlyProvider(uint _referenceId) {
         require(msg.sender == dataReferences[_referenceId].provider);
         _;
+    }
+
+    event encryptedEncodedKeyEvent(
+        uint indexed referenceId,
+        address indexed client,
+        bytes32 encryptedEncodedKey
+    );
+
+    // Needed to send privately encoded Key (K^K2^K3)
+    function setEncryptedEncodedKey(
+        uint _referenceId,
+        address _client,
+        bytes32 _encryptedEncodedKey) onlyProvider(_referenceId) external {
+
+        emit encryptedEncodedKeyEvent(_referenceId, _client, _encryptedEncodedKey);
     }
 
     function withdrawFunds(uint _referenceId) onlyProvider(_referenceId) external {
@@ -59,7 +77,8 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         require(dataReferences[_referenceId].referenceKey != 0);
 
         // Number of undisputed clients
-        uint _undisputedClients = (dataReferences[_referenceId].clients.length).sub(dataReferences[_referenceId].clientDisputes);
+        uint _undisputedClients = (dataReferences[_referenceId].clients.length)
+        .sub(dataReferences[_referenceId].clientDisputes);
         // Calculating the total funds that can be withdrawn
         uint funds = dataReferences[_referenceId].price.mul(_undisputedClients);
         // Sending funds
