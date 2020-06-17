@@ -5,6 +5,9 @@ const bc = require('./js/blockchain');
 const transactions = require('./js/SignedTransactionModule');
 const crypto = require('./js/CryptoModule');
 const EventsModule = require('./js/EventsModule');
+const readwrite = require('./js/ReadWriteModule');
+
+
 
 /********************************
  * Goal : delete this
@@ -37,6 +40,32 @@ const EventsModule = require('./js/EventsModule');
 // };
 // const admin = new Admin(provider, null, options);
 
+/********************************
+ * Defining Database N.B : will destruct if server is closed...
+ ********************************/
+var DiffieSchema = { // Schema for storing Diffie-H keys
+    public_key:  "", // User ethereum public key
+    refId: "", // Id of the reference for which this applies
+    PubDH:   "", // Public key of Diffie-h
+    PrivDH: "", // Private key of Diffie-h
+    Pub_Other: "", // Public key of other individual
+};
+var Reference_ClientSchema = { // Schema for storing reference information for a Client (keys and messages.)
+    public_key: "", // User ethereum public key
+    refId: "", // Id of the reference for which this applies
+    KxorK2 :   "", // KxorK2 provided by the seller
+    K2: "", // K2 provided later by the seller
+};
+var Reference_SellerSchema = { // Schema for storing reference information for a Seller (keys and messages.)
+    public_key:  "", // User ethereum public key
+    refId: "", // Id of the reference for which this applies
+    K: "", // Primary key used to encrypt the info
+    K2:  [],     // a mapping between client addresses and the hashes to send them
+};
+
+const Diffie = Object.create(DiffieSchema);
+const Reference_Seller = Object.create(Reference_SellerSchema);
+const Reference_Client = Object.create(Reference_ClientSchema);
 
 /********************************
  * Create the app
@@ -52,6 +81,7 @@ app.use(express.urlencoded());
 app.use(express.json());
 
 let Account = undefined;
+let prime = crypto.GetPrime(32);
 
 app.use('/public', express.static(__dirname + '/public'))
 
@@ -120,11 +150,15 @@ app.use('/public', express.static(__dirname + '/public'))
         if (Account) {
             const id = req.query.id ;
             let product = await EventsModule.GetRef(id)
-            // TODO Generate Pubkey
-            const DH = crypto.DiffieHellmanGenerate(64);
-            const pubKey = crypto.DiffieHellmanGetPublicKey(DH);
-            console.log(pubKey);
-            const receipt = await transactions.BuyReference(Account,product[0],pubKey);
+            const keys = crypto.DiffieHellmanGenerate(prime);
+            /* Updating object to write and save */
+            Diffie.PrivDH = keys[0];
+            Diffie.PubDH = keys[1];
+            Diffie.public_key = Account.address;
+            Diffie.refId =id
+            await readwrite.Write(id.toString() + '_' + Account.address.toString() +'.txt',JSON.stringify(Diffie));
+
+            const receipt = await transactions.BuyReference(Account,product[0],Diffie.PubDH);
             console.log(receipt);
             res.render('Product.ejs', {product: product[0]});
         } else {
