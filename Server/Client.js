@@ -118,12 +118,12 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Buy a specific reference */
     .get('/Buy/', async (req, res) => {
         if (Account) {
+            const id = req.query.id ;
             let product = await EventsModule.GetRef(id)
             // TODO Generate Pubkey
             const DH = crypto.DiffieHellmanGenerate(64);
             const pubKey = crypto.DiffieHellmanGetPublicKey(DH);
             console.log(pubKey);
-            console.log(Object.keys(pubKey));
             const receipt = await transactions.BuyReference(Account,product[0],pubKey);
             console.log(receipt);
             res.render('Product.ejs', {product: product[0]});

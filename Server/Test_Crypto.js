@@ -67,3 +67,27 @@ function toAscii(input) {
 //
 // console.log("decrypted :" + toAscii(decrypted_m))
 
+let priv = alice.getPrivateKey();
+let pub =  alice.getPublicKey();
+console.log("................");
+console.log(pub);
+console.log(aliceKey);
+console.log(priv);
+
+
+const third  = crypto.createDiffieHellman(alice.getPrime());
+third.setPrivateKey(priv)
+third.setPublicKey(pub)
+console.log("arane")
+console.log(third.getPublicKey().toString("hex"))
+console.log(alice.getPublicKey())
+console.log(alice.getPrivateKey())
+console.log(toBinary(third.getPrivateKey().toString("hex")))
+
+let thirdsecret = third.computeSecret(bobKey)
+
+
+console.log("................");
+console.log(thirdsecret);
+console.log(aliceSecret);
+console.log(toBinary(bobSecret.toString("hex")));

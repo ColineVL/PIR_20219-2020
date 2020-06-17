@@ -1,4 +1,7 @@
 const crypto = require('crypto');
+const Web3 = require('web3');
+const provider = 'http://192.168.33.115:8545';
+const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 
 function toBinary(input) {
     var result = "";
