@@ -18,11 +18,12 @@ var web3ws = new Web3(new Web3.providers.WebsocketProvider('ws://192.168.33.115:
 var account1= "0xfe3b557e8fb62b89f4916b721be55ceb828dbd73";
 var key1 =new Buffer.from('8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','hex');
 
+
 var contract_address = "0x338F940F4231662Dd9a689DdC4691450de932Be5" ; // '0x3Ace09BBA3b8507681146252d3Dd33cD4E2d4F63'
 /////////////////////////////////////////////////////////////////////////////////////////:
 
 // ABI description as JSON structure
-let abi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"string","name":"testStringIndexed","type":"string"},{"indexed":false,"internalType":"string","name":"testString","type":"string"},{"indexed":false,"internalType":"bytes16","name":"byt","type":"bytes16"}],"name":"Eventee","type":"event"},{"inputs":[],"name":"byt","outputs":[{"internalType":"bytes16","name":"","type":"bytes16"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"_testString","type":"string"},{"internalType":"bytes16","name":"_byt","type":"bytes16"}],"name":"set","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"testString","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}];
+let abi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"string","name":"testStringIndexed","type":"string"},{"indexed":false,"internalType":"string","name":"testString","type":"string"},{"indexed":false,"internalType":"bytes16","name":"byt","type":"bytes16"}],"name":"Eventee","type":"event"},{"inputs":[],"name":"byt","outputs":[{"internalType":"bytes16","name":"","type":"bytes16"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"_testString","type":"string"},{"internalType":"bytes16","name":"_byt","type":"bytes16"}],"name":"set","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"testString","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}]
 
 const gasPrice = 1000;//web3.eth.gasPrice;
 const gasPriceHex = web3.utils.numberToHex(gasPrice);
@@ -70,12 +71,11 @@ const setuint1ref = contract.methods.set("Description bogus", byt).encodeABI();
     // var sTx3 =txx3.serialize();
 
 
-    const dataOld = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex'));
-    const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
-        console.log(receipt);
-    }).on('error', function(error){
-        console.log(error);
-    });
+    // const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
+    //     console.log(receipt);
+    // }).on('error', function(error){
+    //     console.log(error);
+    // });
 
 
 
@@ -101,14 +101,14 @@ const setuint1ref = contract.methods.set("Description bogus", byt).encodeABI();
 
 
 
-    // const contractws = new web3ws.eth.Contract(abi,contract_address);
-    // const events = await contractws.events.Event({
-    //     filter:{testString:"Descriptiuvknv;on bogus x2"},
-    //     fromBlock: 0
-    // })
-    //     .on('data', function(event){
-    //         console.log(event.returnValues); // same results as the optional callback above
-    //     })
+    const contractws = new web3ws.eth.Contract(abi,contract_address);
+    const events = await contractws.events.Eventee({
+       // filter:{testString:"Descriptiuvknv;on bogus x2"},
+        fromBlock: 0
+    })
+        .on('data', function(event){
+            console.log(web3.utils.toAscii(event.returnValues.byt)); // same results as the optional callback above
+        })
 
     // console.log(events.callback())
     // console.log("**********************************");
