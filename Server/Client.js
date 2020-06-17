@@ -83,7 +83,7 @@ app.use(express.urlencoded());
 app.use(express.json());
 
 let Account = undefined;
-let prime = crypto.GetPrime();
+let prime = crypto.GetPrime(1024);
 
 app.use('/public', express.static(__dirname + '/public'))
 
@@ -153,9 +153,8 @@ app.use('/public', express.static(__dirname + '/public'))
             const id = req.query.id ;
             let product = await EventsModule.GetRef(id)
             // TODO Generate Pubkey
-            const DH = crypto.DiffieHellmanGenerate(64);
-            const pubKey = crypto.DiffieHellmanGetPublicKey(DH);
-            console.log(pubKey);
+            const keys = crypto.DiffieHellmanGenerate(prime);
+            console.log(keys[1]);
             const receipt = await transactions.BuyReference(Account,product[0],pubKey);
             console.log(receipt);
             res.render('Product.ejs', {product: product[0]});

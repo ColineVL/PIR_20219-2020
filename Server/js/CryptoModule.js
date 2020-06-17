@@ -21,7 +21,6 @@ module.exports = {
         }
         return result;
     },
-
     toAscii: function(input) {
         var result = "";
         var arr = input.match(/.{1,8}/g);
@@ -30,6 +29,13 @@ module.exports = {
         }
         return result;
     },
+    /* Get a prime of length l used for other Diffie Hellman functions*/
+    GetPrime : function(l){
+        const DH = crypto.createDiffieHellman(l);
+        return toBinary(DH.getPrime().toString("hex"));
+    },
+
+    /* One Time Pad , key length must be greater or equal than message. */
     OTP: function(key, message) {
         var res = "";
         for (let i = 0; i < message.length ; i++) {
@@ -37,18 +43,20 @@ module.exports = {
         }
         return res;
     },
-    DiffieHellmanGenerate : function(int) {
-        const DH = crypto.createDiffieHellman(int);
-        return DH;
+
+    /* Generates a Diffie Hellmann pair  with a given prime and returns the private and public keys*/
+    DiffieHellmanGenerate : function(prime) {
+        const DH = crypto.createDiffieHellman(prime);
+        return [DH.getPrivateKey(), DH.getPublicKey()];
     },
-    DiffieHellmanGetPublicKey : function(DH) {
-        const key = DH.generateKeys();
-        const k_int = web3.utils.fromAscii(toBinary(key.toString('hex')));
-        return k_int;
-    },
-    DiffieHellmanComputeSecret : function(DH,key) {
-        const secret = DH.generateKeys(key);
-        return secret;
+
+    /*Compute the secret given the info*/
+    DiffieHellmanComputeSecret : function(prime, pub_key, private_key ,pub_key_other) {
+        const DH = crypto.createDiffieHellman(new Buffer.from(toAscii(prime).toString(16),'hex'));
+        DH.setPublicKey(pub_key);
+        DH.setPrivateKey(private_key);
+        let secret = DH.computeSecret(pub_key_other);
+        return toBinary(secret.toString('hex'));
     },
 
     GetAvailableRefs: function (contractws, endTime, priceMax, provider) {
@@ -58,10 +66,6 @@ module.exports = {
         return result;
     },
 
-    GetPrime : function(l){
-       // const DH = crypto.createDiffieHellman(l);
-        return 0; //DH.getPrime();
-    }
 
 }
 

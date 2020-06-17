@@ -1,5 +1,8 @@
 const crypto = require('crypto');
 const assert = require('assert');
+const Web3 = require('web3');
+const provider = 'http://192.168.33.115:8545';
+const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 
 
 function toBinary(input){
@@ -74,7 +77,7 @@ console.log(pub);
 console.log(aliceKey);
 console.log(priv);
 
-
+let prime= toBinary(alice.getPrime().toString("hex"));
 const third  = crypto.createDiffieHellman(alice.getPrime());
 third.setPrivateKey(priv)
 third.setPublicKey(pub)
@@ -90,9 +93,16 @@ let thirdsecret = third.computeSecret(bobKey)
 console.log("................");
 console.log(thirdsecret);
 console.log(aliceSecret);
-console.log(toBinary(bobSecret.toString("hex")));
+console.log(bobSecret);
 
 let str ="lgvjhv";
 
 let res = toBinary(str);
 console.log(res);
+console.log("..............")
+console.log(toBinary(alice.getPrime().toString("hex")));
+
+console.log("####################################")
+// parseInt(number, 2).toString(16)
+console.log(alice.getPrime())
+console.log(new Buffer.from(toAscii(prime).toString(16),'hex'))
