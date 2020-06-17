@@ -58,6 +58,11 @@ module.exports = {
         return result;
     },
 
+    GetPrime : function(l){
+        const DH = crypto.createDiffieHellman(int);
+        return DH.getPrime();
+    }
+
 }
 
 // event NewDataReference(uint referenceId, address provider, uint price, uint contractEndTime);

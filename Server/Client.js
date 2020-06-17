@@ -5,6 +5,8 @@ const bc = require('./js/blockchain');
 const transactions = require('./js/SignedTransactionModule');
 const crypto = require('./js/CryptoModule');
 const EventsModule = require('./js/EventsModule');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 /********************************
  * Goal : delete this
@@ -37,6 +39,33 @@ const EventsModule = require('./js/EventsModule');
 // };
 // const admin = new Admin(provider, null, options);
 
+/********************************
+ * Defining Database
+ ********************************/
+var DiffieSchema = new Schema({ // Schema for storing Diffie-H keys
+    public_key:  String, // User ethereum public key
+    refId: String, // Id of the reference for which this applies
+    PubDH:   String, // Public key of Diffie-h
+    PrivDH: String, // Private key of Diffie-h
+    Pub_Other: String, // Public key of other individual
+});
+var Reference_ClientSchema = new Schema({ // Schema for storing reference information for a Client (keys and messages.)
+    public_key:  String, // User ethereum public key
+    refId: String, // Id of the reference for which this applies
+    KxorK2 :   String, // KxorK2 provided by the seller
+    K2: String, // K2 provided later by the seller
+});
+var Reference_SellerSchema = new Schema({ // Schema for storing reference information for a Seller (keys and messages.)
+    public_key:  String, // User ethereum public key
+    refId: String, // Id of the reference for which this applies
+    K: String, // Primary key used to encrypt the info
+    K2:  {     // a mapping between client addresses and the hashes to send them
+        type: Map,
+        of: String},
+});
+let Diffie = mongoose.model('Diffie', DiffieSchema);
+let Reference_Client = mongoose.model('Reference_ClientSchema', Reference_ClientSchema);
+let Reference_Seller = mongoose.model('Reference_SellerSchema', Reference_SellerSchema);
 
 /********************************
  * Create the app
@@ -52,6 +81,7 @@ app.use(express.urlencoded());
 app.use(express.json());
 
 let Account = undefined;
+let prime = crypto.GetPrime();
 
 app.use('/public', express.static(__dirname + '/public'))
 

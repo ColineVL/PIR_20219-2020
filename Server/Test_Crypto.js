@@ -91,3 +91,8 @@ console.log("................");
 console.log(thirdsecret);
 console.log(aliceSecret);
 console.log(toBinary(bobSecret.toString("hex")));
+
+let str ="lgvjhv";
+
+let res = toBinary(str);
+console.log(res);
