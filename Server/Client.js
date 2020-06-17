@@ -56,7 +56,6 @@ var Reference_ClientSchema = { // Schema for storing reference information for a
     KxorK2 :   "", // KxorK2 provided by the seller
     K2: "", // K2 provided later by the seller
 };
-
 var Reference_SellerSchema = { // Schema for storing reference information for a Seller (keys and messages.)
     public_key:  "", // User ethereum public key
     refId: "", // Id of the reference for which this applies
@@ -64,9 +63,9 @@ var Reference_SellerSchema = { // Schema for storing reference information for a
     K2:  [],     // a mapping between client addresses and the hashes to send them
 };
 
-let Reference_Seller = [];
-let Reference_Buyer = [];
-let Diffie = []
+const Diffie = Object.create(DiffieSchema);
+const Reference_Seller = Object.create(Reference_SellerSchema);
+const Reference_Client = Object.create(Reference_ClientSchema);
 
 /********************************
  * Create the app
@@ -151,10 +150,15 @@ app.use('/public', express.static(__dirname + '/public'))
         if (Account) {
             const id = req.query.id ;
             let product = await EventsModule.GetRef(id)
-            // TODO Generate Pubkey
             const keys = crypto.DiffieHellmanGenerate(prime);
-            console.log(keys[1]);
-            const receipt = await transactions.BuyReference(Account,product[0],pubKey);
+            /* Updating object to write and save */
+            Diffie.PrivDH = keys[0];
+            Diffie.PubDH = keys[1];
+            Diffie.public_key = Account.address;
+            Diffie.refId =id
+            await readwrite.Write(id.toString() + '_' + Account.address.toString() +'.txt',JSON.stringify(Diffie));
+
+            const receipt = await transactions.BuyReference(Account,product[0],Diffie.PubDH);
             console.log(receipt);
             res.render('Product.ejs', {product: product[0]});
         } else {

@@ -105,4 +105,7 @@ console.log(toBinary(alice.getPrime().toString("hex")));
 console.log("####################################")
 // parseInt(number, 2).toString(16)
 console.log(alice.getPrime())
-console.log(new Buffer.from(toAscii(prime).toString(16),'hex'))
+prime1 = alice.getPrime().toString("hex")
+console.log(new Buffer.from(prime1,'hex'));//new Buffer.from(toAscii(prime).toString(16),'hex'))
+
+console.log(alice.getGenerator())

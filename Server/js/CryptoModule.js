@@ -29,10 +29,11 @@ module.exports = {
         }
         return result;
     },
+
     /* Get a prime of length l used for other Diffie Hellman functions*/
     GetPrime : function(l){
         const DH = crypto.createDiffieHellman(l);
-        return toBinary(DH.getPrime().toString("hex"));
+        return [DH.getPrime().toString("hex"), DH.getGenerator().toString('hex') ];
     },
 
     /* One Time Pad , key length must be greater or equal than message. */
@@ -46,16 +47,22 @@ module.exports = {
 
     /* Generates a Diffie Hellmann pair  with a given prime and returns the private and public keys*/
     DiffieHellmanGenerate : function(prime) {
-        const DH = crypto.createDiffieHellman(prime);
+        const p = new Buffer.from(prime[0],'hex')
+        const generator = new Buffer.from(prime[1],'hex')
+        const DH = crypto.createDiffieHellman(p, generator);
+
         return [DH.getPrivateKey(), DH.getPublicKey()];
     },
 
     /*Compute the secret given the info*/
     DiffieHellmanComputeSecret : function(prime, pub_key, private_key ,pub_key_other) {
-        const DH = crypto.createDiffieHellman(new Buffer.from(toAscii(prime).toString(16),'hex'));
+        const p = new Buffer.from(prime[0],'hex')
+        const generator = new Buffer.from(prime[1],'hex')
+        const DH = crypto.createDiffieHellman(p, generator);
         DH.setPublicKey(pub_key);
         DH.setPrivateKey(private_key);
         let secret = DH.computeSecret(pub_key_other);
+
         return toBinary(secret.toString('hex'));
     },
 
