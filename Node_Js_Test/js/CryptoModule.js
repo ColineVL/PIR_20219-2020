@@ -40,7 +40,7 @@ module.exports = {
     },
     DiffieHellmanGetPublicKey : function(DH) {
         const key = DH.generateKeys();
-        const k_int = parseInt(toBinary(key.toString('hex')),2);
+        const k_int = web3.utils.fromAscii(toBinary(key.toString('hex')));
         return k_int;
     },
     DiffieHellmanComputeSecret : function(DH,key) {
