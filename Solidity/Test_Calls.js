@@ -38,9 +38,37 @@ const transactionObject = {
 };
 
 // const setuint1ref = contract.methods.buy_reference(4,270).encodeABI();
-let byt = web3.utils.fromAscii("101010")
 
-const setuint1ref = contract.methods.createDataReference(100000,1524,byt,"Description and keys are bogus, just for testing").encodeABI();
+let test= web3.utils.hexToBytes("0xb5");
+console.log(test)
+console.log(Object.keys(test))
+
+
+let buffer = [ "2" ] // new ArrayBuffer(8)
+//buffer[0] =1
+let view = new Uint32Array(buffer)
+console.log(".........")
+console.log(buffer)
+let testbuff= web3.utils.bytesToHex(buffer);
+console.log(testbuff)
+console.log(".........")
+
+console.log(test[0])
+let test1= web3.utils.bytesToHex(test);
+console.log(test1)
+
+console.log("Final test")
+let fuck =web3.utils.toHex(10101010)
+let fuckb = web3.utils.hexToBytes(fuck)
+console.log(fuck)
+console.log(fuckb)
+console.log(web3.utils.bytesToHex(fuckb))
+
+
+let byt = web3.utils.bytesToHex(["101101011011011"])
+console.log(byt)
+console.log(byt.length)
+const setuint1ref = contract.methods.createDataReference(4850,124,byt,"Agaikyrdjcytdkukn, all bogus bogus, just for testing").encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0)5encodeABI();
 
 
@@ -71,12 +99,12 @@ const setuint1ref = contract.methods.createDataReference(100000,1524,byt,"Descri
     // var sTx2 =txx2.serialize();
     // var sTx3 =txx3.serialize();
 
-
-    const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
-        console.log(receipt);
-    }).on('error', function(error){
-        console.log(error);
-    });
+    //
+    // const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
+    //     console.log(receipt);
+    // }).on('error', function(error){
+    //     console.log(error);
+    // });
 
 
 

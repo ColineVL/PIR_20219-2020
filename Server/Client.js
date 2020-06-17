@@ -81,7 +81,7 @@ app.use(express.urlencoded());
 app.use(express.json());
 
 let Account = undefined;
-let prime = crypto.GetPrime(1024);
+let prime = crypto.GetPrime(32);
 
 app.use('/public', express.static(__dirname + '/public'))
 

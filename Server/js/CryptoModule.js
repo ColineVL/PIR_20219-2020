@@ -50,6 +50,7 @@ module.exports = {
         const p = new Buffer.from(prime[0],'hex')
         const generator = new Buffer.from(prime[1],'hex')
         const DH = crypto.createDiffieHellman(p, generator);
+        DH.generateKeys();
 
         return [DH.getPrivateKey(), DH.getPublicKey()];
     },

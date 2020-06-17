@@ -2,6 +2,16 @@ const readline = require('readline');
 const Web3 = require('web3');
 const Tx = require('ethereumjs-tx');
 
+
+function toBinary(input) {
+    var result = "";
+    for (var i = 0; i < input.length; i++) {
+        var bin = input[i].charCodeAt().toString(2);
+        result += Array(8 - bin.length + 1).join("0") + bin;
+    }
+    return result;
+}
+
 const options = {
     defaultAccount: '0xfe3b557e8fb62b89f4916b721be55ceb828dbd73',
     defaultBlock: 'latest',
@@ -66,9 +76,14 @@ module.exports = {
     BuyReference: async function (account, product, pubKey) {
         web3.transactionConfirmationBlocks = 1;
 
+        let pubKey_bin = web3.utils.fromAscii(toBinary(pubKey.toString("hex")));
+        console.log(pubKey_bin.length)
+        console.log("...........")
+        console.log(toBinary(pubKey.toString("hex")).length)
+        console.log(product.returnValues.price)
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
-        const dataref = contract.methods.buy_reference(product.returnValues.referenceId,pubKey).encodeABI();
+        const dataref = contract.methods.buyReference(product.returnValues.referenceId,pubKey_bin).encodeABI();
         const rawTx = {
             nonce: web3.utils.numberToHex(txnCount),
             gasPrice: web3.utils.numberToHex(1500),

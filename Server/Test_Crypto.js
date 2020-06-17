@@ -15,7 +15,7 @@ function toBinary(input){
 }
 
 // Generate Alice's keys...
-const alice = crypto.createDiffieHellman(64);
+const alice = crypto.createDiffieHellman(4);
 const aliceKey = alice.generateKeys();
 
 // Generate Bob's keys...
@@ -100,7 +100,8 @@ let str ="lgvjhv";
 let res = toBinary(str);
 console.log(res);
 console.log("..............")
-console.log(toBinary(alice.getPrime().toString("hex")));
+let key = alice.getPrime()
+console.log(toBinary(key.toString("hex")));
 
 console.log("####################################")
 // parseInt(number, 2).toString(16)
@@ -109,3 +110,9 @@ prime1 = alice.getPrime().toString("hex")
 console.log(new Buffer.from(prime1,'hex'));//new Buffer.from(toAscii(prime).toString(16),'hex'))
 
 console.log(alice.getGenerator())
+console.log("/////////////////////////////////////////////");
+console.log(key.toString("hex"));
+console.log(key.toString("Ascii"));
+console.log(key.toString("UTF-8"));
+console.log(parseInt(key,'2'));
+console.log(key)
