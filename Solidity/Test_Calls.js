@@ -65,10 +65,10 @@ console.log(fuckb)
 console.log(web3.utils.bytesToHex(fuckb))
 
 
-let byt = web3.utils.bytesToHex(["101101011011011"])
+let byt = "0x3f420cfe1d6c583defea607e5838660df492e212192f1e1289378e11bae255c5d3f1fdfaf7520a84d903e9d7a8e3b9743eb84971bfd7a6242be8aefd8afd4a87" //web3.utils.bytesToHex(["101101011011011"])
 console.log(byt)
 console.log(byt.length)
-const setuint1ref = contract.methods.createDataReference(4850,124,byt,"Agaikyrdjcytdkukn, all bogus bogus, just for testing").encodeABI();
+const setuint1ref = contract.methods.createDataReference(407,24,byt,"will fail").encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0)5encodeABI();
 
 
@@ -100,11 +100,11 @@ const setuint1ref = contract.methods.createDataReference(4850,124,byt,"Agaikyrdj
     // var sTx3 =txx3.serialize();
 
     //
-    // const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
-    //     console.log(receipt);
-    // }).on('error', function(error){
-    //     console.log(error);
-    // });
+    const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
+        console.log(receipt);
+    }).on('error', function(error){
+        console.log(error);
+    });
 
 
 

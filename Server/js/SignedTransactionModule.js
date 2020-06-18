@@ -55,7 +55,7 @@ module.exports = {
         return web3.eth.sendSignedTransaction(rawTxHex);
     },
     createAndSendSignedTransactionData: async function (prov, valueInEther, privateKey_notBuffered, addressFrom, addressTo, data) {
-        web3.transactionConfirmationBlocks = 1;
+        // web3.transactionConfirmationBlocks = 1;
 
         const privateKey = new Buffer.from(privateKey_notBuffered, 'hex');
         const txnCount = await web3.eth.getTransactionCount(addressFrom, "pending")
@@ -74,22 +74,21 @@ module.exports = {
         return web3.eth.sendSignedTransaction(rawTxHex);
     },
     BuyReference: async function (account, product, pubKey) {
-        web3.transactionConfirmationBlocks = 1;
+        // web3.transactionConfirmationBlocks = 1;
 
-        let pubKey_bin = web3.utils.fromAscii(toBinary(pubKey.toString("hex")));
-        console.log(pubKey_bin.length)
-        console.log("...........")
-        console.log(toBinary(pubKey.toString("hex")).length)
-        console.log(product.returnValues.price)
+        let pubKey_bin = web3.utils.bytesToHex(pubKey);
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
         const dataref = contract.methods.buyReference(product.returnValues.referenceId,pubKey_bin).encodeABI();
+        console.log(product.returnValues.price)
+        console.log(typeof product.returnValues.price)
+
         const rawTx = {
             nonce: web3.utils.numberToHex(txnCount),
             gasPrice: web3.utils.numberToHex(1500),
             gasLimit: web3.utils.numberToHex(4700000),
             to: ContractAddress,
-            value: product.returnValues.price,
+            value: parseInt(product.returnValues.price,10),
             data: dataref
         };
         const tx = new Tx(rawTx);
