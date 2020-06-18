@@ -78,12 +78,12 @@ app.use('/public', express.static(__dirname + '/public'))
             Account = account;
             res.redirect(''); // Redirecting home to confirm connection
         }
-            catch(err) { // If an error is raised, try reconnecting
-                console.log(typeof err)
-                console.log(typeof err == "object")
-                console.log(Object.keys(err))
-                 res.render('ConnexionForm.ejs', {error : err, account : Account});
-            };
+        catch(err) { // If an error is raised, try reconnecting
+            console.log(typeof err)
+            console.log(typeof err == "object")
+            console.log(Object.keys(err))
+            res.render('ConnexionForm.ejs', {error : err, account : Account});
+        };
     })
 
     /************************************  BUYER PART ***************************/

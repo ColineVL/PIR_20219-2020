@@ -12,24 +12,29 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         uint price,
         uint contractEndTime,
         bytes32 publicKeyDH,
+        uint8 depreciationType,
         string description);
 
     //function createDataReference
     function createDataReference(uint _price,
         uint _contractEndTime,
         bytes32 _publicKeyDH,
+        uint8 _depreciationType,
         string memory _description) public {
         // Creating new data reference
 
         DataReference memory newReference;
 
-        newReference.referenceId = referenceIdCounter;
+//      newReference.referenceId = referenceIdCounter;
 
-        // convert price to ether
+        // converts price to ether
         newReference.price = 0 ether;
 
-        // setting price in ether. Provider won't be able to change it later.
+        // Sets price and depreciation type in ether. Provider won't be able to change it later.
         newReference.price = _price;
+        newReference.depreciationType = _depreciationType;
+
+        newReference.contractLength = _contractEndTime.sub(now);
 
         newReference.contractEndTime = _contractEndTime;
 
@@ -38,10 +43,17 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         // Adding reference to the blockchain's storage
         dataReferences.push(newReference);
 
-        emit NewDataReference(referenceIdCounter, msg.sender, _price, _contractEndTime, _publicKeyDH, _description);
+        emit NewDataReference(
+            dataReferences.length,
+            msg.sender,
+            _price,
+            _contractEndTime,
+            _publicKeyDH,
+            _depreciationType,
+            _description);
 
-        // !!!!!!!!!!!!! Maybe we will not use data ID counter also use SafeMath to add the counter
-        referenceIdCounter = referenceIdCounter.add(1);
+//        // !!!!!!!!!!!!! Maybe we will not use data ID counter also use SafeMath to add the counter
+//        referenceIdCounter = referenceIdCounter.add(1);
 
     }
 
@@ -67,8 +79,6 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     }
 
     function withdrawFunds(uint _referenceId) onlyProvider(_referenceId) external {
-        // Checks if provider hasn't already withdrawn money
-        require(dataReferences[_referenceId].withdrawnFunds == false);
 
         // Checks if the provider has waited for the time limit for clients to set a dispute
         require(now > dataReferences[_referenceId].contractEndTime + 5 days);
@@ -80,9 +90,9 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         uint _undisputedClients = (dataReferences[_referenceId].clients.length)
         .sub(dataReferences[_referenceId].clientDisputes);
         // Calculating the total funds that can be withdrawn
-        uint funds = dataReferences[_referenceId].price.mul(_undisputedClients);
-        // Sending funds
-        dataReferences[_referenceId].withdrawnFunds = true;
+        uint funds = dataReferences[_referenceId].withdrawableFunds;
+        dataReferences[_referenceId].withdrawableFunds = 0;
+
         (msg.sender).transfer(funds);
     }
 

@@ -20,7 +20,7 @@ contract Depreciation_Contract is Ownable{
     uint referenceIdCounter = 0;
 
     struct DataReference{ // Contains reference ANd price
-        uint referenceId;
+//      uint referenceId;
         uint price;
         uint referenceKey; //Take care of hackers, must be long enough ... to be determined
         /*
@@ -35,9 +35,18 @@ contract Depreciation_Contract is Ownable{
         */
         uint contractEndTime;
 
+        /*
+            Value depreciation factors.
+            Depreciation type = 0: constant price | 1: linear depreciation | 2: exponential
+        */
+
+        // Needed to calculate depreciation value
+        uint contractLength;
+        uint8 depreciationType;
+
         address provider;
         // Necessary to check if the provider withdrew undisputed funds so he does not withdraw other's funds
-        bool withdrawnFunds;
+        uint withdrawableFunds;
 
         /*
             Client parameters
@@ -45,6 +54,7 @@ contract Depreciation_Contract is Ownable{
 
         // List of clients that bought the contract
         address[] clients;
+        mapping (address => uint) clientFunds;
 
         // Needed to track how many funds are undisputed and what can the provider withdraw
         uint clientDisputes;
@@ -73,15 +83,32 @@ contract Depreciation_Contract is Ownable{
 
     uint internal disputePrice = 0.02 ether;
 
-    // Gives access to the smart contract's owner to change disputePrice since ether/USD pair is not stable
-//    function setDisputePrice(uint _price) onlyOwner external{
-//        disputePrice = _price;
-//    }
+    // Gives access to the smart contract's owner to change disputePrice
+    function setDisputePrice(uint _price) onlyOwner external{
+        disputePrice = _price;
+    }
 
-    /*
-    TODO FUNCTIONS
-    Settle dispute
-    */
+
+    function referenceCurrentPrice(uint _referenceId) view public returns(uint price){
+        uint _price = dataReferences[_referenceId].price;
+        uint8 depreciationType = dataReferences[_referenceId].depreciationType;
+
+        // Linear value depreciation
+        if(depreciationType == 1){
+            uint timeRemaining = dataReferences[_referenceId].contractEndTime.sub(now);
+            _price = (_price.mul(timeRemaining)).div(dataReferences[_referenceId].contractLength);
+        }
+
+        // !!!!!!!!!!!! Exponential value depreciation. Cannot work, ufixed does not have exponential ** operator
+//        else if(depreciationType == 2){
+//            uint timeRemaining = dataReferences[_referenceId].contractEndTime.sub(now);
+//            ufixed rate = ufixed(timeRemaining)/ufixed (dataReferences[_referenceId].contractLength);
+//            _price = price.mul(ufixed(2)**(rate) - ufixed(1));
+//        }
+
+        // if no depreciation type index is correct it will return the initial price (no depreciation)
+        return _price;
+    }
 
 
 }
