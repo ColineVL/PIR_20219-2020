@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Manage <%= product.returnValues.referenceId %> </title>
+
+</head>
+
+<body>
+<h1> Global Info : </h1>
+<p>Total number of clients : <%= num%></p>
+<ul>
+    <li> Id : <%= product.returnValues.referenceId %>  </li>
+    <li> Provider : <%= product.returnValues.provider %>  </li>
+    <li> Price : <%= product.returnValues.price %>  </li>
+    <li> End Time : <%= product.returnValues.contractEndTime %>  </li>
+    <li> Description : <%= product.returnValues.description %>  </li>
+</ul>
+<br>
+<p>To do : </p>
+<br>
+<ul>
+    <li> Send Info( K2xORK) : <%= 8 %> clients <a href="/">Do</a> </li>
+    <li> Verify hashes and send K2 : <%= 2 %> clients <a href="/">Do</a> </li>
+    <li> Dispute : <%= 1 %> clients <a href="/">Do</a> </li>
+
+</ul>
+<a href="/ForSale">Back</a>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+

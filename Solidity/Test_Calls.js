@@ -39,36 +39,11 @@ const transactionObject = {
 
 // const setuint1ref = contract.methods.buy_reference(4,270).encodeABI();
 
-let test= web3.utils.hexToBytes("0xb5");
-console.log(test)
-console.log(Object.keys(test))
 
 
-let buffer = [ "2" ] // new ArrayBuffer(8)
-//buffer[0] =1
-let view = new Uint32Array(buffer)
-console.log(".........")
-console.log(buffer)
-let testbuff= web3.utils.bytesToHex(buffer);
-console.log(testbuff)
-console.log(".........")
+let byt = web3.utils.bytesToHex(["101101101110100011"]) // "0x3f420cfe1d63e9d7a8e3b9743eb84971bfd7a6242be8aefd8afd4a87" //web3.utils.bytesToHex(["101101011011011"])
 
-console.log(test[0])
-let test1= web3.utils.bytesToHex(test);
-console.log(test1)
-
-console.log("Final test")
-let fuck =web3.utils.toHex(10101010)
-let fuckb = web3.utils.hexToBytes(fuck)
-console.log(fuck)
-console.log(fuckb)
-console.log(web3.utils.bytesToHex(fuckb))
-
-
-let byt = web3.utils.bytesToHex(["101101011011011"])
-console.log(byt)
-console.log(byt.length)
-const setuint1ref = contract.methods.createDataReference(4850,124,byt,"Agaikyrdjcytdkukn, all bogus bogus, just for testing").encodeABI();
+const setuint1ref = contract.methods.buyReference(0,byt).encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0)5encodeABI();
 
 
@@ -100,11 +75,14 @@ const setuint1ref = contract.methods.createDataReference(4850,124,byt,"Agaikyrdj
     // var sTx3 =txx3.serialize();
 
     //
-    // const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
-    //     console.log(receipt);
-    // }).on('error', function(error){
-    //     console.log(error);
-    // });
+    const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
+        // console.log(receipt);
+    }).catch(function(error){
+        console.log("hello");
+    });
+    //
+    // let blockNumber = dataOld1.blockNumber ;
+    // console.log(blockNumber)
 
 
 
@@ -115,8 +93,10 @@ const setuint1ref = contract.methods.createDataReference(4850,124,byt,"Agaikyrdj
     //     console.log(receipt);
     // });
     // console.log("*************************************");
-    // const map = await contract.methods.dataReferences(0).call(transactionObject);
-    // // const data2 = await contract.methods.data2().call(transactionObject);
+    const map = await contract.methods.dataReferences(0).clients.call({from : account1});
+    // const clients = await contract.methods.dataRefer.call(transactionObject);
+    console.log(map)
+    console.log(typeof map)
     // // const data = await contract.methods.getData().call(transactionObject);
     // console.log("data refs :" + map.clients);
     // console.log(map)
@@ -130,7 +110,7 @@ const setuint1ref = contract.methods.createDataReference(4850,124,byt,"Agaikyrdj
 
 
     //
-    // const contractws = new web3ws.eth.Contract(abi,contract_address);
+    const contractws = new web3ws.eth.Contract(abi,contract_address);
     // const events = await contractws.events.Eventee({
     //    // filter:{testString:"Descriptiuvknv;on bogus x2"},
     //     fromBlock: 0
@@ -140,14 +120,15 @@ const setuint1ref = contract.methods.createDataReference(4850,124,byt,"Agaikyrdj
     //     })
 
     // console.log(events.callback())
-    // console.log("**********************************");
-    // contractws.getPastEvents("NewClient", {
-    //     fromBlock: 0,
-    //     toBlock: 'latest'
-    // }, function(error, events){ console.log(events); })
-    //     .then(function(events){
-    //         console.log(events) // same results as the optional callback above
-    //     });
+//     console.log("**********************************");
+//     contractws.getPastEvents("NewDataReference", {
+//         filter: {address: account1},
+//         fromBlock: blockNumber-1,
+//         toBlock: 'latest'
+//     }, function(error, events){ console.log(events); })
+//         .then(function(events){
+//             console.log(events) // same results as the optional callback above
+//         });
 })();
 
 

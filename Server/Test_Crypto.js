@@ -15,7 +15,7 @@ function toBinary(input){
 }
 
 // Generate Alice's keys...
-const alice = crypto.createDiffieHellman(4);
+const alice = crypto.createDiffieHellman(256);
 const aliceKey = alice.generateKeys();
 
 // Generate Bob's keys...
@@ -116,3 +116,13 @@ console.log(key.toString("Ascii"));
 console.log(key.toString("UTF-8"));
 console.log(parseInt(key,'2'));
 console.log(key)
+console.log("======================================================")
+console.log(alice.getPrime());
+let buf1 = web3.utils.bytesToHex(alice.getPublicKey())
+console.log(buf1)
+console.log(new Buffer.from(buf1))
+
+let v = "1000";
+console.log(typeof parseInt(v,10))
+
+console.log(parseInt(v,10))

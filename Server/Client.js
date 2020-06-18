@@ -44,7 +44,6 @@ const readwrite = require('./js/ReadWriteModule');
  * Defining Database N.B : will destruct if server is closed...
  ********************************/
 var DiffieSchema = { // Schema for storing Diffie-H keys
-    public_key:  "", // User ethereum public key
     refId: "", // Id of the reference for which this applies
     PubDH:   "", // Public key of Diffie-h
     PrivDH: "", // Private key of Diffie-h
@@ -154,19 +153,29 @@ app.use('/public', express.static(__dirname + '/public'))
             /* Updating object to write and save */
             Diffie.PrivDH = keys[0];
             Diffie.PubDH = keys[1];
-            Diffie.public_key = Account.address;
             Diffie.refId =id
-            await readwrite.Write(id.toString() + '_' + Account.address.toString() +'.txt',JSON.stringify(Diffie));
 
             const receipt = await transactions.BuyReference(Account,product[0],Diffie.PubDH);
-            console.log(receipt);
-            res.render('Product.ejs', {product: product[0]});
+            if (receipt){
+                await readwrite.Write(__dirname +'/Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt',JSON.stringify(Diffie));
+
+                console.log(receipt);
+                res.render('Product.ejs', {product: product[0]});
+            } else {
+                res.redirect('/BuyError');
+            }
         } else {
             res.render('homeClient.ejs',{account : Account});
         }
-
     })
+
+    /*If something has gone wrong..*/
+    .get('/BuyError', async (req, res) => {
+        res.render('BuyError.ejs');
+    })
+
     /************ Bought ************/
+
     /* Interface for a buyer */
     .get('/Bought', async (req, res) => {
         if (Account) {
@@ -179,6 +188,8 @@ app.use('/public', express.static(__dirname + '/public'))
 
 
     /************************************  SELLER PART ***************************/
+
+    /********* Global part *********/
     /* Seller Menu */
     .get('/SellerMenu', async (req, res) => {
         if (Account) {
@@ -194,10 +205,69 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('SellNew.ejs',{account : Account});
     })
 
+    .post('/PostProduct', async(req, res) =>{
+        if (Account) {
+            /* Info to be sent*/
+            const price = req.body.price ;
+            const endTime= req.body.contractEndTime ;
+            const description = req.body.description ;
+
+            /*DH keys, to be stored and public sent*/
+            const keys = crypto.DiffieHellmanGenerate(prime);
+            /* Updating object to write and save */
+            Diffie.PrivDH = keys[0];
+            Diffie.PubDH = keys[1];
+
+            /*Send transaction the get the ref_id for the database*/
+            const receipt = await transactions.SellReference(Account,Diffie.PubDH,price,endTime,description);
+            if (receipt){
+                let blockNumber = receipt.blockNumber ;
+                let event = await EventsModule.GetYourRef(Account,blockNumber)
+                let id = event[0].returnValues.referenceId;
+
+                Diffie.refId = id;
+                await readwrite.Write(__dirname +'/Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt',JSON.stringify(Diffie));
+
+                res.redirect('/ForSale');
+            } else {
+                res.redirect('/SellError');
+            }
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
+
+    /********* Need Actions ***********/
+
+    /*See ongoing sales*/
+    .get('/OngoingSales', async (req, res) => {
+        if (Account) {
+            let Ids =await EventsModule.GetSoldRefs(Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+            let IdsDone = [];
+            res.render('OngoingSales.ejs',{Ids: Ids, IdsDone: IdsDone});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
+
+    /* Interface to manage a certain id being sold*/
+    .get('/ManageId/', async (req, res) => {
+        if (Account) {
+            const id = req.query.id ;
+            let product = await EventsModule.GetRef(id);
+            const clients = [1,2,1,2,1,7]//transactions.GetClients(id); // TODO finish coding function.. problem of client arrays
 
 
+            res.render('ManageId.ejs', {product: product[0], num: clients.length});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
 
-
+    /*If something has gone wrong..*/
+    .get('/SellError', async (req, res) => {
+        res.render('SellError.ejs');
+    })
 
     /* If user asks for an innexistant view, we redirect him to the homepage */
     .use(function(req, res, next){
