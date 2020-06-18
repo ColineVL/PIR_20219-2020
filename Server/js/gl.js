@@ -66,6 +66,15 @@ const boughtDataItem = {
  * Sell Items
  ********************************/
 
+const sellNewItem = {
+    title: "Sell a new product",
+    name: "sellNewItem"
+};
+
+const ongoingSalesItem = {
+    title: "Ongoing sales",
+    name: "ongoingSalesItem"
+};
 
 /********************************
  * Create Layout
@@ -194,27 +203,47 @@ myLayout.registerComponent('resultTransactionItem', function (container, state) 
 
 myLayout.registerComponent('forSaleItem', function (container, state) {
     container.getElement().html(
-        '<h1>Clic on a product to get more info.</h1>' +
-        '<ul id="forSale_list"></ul>'
+        '<div class="container">' +
+        '<h1>For sale items:</h1>' +
+        '<ul id="forSale_list"></ul>' +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('ongoingTransactionsItem', function (container, state) {
     container.getElement().html(
+        '<div class="container">' +
         '<h1>Transactions:</h1>' +
-        '<ul id="ongoing_list"></ul>'
+        '<ul id="ongoing_list"></ul>' +
+        '</div>'
     );
 });
 
 myLayout.registerComponent('boughtDataItem', function (container, state) {
     container.getElement().html(
+        '<div class="container">' +
         '<h1>Bought data:</h1>' +
-        '<ul id="boughtData_list"></ul>'
+        '<ul id="boughtData_list"></ul>' +
+        '</div>'
     );
 });
 
 /** Sell items **/
 
+myLayout.registerComponent('sellNewItem', function (container, state) {
+    container.getElement().html('<div id="forSale">');
+    loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
+});
+
+myLayout.registerComponent('ongoingSalesItem', function (container, state) {
+    container.getElement().html(
+        '<div class="container">' +
+        '<h1>Products being sold :</h1>' +
+        '<div id="ongoing_beingSold"></div>' +
+        '<div id="ongoing_sold"></div>' +
+        '</div>'
+    );
+});
 
 /********************************
  * Initialize Layout
@@ -268,11 +297,12 @@ addMenuItem(forSaleItem);
 addMenuItem(ongoingTransactionsItem);
 addMenuItem(boughtDataItem);
 $('#menuContainer').append("<h2>Sell</h2>");
+addMenuItem(sellNewItem);
+addMenuItem(ongoingSalesItem);
 $('#menuContainer').append("<h2>Debug</h2>");
 addMenuItem(createTransactionItem);
 addMenuItem(checkABalanceItem);
 $('#menuContainer').append("<h3><a href='closeserver'>Close server</a></h3>");
-
 
 /********************************
  * Create items out of the menu
