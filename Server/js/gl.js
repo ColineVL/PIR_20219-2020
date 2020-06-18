@@ -271,6 +271,7 @@ $('#menuContainer').append("<h2>Sell</h2>");
 $('#menuContainer').append("<h2>Debug</h2>");
 addMenuItem(createTransactionItem);
 addMenuItem(checkABalanceItem);
+$('#menuContainer').append("<h3><a href='closeserver'>Close server</a></h3>");
 
 
 /********************************

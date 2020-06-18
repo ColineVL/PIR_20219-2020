@@ -47,6 +47,22 @@ html, body {
     text-align: center;
 }
 
+#menuContainer h3 {
+    border-top: 1px solid #333;
+    cursor: pointer;
+    padding: 10px 5px;
+    color: #BBB;
+    background: #222;
+    font: 15px Arial, sans-serif;
+    text-align: center;
+    font-style: italic;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
 #menuContainer li {
     border-bottom: 1px solid #000;
     border-top: 1px solid #333;
