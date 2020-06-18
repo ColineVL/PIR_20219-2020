@@ -118,4 +118,16 @@ module.exports = {
             .catch(function(error){});
         return receipt;
     },
+
+    /*Function to view the clients of a certain reference*/
+    GetClients: async function (account,id) {
+        const transactionObject = {
+            from: account.address,
+            gas: web3.utils.numberToHex(3000000),
+            gasPrice: gasPrice
+        };
+        let clients =await contract.methods.clients().call(transactionObject)
+            .catch(function(error){});
+        return clients;
+    },
 };

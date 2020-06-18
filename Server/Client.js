@@ -188,6 +188,8 @@ app.use('/public', express.static(__dirname + '/public'))
 
 
     /************************************  SELLER PART ***************************/
+
+    /********* Global part *********/
     /* Seller Menu */
     .get('/SellerMenu', async (req, res) => {
         if (Account) {
@@ -202,7 +204,6 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SellNew', async (req, res) => {
         res.render('SellNew.ejs',{account : Account});
     })
-
 
     .post('/PostProduct', async(req, res) =>{
         if (Account) {
@@ -231,13 +232,37 @@ app.use('/public', express.static(__dirname + '/public'))
             } else {
                 res.redirect('/SellError');
             }
-
-
         } else {
             res.render('homeClient.ejs',{account : Account});
         }
     })
 
+    /********* Need Actions ***********/
+
+    /*See ongoing sales*/
+    .get('/OngoingSales', async (req, res) => {
+        if (Account) {
+            let Ids =await EventsModule.GetSoldRefs(Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+            let IdsDone = [];
+            res.render('OngoingSales.ejs',{Ids: Ids, IdsDone: IdsDone});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
+
+    /* Interface to manage a certain id being sold*/
+    .get('/ManageId/', async (req, res) => {
+        if (Account) {
+            const id = req.query.id ;
+            let product = await EventsModule.GetRef(id);
+            const clients = [1,2,1,2,1,7]//transactions.GetClients(id); // TODO finish coding function.. problem of client arrays
+
+
+            res.render('ManageId.ejs', {product: product[0], nul: clients.length});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
 
     /*If something has gone wrong..*/
     .get('/SellError', async (req, res) => {
