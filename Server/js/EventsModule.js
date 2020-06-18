@@ -29,7 +29,7 @@ const contractws = new web3ws.eth.Contract(abi, ContractAddress);
 
 
 module.exports = {
-    // GetAvailableRefs: async function (contractws, endTime, priceMax, provider) {
+    /*Get all references */
     GetAvailableRefs: async function (endTime, priceMax, provider) {
 
         endTime = endTime || 0; //TODO Talk about endtime
@@ -45,8 +45,9 @@ module.exports = {
         }) // TODO Eventually do something here
         return res1;
     },
+
+    /*Get a specific reference by it's Id*/
     GetRef: async function (refId) {
-        console.log(refId)
         let res1 = await contractws.getPastEvents("NewDataReference", {
             filter: {referenceId: refId.toString()},
             fromBlock: 0,
@@ -54,6 +55,17 @@ module.exports = {
         }, function (error, events) {}) // TODO Eventually do something here
         return res1;
     },
+    /*Get the reference you just put up for sale (useful for sellers database)*/
+    GetYourRef: async function (account, blockNumber) {
+        let res1 = await contractws.getPastEvents("NewDataReference", {
+            filter: {address: account.address},
+            fromBlock: blockNumber-1,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1;
+    },
+
+    /*Get references bought by a specific id*/
     GetBoughtRefs: async function (account) {
         let res1 = await contractws.getPastEvents("NewClient", {
             filter: {address: account.address},

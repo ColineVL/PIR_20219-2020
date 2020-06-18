@@ -44,7 +44,6 @@ const readwrite = require('./js/ReadWriteModule');
  * Defining Database N.B : will destruct if server is closed...
  ********************************/
 var DiffieSchema = { // Schema for storing Diffie-H keys
-    public_key:  "", // User ethereum public key
     refId: "", // Id of the reference for which this applies
     PubDH:   "", // Public key of Diffie-h
     PrivDH: "", // Private key of Diffie-h
@@ -154,7 +153,6 @@ app.use('/public', express.static(__dirname + '/public'))
             /* Updating object to write and save */
             Diffie.PrivDH = keys[0];
             Diffie.PubDH = keys[1];
-            Diffie.public_key = Account.address;
             Diffie.refId =id
             await readwrite.Write(__dirname +'/Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt',JSON.stringify(Diffie));
 
@@ -194,7 +192,31 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('SellNew.ejs',{account : Account});
     })
 
+    .post('/PostProduct', async(req, res) =>{
+        if (Account) {
+            /* Info to be sent*/
+            const price = req.body.price ;
+            const endTime= req.body.contractEndTime ;
+            const description = req.body.description ;
 
+            /*DH keys, to be stored and public sent*/
+            const keys = crypto.DiffieHellmanGenerate(prime);
+            /* Updating object to write and save */
+            Diffie.PrivDH = keys[0];
+            Diffie.PubDH = keys[1];
+
+            /*Send transaction the get the ref_id for the database*/
+            const receipt = await transactions.SellReference(Account,Diffie.PubDH,price,endTime,description);
+
+            let blockNumber = receipt.blockNumber ;
+            Diffie.refId = EventsModule.GetYourRef(Account,blockNumber);
+            await readwrite.Write(__dirname +'/Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt',JSON.stringify(Diffie));
+
+            res.render('Product.ejs', {product: product[0]});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
 
 
 
