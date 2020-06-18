@@ -241,8 +241,7 @@ function getReferences() {
 
 /** Reference info **/
 function getRefInfo(id) {
-    product = references[id].returnValues;
-    ["contractEndTime"]
+    let product = references[id].returnValues;
     let keysToDisplay = ["contractEndTime", "price", "public key", "referenceId"];
     let html = "<table><tbody>";
     for (let key in keysToDisplay) {
