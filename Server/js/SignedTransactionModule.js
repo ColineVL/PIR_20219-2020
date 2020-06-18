@@ -93,7 +93,9 @@ module.exports = {
         tx.sign(privateKey);
         const serializedTx = tx.serialize();
         const rawTxHex = '0x' + serializedTx.toString('hex');
-        return web3.eth.sendSignedTransaction(rawTxHex);
+        let receipt = web3.eth.sendSignedTransaction(rawTxHex)
+            .catch(function(error){});
+        return receipt;
     },
     SellReference: async function (account,pubKey,price,endTime,description) {
         let pubKey_bin = web3.utils.bytesToHex(pubKey);
@@ -112,6 +114,8 @@ module.exports = {
         tx.sign(privateKey);
         const serializedTx = tx.serialize();
         const rawTxHex = '0x' + serializedTx.toString('hex');
-        return web3.eth.sendSignedTransaction(rawTxHex);
+        let receipt = web3.eth.sendSignedTransaction(rawTxHex)
+            .catch(function(error){});
+        return receipt;
     },
 };

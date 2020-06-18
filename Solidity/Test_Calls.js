@@ -43,7 +43,7 @@ const transactionObject = {
 
 let byt = web3.utils.bytesToHex(["101101101110100011"]) // "0x3f420cfe1d63e9d7a8e3b9743eb84971bfd7a6242be8aefd8afd4a87" //web3.utils.bytesToHex(["101101011011011"])
 
-const setuint1ref = contract.methods.createDataReference(4740,4,byt,"hell hell helloooo helloo").encodeABI();
+const setuint1ref = contract.methods.buyReference(0,byt).encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0)5encodeABI();
 
 
@@ -76,13 +76,13 @@ const setuint1ref = contract.methods.createDataReference(4740,4,byt,"hell hell h
 
     //
     const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
-        console.log(receipt);
-    }).on('error', function(error){
-        console.log(error);
+        // console.log(receipt);
+    }).catch(function(error){
+        console.log("hello");
     });
-
-    let blockNumber = dataOld1.blockNumber ;
-    console.log(blockNumber)
+    //
+    // let blockNumber = dataOld1.blockNumber ;
+    // console.log(blockNumber)
 
 
 
@@ -118,15 +118,15 @@ const setuint1ref = contract.methods.createDataReference(4740,4,byt,"hell hell h
     //     })
 
     // console.log(events.callback())
-    console.log("**********************************");
-    contractws.getPastEvents("NewDataReference", {
-        filter: {address: account1},
-        fromBlock: blockNumber-1,
-        toBlock: 'latest'
-    }, function(error, events){ console.log(events); })
-        .then(function(events){
-            console.log(events) // same results as the optional callback above
-        });
+//     console.log("**********************************");
+//     contractws.getPastEvents("NewDataReference", {
+//         filter: {address: account1},
+//         fromBlock: blockNumber-1,
+//         toBlock: 'latest'
+//     }, function(error, events){ console.log(events); })
+//         .then(function(events){
+//             console.log(events) // same results as the optional callback above
+//         });
 })();
 
 
