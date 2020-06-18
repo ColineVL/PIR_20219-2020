@@ -156,7 +156,7 @@ app.use('/public', express.static(__dirname + '/public'))
             Diffie.PubDH = keys[1];
             Diffie.public_key = Account.address;
             Diffie.refId =id
-            await readwrite.Write(id.toString() + '_' + Account.address.toString() +'.txt',JSON.stringify(Diffie));
+            await readwrite.Write(__dirname +'/Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt',JSON.stringify(Diffie));
 
             const receipt = await transactions.BuyReference(Account,product[0],Diffie.PubDH);
             console.log(receipt);
