@@ -208,17 +208,21 @@ app.use('/public', express.static(__dirname + '/public'))
             /*Send transaction the get the ref_id for the database*/
             const receipt = await transactions.SellReference(Account,Diffie.PubDH,price,endTime,description);
 
+            console.log(receipt)
+
             let blockNumber = receipt.blockNumber ;
-            Diffie.refId = EventsModule.GetYourRef(Account,blockNumber);
+            let event = await EventsModule.GetYourRef(Account,blockNumber)
+            console.log(event)
+            let id = event[0].returnValues.referenceId;
+            console.log(id)
+            Diffie.refId = id;
             await readwrite.Write(__dirname +'/Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt',JSON.stringify(Diffie));
 
-            res.render('Product.ejs', {product: product[0]});
+            res.redirect('/ForSale');
         } else {
             res.render('homeClient.ejs',{account : Account});
         }
     })
-
-
 
 
     /* If user asks for an innexistant view, we redirect him to the homepage */

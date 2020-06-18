@@ -95,7 +95,7 @@ module.exports = {
         const rawTxHex = '0x' + serializedTx.toString('hex');
         return web3.eth.sendSignedTransaction(rawTxHex);
     },
-    SellReference: async function (Account,pubKey,price,endTime,description) {
+    SellReference: async function (account,pubKey,price,endTime,description) {
         let pubKey_bin = web3.utils.bytesToHex(pubKey);
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
