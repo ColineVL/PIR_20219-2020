@@ -51,7 +51,7 @@ async function getAccount(privateKey) {
 /********************************
  * Nodes
  ********************************/
-//setInterval(refreshNodesList, 2000);
+setInterval(refreshNodesList, 2000);
 async function refreshNodesList() {
     let PeerCount = await web3.eth.net.getPeerCount();
     let peers = await admin.getPeers();
@@ -77,7 +77,7 @@ async function createTransaction(jsonInfo) {
  ********************************/
 
 // Update of the list of last blocks numbers
-//setInterval(refreshBlocksNUMBERSList, 2000);
+setInterval(refreshBlocksNUMBERSList, 2000);
 
 function callbackBlocksNUMBERSlist() {
     if (nbBlocksToPrint === blockslistNUMBERS.length) {
@@ -108,12 +108,10 @@ async function getBlockInfo(blocknumber) {
  ********************************/
 
 async function getNodelistIDS() {
-    await refreshNodesList();
     return nodelistIDS;
 }
 
 function getBlockslistNUMBERS() {
-    refreshBlocksNUMBERSList();
     return blockslistNUMBERS;
 }
 
