@@ -126,4 +126,26 @@ module.exports = {
             .catch(function(error){});
         return clients;
     },
+    /*Send K2 xor K to the correct client (via the contract) from the provider*/
+    SendK2ToClient: async function (account,id, client_address, encryptedEncodedKey) {
+        let bin = web3.utils.bytesToHex(encryptedEncodedKey);
+        const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
+        const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
+        const dataref = contract.methods.setEncryptedEncodedKey(id, client_address, bin).encodeABI();
+
+        const rawTx = {
+            nonce: web3.utils.numberToHex(txnCount),
+            gasPrice: web3.utils.numberToHex(1500),
+            gasLimit: web3.utils.numberToHex(4700000),
+            to: ContractAddress,
+            data: dataref
+        };
+        const tx = new Tx(rawTx);
+        tx.sign(privateKey);
+        const serializedTx = tx.serialize();
+        const rawTxHex = '0x' + serializedTx.toString('hex');
+        let receipt = web3.eth.sendSignedTransaction(rawTxHex)
+            .catch(function(error){console.log(error)});
+        return receipt;
+    },
 };

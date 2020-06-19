@@ -45,13 +45,13 @@ function toAscii(input) {
     }
     return result;
 }
-// function OTP(key, message) {
-//     var res = "";
-//     for (let i = 0; i < message.length ; i++) {
-//         res += key[i] ^ message[i];
-//     }
-//     return res;
-// }
+function OTP(key, message) {
+    var res = [];
+    for (let i = 0; i < message.length ; i++) {
+        res .push(key[i] ^ message[i]);
+    }
+    return new Buffer.from(res,'hex');
+}
 // let message = "This is a simple test. 2.5.2" ;
 // let m_bin = toBinary(message);
 // console.log(message);
@@ -141,3 +141,26 @@ function StrToBytes(str) {
     let res = []
     return res
 }
+let l = ['aa', 'basd', 'caa','aab', 'mljgdhbfhffkytvurdjhgcjfg6', 'aaa', "adert"];
+if (l.indexOf("mljgdhbfhffkytvurdjhgcjfg6") >= 0) {
+    console.log("yassss")
+}
+
+let loi = crypto.randomBytes(3);
+let loi2 = crypto.randomBytes(10);
+console.log(loi)
+console.log(loi2)
+console.log(aliceSecret)
+console.log(OTP(loi,loi2))
+console.log(OTP(aliceSecret,OTP(loi,loi2)))
+
+var Kop = new Buffer.from([66,161,127,226],'hex')
+console.log(Kop.slice(0,2))
+// console.log(loi[0])
+let hash = web3.utils.keccak256(loi)
+console.log(hash)
+
+console.log(web3.utils.bytesToHex(Kop))
+
+
+

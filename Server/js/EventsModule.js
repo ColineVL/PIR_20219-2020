@@ -84,7 +84,52 @@ module.exports = {
         }, function (error, events) {}) // TODO Eventually do something here
         return res1;
     },
+    /*Get all emits testifying that a client sent the encrypted key hashed for a certain product of reference id : id*/
+    GetEncryptedHashKeysResponses: async function (id) {
+        let res1 = await contractws.getPastEvents("encryptedKeyHash", {
+            filter: {referenceId: id},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1;
+    },
+    /*Get all emits testifying that a the provider sent the encrypted key K2 for a certain product of reference id : id*/
+    GetEncryptedKeysSent: async function (id) {
+        let res1 = await contractws.getPastEvents("encryptedEncodedKeyEvent", {
+            filter: {referenceId: id},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1;
+    },
 
+    /*Useful function that transforms a list of events into a list of addresses concerned by the event*/
+    /*note that the event has to be coded such that the attribute of the addresses is "client" !*/
+    EventsToAddresses: function (events) {
+        let res = [];
+        for (let i = 0; i < events.length ; i++) {
+            res.push(events[i].returnValues.client)
+        }
+        return res;
+    },
+    /*Computes the list of elements in list1 and not list2*/
+    ComputeLeft : function (list1,list2) {
+        let res = [];
+        for (let i = 0; i < list1.length ; i++) {
+            if ( !(list2.indexOf(list1[i]) >= 0) ) {
+                res.push(list1[i])
+            }
+        }
+        return res;
+    },
+    GetPubDiffieClient: async function (address_client, id) {
+        let res1 = await contractws.getPastEvents("NewClient", {
+            filter: {referenceId: id, address: address_client},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return new Buffer.from(web3.utils.hexToBytes(res1[0].returnValues.publicKeyDH)).slice(0,4);
+    },
 }
 
 // // event NewDataReference(uint referenceId, address provider, uint price, uint contractEndTime);

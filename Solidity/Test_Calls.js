@@ -38,12 +38,13 @@ const transactionObject = {
 };
 
 // const setuint1ref = contract.methods.buy_reference(4,270).encodeABI();
+var Kop = new Buffer.from([10,147,219,23,56,24,250,196,145,54],'hex')
+var bytes = web3.utils.bytesToHex(Kop);
 
 
+// let byt = web3.utils.bytesToHex(["101101101110100011"]) // "0x3f420cfe1d63e9d7a8e3b9743eb84971bfd7a6242be8aefd8afd4a87" //web3.utils.bytesToHex(["101101011011011"])
 
-let byt = web3.utils.bytesToHex(["101101101110100011"]) // "0x3f420cfe1d63e9d7a8e3b9743eb84971bfd7a6242be8aefd8afd4a87" //web3.utils.bytesToHex(["101101011011011"])
-
-const setuint1ref = contract.methods.buyReference(0,byt).encodeABI();
+const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0)5encodeABI();
 
 
@@ -59,7 +60,7 @@ const setuint1ref = contract.methods.buyReference(0,byt).encodeABI();
         gasLimit: gasLimitHex,
         data:setuint1ref ,
         from: account1,
-       // value: 100000//web3.utils.toWei('1', 'ether'),
+       value: 455475//web3.utils.toWei('1', 'ether'),
     };
 
 
@@ -92,11 +93,11 @@ const setuint1ref = contract.methods.buyReference(0,byt).encodeABI();
     // const dataNew = await web3.eth.sendSignedTransaction('0x' + sTx3.toString('hex')).on('receipt', function(receipt){
     //     console.log(receipt);
     // });
-    // console.log("*************************************");
-    const map = await contract.methods.getClients(0).call({from : account1});
-    // const clients = await contract.methods.dataRefer.call(transactionObject);
-    console.log(map)
-    console.log(typeof map)
+    // // console.log("*************************************");
+    // const map = await contract.methods.getClients(0).call({from : account1});
+    // // const clients = await contract.methods.dataRefer.call(transactionObject);
+    // console.log(map)
+    // console.log(typeof map)
     // // const data = await contract.methods.getData().call(transactionObject);
     // console.log("data refs :" + map.clients);
     // console.log(map)
@@ -110,25 +111,20 @@ const setuint1ref = contract.methods.buyReference(0,byt).encodeABI();
 
 
     //
+
     const contractws = new web3ws.eth.Contract(abi,contract_address);
-    // const events = await contractws.events.Eventee({
-    //    // filter:{testString:"Descriptiuvknv;on bogus x2"},
-    //     fromBlock: 0
-    // })
-    //     .on('data', function(event){
-    //         console.log(web3.utils.toAscii(event.returnValues.byt)); // same results as the optional callback above
-    //     })
 
     // console.log(events.callback())
-//     console.log("**********************************");
-//     contractws.getPastEvents("NewDataReference", {
-//         filter: {address: account1},
-//         fromBlock: blockNumber-1,
-//         toBlock: 'latest'
-//     }, function(error, events){ console.log(events); })
-//         .then(function(events){
-//             console.log(events) // same results as the optional callback above
-//         });
+    console.log("**********************************");
+    let res1 =  contractws.getPastEvents("NewClient", {
+        filter: {address: account1},
+        fromBlock: 0,
+        toBlock: 'latest'
+    }, function(error, events){ console.log(events[0].returnValues.publicKeyDH)
+        console.log(web3.utils.hexToBytes(events[0].returnValues.publicKeyDH)); })
+        .then(function(events){
+            // console.log(events.returnValues )// same results as the optional callback above
+        });
 })();
 
 

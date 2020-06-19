@@ -10,38 +10,50 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         uint indexed referenceId,
         address indexed provider,
         uint price,
-        uint contractEndTime,
+        uint128 endTime,
         bytes32 publicKeyDH,
+        uint8 depreciationType,
         string description);
 
     //function createDataReference
     function createDataReference(uint _price,
-        uint _contractEndTime,
+        uint128 _referenceDuration,
         bytes32 _publicKeyDH,
+        uint8 _depreciationType,
         string memory _description) public {
-        // Creating new data reference
 
+        // Creating new data reference
         DataReference memory newReference;
 
-        newReference.referenceId = referenceIdCounter;
+//      newReference.referenceId = referenceIdCounter;
 
-        // convert price to ether
-        newReference.price = 0 ether;
+        // converts price to ether
+        newReference.initialPrice = 0 ether;
 
-        // setting price in ether. Provider won't be able to change it later.
-        newReference.price = _price;
+        // Sets price and depreciation type in ether. Provider won't be able to change it later.
+        newReference.initialPrice = _price;
+        newReference.depreciationType = _depreciationType;
 
-        newReference.contractEndTime = _contractEndTime;
+        newReference.deployTime = uint128(now);
+
+        newReference.endTime = _referenceDuration + uint128(now);
 
         newReference.provider = msg.sender;
 
         // Adding reference to the blockchain's storage
         dataReferences.push(newReference);
 
-        emit NewDataReference(referenceIdCounter, msg.sender, _price, _contractEndTime, _publicKeyDH, _description);
+        emit NewDataReference(
+            dataReferences.length,
+            msg.sender,
+            _price,
+            newReference.endTime,
+            _publicKeyDH,
+            _depreciationType,
+            _description);
 
-        // !!!!!!!!!!!!! Maybe we will not use data ID counter also use SafeMath to add the counter
-        referenceIdCounter = referenceIdCounter.add(1);
+//        // !!!!!!!!!!!!! Maybe we will not use data ID counter also use SafeMath to add the counter
+//        referenceIdCounter = referenceIdCounter.add(1);
 
     }
 
@@ -67,22 +79,17 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     }
 
     function withdrawFunds(uint _referenceId) onlyProvider(_referenceId) external {
-        // Checks if provider hasn't already withdrawn money
-        require(dataReferences[_referenceId].withdrawnFunds == false);
 
         // Checks if the provider has waited for the time limit for clients to set a dispute
-        require(now > dataReferences[_referenceId].contractEndTime + 5 days);
+        require(now > dataReferences[_referenceId].endTime + 5 days);
 
         // Checks that provider gave a key
         require(dataReferences[_referenceId].referenceKey != 0);
 
-        // Number of undisputed clients
-        uint _undisputedClients = (dataReferences[_referenceId].clients.length)
-        .sub(dataReferences[_referenceId].clientDisputes);
         // Calculating the total funds that can be withdrawn
-        uint funds = dataReferences[_referenceId].price.mul(_undisputedClients);
-        // Sending funds
-        dataReferences[_referenceId].withdrawnFunds = true;
+        uint funds = dataReferences[_referenceId].withdrawableFunds;
+        dataReferences[_referenceId].withdrawableFunds = 0;
+
         (msg.sender).transfer(funds);
     }
 
@@ -157,7 +164,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         dataReferences[_referenceId].resolvedDispute[_client] = true;
 
         // Total funds to be transferred to the rightful owner
-        uint funds = dataReferences[_referenceId].price + (disputePrice * 2);
+        uint funds = dataReferences[_referenceId].clientFunds[_client] + msg.value;
 
         // Computes the hashes of the encrypted key given by the provider
         bytes32 checkEncryptedKeyHash = keccak256(abi.encodePacked(

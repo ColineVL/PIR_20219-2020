@@ -75,12 +75,12 @@ app.use('/public', express.static(__dirname + '/public'))
             Account = account;
             res.redirect(''); // Redirecting home to confirm connection
         }
-            catch(err) { // If an error is raised, try reconnecting
-                console.log(typeof err)
-                console.log(typeof err == "object")
-                console.log(Object.keys(err))
-                 res.render('ConnexionForm.ejs', {error : err, account : Account});
-            };
+        catch(err) { // If an error is raised, try reconnecting
+            console.log(typeof err)
+            console.log(typeof err == "object")
+            console.log(Object.keys(err))
+            res.render('ConnexionForm.ejs', {error : err, account : Account});
+        };
     })
 
     /************************************  BUYER PART ***************************/
@@ -202,9 +202,54 @@ app.use('/public', express.static(__dirname + '/public'))
         if (Account) {
             const id = req.query.id ;
             let product = await EventsModule.GetRef(id);
-            const clients = await transactions.GetClients(Account,id); // TODO finish coding function.. problem of client arrays
-            let num = clients.length;
-            res.render('ManageId.ejs', {product: product[0], num: num});
+            const clients = await transactions.GetClients(Account,id);
+            let total_clients = clients.length;
+
+            let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
+            let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length;
+
+            let Clients_WhoRespondedToHash = await EventsModule.GetEncryptedHashKeysResponses(id)
+            let num_clients_step2 = total_clients -num_clients_step1 - Clients_WhoRespondedToHash.length;
+
+            // TODO finish coding function.. to get number of disputes
+            res.render('ManageId.ejs', {product: product[0], Id: id, total_clients: total_clients, num_clients_step1: num_clients_step1, num_clients_step2: num_clients_step2});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
+
+    /* Interface to sned K2 keys to the ones who have'nt got it yet*/
+    .get('/SendCryptedK2/', async (req, res) => {
+        if (Account) {
+            const id = req.query.id ;
+            const all_clients = await transactions.GetClients(Account,id);
+            let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
+            let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2) // So I compute a  need a list of addresses
+            let ClientsToDo = await EventsModule.ComputeLeft(all_clients,Address_ListClientsWhoReceivedK2) // Then i find who is left...
+
+            let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
+            // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
+
+            let done = 0 // To check how many were succesful at the end...
+            for (let i = 0; i < ClientsToDo.length  ; i++) {
+                let client_address = ClientsToDo[i];
+
+                let Pub_Client = await EventsModule.GetPubDiffieClient(client_address,id);
+                let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
+                let K2 = crypto.RandomBytes(7);
+
+                let toSend = crypto.OTP(K2,crypto.OTP(secret,K2)).slice(0,4);
+                let hashed = crypto.Hash(toSend);
+
+                await readwrite.WriteAsRefSeller(__dirname +'/Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt',hashed,K2)
+
+                let receipt = await transactions.SendK2ToClient(Account,id, client_address, toSend);
+                if (receipt) {
+                    done += 1;
+                }
+            }
+
+            res.render('SentToClients.ejs', {num: ClientsToDo.length, done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});
         }
