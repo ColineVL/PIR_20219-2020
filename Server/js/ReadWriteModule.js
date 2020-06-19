@@ -39,7 +39,7 @@ module.exports = {
         RefSeller.hash =hash;
         RefSeller.K2 = K2;
         await fs.writeFile(path, JSON.stringify(RefSeller), function(err) {
-            if (err) {} // TODO maybe do something here for error
+            if (err) {console.log(err)} // TODO maybe do something here for error
         })
         return 0;
     },
