@@ -2,10 +2,10 @@ const express = require('express');
 const session = require('cookie-session'); // Charge le middleware de sessions
 const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
 const bc = require('./js/blockchain');
-// const transactions = require('./js/SignedTransactionModule');
-// const crypto = require('./js/CryptoModule');
+const transactions = require('./js/SignedTransactionModule');
+const crypto = require('./js/CryptoModule');
 const EventsModule = require('./js/EventsModule');
-// const readwrite = require('./js/ReadWriteModule');
+const readwrite = require('./js/ReadWriteModule');
 
 
 
@@ -169,13 +169,16 @@ app.use('/public', express.static(__dirname + '/public'))
             let product = await EventsModule.GetRef(id)
 
             let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/../Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
+            let seller_address = await EventsModule.EventsToAddresses(product)
+            let Pub_Seller = await EventsModule.GetPubDiffieSeller(seller_address[0],id);
+            let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Seller)
 
-            let Pub_Seller = await EventsModule.GetPubDiffieSeller(seller_address,id);
-            let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
+            let encrypted_event = EventsModule.GetEncryptedKeySentSpecific(Id,Account.address) // Get the K xor K2 xor K3 the provider sent me
+            let encrypted = encrypted_event[0].returnValues.encryptedEncodedKey // The actual value
 
-
-            let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, Account.address)
-            let eventPhase2 = await EventsModule.GetKeySentSpecific(Id,Account.address)
+            let decryptedToBeHashed = crypto.OTP(secret,encrypted);
+            let HashTobeSent = crypto.Hash(decryptedToBeHashed)
+            // Now we can do the OTP
             res.render('ManageBuy.ejs',{Id: Id, product:product[0], eventPhase1:eventPhase1, eventPhase2:eventPhase2});
         } else {
             res.render('homeClient.ejs',{account : Account});

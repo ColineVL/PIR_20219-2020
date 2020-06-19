@@ -10,6 +10,10 @@ var Reference_SellerSchema = { // Schema for storing reference information for a
     K2: "", // Primary key used to encrypt the info
     hash:  "",     // a mapping between client addresses and the hashes to send them
 };
+var Reference_ClientSchema = { // Schema for storing reference information for a Client (keys and messages.)
+    KxorK2 :   "", // KxorK2 provided by the seller
+    K2: "", // K2 provided later by the seller
+};
 
 module.exports = {
     // GetAvailableRefs: async function (contractws, endTime, priceMax, provider) {
