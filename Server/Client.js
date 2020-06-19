@@ -72,6 +72,7 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('ConnexionForm.ejs', {account : Account});
     })
 
+
     /* Handler to process the connection */
     .post('/Connexion/', async (req, res) => {
         try {
@@ -171,30 +172,8 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SendClientHash', async (req, res) => {
         if (Account) {
             let id = req.query.id;
-            let product = await EventsModule.GetRef(id)
+            let done = await bc.sendClientHash(id, Account.privateKey)
 
-            let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
-            let seller_address = await EventsModule.EventsToAddresses(product)
-            let Pub_Seller = await EventsModule.GetPubDiffieSeller(seller_address[0],id);
-            let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Seller)
-
-            let encrypted_event = await EventsModule.GetEncryptedKeySentSpecific(id,Account.address) // Get the K xor K2 xor K3 the provider sent me
-            let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey)) // The actual value
-
-            let decryptedToBeHashed = crypto.OTP(secret,encrypted);
-            let HashTobeSent = crypto.Hash(decryptedToBeHashed)
-
-            console.log(decryptedToBeHashed)
-            console.log(HashTobeSent)
-
-
-            await readwrite.WriteAsRefBuyer(__dirname +'/Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt',decryptedToBeHashed)
-            let done = 0 // value to verify later that everything went correctly
-            let receipt = transactions.SendHashToProvider(Account,id,Buffer.from(HashTobeSent.slice(2),'hex'))
-            // Now we can do the OTP
-            if (receipt){
-                done =1;
-            }
             res.render('SentHash.ejs',{done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});
