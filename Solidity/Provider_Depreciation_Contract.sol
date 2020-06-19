@@ -10,33 +10,34 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         uint indexed referenceId,
         address indexed provider,
         uint price,
-        uint contractEndTime,
+        uint128 endTime,
         bytes32 publicKeyDH,
         uint8 depreciationType,
         string description);
 
     //function createDataReference
     function createDataReference(uint _price,
-        uint _contractEndTime,
+        uint128 _endTime,
         bytes32 _publicKeyDH,
         uint8 _depreciationType,
         string memory _description) public {
-        // Creating new data reference
 
+        require(_endTime > now);
+        // Creating new data reference
         DataReference memory newReference;
 
 //      newReference.referenceId = referenceIdCounter;
 
         // converts price to ether
-        newReference.price = 0 ether;
+        newReference.initialPrice = 0 ether;
 
         // Sets price and depreciation type in ether. Provider won't be able to change it later.
-        newReference.price = _price;
+        newReference.initialPrice = _price;
         newReference.depreciationType = _depreciationType;
 
-        newReference.contractLength = _contractEndTime.sub(now);
+        newReference.deployTime = uint128(now);
 
-        newReference.contractEndTime = _contractEndTime;
+        newReference.endTime = _endTime;
 
         newReference.provider = msg.sender;
 
@@ -47,7 +48,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
             dataReferences.length,
             msg.sender,
             _price,
-            _contractEndTime,
+            _endTime,
             _publicKeyDH,
             _depreciationType,
             _description);
@@ -81,7 +82,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     function withdrawFunds(uint _referenceId) onlyProvider(_referenceId) external {
 
         // Checks if the provider has waited for the time limit for clients to set a dispute
-        require(now > dataReferences[_referenceId].contractEndTime + 5 days);
+        require(now > dataReferences[_referenceId].endTime + 5 days);
 
         // Checks that provider gave a key
         require(dataReferences[_referenceId].referenceKey != 0);
@@ -167,7 +168,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         dataReferences[_referenceId].resolvedDispute[_client] = true;
 
         // Total funds to be transferred to the rightful owner
-        uint funds = dataReferences[_referenceId].price + (disputePrice * 2);
+        uint funds = dataReferences[_referenceId].clientFunds[_client] + msg.value;
 
         // Computes the hashes of the encrypted key given by the provider
         bytes32 checkEncryptedKeyHash = keccak256(abi.encodePacked(

@@ -21,7 +21,7 @@ contract Depreciation_Contract is Ownable{
 
     struct DataReference{ // Contains reference ANd price
 //      uint referenceId;
-        uint price;
+        uint initialPrice;
         uint referenceKey; //Take care of hackers, must be long enough ... to be determined
         /*
         contractDuration is too long, it must be shortened with:
@@ -29,19 +29,19 @@ contract Depreciation_Contract is Ownable{
            - Put require statement in createDataReference
         */
 
+
+        // Needed to calculate depreciation value
+        uint128 deployTime;
         /*
-        Should not be allowed to be changed by anyone, even the owner to avoid scams and ...
-        ... withholding funds for a longer time than anticipated
+            Should not be allowed to be changed by anyone, even the owner to avoid scams and ...
+            ... withholding funds for a longer time than anticipated
         */
-        uint contractEndTime;
+        uint128 endTime;
 
         /*
             Value depreciation factors.
-            Depreciation type = 0: constant price | 1: linear depreciation | 2: exponential
+            1: linear depreciation | 2: exponential, any other value constant price (no depreciation)
         */
-
-        // Needed to calculate depreciation value
-        uint contractLength;
         uint8 depreciationType;
 
         address provider;
@@ -89,24 +89,33 @@ contract Depreciation_Contract is Ownable{
     }
 
 
-    function referenceCurrentPrice(uint _referenceId) view public returns(uint price){
-        uint _price = dataReferences[_referenceId].price;
+    function getReferenceCurrentPrice(uint _referenceId) view public returns(uint price){
+        uint _price = dataReferences[_referenceId].initialPrice;
         uint8 depreciationType = dataReferences[_referenceId].depreciationType;
 
         // Linear value depreciation
         if(depreciationType == 1){
-            uint timeRemaining = dataReferences[_referenceId].contractEndTime.sub(now);
-            _price = (_price.mul(timeRemaining)).div(dataReferences[_referenceId].contractLength);
+            // reference time length timeLength: T(end) - T(deploy)
+            uint timeLength = uint (dataReferences[_referenceId].endTime - dataReferences[_referenceId].deployTime);
+            // time elapsed from the beginning of contract T: now - deployTime
+            uint timeElapsed = now - uint (dataReferences[_referenceId].deployTime);
+
+            _price = _price - (_price * timeElapsed / timeLength);
+
         }
 
-        // !!!!!!!!!!!! Exponential value depreciation. Cannot work, ufixed does not have exponential ** operator
-//        else if(depreciationType == 2){
-//            uint timeRemaining = dataReferences[_referenceId].contractEndTime.sub(now);
-//            ufixed rate = ufixed(timeRemaining)/ufixed (dataReferences[_referenceId].contractLength);
-//            _price = price.mul(ufixed(2)**(rate) - ufixed(1));
-//        }
+        // Quadratic value depreciation
+        else if(depreciationType == 2){
+            // reference time length timeLength: T(end) - T(deploy)
+            uint timeLength = uint (dataReferences[_referenceId].endTime - dataReferences[_referenceId].deployTime);
+            // time elapsed from the beginning of contract T: now - deployTime
+            uint timeElapsed = now - uint (dataReferences[_referenceId].deployTime);
 
-        // if no depreciation type index is correct it will return the initial price (no depreciation)
+            _price = _price.mul(timeElapsed).div(timeLength).mul(timeElapsed).div(timeLength)
+            - 2*_price.mul(timeElapsed).div(timeElapsed) + _price;
+        }
+
+        // if no depreciation type index is correct it will return the initial price (constant value / no depreciation)
         return _price;
     }
 

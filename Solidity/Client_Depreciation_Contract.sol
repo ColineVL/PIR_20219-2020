@@ -14,9 +14,10 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     }
 
     modifier isPayed(uint _referenceId) {
-        uint _price = referenceCurrentPrice(_referenceId);
+        uint _price = getReferenceCurrentPrice(_referenceId);
         // The ether sent must be bigger to the current price but not higher than the initial one to avoid paying more
-        require(msg.value >= _price & msg.value <= dataReferences[_referenceId].price);
+        require(msg.value >= _price);
+        require(msg.value <= dataReferences[_referenceId].initialPrice);
         _;
     }
 
@@ -37,9 +38,6 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         // Checks if referenceId is valid
         // !!!!!!!!!!!! Check if < or <= Maybe remove line if it will automatically give index out of bound
         require(_referenceId <= dataReferences.length);
-
-        // Checks if the client's ether corresponds to the set price
-        require(msg.value == dataReferences[_referenceId].price);
 
         // Checks that client did not already buy reference
         require(dataReferences[_referenceId].isClient[msg.sender] == false);
@@ -106,7 +104,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         dataReferences[_referenceId].clientDisputes = dataReferences[_referenceId].clientDisputes.add(1);
 
         dataReferences[_referenceId].clientFunds[msg.sender] += msg.value;
-        dataReferences[_referenceId].withdrawableFunds[msg.sender] -= msg.value;
+        dataReferences[_referenceId].withdrawableFunds -= msg.value;
         emit raiseDisputeEvent(_referenceId, msg.sender, now);
     }
 
