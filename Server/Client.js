@@ -150,12 +150,12 @@ app.use('/public', express.static(__dirname + '/public'))
     /*Information and management of Ongoing transactions buyer-side ..*/
     .get('/ManageIdBuyer', async (req, res) => {
         if (Account) {
-            let Id = req.body.id;
-            let product = await EventsModule.GetRef(id)
+            let Id = req.query.id;
+            let product = await EventsModule.GetRef(Id)
 
-            let eventPhase1 = await GetEncryptedKeySentSpecific(Id, Account.address)
-            let eventPhase2 = await GetKeySentSpecific(Id,Account.address)
-            res.render('ManageBuy.ejs',{Id: Id, product:product, eventPhase1:eventPhase1, eventPhase2:eventPhase2});
+            let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, Account.address)
+            let eventPhase2 = await EventsModule.GetKeySentSpecific(Id,Account.address)
+            res.render('ManageBuy.ejs',{Id: Id, product:product[0], eventPhase1:eventPhase1, eventPhase2:eventPhase2});
         } else {
             res.render('homeClient.ejs',{account : Account});
         }
