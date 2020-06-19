@@ -13,9 +13,17 @@ app.use(express.static(__dirname + '/js'));
 // Load the html files
 app.use(express.static(__dirname + '/html'));
 // Parse URL-encoded bodies (as sent by HTML forms)
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
+
+/********************************
+ * Listen on port 8081
+ ********************************/
+
+let server = app.listen(8081, function () {
+    console.log("Server listening on port 8081.");
+});
 
 /********************************
  * Register the URLs
@@ -34,8 +42,8 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     .get('/updatenodelist/', async (req, res) => {
-        let liste = bc.getNodelistIDS();
-        res.json(liste);
+        let list = await bc.getNodelistIDS();
+        res.json(list);
     })
 
     .get('/updatelistBlocks/', async (req, res) => {
@@ -82,11 +90,14 @@ app.use('/public', express.static(__dirname + '/public'))
 
 
 
-    /** Redirection to home if the page is not found **/
-    .use(function (req, res, next) {
-        res.redirect('/');
+    /** Close the server **/
+
+    .get('/closeserver', function (req, res) {
+        res.render('closeServer.ejs');
+        server.close( () => {console.log("Server closed.");});
     })
 
-
-
-    .listen(8081);
+    /** Redirection to home if the page is not found **/
+    .use(function (req, res) {
+        res.redirect('/');
+    });

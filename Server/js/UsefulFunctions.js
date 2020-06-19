@@ -3,15 +3,24 @@ let myAccount = "notConnected";
 let references;
 
 /** To get a response from the server **/
-function loadXMLDoc(page, callback) {
+function loadXMLDoc(page, successCallback) {
     const xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
-            callback(JSON.parse(this.responseText));
+            try {
+                let result = JSON.parse(this.responseText);
+                successCallback(result);
+            } catch (e) {
+                failureCallback(e);
+            }
         }
-    };
+    }
     xhttp.open("GET", page, true);
     xhttp.send();
+}
+
+function failureCallback(err) {
+    console.log(err);
 }
 
 /** Display functions **/
@@ -139,7 +148,7 @@ function getBalance() {
  ********************************/
 
 /** Update of the nodelist **/
-setInterval(updateNodesList, 2000);
+//setInterval(updateNodesList, 2000);
 
 function callbackNodelist(param) {
     param = displayListNodes(param);
@@ -158,7 +167,7 @@ function updateNodesList() {
  ********************************/
 
 /** Update of the blocks list **/
-setInterval(updateBlocksList, 2000);
+//setInterval(updateBlocksList, 2000);
 
 function callbackBlockslist(param) {
     param = displayListBlocks(param);
@@ -241,8 +250,7 @@ function getReferences() {
 
 /** Reference info **/
 function getRefInfo(id) {
-    product = references[id].returnValues;
-    ["contractEndTime"]
+    let product = references[id].returnValues;
     let keysToDisplay = ["contractEndTime", "price", "public key", "referenceId"];
     let html = "<table><tbody>";
     for (let key in keysToDisplay) {
