@@ -168,6 +168,7 @@ async function manageID(id, privateKey) {
     let product = await EventsModule.GetRef(id);
     const clients = await transactions.GetClients(account,id);
     let total_clients = clients.length;
+    // Ca bugue ici
 
     let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
     let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length;

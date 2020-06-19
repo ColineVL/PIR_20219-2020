@@ -139,6 +139,12 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(Ids);
     })
 
+    .get('/manageId/:id/:privateKey', async (req, res) => {
+        const resultat = await bc.manageID(req.params.id, req.params.privateKey);
+        // resultat = [product, total_clients, num_clients_step1, num_clients_step2]
+        res.json(resultat);
+    })
+
 
     /** Close the server **/
 

@@ -404,3 +404,11 @@ function loadOngoingSales() {
         loadXMLDoc("ongoingSales/" + myAccount.address, callbackOngoingSales);
     }
 }
+
+function callbackManageId(param) {
+    console.log(param);
+}
+
+function manageItem(id) {
+    loadXMLDoc("manageId/" + id + "/" + myAccount.privateKey, callbackManageId);
+}
