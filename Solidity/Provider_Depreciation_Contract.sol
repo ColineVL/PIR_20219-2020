@@ -32,6 +32,8 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         newReference.deployTime = uint128(now);
 
         newReference.endTime = _referenceDuration + uint128(now);
+        // To avoid overflow and any malicious attempts to withdraw money when not supposed
+        require(newReference.endTime > uint128(now));
 
         newReference.provider = msg.sender;
 

@@ -9,6 +9,7 @@ import "./node_modules/@openzeppelin/contracts/access/Ownable.sol";
 contract Depreciation_Contract is Ownable{
 
     using SafeMath for uint256;
+    using SafeMath for uint128;
 
     // CHECK ALL TYPES and PUBLIC STUFF
 
