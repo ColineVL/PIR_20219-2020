@@ -69,8 +69,14 @@ module.exports = {
         DH.setPrivateKey(private_key);
         let secret = DH.computeSecret(pub_key_other);
 
-        return toBinary(secret.toString('hex'));
+        return secret;
     },
+
+    /*Hash*/
+    Hash: function (buff) {
+        return web3.utils.keccak256(buff);
+    },
+
 
     GetAvailableRefs: function (contractws, endTime, priceMax, provider) {
         const result = [];

@@ -150,10 +150,17 @@ let loi = crypto.randomBytes(3);
 let loi2 = crypto.randomBytes(10);
 console.log(loi)
 console.log(loi2)
+console.log(aliceSecret)
 console.log(OTP(loi,loi2))
-console.log(OTP(loi2,OTP(loi,loi2)))
+console.log(OTP(aliceSecret,OTP(loi,loi2)))
 
 var Kop = new Buffer.from([10,147,219,23,56,24,250,196,145,54],'hex')
 console.log(Kop)
 // console.log(loi[0])
+let hash = web3.utils.keccak256(loi)
+console.log(hash)
+
+console.log(web3.utils.bytesToHex(Kop))
+
+
 

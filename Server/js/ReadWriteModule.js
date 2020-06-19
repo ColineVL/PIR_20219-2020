@@ -6,6 +6,10 @@ var DiffieSchema = { // Schema for storing Diffie-H keys
     PrivDH: "", // Private key of Diffie-h
     Pub_Other: "", // Public key of other individual
 };
+var Reference_SellerSchema = { // Schema for storing reference information for a Seller (keys and messages.)
+    K2: "", // Primary key used to encrypt the info
+    hash:  "",     // a mapping between client addresses and the hashes to send them
+};
 
 module.exports = {
     // GetAvailableRefs: async function (contractws, endTime, priceMax, provider) {
@@ -30,5 +34,14 @@ module.exports = {
         Diffie.PubDH = new Buffer.from(res_obj.PubDH.data,'hex');
 
         return Diffie;
+    },
+    WriteAsRefSeller : async function (path, hash, K2) {
+        const RefSeller = Object.create(Reference_SellerSchema);
+        RefSeller.hash =hash;
+        RefSeller.K2 = K2;
+        await fs.writeFile(path, JSON.stringify(RefSeller), function(err) {
+            if (err) {} // TODO maybe do something here for error
+        })
+        return 0;
     },
 }
