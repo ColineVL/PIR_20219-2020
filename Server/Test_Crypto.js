@@ -154,8 +154,9 @@ console.log(aliceSecret)
 console.log(OTP(loi,loi2))
 console.log(OTP(aliceSecret,OTP(loi,loi2)))
 
-var Kop = new Buffer.from([66,161,127,226],'hex')
-console.log(Kop.slice(0,2))
+lopo = "0xec972af11ad71fb777760f7e99f1c3d7455a71589edb80eb19c2ea1facd92a30"
+var Kop = new Buffer.from(lopo.slice(2),'hex')
+console.log(Kop)
 // console.log(loi[0])
 let hash = web3.utils.keccak256(loi)
 console.log(hash)
