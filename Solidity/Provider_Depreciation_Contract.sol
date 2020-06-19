@@ -25,11 +25,6 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         // Creating new data reference
         DataReference memory newReference;
 
-//      newReference.referenceId = referenceIdCounter;
-
-        // converts price to ether
-        newReference.initialPrice = 0 ether;
-
         // Sets price and depreciation type in ether. Provider won't be able to change it later.
         newReference.initialPrice = _price;
         newReference.depreciationType = _depreciationType;
