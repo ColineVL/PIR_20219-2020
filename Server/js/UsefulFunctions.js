@@ -259,17 +259,28 @@ function getReferences() {
 function getRefForSaleInfo(id) {
     const product = references[id];
     const keysToDisplay = ["description", "price", "contractEndTime", "provider", "publicKeyDH"];
-    displayProductInfo(product, keysToDisplay);
+    addItem(forSaleproductInfoItem);
+    const html = displayProductInfo(product, keysToDisplay);
+    $('#forSaleProductInfo_info').html(html);
+    if (myAccount === "notConnected") {
+        $('#forSaleProductInfo_message').show();
+        $('#forSaleProductInfo_message').text("You are not connected...");
+        $('#forSaleProductInfo_buyButton').hide();
+    } else {
+        $('#forSaleProductInfo_buyButton').show();
+        $('#forSaleProductInfo_message').hide();
+    }
 }
 
 function getBoughtItemInfo(id) {
     const product = boughtData[id];
     const keysToDisplay = ["publicKeyDH"];
-    displayProductInfo(product, keysToDisplay);
+    addItem(boughtProductInfoItem);
+    const html = displayProductInfo(product, keysToDisplay);
+    $('#boughtProductInfo_info').html(html);
 }
 
 function displayProductInfo(product, keysToDisplay) {
-    addItem(productInfoItem);
     let html = "<table><tbody>";
     html += "<tr>";
     html += "<td>ReferenceId</td>";
@@ -282,13 +293,7 @@ function displayProductInfo(product, keysToDisplay) {
         html += "</tr>";
     });
     html += "</tbody></table>";
-    $('#productInfo_info').html(html);
-    if (myAccount === "notConnected") {
-        $('#productInfo_message').show();
-        $('#productInfo_buyButton').hide();
-    } else {
-        $('#productInfo_message').hide();
-    }
+    return html;
 }
 
 /** Get bought data **/
@@ -330,8 +335,8 @@ function getBoughtData() {
 /** Buy product **/
 function callbackBuy(param) {
     // TODO en cas de problème
-    $('#productInfo_message').show();
-    $('#productInfo_message').text("Bought!");
+    $('#forSaleProductInfo_message').show();
+    $('#forSaleProductInfo_message').text("Bought!");
 }
 
 async function buyProduct() {

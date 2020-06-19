@@ -51,9 +51,14 @@ const forSaleItem = {
     name: "forSaleItem",
 };
 
-const productInfoItem = {
-    title: "Info about the product",
-    name: "productInfoItem"
+const forSaleproductInfoItem = {
+    title: "Product info",
+    name: "forSaleproductInfoItem"
+}
+
+const boughtProductInfoItem = {
+    title: "Product info",
+    name: "boughtProductInfoItem"
 }
 
 const ongoingTransactionsItem = {
@@ -215,13 +220,22 @@ myLayout.registerComponent('forSaleItem', function (container, state) {
     );
 });
 
-myLayout.registerComponent('productInfoItem', function (container, state) {
+myLayout.registerComponent('forSaleproductInfoItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<h1>Product info:</h1>' +
-        '<ul id="productInfo_info"></ul>' +
-        '<button id="productInfo_buyButton" onclick="buyProduct()">Buy</button>' +
-        '<p class="message" id="productInfo_message">You are not connected...</p>' +
+        '<h1>For sale product info:</h1>' +
+        '<ul id="forSaleProductInfo_info"></ul>' +
+        '<button id="forSaleProductInfo_buyButton" onclick="buyProduct()">Buy</button>' +
+        '<p class="message" id="forSaleProductInfo_message"></p>' +
+        '</div>'
+    );
+});
+
+myLayout.registerComponent('boughtProductInfoItem', function (container, state) {
+    container.getElement().html(
+        '<div class="container">' +
+        '<h1>Bought product info:</h1>' +
+        '<ul id="boughtProductInfo_info"></ul>' +
         '</div>'
     );
 });
