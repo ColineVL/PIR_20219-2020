@@ -122,6 +122,14 @@ module.exports = {
         }
         return res;
     },
+    GetPubDiffieClient: async function (account) {
+        let res1 = await contractws.getPastEvents("NewClient", {
+            filter: {address: account.address},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1[0].returnValues.key;
+    },
 }
 
 // // event NewDataReference(uint referenceId, address provider, uint price, uint contractEndTime);

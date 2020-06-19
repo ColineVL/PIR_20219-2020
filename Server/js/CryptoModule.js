@@ -38,11 +38,16 @@ module.exports = {
 
     /* One Time Pad , key length must be greater or equal than message. */
     OTP: function(key, message) {
-        var res = "";
+        var res = [];
         for (let i = 0; i < message.length ; i++) {
-            res += key[i] ^ message[i];
+            res.push(key[i] ^ message[i]);
         }
-        return res;
+        return new Buffer.from(res,'hex');
+    },
+
+    /* Generate l random bytes */
+    RandomBytes: function(length) {
+        return crypto.randomBytes(length);
     },
 
     /* Generates a Diffie Hellmann pair  with a given prime and returns the private and public keys*/

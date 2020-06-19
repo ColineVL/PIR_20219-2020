@@ -56,11 +56,11 @@ var Reference_ClientSchema = { // Schema for storing reference information for a
     K2: "", // K2 provided later by the seller
 };
 var Reference_SellerSchema = { // Schema for storing reference information for a Seller (keys and messages.)
-    public_key:  "", // User ethereum public key
-    refId: "", // Id of the reference for which this applies
-    K: "", // Primary key used to encrypt the info
-    K2:  [],     // a mapping between client addresses and the hashes to send them
+    K2: "", // Primary key used to encrypt the info
+    hash:  "",     // a mapping between client addresses and the hashes to send them
 };
+
+var K = new Buffer.from([10,147,219,23,56,24,250,196,145,54],'hex') // For testing Purposes #TODO Generate it and store it
 
 const Diffie = Object.create(DiffieSchema);
 const Reference_Seller = Object.create(Reference_SellerSchema);
@@ -280,6 +280,15 @@ app.use('/public', express.static(__dirname + '/public'))
             let Address_ListClientsWhoReceivedK2 = EventsModule.EventsToAddresses(ClientsWhoReceivedK2) // So I compute a  need a list of addresses
             let ClientsToDo = EventsModule.ComputeLeft(all_clients,Address_ListClientsWhoReceivedK2) // Then i find who is left...
 
+            let myDH_obj =  readwrite.ReadAsObjectDH(__dirname +'/Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
+            // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
+            for (let i = 0; i < ClientsToDo ; i++) {
+                let Pub_Client = EventsModule.GetPubDiffieClient(ClientsToDo[i]);
+                let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
+                let K2 = crypto.RandomBytes(10);
+
+
+            }
 
             res.render('SentToClients.ejs', {num: ClientsToDo.length, });
         } else {
