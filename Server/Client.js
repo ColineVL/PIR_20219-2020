@@ -184,8 +184,10 @@ app.use('/public', express.static(__dirname + '/public'))
             let done = 0 // value to verify later that everything went correctly
             let receipt = transactions.SendHashToProvider(Account,id,HashTobeSent)
             // Now we can do the OTP
-            if (receiot)
-            res.render('ManageBuy.ejs',{Id: Id, product:product[0], eventPhase1:eventPhase1, eventPhase2:eventPhase2});
+            if (receipt){
+                done =1;
+            }
+            res.render('SentHash.ejs',{done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});
         }
