@@ -107,7 +107,7 @@ async function getBlockInfo(blocknumber) {
  * Exports
  ********************************/
 
-function getNodelistIDS() {
+async function getNodelistIDS() {
     return nodelistIDS;
 }
 

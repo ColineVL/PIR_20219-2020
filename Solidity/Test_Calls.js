@@ -19,11 +19,11 @@ var account1= "0xfe3b557e8fb62b89f4916b721be55ceb828dbd73";
 var key1 =new Buffer.from('8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','hex');
 
 
-var contract_address = "0x338F940F4231662Dd9a689DdC4691450de932Be5" ; // '0x3Ace09BBA3b8507681146252d3Dd33cD4E2d4F63'
+var contract_address = '0x42699A7612A82f1d9C36148af9C77354759b210b' ; // '0x3Ace09BBA3b8507681146252d3Dd33cD4E2d4F63'
 /////////////////////////////////////////////////////////////////////////////////////////:
 
 // ABI description as JSON structure
-let abi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"string","name":"testStringIndexed","type":"string"},{"indexed":false,"internalType":"string","name":"testString","type":"string"},{"indexed":false,"internalType":"bytes16","name":"byt","type":"bytes16"}],"name":"Eventee","type":"event"},{"inputs":[],"name":"byt","outputs":[{"internalType":"bytes16","name":"","type":"bytes16"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"_testString","type":"string"},{"internalType":"bytes16","name":"_byt","type":"bytes16"}],"name":"set","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"testString","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}]
+let abi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"bytes32","name":"publicKeyDH","type":"bytes32"}],"name":"NewClient","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"provider","type":"address"},{"indexed":false,"internalType":"uint256","name":"price","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"contractEndTime","type":"uint256"},{"indexed":false,"internalType":"bytes32","name":"publicKeyDH","type":"bytes32"},{"indexed":false,"internalType":"string","name":"description","type":"string"}],"name":"NewDataReference","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"bytes32","name":"encryptedEncodedKey","type":"bytes32"}],"name":"encryptedEncodedKeyEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"bytes32","name":"encryptedKeyHash","type":"bytes32"}],"name":"encryptedKeyHash","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"uint256","name":"keyDecoder","type":"uint256"}],"name":"keyDecoder","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"client","type":"address"},{"indexed":true,"internalType":"uint256","name":"time","type":"uint256"}],"name":"raiseDisputeEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"referenceKey","type":"uint256"}],"name":"referenceKey","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"winner","type":"address"},{"indexed":true,"internalType":"address","name":"loser","type":"address"},{"indexed":false,"internalType":"uint256","name":"funds","type":"uint256"}],"name":"settleDisputeEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"client","type":"address"},{"indexed":true,"internalType":"uint256","name":"funds","type":"uint256"}],"name":"withdrawRefund","type":"event"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"bytes32","name":"_publicKeyDH","type":"bytes32"}],"name":"buyReference","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_price","type":"uint256"},{"internalType":"uint256","name":"_contractEndTime","type":"uint256"},{"internalType":"bytes32","name":"_publicKeyDH","type":"bytes32"},{"internalType":"string","name":"_description","type":"string"}],"name":"createDataReference","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"dataReferences","outputs":[{"internalType":"uint256","name":"referenceId","type":"uint256"},{"internalType":"uint256","name":"price","type":"uint256"},{"internalType":"uint256","name":"referenceKey","type":"uint256"},{"internalType":"uint256","name":"contractEndTime","type":"uint256"},{"internalType":"address","name":"provider","type":"address"},{"internalType":"bool","name":"withdrawnFunds","type":"bool"},{"internalType":"uint256","name":"clientDisputes","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"getClientDisputes","outputs":[{"internalType":"address[]","name":"","type":"address[]"},{"internalType":"bool[]","name":"","type":"bool[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"getClients","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"raiseDispute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"address","name":"_client","type":"address"},{"internalType":"bytes32","name":"_encryptedEncodedKey","type":"bytes32"}],"name":"setEncryptedEncodedKey","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"bytes32","name":"_encryptedKeyHash","type":"bytes32"}],"name":"setEncryptedHashedKey","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"address","name":"_client","type":"address"},{"internalType":"uint256","name":"_keyDecoder","type":"uint256"}],"name":"setKeyDecoder","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"uint256","name":"_referenceKey","type":"uint256"}],"name":"setReferenceKey","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"address payable","name":"_client","type":"address"}],"name":"settleDispute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"withdrawDisputeFunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"withdrawFunds","outputs":[],"stateMutability":"nonpayable","type":"function"}];
 
 const gasPrice = 1000;//web3.eth.gasPrice;
 const gasPriceHex = web3.utils.numberToHex(gasPrice);
@@ -38,8 +38,12 @@ const transactionObject = {
 };
 
 // const setuint1ref = contract.methods.buy_reference(4,270).encodeABI();
-let byt = web3.utils.fromAscii("101010")
-const setuint1ref = contract.methods.set("Description bogus", byt).encodeABI();
+
+
+
+let byt = web3.utils.bytesToHex(["101101101110100011"]) // "0x3f420cfe1d63e9d7a8e3b9743eb84971bfd7a6242be8aefd8afd4a87" //web3.utils.bytesToHex(["101101011011011"])
+
+const setuint1ref = contract.methods.buyReference(0,byt).encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0)5encodeABI();
 
 
@@ -70,12 +74,15 @@ const setuint1ref = contract.methods.set("Description bogus", byt).encodeABI();
     // var sTx2 =txx2.serialize();
     // var sTx3 =txx3.serialize();
 
-
+    //
     // const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
-    //     console.log(receipt);
-    // }).on('error', function(error){
-    //     console.log(error);
+    //     // console.log(receipt);
+    // }).catch(function(error){
+    //     console.log("hello");
     // });
+    //
+    // let blockNumber = dataOld1.blockNumber ;
+    // console.log(blockNumber)
 
 
 
@@ -86,8 +93,10 @@ const setuint1ref = contract.methods.set("Description bogus", byt).encodeABI();
     //     console.log(receipt);
     // });
     // console.log("*************************************");
-    // const map = await contract.methods.dataReferences(0).call(transactionObject);
-    // // const data2 = await contract.methods.data2().call(transactionObject);
+    const map = await contract.methods.dataReferences(1).call({from : account1});
+    // const clients = await contract.methods.dataRefer.call(transactionObject);
+    console.log(map)
+    console.log(typeof map)
     // // const data = await contract.methods.getData().call(transactionObject);
     // console.log("data refs :" + map.clients);
     // console.log(map)
@@ -100,25 +109,26 @@ const setuint1ref = contract.methods.set("Description bogus", byt).encodeABI();
     // console.log("data before :" +dataNew);
 
 
-
+    //
     const contractws = new web3ws.eth.Contract(abi,contract_address);
-    const events = await contractws.events.Eventee({
-       // filter:{testString:"Descriptiuvknv;on bogus x2"},
-        fromBlock: 0
-    })
-        .on('data', function(event){
-            console.log(web3.utils.toAscii(event.returnValues.byt)); // same results as the optional callback above
-        })
+    // const events = await contractws.events.Eventee({
+    //    // filter:{testString:"Descriptiuvknv;on bogus x2"},
+    //     fromBlock: 0
+    // })
+    //     .on('data', function(event){
+    //         console.log(web3.utils.toAscii(event.returnValues.byt)); // same results as the optional callback above
+    //     })
 
     // console.log(events.callback())
-    // console.log("**********************************");
-    // contractws.getPastEvents("NewClient", {
-    //     fromBlock: 0,
-    //     toBlock: 'latest'
-    // }, function(error, events){ console.log(events); })
-    //     .then(function(events){
-    //         console.log(events) // same results as the optional callback above
-    //     });
+//     console.log("**********************************");
+//     contractws.getPastEvents("NewDataReference", {
+//         filter: {address: account1},
+//         fromBlock: blockNumber-1,
+//         toBlock: 'latest'
+//     }, function(error, events){ console.log(events); })
+//         .then(function(events){
+//             console.log(events) // same results as the optional callback above
+//         });
 })();
 
 

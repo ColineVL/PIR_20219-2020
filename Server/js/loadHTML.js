@@ -14,3 +14,7 @@ function callbackLoadHTMLMyAccount(html) {
     $("#myAccount").html(html);
     loadMyAccount();
 }
+
+function callbackLoadHTMLsellNew(html) {
+    $("#forSale").html(html);
+}
