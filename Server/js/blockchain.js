@@ -21,6 +21,7 @@ const database = require('./database.js');
 const EventsModule = require('./EventsModule');
 
 
+
 const Diffie = database.newDiffieSchema();
 const Reference_Seller = database.newReference_SellerSchema();
 const Reference_Client = database.newReference_ClientSchema();
@@ -164,6 +165,20 @@ async function buyProduct(id, product, privateKey) {
     }
 }
 
+async function manageID(id, privateKey) {
+    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+    let product = await EventsModule.GetRef(id);
+    const clients = await transactions.GetClients(account,id);
+    let total_clients = clients.length;
+
+    let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
+    let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length;
+
+    let Clients_WhoRespondedToHash = await EventsModule.GetEncryptedHashKeysResponses(id)
+    let num_clients_step2 = total_clients -num_clients_step1 - Clients_WhoRespondedToHash.length;
+    return [product, total_clients, num_clients_step1, num_clients_step2];
+}
+
 /********************************
  * Exports
  ********************************/
@@ -186,4 +201,5 @@ module.exports = {
     createTransaction,
     sellItem,
     buyProduct,
+    manageID,
 };

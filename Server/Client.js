@@ -201,16 +201,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/ManageId/', async (req, res) => {
         if (Account) {
             const id = req.query.id ;
-            let product = await EventsModule.GetRef(id);
-            const clients = await transactions.GetClients(Account,id);
-            let total_clients = clients.length;
-
-            let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
-            let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length;
-
-            let Clients_WhoRespondedToHash = await EventsModule.GetEncryptedHashKeysResponses(id)
-            let num_clients_step2 = total_clients -num_clients_step1 - Clients_WhoRespondedToHash.length;
-
+            const [product, total_clients, num_clients_step1, num_clients_step2] = await bc.manageID(id, Account.privateKey);
             // TODO finish coding function.. to get number of disputes
             res.render('ManageId.ejs', {product: product[0], Id: id, total_clients: total_clients, num_clients_step1: num_clients_step1, num_clients_step2: num_clients_step2});
         } else {
