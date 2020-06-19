@@ -154,12 +154,11 @@ app.use('/public', express.static(__dirname + '/public'))
             Diffie.PrivDH = keys[0];
             Diffie.PubDH = keys[1];
             Diffie.refId =id
-
+            console.log(Diffie.PubDH)
             const receipt = await transactions.BuyReference(Account,product[0],Diffie.PubDH);
             if (receipt){
                 await readwrite.Write(__dirname +'/Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt',JSON.stringify(Diffie));
 
-                console.log(receipt);
                 res.render('Product.ejs', {product: product[0]});
             } else {
                 res.redirect('/BuyError');
@@ -277,23 +276,26 @@ app.use('/public', express.static(__dirname + '/public'))
             const id = req.query.id ;
             const all_clients = await transactions.GetClients(Account,id);
             let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
-            let Address_ListClientsWhoReceivedK2 = EventsModule.EventsToAddresses(ClientsWhoReceivedK2) // So I compute a  need a list of addresses
-            let ClientsToDo = EventsModule.ComputeLeft(all_clients,Address_ListClientsWhoReceivedK2) // Then i find who is left...
+            let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2) // So I compute a  need a list of addresses
+            let ClientsToDo = await EventsModule.ComputeLeft(all_clients,Address_ListClientsWhoReceivedK2) // Then i find who is left...
 
-            let myDH_obj =  readwrite.ReadAsObjectDH(__dirname +'/Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
+            let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
             // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
 
             let done = 0 // To check how many were succesful at the end...
-            for (let i = 0; i < ClientsToDo ; i++) {
-                let Pub_Client = EventsModule.GetPubDiffieClient(ClientsToDo[i]);
-                let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
-                let K2 = crypto.RandomBytes(10);
+            for (let i = 0; i < ClientsToDo.length  ; i++) {
+                let client_address = ClientsToDo[i];
 
-                let toSend = crypto.OTP(K2,crypto.OTP(secret,K2));
+                let Pub_Client = await EventsModule.GetPubDiffieClient(client_address,id);
+                let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
+                let K2 = crypto.RandomBytes(7);
+
+                let toSend = crypto.OTP(K2,crypto.OTP(secret,K2)).slice(0,4);
                 let hashed = crypto.Hash(toSend);
 
                 await readwrite.WriteAsRefSeller(__dirname +'/Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt',hashed,K2)
-                let receipt = await transactions.SendK2ToClient(Account,id, ClientsToDo[i], hashed);
+
+                let receipt = await transactions.SendK2ToClient(Account,id, client_address, toSend);
                 if (receipt) {
                     done += 1;
                 }

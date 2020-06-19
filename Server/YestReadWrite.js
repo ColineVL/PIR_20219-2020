@@ -23,7 +23,7 @@ app.use('/public', express.static(__dirname + '/public'))
        //  await readwrite.Write('testing2.txt',JSON.stringify(info));
        //  console.log(info)
 
-        let path = "/home/rsx14/IdeaProjects/PIR/Server/Database/DH4_0xFE3B557E8Fb62b89F4916B721be55cEb828dBd73.txt";
+        let path = "/home/rsx14/IdeaProjects/PIR/Server/Database/DH13_0xFE3B557E8Fb62b89F4916B721be55cEb828dBd73.txt";
         res = await fs.readFileSync(path, function (err, data) {
             // console.log(JSON.parse(data).PrivDH)
         });
@@ -32,7 +32,7 @@ app.use('/public', express.static(__dirname + '/public'))
         let ob = JSON.parse(res)
         console.log(ob)
         console.log(Object.keys(ob));
-        console.log(new Buffer.from(ob.PrivDH.data,'hex'))
+        console.log(new Buffer.from(ob.PubDH.data,'hex'))
     })
 
 .listen(5555);

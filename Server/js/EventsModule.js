@@ -122,13 +122,13 @@ module.exports = {
         }
         return res;
     },
-    GetPubDiffieClient: async function (account) {
+    GetPubDiffieClient: async function (address_client, id) {
         let res1 = await contractws.getPastEvents("NewClient", {
-            filter: {address: account.address},
+            filter: {referenceId: id, address: address_client},
             fromBlock: 0,
             toBlock: 'latest'
         }, function (error, events) {}) // TODO Eventually do something here
-        return res1[0].returnValues.key;
+        return new Buffer.from(web3.utils.hexToBytes(res1[0].returnValues.publicKeyDH)).slice(0,4);
     },
 }
 

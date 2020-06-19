@@ -32,7 +32,6 @@ module.exports = {
 
         Diffie.PrivDH = new Buffer.from(res_obj.PrivDH.data,'hex');
         Diffie.PubDH = new Buffer.from(res_obj.PubDH.data,'hex');
-
         return Diffie;
     },
     WriteAsRefSeller : async function (path, hash, K2) {

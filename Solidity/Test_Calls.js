@@ -76,11 +76,11 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
     // var sTx3 =txx3.serialize();
 
     //
-    const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
-        // console.log(receipt);
-    }).catch(function(error){
-        console.log("hello");
-    });
+    // const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
+    //     // console.log(receipt);
+    // }).catch(function(error){
+    //     console.log("hello");
+    // });
     //
     // let blockNumber = dataOld1.blockNumber ;
     // console.log(blockNumber)
@@ -111,25 +111,20 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
 
 
     //
+
     const contractws = new web3ws.eth.Contract(abi,contract_address);
-    // const events = await contractws.events.Eventee({
-    //    // filter:{testString:"Descriptiuvknv;on bogus x2"},
-    //     fromBlock: 0
-    // })
-    //     .on('data', function(event){
-    //         console.log(web3.utils.toAscii(event.returnValues.byt)); // same results as the optional callback above
-    //     })
 
     // console.log(events.callback())
-//     console.log("**********************************");
-//     contractws.getPastEvents("NewDataReference", {
-//         filter: {address: account1},
-//         fromBlock: blockNumber-1,
-//         toBlock: 'latest'
-//     }, function(error, events){ console.log(events); })
-//         .then(function(events){
-//             console.log(events) // same results as the optional callback above
-//         });
+    console.log("**********************************");
+    let res1 =  contractws.getPastEvents("NewClient", {
+        filter: {address: account1},
+        fromBlock: 0,
+        toBlock: 'latest'
+    }, function(error, events){ console.log(events[0].returnValues.publicKeyDH)
+        console.log(web3.utils.hexToBytes(events[0].returnValues.publicKeyDH)); })
+        .then(function(events){
+            // console.log(events.returnValues )// same results as the optional callback above
+        });
 })();
 
 
