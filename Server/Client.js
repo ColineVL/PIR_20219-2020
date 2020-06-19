@@ -95,7 +95,7 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    /************ Buy ************/
+    /************ Buy New ************/
 
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
@@ -131,6 +131,19 @@ app.use('/public', express.static(__dirname + '/public'))
     /*If something has gone wrong..*/
     .get('/BuyError', async (req, res) => {
         res.render('BuyError.ejs');
+    })
+
+    /************ Ongoing Buys ************/
+
+    /*Information and management of Ongoing transactions buyer-side ..*/
+    .get('/OngoingBuy', async (req, res) => {
+        if (Account) {
+            let Ids =await EventsModule.GetSoldRefs(Account.address); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+            let IdsDone = [];
+            res.render('OngoingBuys.ejs',{Ids: Ids, IdsDone: IdsDone});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
     })
 
     /************ Bought ************/
