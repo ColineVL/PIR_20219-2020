@@ -17,12 +17,11 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
 
     //function createDataReference
     function createDataReference(uint _price,
-        uint128 _endTime,
+        uint128 _referenceDuration,
         bytes32 _publicKeyDH,
         uint8 _depreciationType,
         string memory _description) public {
 
-        require(_endTime > now);
         // Creating new data reference
         DataReference memory newReference;
 
@@ -37,7 +36,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
 
         newReference.deployTime = uint128(now);
 
-        newReference.endTime = _endTime;
+        newReference.endTime = _referenceDuration + uint128(now);
 
         newReference.provider = msg.sender;
 
@@ -48,7 +47,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
             dataReferences.length,
             msg.sender,
             _price,
-            _endTime,
+            newReference.endTime,
             _publicKeyDH,
             _depreciationType,
             _description);
@@ -87,9 +86,6 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         // Checks that provider gave a key
         require(dataReferences[_referenceId].referenceKey != 0);
 
-        // Number of undisputed clients
-        uint _undisputedClients = (dataReferences[_referenceId].clients.length)
-        .sub(dataReferences[_referenceId].clientDisputes);
         // Calculating the total funds that can be withdrawn
         uint funds = dataReferences[_referenceId].withdrawableFunds;
         dataReferences[_referenceId].withdrawableFunds = 0;

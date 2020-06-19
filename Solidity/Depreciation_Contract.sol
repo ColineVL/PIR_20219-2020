@@ -40,7 +40,7 @@ contract Depreciation_Contract is Ownable{
 
         /*
             Value depreciation factors.
-            1: linear depreciation | 2: exponential, any other value constant price (no depreciation)
+            1: linear depreciation | 2: quadratic depreciation. Any other value constant price (no depreciation)
         */
         uint8 depreciationType;
 
