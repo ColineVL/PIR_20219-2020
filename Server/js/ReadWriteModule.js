@@ -47,4 +47,12 @@ module.exports = {
         })
         return 0;
     },
+    WriteAsRefBuyer : async function (path, KxorK2) {
+        const RefBuyer = Object.create(Reference_ClientSchema );
+        RefBuyer.KxorK2 = KxorK2;
+        await fs.writeFile(path, JSON.stringify(RefBuyer), function(err) {
+            if (err) {console.log(err)} // TODO maybe do something here for error
+        })
+        return 0;
+    },
 }

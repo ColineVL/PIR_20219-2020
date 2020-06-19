@@ -174,10 +174,15 @@ app.use('/public', express.static(__dirname + '/public'))
             let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Seller)
 
             let encrypted_event = EventsModule.GetEncryptedKeySentSpecific(Id,Account.address) // Get the K xor K2 xor K3 the provider sent me
-            let encrypted = encrypted_event[0].returnValues.encryptedEncodedKey // The actual value
+            let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey)) // The actual value
 
             let decryptedToBeHashed = crypto.OTP(secret,encrypted);
             let HashTobeSent = crypto.Hash(decryptedToBeHashed)
+
+
+            await readwrite.WriteAsRefBuyer(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt',hashed,K2)
+            let done = 0 // value to verify later that everything went correctly
+            let receipt =
             // Now we can do the OTP
             res.render('ManageBuy.ejs',{Id: Id, product:product[0], eventPhase1:eventPhase1, eventPhase2:eventPhase2});
         } else {
