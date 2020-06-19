@@ -94,9 +94,10 @@ module.exports = {
         const serializedTx = tx.serialize();
         const rawTxHex = '0x' + serializedTx.toString('hex');
         let receipt = web3.eth.sendSignedTransaction(rawTxHex)
-            .catch(function(error){});
+            .catch(function(error){console.log(error)});
         return receipt;
     },
+
     SellReference: async function (account,pubKey,price,endTime,description) {
         let pubKey_bin = web3.utils.bytesToHex(pubKey);
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');

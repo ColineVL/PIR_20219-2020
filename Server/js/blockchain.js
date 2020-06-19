@@ -14,7 +14,19 @@ const options = {
 };
 const admin = new Admin(provider, null, options);
 
-const SignedTransaction = require('./SignedTransactionModule');
+const transactions = require('./SignedTransactionModule');
+const crypto = require('./CryptoModule');
+const readwrite = require('./ReadWriteModule');
+const database = require('./database.js');
+const EventsModule = require('./EventsModule');
+
+
+const Diffie = database.newDiffieSchema();
+const Reference_Seller = database.newReference_SellerSchema();
+const Reference_Client = database.newReference_ClientSchema();
+
+let prime = crypto.GetPrime(32);
+
 
 /********************************
  * Variables
@@ -67,7 +79,7 @@ async function refreshNodesList() {
 
 async function createTransaction(jsonInfo) {
     jsonInfo = JSON.parse(jsonInfo);
-    const receipt = await SignedTransaction.createAndSendSignedTransaction(provider, jsonInfo["amount"], jsonInfo["privateKey"], jsonInfo["sender"], jsonInfo["receiver"]);
+    const receipt = await transactions.createAndSendSignedTransaction(provider, jsonInfo["amount"], jsonInfo["privateKey"], jsonInfo["sender"], jsonInfo["receiver"]);
     //,0.001,'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','0xfe3b557e8fb62b89f4916b721be55ceb828dbd73','0xf17f52151EbEF6C7334FAD080c5704D77216b732');
     return receipt;
 }
@@ -102,6 +114,55 @@ async function getBlockInfo(blocknumber) {
     return web3.eth.getBlock(blocknumber);
 }
 
+/********************************
+ * Sell new item
+ ********************************/
+
+async function sellItem(jsonInfo) {
+   // jsonInfo = JSON.parse(jsonInfo);
+    const price = jsonInfo["price"];
+    const contractEndTime = jsonInfo["contractEndTime"];
+    const description = jsonInfo["descr"];
+    const privateKey = jsonInfo["privateKey"];
+    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+
+    /*DH keys, to be stored and public sent*/
+    const keys = crypto.DiffieHellmanGenerate(prime);
+    /* Updating object to write and save */
+    Diffie.PrivDH = keys[0];
+    Diffie.PubDH = keys[1];
+
+    /*Send transaction the get the ref_id for the database*/
+    const receipt = await transactions.SellReference(account, Diffie.PubDH, price, contractEndTime, description);
+    if (receipt) {
+        let blockNumber = receipt.blockNumber;
+        let event = await EventsModule.GetYourRef(account.address, blockNumber)
+        let id = event[0].returnValues.referenceId;
+
+        Diffie.refId = id;
+        await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
+        return("ok");
+        // TODO afficher le receipt ?
+    } else {
+        return("error");
+    }
+}
+
+async function buyProduct(id, product, privateKey) {
+    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+    const keys = crypto.DiffieHellmanGenerate(prime);
+    /* Updating object to write and save */
+    Diffie.PrivDH = keys[0];
+    Diffie.PubDH = keys[1];
+    Diffie.refId =id
+    const receipt = await transactions.BuyReference(account,product[0],Diffie.PubDH);
+    if (receipt) {
+        await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
+        return ("ok");
+    } else {
+        return ("error");
+    }
+}
 
 /********************************
  * Exports
@@ -123,4 +184,6 @@ module.exports = {
     getAccount,
     createNewAccount,
     createTransaction,
+    sellItem,
+    buyProduct,
 };

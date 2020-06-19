@@ -1,33 +1,41 @@
 <div class="container">
-    <h1> Fill in the form to sell a new product</h1>
 
-    <div class="row">
-        <div class="col-25">
-            <label for="sellNew_price">Price</label>
-        </div>
-        <div class="col-75">
-            <input id="sellNew_price" type="text">
-        </div>
+    <div id="sellNew_notConnected">
+        <p class="message">You are not connected...</p>
     </div>
 
-    <div class="row">
-        <div class="col-25">
-            <label for="contractEndTime">Contract end time</label>
+    <div id="sellNew_connected">
+        <h1> Fill in the form to sell a new product</h1>
+        <p class="message" id="sellNew_message"></p>
+
+        <div class="row">
+            <div class="col-25">
+                <label for="sellNew_price">Price</label>
+            </div>
+            <div class="col-75">
+                <input id="sellNew_price" type="text">
+            </div>
         </div>
-        <div class="col-75">
-            <input id="contractEndTime" type="text">
+
+        <div class="row">
+            <div class="col-25">
+                <label for="sellNew_contractEndTime">Contract end time</label>
+            </div>
+            <div class="col-75">
+                <input id="sellNew_contractEndTime" type="text">
+            </div>
         </div>
+
+        <div class="row">
+            <div class="col-25">
+                <label for="sellNew_description">Product Description</label>
+            </div>
+            <div class="col-75">
+                <input id="sellNew_description" type="text">
+            </div>
+        </div>
+
+        <button onclick="sellNewProduct()">Sell</button>
     </div>
 
-    <div class="row">
-        <div class="col-25">
-            <label for="description">Product Description</label>
-        </div>
-        <div class="col-75">
-            <input id="description" type="text">
-        </div>
-    </div>
-
-    <!--<button onclick="function()">Sign in</button>-->
-    <button>Sign in</button>
 </div>

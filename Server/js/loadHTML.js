@@ -17,4 +17,11 @@ function callbackLoadHTMLMyAccount(html) {
 
 function callbackLoadHTMLsellNew(html) {
     $("#forSale").html(html);
+    if (myAccount === "notConnected") {
+        $('#sellNew_connected').hide();
+        $('#sellNew_notConnected').show();
+    } else {
+        $('#sellNew_notConnected').hide();
+        $('#sellNew_connected').show();
+    }
 }

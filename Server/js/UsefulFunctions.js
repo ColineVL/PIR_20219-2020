@@ -9,6 +9,7 @@ function loadXMLDoc(page, successCallback) {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             try {
+                console.log(this.responseText);
                 let result = JSON.parse(this.responseText);
                 successCallback(result);
             } catch (e) {
@@ -302,5 +303,34 @@ function getBoughtData() {
         $('#boughtData_notConnected').hide();
         $('#boughtData_connected').show();
         loadXMLDoc("getboughtdata/" + myAccount.address, callbackGetBoughtData);
+    }
+}
+
+/********************************
+ * Sell menu
+ ********************************/
+function loadSellNewProductItem() {
+    loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
+}
+
+function callbackSellNewProduct(param) {
+    $("#sellNew_message").show();
+    $("#sellNew_message").html(param);
+}
+
+function sellNewProduct() {
+    /* Info to be sent */
+    let price = $("#sellNew_price").val();
+    let contractEndTime = $("#sellNew_contractEndTime").val();
+    let descr = $("#sellNew_description").val();
+    let json = {price:price, contractEndTime:contractEndTime, descr:descr, privateKey:myAccount.privateKey};
+
+    if (price === "" || contractEndTime === "" || descr === "") {
+        console.log("Please complete the whole form.");
+        $("#sellNew_message").show();
+        $("#sellNew_message").html("Please complete the whole form.");
+    } else {
+        $("#sellNew_message").hide();
+        loadXMLDoc("sellNewProduct/" + JSON.stringify(json), callbackSellNewProduct);
     }
 }
