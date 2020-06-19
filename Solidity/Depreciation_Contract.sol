@@ -111,8 +111,8 @@ contract Depreciation_Contract is Ownable{
             // time elapsed from the beginning of contract T: now - deployTime
             uint timeElapsed = now - uint (dataReferences[_referenceId].deployTime);
 
-            _price = _price.mul(timeElapsed).div(timeLength).mul(timeElapsed).div(timeLength)
-            - 2*_price.mul(timeElapsed).div(timeElapsed) + _price;
+            _price = (_price*timeElapsed*timeElapsed)/(timeLength*timeLength)
+            - (2*_price*timeElapsed)/(timeLength) + _price;
         }
 
         // if no depreciation type index is correct it will return the initial price (constant value / no depreciation)

@@ -2,10 +2,15 @@ const express = require('express');
 const session = require('cookie-session'); // Charge le middleware de sessions
 const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
 const bc = require('./js/blockchain');
-// const transactions = require('./js/SignedTransactionModule');
-// const crypto = require('./js/CryptoModule');
+const transactions = require('./js/SignedTransactionModule');
+const crypto = require('./js/CryptoModule');
 const EventsModule = require('./js/EventsModule');
-// const readwrite = require('./js/ReadWriteModule');
+const readwrite = require('./js/ReadWriteModule');
+
+let prime = crypto.GetPrime(32);
+const Web3 = require('web3');
+const provider = 'http://192.168.33.115:8545';
+const web3 = new Web3(new Web3.providers.HttpProvider(provider))
 
 
 
@@ -66,6 +71,11 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/ConnexionForm', function(req, res) {
         res.render('ConnexionForm.ejs', {account : Account});
     })
+    /* Emulating Signout by deleting account*/
+    .get('/Signout', function(req, res) {
+        Account = undefined;
+        res.redirect('/');
+    })
 
     /* Handler to process the connection */
     .post('/Connexion/', async (req, res) => {
@@ -95,7 +105,7 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    /************ Buy ************/
+    /************ Buy New ************/
 
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
@@ -131,6 +141,47 @@ app.use('/public', express.static(__dirname + '/public'))
     /*If something has gone wrong..*/
     .get('/BuyError', async (req, res) => {
         res.render('BuyError.ejs');
+    })
+
+    /************ Ongoing Buys ************/
+
+    /*Information and management of Ongoing transactions buyer-side ..*/
+    .get('/OngoingBuy', async (req, res) => {
+        if (Account) {
+            let Ids = await EventsModule.GetBoughtRefs(Account.address);
+            let IdsDone = []; // TODO: Still no idea how to do this
+
+            res.render('OngoingBuys.ejs',{Ids: Ids, IdsDone: IdsDone});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
+
+    /*Information and management of Ongoing transactions buyer-side ..*/
+    .get('/ManageIdBuyer', async (req, res) => {
+        if (Account) {
+            let Id = req.query.id;
+            let product = await EventsModule.GetRef(Id)
+
+            let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, Account.address)
+            let eventPhase2 = await EventsModule.GetKeySentSpecific(Id,Account.address)
+            let num_event2 = eventPhase2.length
+            let num_event1 = eventPhase1.length -num_event2 // Because in that case it is already done
+            res.render('ManageBuy.ejs',{Id: Id, product:product[0], num_event1:num_event1, num_event2:num_event2});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
+    /*Information and management of Ongoing transactions buyer-side ..*/
+    .get('/SendClientHash', async (req, res) => {
+        if (Account) {
+            let id = req.query.id;
+            let done = await bc.sendClientHash(id, Account.privateKey)
+
+            res.render('SentHash.ejs',{done: done});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
     })
 
     /************ Bought ************/
