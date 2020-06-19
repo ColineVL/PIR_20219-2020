@@ -118,7 +118,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     }
 
     function getClients(uint _referenceId) onlyProvider(_referenceId) external view returns (address[] memory){
-        return dataReferences[_referenceId].clients;
+    return dataReferences[_referenceId].clients;
     }
 
     /*
