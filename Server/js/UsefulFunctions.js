@@ -1,6 +1,7 @@
 /** Variables **/
 let myAccount = "notConnected";
 let references;
+let boughtData;
 
 /** To get a response from the server **/
 function loadXMLDoc(page, successCallback) {
@@ -243,7 +244,7 @@ function callbackGetReferences(param) {
         html += "<summary>" + reference.returnValues["referenceId"] + "</summary>";
         html += "<p>" + reference.returnValues["description"] + "</p>";
         html += "<p>(Wei) " + reference.returnValues["price"] + "</p>";
-        html += "<p class='link' onclick=getRefInfo(" + reference.returnValues["referenceId"] + ")>Get more info</p>";
+        html += "<p class='link' onclick=getRefForSaleInfo(" + reference.returnValues["referenceId"] + ")>Get more info</p>";
         html += "</details>";
     });
     $("#forSale_list").html(html);
@@ -253,11 +254,21 @@ function getReferences() {
     loadXMLDoc("getreferences", callbackGetReferences);
 }
 
-/** Reference info **/
-function getRefInfo(id) {
-    addItem(productInfoItem);
+/** Product info **/
+function getRefForSaleInfo(id) {
     const product = references[id].returnValues;
-    const keysToDisplay = ["contractEndTime", "description", "price", "provider", "publicKeyDH", "referenceId"];
+    const keysToDisplay = ["referenceId", "description", "price", "contractEndTime", "provider", "publicKeyDH"];
+    displayProductInfo(product, keysToDisplay);
+}
+
+function getBoughtItemInfo(id) {
+    const product = boughtData[id].returnValues;
+    const keysToDisplay = ["referenceId", "publicKeyDH"];
+    displayProductInfo(product, keysToDisplay);
+}
+
+function displayProductInfo(product, keysToDisplay) {
+    addItem(productInfoItem);
     let html = "<table><tbody>";
     keysToDisplay.forEach(function (key) {
         html += "<tr>";
@@ -267,4 +278,29 @@ function getRefInfo(id) {
     });
     html += "</tbody></table>";
     $('#productInfo_info').html(html);
+}
+
+/** Get bought data **/
+function callbackGetBoughtData(Ids) {
+    boughtData = Ids;
+    let html = "";
+    for (let i = 0; i < Ids.length; i++) {
+        html += "<details>";
+        html += "<summary>" + Ids[i].returnValues["referenceId"] + "</summary>";
+        // TODO afficher des infos, au minimum la description
+        html += "<p class='link' onclick=getBoughtItemInfo(" + Ids[i].returnValues["referenceId"] + ")>Get more info</p>";
+        html += "</details>";
+    }
+    $("#boughtData_list").html(html);
+}
+
+function getBoughtData() {
+    if (myAccount === "notConnected") {
+        $('#boughtData_connected').hide();
+        $('#boughtData_notConnected').show();
+    } else {
+        $('#boughtData_notConnected').hide();
+        $('#boughtData_connected').show();
+        loadXMLDoc("getboughtdata/" + myAccount.address, callbackGetBoughtData);
+    }
 }

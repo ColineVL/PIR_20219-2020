@@ -37,56 +37,59 @@ app.use('/public', express.static(__dirname + '/public'))
     /** Main gets **/
 
     .get('/connect/:privateKey', async (req, res) => {
-        let account = await bc.getAccount(req.params.privateKey);
+        const account = await bc.getAccount(req.params.privateKey);
         res.json(account);
     })
 
     .get('/updatenodelist/', async (req, res) => {
-        let list = await bc.getNodelistIDS();
+        const list = await bc.getNodelistIDS();
         res.json(list);
     })
 
     .get('/updatelistBlocks/', async (req, res) => {
-        let info = bc.getBlockslistNUMBERS();
+        const info = bc.getBlockslistNUMBERS();
         res.json(info);
     })
 
     .get('/getblockinfo/:blocknumber', async (req, res) => {
-        let info = await bc.getBlockInfo(req.params.blocknumber);
+        const info = await bc.getBlockInfo(req.params.blocknumber);
         res.json(info);
     })
 
     .get('/getbalance/:addressToCheck', async (req, res) => {
-        let bal = await bc.getBalance(req.params.addressToCheck);
+        const bal = await bc.getBalance(req.params.addressToCheck);
         res.json(bal);
     })
 
     .get('/newaccount/', async (req, res) => {
-        let info = await bc.createNewAccount();
+        const info = await bc.createNewAccount();
         res.json([info["address"], info["privateKey"]]);
     })
 
     .get('/maketransaction/:jsonInfo', async (req, res) => {
-        let receipt = await bc.createTransaction(req.params.jsonInfo);
+        const receipt = await bc.createTransaction(req.params.jsonInfo);
         res.json(receipt);
     })
 
-    /** Buy gets **/
+    /** Buy **/
 
     .get('/getreferences/', async (req, res) => {
-        let Ids = await EventsModule.GetAvailableRefs();
+        const Ids = await EventsModule.GetAvailableRefs();
         res.json(Ids);
     })
 
     .get('/getrefinfo/:id', async (req, res) => {
-        let product = Ids[id];
-        console.log("Product ")
-        console.log(product);
+        const product = Ids[id];
         res.json(product);
     })
 
+    .get('/getboughtdata/:address', async (req, res) => {
+        const Ids = await EventsModule.GetBoughtRefs(req.params.address);
+        res.json(Ids);
+    })
 
-    /** Sell gets **/
+
+    /** Sell **/
 
 
 
@@ -94,7 +97,9 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/closeserver', function (req, res) {
         res.render('closeServer.ejs');
-        server.close( () => {console.log("Server closed.");});
+        server.close(() => {
+            console.log("Server closed.");
+        });
     })
 
     /** Redirection to home if the page is not found **/

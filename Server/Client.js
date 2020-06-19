@@ -179,7 +179,7 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Interface for a buyer */
     .get('/Bought', async (req, res) => {
         if (Account) {
-            let Ids =await EventsModule.GetBoughtRefs(Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+            let Ids =await EventsModule.GetBoughtRefs(Account.address); // TODO: Verify FUNCTION HERE TO GET REFERENCES
             res.render('BoughtInfo.ejs',{Ids: Ids});
         } else {
             res.render('homeClient.ejs',{account : Account});

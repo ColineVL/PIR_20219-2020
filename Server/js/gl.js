@@ -236,8 +236,13 @@ myLayout.registerComponent('ongoingTransactionsItem', function (container, state
 myLayout.registerComponent('boughtDataItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
+        '<div id="boughtData_notConnected">' +
+        '<p class="message">You are not connected...</p>' +
+        '</div>' +
+        '<div id="boughtData_connected">' +
         '<h1>Bought data:</h1>' +
         '<ul id="boughtData_list"></ul>' +
+        '</div>' +
         '</div>'
     );
 });
@@ -298,6 +303,9 @@ function addMenuItem(newItem) {
     }
     if (newItem.name === "forSaleItem") {
         element.click(getReferences);
+    }
+    if (newItem.name === "boughtDataItem") {
+        element.click(getBoughtData);
     }
 }
 
