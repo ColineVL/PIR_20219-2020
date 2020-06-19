@@ -134,6 +134,11 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(result);
     })
 
+    .get('/ongoingSales/:address', async (req, res) => {
+        let Ids = await EventsModule.GetSoldRefs(req.params.address); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+        res.json(Ids);
+    })
+
 
     /** Close the server **/
 

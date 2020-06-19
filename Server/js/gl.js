@@ -272,9 +272,13 @@ myLayout.registerComponent('sellNewItem', function (container, state) {
 myLayout.registerComponent('ongoingSalesItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
+        '<div id="ongoing_notConnected">' +
+        '<p class="message">You are not connected...</p>' +
+        '</div>' +
+        '<div id="ongoing_connected">' +
         '<h1>Products being sold :</h1>' +
-        '<div id="ongoing_beingSold"></div>' +
-        '<div id="ongoing_sold"></div>' +
+        '<ul id="ongoing_beingSold"></ul>' +
+        '</div>' +
         '</div>'
     );
 });
@@ -324,6 +328,9 @@ function addMenuItem(newItem) {
     }
     if (newItem.name === "sellNewItem") {
         element.click(loadSellNewProductItem);
+    }
+    if (newItem.name === "ongoingSalesItem") {
+        element.click(loadOngoingSales);
     }
 }
 

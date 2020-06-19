@@ -379,3 +379,28 @@ function sellNewProduct() {
         loadXMLDoc("sellNewProduct/" + JSON.stringify(json), callbackSellNewProduct);
     }
 }
+
+function callbackOngoingSales(Ids) {
+    let html = "";
+    for (const data of Ids) {
+        html += "<details>";
+        html += "<summary>" + data.returnValues["referenceId"] + "</summary>";
+        html += "<p>" + data.returnValues["description"] + "</p>";
+        html += "<p>Price (Wei): " + data.returnValues["price"] + "</p>";
+        html += "<p>End time: " + data.returnValues["contractEndTime"] + "</p>";
+        html += "<p class='link' onclick=manageItem(" + data.returnValues["referenceId"] + ")>Manage this Id</p>";
+        html += "</details>";
+    }
+    $("#ongoing_beingSold").html(html);
+}
+
+function loadOngoingSales() {
+    if (myAccount === "notConnected") {
+        $('#ongoing_connected').hide();
+        $('#ongoing_notConnected').show();
+    } else {
+        $('#ongoing_notConnected').hide();
+        $('#ongoing_connected').show();
+        loadXMLDoc("ongoingSales/" + myAccount.address, callbackOngoingSales);
+    }
+}
