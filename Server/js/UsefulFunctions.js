@@ -306,6 +306,20 @@ function getBoughtData() {
     }
 }
 
+/** Buy product **/
+function callbackBuy(param) {
+    console.log(param);
+}
+
+async function buyProduct() {
+    if (myAccount === "notConnected") {
+        console.log("Pas connecté");
+    } else {
+        const id = 1;
+        loadXMLDoc("buy/" + id, callbackBuy);
+    }
+}
+
 /********************************
  * Sell menu
  ********************************/
@@ -323,7 +337,7 @@ function sellNewProduct() {
     let price = $("#sellNew_price").val();
     let contractEndTime = $("#sellNew_contractEndTime").val();
     let descr = $("#sellNew_description").val();
-    let json = {price:price, contractEndTime:contractEndTime, descr:descr, privateKey:myAccount.privateKey};
+    let json = {price: price, contractEndTime: contractEndTime, descr: descr, privateKey: myAccount.privateKey};
 
     if (price === "" || contractEndTime === "" || descr === "") {
         console.log("Please complete the whole form.");

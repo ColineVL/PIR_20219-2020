@@ -1,8 +1,8 @@
 const express = require('express');
 const bc = require('./js/blockchain');
 const EventsModule = require('./js/EventsModule');
-const crypto = require('./js/CryptoModule');
-const readwrite = require('./js/ReadWriteModule');
+// const crypto = require('./js/CryptoModule');
+// const readwrite = require('./js/ReadWriteModule');
 
 
 /********************************
@@ -115,6 +115,17 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/getboughtdata/:address', async (req, res) => {
         const Ids = await EventsModule.GetBoughtRefs(req.params.address);
         res.json(Ids);
+    })
+
+    .get('/buy/:id', async (req, res) => {
+        let product = await EventsModule.GetRef(req.params.id);
+        let result = await bc.buyProduct(req.params.id, product, myAccount.privateKey);
+
+        if (result === "error") {
+            res.json(result);
+        } else {
+            res.json(product[0]);
+        }
     })
 
 
