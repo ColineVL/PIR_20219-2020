@@ -11,16 +11,12 @@
 
 <ul>
     <%    for (let i = 0; i < Ids.length ; i++) { %>
-        <li> <a href="/Product/?id=<%= Ids[i].returnValues.referenceId %>"> <%= Ids[i].returnValues.referenceId %> </a>
-            <ul>
-                <li> Price : <%= Ids[i].returnValues.price %>  </li>
-                <li> End Time : <%= Ids[i].returnValues.contractEndTime %>  </li>
-                <li> Description : <%= Ids[i].returnValues.description %>  </li>
-            </ul>
-            <br>
+        <p><a href="/Product/?id=<%= Ids[i].returnValues.referenceId %>"> <%= Ids[i].returnValues.referenceId %> </a>
+        </p>
+        <br><br>
             <a href="/ManageIdBuyer/?id=<%= Ids[i].returnValues.referenceId %>"> Manage this Id</a>
             <br><br>
-        </li>
+        </p>
     <% }; %>
 </ul>
 

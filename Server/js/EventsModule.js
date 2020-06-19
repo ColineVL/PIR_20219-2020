@@ -103,6 +103,27 @@ module.exports = {
         return res1;
     },
 
+    /*Get emit testifying that a the provider sent the encrypted key K2 for a certain product of reference id : id*/
+    GetEncryptedKeySentSpecific: async function (id,myaddress) {
+        let res1 = await contractws.getPastEvents("encryptedEncodedKeyEvent", {
+            filter: {client: myaddress, referenceId: id},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1;
+    },
+
+    /*Get emit testifying that a the provider sent me the K2 for a certain product of reference id : id*/
+    GetKeySentSpecific: async function (id, myaddress) {
+        let res1 = await contractws.getPastEvents("keyDecoder", {
+            filter: {client: myaddress, referenceId: id},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1;
+    },
+
+
     /*Useful function that transforms a list of events into a list of addresses concerned by the event*/
     /*note that the event has to be coded such that the attribute of the addresses is "client" !*/
     EventsToAddresses: function (events) {

@@ -138,9 +138,24 @@ app.use('/public', express.static(__dirname + '/public'))
     /*Information and management of Ongoing transactions buyer-side ..*/
     .get('/OngoingBuy', async (req, res) => {
         if (Account) {
-            let Ids =await EventsModule.GetSoldRefs(Account.address); // TODO: Verify FUNCTION HERE TO GET REFERENCES
-            let IdsDone = [];
+            let Ids = await EventsModule.GetBoughtRefs(Account.address);
+            let IdsDone = []; // TODO: Still no idea how to do this
+
             res.render('OngoingBuys.ejs',{Ids: Ids, IdsDone: IdsDone});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
+
+    /*Information and management of Ongoing transactions buyer-side ..*/
+    .get('/ManageIdBuyer', async (req, res) => {
+        if (Account) {
+            let Id = req.body.id;
+            let product = await EventsModule.GetRef(id)
+
+            let eventPhase1 = await GetEncryptedKeySentSpecific(Id, Account.address)
+            let eventPhase2 = await GetKeySentSpecific(Id,Account.address)
+            res.render('ManageBuy.ejs',{Id: Id, product:product, eventPhase1:eventPhase1, eventPhase2:eventPhase2});
         } else {
             res.render('homeClient.ejs',{account : Account});
         }

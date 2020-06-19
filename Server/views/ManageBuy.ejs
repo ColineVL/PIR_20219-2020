@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Manage Product Buy </title>
+
+</head>
+
+<body>
+<h1> Global Info : </h1>
+<ul>
+    <li> Id : <%= product.returnValues.referenceId %>  </li>
+    <li> Provider : <%= product.returnValues.provider %>  </li>
+    <li> Price : <%= product.returnValues.price %>  </li>
+    <li> End Time : <%= product.returnValues.contractEndTime %>  </li>
+    <li> Description : <%= product.returnValues.description %>  </li>
+</ul>
+<br>
+<p>To do : </p>
+<br>
+<ul>
+    <li> Hash Received : <%= eventPhase1.length %> clients <a href="/SendHashClient/?id=<%=Id%>">Do </a> </li>
+    <li> Key received : <%= eventPhase2.length %> clients <a href="/">Do</a> </li>
+    <li> Dispute : <%= 1 + "Todo"%> clients <a href="/">Do</a> </li>
+
+</ul>
+<a href="/ForSale">Back</a>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
