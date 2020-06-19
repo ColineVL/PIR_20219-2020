@@ -258,19 +258,23 @@ function getReferences() {
 /** Product info **/
 function getRefForSaleInfo(id) {
     const product = references[id];
-    const keysToDisplay = ["referenceId", "description", "price", "contractEndTime", "provider", "publicKeyDH"];
+    const keysToDisplay = ["description", "price", "contractEndTime", "provider", "publicKeyDH"];
     displayProductInfo(product, keysToDisplay);
 }
 
 function getBoughtItemInfo(id) {
     const product = boughtData[id];
-    const keysToDisplay = ["referenceId", "publicKeyDH"];
+    const keysToDisplay = ["publicKeyDH"];
     displayProductInfo(product, keysToDisplay);
 }
 
 function displayProductInfo(product, keysToDisplay) {
     addItem(productInfoItem);
     let html = "<table><tbody>";
+    html += "<tr>";
+    html += "<td>ReferenceId</td>";
+    html += "<td id='productInfo_referenceID'>" + product["referenceId"] + "</td>";
+    html += "</tr>";
     keysToDisplay.forEach(function (key) {
         html += "<tr>";
         html += "<td>" + key.capitalize() + "</td>";
@@ -279,6 +283,12 @@ function displayProductInfo(product, keysToDisplay) {
     });
     html += "</tbody></table>";
     $('#productInfo_info').html(html);
+    if (myAccount === "notConnected") {
+        $('#productInfo_message').show();
+        $('#productInfo_buyButton').hide();
+    } else {
+        $('#productInfo_message').hide();
+    }
 }
 
 /** Get bought data **/
@@ -289,6 +299,7 @@ function comparisonBoughtData(data1, data2) {
         return 1;
     }
 }
+
 function callbackGetBoughtData(Ids) {
     // TODO apparemment ça trie pas...
     Ids.sort(comparisonBoughtData);
@@ -318,16 +329,14 @@ function getBoughtData() {
 
 /** Buy product **/
 function callbackBuy(param) {
-    console.log(param);
+    // TODO en cas de problème
+    $('#productInfo_message').show();
+    $('#productInfo_message').text("Bought!");
 }
 
 async function buyProduct() {
-    if (myAccount === "notConnected") {
-        console.log("Pas connecté");
-    } else {
-        const id = 1;
-        loadXMLDoc("buy/" + id, callbackBuy);
-    }
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("buy/" + id + "/" + myAccount.privateKey, callbackBuy);
 }
 
 /********************************

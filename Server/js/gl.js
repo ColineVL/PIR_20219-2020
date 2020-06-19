@@ -220,6 +220,8 @@ myLayout.registerComponent('productInfoItem', function (container, state) {
         '<div class="container">' +
         '<h1>Product info:</h1>' +
         '<ul id="productInfo_info"></ul>' +
+        '<button id="productInfo_buyButton" onclick="buyProduct()">Buy</button>' +
+        '<p class="message" id="productInfo_message">You are not connected...</p>' +
         '</div>'
     );
 });

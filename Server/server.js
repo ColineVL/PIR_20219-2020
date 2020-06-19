@@ -117,10 +117,9 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(Ids);
     })
 
-    .get('/buy/:id', async (req, res) => {
+    .get('/buy/:id/:privateKey', async (req, res) => {
         let product = await EventsModule.GetRef(req.params.id);
-        let result = await bc.buyProduct(req.params.id, product, myAccount.privateKey);
-
+        let result = await bc.buyProduct(req.params.id, product, req.params.privateKey);
         if (result === "error") {
             res.json(result);
         } else {
