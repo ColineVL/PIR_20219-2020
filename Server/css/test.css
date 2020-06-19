@@ -110,6 +110,15 @@ a {
     margin-bottom: 5px;
 }
 
+#sellNew_receipt {
+    text-align: center;
+    font-style: italic;
+    font-size: 15px;
+    margin-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #layoutContainer p {
     font-size: 15px;
     margin: 7px;

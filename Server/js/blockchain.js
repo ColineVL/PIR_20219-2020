@@ -120,7 +120,7 @@ async function getBlockInfo(blocknumber) {
  ********************************/
 
 async function sellItem(jsonInfo) {
-   // jsonInfo = JSON.parse(jsonInfo);
+    jsonInfo = JSON.parse(jsonInfo);
     const price = jsonInfo["price"];
     const contractEndTime = jsonInfo["contractEndTime"];
     const description = jsonInfo["descr"];
@@ -134,18 +134,16 @@ async function sellItem(jsonInfo) {
     Diffie.PubDH = keys[1];
 
     /*Send transaction the get the ref_id for the database*/
-    const receipt = await transactions.SellReference(account, Diffie.PubDH, price, contractEndTime, description);
-    if (receipt) {
+    try {
+        const receipt = await transactions.SellReference(account, Diffie.PubDH, price, contractEndTime, description);
         let blockNumber = receipt.blockNumber;
         let event = await EventsModule.GetYourRef(account.address, blockNumber)
         let id = event[0].returnValues.referenceId;
-
         Diffie.refId = id;
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
-        return("ok");
-        // TODO afficher le receipt ?
-    } else {
-        return("error");
+        return receipt;
+    } catch (err) {
+        return err
     }
 }
 

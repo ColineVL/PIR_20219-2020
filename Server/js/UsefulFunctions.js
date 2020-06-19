@@ -9,7 +9,6 @@ function loadXMLDoc(page, successCallback) {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             try {
-                console.log(this.responseText);
                 let result = JSON.parse(this.responseText);
                 successCallback(result);
             } catch (e) {
@@ -238,15 +237,16 @@ function makeTransaction() {
 
 /** Get references **/
 function callbackGetReferences(param) {
-    references = param;
+    references = {};
     let html = "";
-    references.forEach(function (reference) {
+    param.forEach(function (reference) {
         html += "<details>";
         html += "<summary>" + reference.returnValues["referenceId"] + "</summary>";
         html += "<p>" + reference.returnValues["description"] + "</p>";
         html += "<p>(Wei) " + reference.returnValues["price"] + "</p>";
         html += "<p class='link' onclick=getRefForSaleInfo(" + reference.returnValues["referenceId"] + ")>Get more info</p>";
         html += "</details>";
+        references[reference.returnValues["referenceId"]] = reference.returnValues;
     });
     $("#forSale_list").html(html);
 }
@@ -257,13 +257,13 @@ function getReferences() {
 
 /** Product info **/
 function getRefForSaleInfo(id) {
-    const product = references[id].returnValues;
+    const product = references[id];
     const keysToDisplay = ["referenceId", "description", "price", "contractEndTime", "provider", "publicKeyDH"];
     displayProductInfo(product, keysToDisplay);
 }
 
 function getBoughtItemInfo(id) {
-    const product = boughtData[id].returnValues;
+    const product = boughtData[id];
     const keysToDisplay = ["referenceId", "publicKeyDH"];
     displayProductInfo(product, keysToDisplay);
 }
@@ -282,15 +282,25 @@ function displayProductInfo(product, keysToDisplay) {
 }
 
 /** Get bought data **/
+function comparisonBoughtData(data1, data2) {
+    if (data1.returnValues["referenceId"] < data2.returnValues["referenceId"]) {
+        return -1;
+    } else {
+        return 1;
+    }
+}
 function callbackGetBoughtData(Ids) {
-    boughtData = Ids;
+    // TODO apparemment ça trie pas...
+    Ids.sort(comparisonBoughtData);
+    boughtData = {};
     let html = "";
-    for (let i = 0; i < Ids.length; i++) {
+    for (const data of Ids) {
         html += "<details>";
-        html += "<summary>" + Ids[i].returnValues["referenceId"] + "</summary>";
+        html += "<summary>" + data.returnValues["referenceId"] + "</summary>";
         // TODO afficher des infos, au minimum la description
-        html += "<p class='link' onclick=getBoughtItemInfo(" + Ids[i].returnValues["referenceId"] + ")>Get more info</p>";
+        html += "<p class='link' onclick=getBoughtItemInfo(" + data.returnValues["referenceId"] + ")>Get more info</p>";
         html += "</details>";
+        boughtData[data.returnValues["referenceId"]] = data.returnValues;
     }
     $("#boughtData_list").html(html);
 }
@@ -330,6 +340,14 @@ function loadSellNewProductItem() {
 function callbackSellNewProduct(param) {
     $("#sellNew_message").show();
     $("#sellNew_message").html(param);
+    try {
+        $("#sellNew_receipt").show();
+        $("#sellNew_message").text("The offer is on the blockchain!");
+        $("#sellNew_blockNumber").text(param["blockNumber"]);
+        $("#sellNew_gasUsed").text(param["cumulativeGasUsed"]);
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 function sellNewProduct() {
@@ -340,7 +358,6 @@ function sellNewProduct() {
     let json = {price: price, contractEndTime: contractEndTime, descr: descr, privateKey: myAccount.privateKey};
 
     if (price === "" || contractEndTime === "" || descr === "") {
-        console.log("Please complete the whole form.");
         $("#sellNew_message").show();
         $("#sellNew_message").html("Please complete the whole form.");
     } else {
