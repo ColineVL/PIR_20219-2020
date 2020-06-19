@@ -265,7 +265,23 @@ app.use('/public', express.static(__dirname + '/public'))
             let num_clients_step2 = total_clients -num_clients_step1 - Clients_WhoRespondedToHash.length;
 
             // TODO finish coding function.. to get number of disputes
-            res.render('ManageId.ejs', {product: product[0], total_clients: total_clients, num_clients_step1: num_clients_step1, num_clients_step2: num_clients_step2});
+            res.render('ManageId.ejs', {product: product[0], Id: id, total_clients: total_clients, num_clients_step1: num_clients_step1, num_clients_step2: num_clients_step2});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
+
+    /* Interface to sned K2 keys to the ones who have'nt got it yet*/
+    .get('/SendCryptedK2/', async (req, res) => {
+        if (Account) {
+            const id = req.query.id ;
+            const all_clients = await transactions.GetClients(Account,id);
+            let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
+            let Address_ListClientsWhoReceivedK2 = EventsModule.EventsToAddresses(ClientsWhoReceivedK2) // So I compute a  need a list of addresses
+            let ClientsToDo = EventsModule.ComputeLeft(all_clients,Address_ListClientsWhoReceivedK2) // Then i find who is left...
+
+
+            res.render('SentToClients.ejs', {num: ClientsToDo.length, });
         } else {
             res.render('homeClient.ejs',{account : Account});
         }

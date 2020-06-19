@@ -103,6 +103,25 @@ module.exports = {
         return res1;
     },
 
+    /*Useful function that transforms a list of events into a list of addresses concerned by the event*/
+    /*note that the event has to be coded such that the attribute of the addresses is "client" !*/
+    EventsToAddresses: function (events) {
+        let res = [];
+        for (let i = 0; i < events.length ; i++) {
+            res.push(events[i].returnValues.client)
+        }
+        return res;
+    },
+    /*Computes the list of elements in list1 and not list2*/
+    ComputeLeft : function (list1,list2) {
+        let res = [];
+        for (let i = 0; i < list1.length ; i++) {
+            if ( !(list2.indexOf(list1[i]) >= 0) ) {
+                res.push(list1[i])
+            }
+        }
+        return res;
+    },
 }
 
 // // event NewDataReference(uint referenceId, address provider, uint price, uint contractEndTime);

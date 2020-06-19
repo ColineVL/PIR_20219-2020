@@ -141,3 +141,7 @@ function StrToBytes(str) {
     let res = []
     return res
 }
+let l = ['aa', 'basd', 'caa','aab', 'mljgdhbfhffkytvurdjhgcjfg6', 'aaa', "adert"];
+if (l.indexOf("mljgdhbfhffkytvurdjhgcjfg6") >= 0) {
+    console.log("yassss")
+}
