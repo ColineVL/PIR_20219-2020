@@ -385,3 +385,9 @@ function testLine2() {
     document.getElementById("binaryLine2").innerHTML = byte2;
     document.getElementById("stringLine2").innerHTML = binary2StringLine2(byte2);
 }
+
+
+function SeparateBytes(str) {
+    let res = []
+    return res
+}

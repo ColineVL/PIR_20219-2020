@@ -255,10 +255,9 @@ app.use('/public', express.static(__dirname + '/public'))
         if (Account) {
             const id = req.query.id ;
             let product = await EventsModule.GetRef(id);
-            const clients = [1,2,1,2,1,7]//transactions.GetClients(id); // TODO finish coding function.. problem of client arrays
-
-
-            res.render('ManageId.ejs', {product: product[0], num: clients.length});
+            const clients = await transactions.GetClients(Account,id); // TODO finish coding function.. problem of client arrays
+            let num = clients.length;
+            res.render('ManageId.ejs', {product: product[0], num: num});
         } else {
             res.render('homeClient.ejs',{account : Account});
         }

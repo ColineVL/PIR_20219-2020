@@ -121,12 +121,7 @@ module.exports = {
 
     /*Function to view the clients of a certain reference*/
     GetClients: async function (account,id) {
-        const transactionObject = {
-            from: account.address,
-            gas: web3.utils.numberToHex(3000000),
-            gasPrice: gasPrice
-        };
-        let clients =await contract.methods.clients().call(transactionObject)
+        let clients = await contract.methods.getClients(id).call({from : account.address})
             .catch(function(error){});
         return clients;
     },

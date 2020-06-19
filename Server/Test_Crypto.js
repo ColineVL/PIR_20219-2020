@@ -111,18 +111,33 @@ console.log(new Buffer.from(prime1,'hex'));//new Buffer.from(toAscii(prime).toSt
 
 console.log(alice.getGenerator())
 console.log("/////////////////////////////////////////////");
-console.log(key.toString("hex"));
-console.log(key.toString("Ascii"));
-console.log(key.toString("UTF-8"));
-console.log(parseInt(key,'2'));
-console.log(key)
-console.log("======================================================")
-console.log(alice.getPrime());
-let buf1 = web3.utils.bytesToHex(alice.getPublicKey())
-console.log(buf1)
-console.log(new Buffer.from(buf1))
+// console.log(key.toString("hex"));
+// console.log(key.toString("Ascii"));
+// console.log(key.toString("UTF-8"));
+// console.log(parseInt(key,'2'));
+// console.log(key)
+// console.log("======================================================")
+// console.log(alice.getPrime());
+// let buf1 = web3.utils.bytesToHex(alice.getPublicKey())
+// console.log(buf1)
+// console.log(new Buffer.from(buf1))
+//
+// let v = "1000";
+// console.log(typeof parseInt(v,10))
+//
+// console.log(parseInt(v,10))
 
-let v = "1000";
-console.log(typeof parseInt(v,10))
+let byte =[56, 58]
+console.log(byte)
 
-console.log(parseInt(v,10))
+let buf = new Buffer.from(byte,'hex')
+let send = web3.utils.bytesToHex(buf)
+console.log(send)
+
+let rev = web3.utils.hexToBytes(send)
+console.log(rev)
+
+function StrToBytes(str) {
+    let res = []
+    return res
+}

@@ -13,7 +13,6 @@ contract StringBytesTest {
         mapping (address => bool) isClient;
     }
 
-
     address[]  public clients3;
 
     DataReference[] public dataReferences;
@@ -26,12 +25,12 @@ contract StringBytesTest {
         emit Eventee(_testString, _testString, byt);
     }
 
-    function set1( uint _int) public {
-        DataReference memory newReference;
+    function set1( uint _int) public{
 
-        newReference.int1 = _int;
-        newReference.clients.push(msg.sender);
-        newReference.isClient[msg.sender] = true;
+
+        dataReferences.int1 = _int;
+        dataReferences.clients.push(msg.sender);
+        dataReferences.isClient[msg.sender] = true;
 
         dataReferences.push(newReference);
     }

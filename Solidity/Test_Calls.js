@@ -93,7 +93,7 @@ const setuint1ref = contract.methods.buyReference(0,byt).encodeABI();
     //     console.log(receipt);
     // });
     // console.log("*************************************");
-    const map = await contract.methods.dataReferences(1).call({from : account1});
+    const map = await contract.methods.getClients(0).call({from : account1});
     // const clients = await contract.methods.dataRefer.call(transactionObject);
     console.log(map)
     console.log(typeof map)
