@@ -75,11 +75,11 @@ const setuint1ref = contract.methods.buyReference(0,byt).encodeABI();
     // var sTx3 =txx3.serialize();
 
     //
-    const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
-        // console.log(receipt);
-    }).catch(function(error){
-        console.log("hello");
-    });
+    // const dataOld1 = await web3.eth.sendSignedTransaction('0x' + sTx1.toString('hex')).on('receipt', function(receipt){
+    //     // console.log(receipt);
+    // }).catch(function(error){
+    //     console.log("hello");
+    // });
     //
     // let blockNumber = dataOld1.blockNumber ;
     // console.log(blockNumber)
@@ -93,7 +93,7 @@ const setuint1ref = contract.methods.buyReference(0,byt).encodeABI();
     //     console.log(receipt);
     // });
     // console.log("*************************************");
-    const map = await contract.methods.dataReferences(0).clients.call({from : account1});
+    const map = await contract.methods.dataReferences(1).call({from : account1});
     // const clients = await contract.methods.dataRefer.call(transactionObject);
     console.log(map)
     console.log(typeof map)
