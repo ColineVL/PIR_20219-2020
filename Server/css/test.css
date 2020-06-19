@@ -150,10 +150,6 @@ a {
     content: "Node " counter(node) ": ";
 }
 
-#layoutContainer #blocks_list li {
-    list-style-type: 'square';
-}
-
 details {
     padding: 5px 5px 0;
 }

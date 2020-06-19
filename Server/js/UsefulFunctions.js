@@ -149,7 +149,7 @@ function getBalance() {
  ********************************/
 
 /** Update of the nodelist **/
-//setInterval(updateNodesList, 2000);
+setInterval(updateNodesList, 2000);
 
 function callbackNodelist(param) {
     param = displayListNodes(param);
@@ -168,7 +168,7 @@ function updateNodesList() {
  ********************************/
 
 /** Update of the blocks list **/
-//setInterval(updateBlocksList, 2000);
+setInterval(updateBlocksList, 2000);
 
 function callbackBlockslist(param) {
     param = displayListBlocks(param);
@@ -190,7 +190,7 @@ function callbackBlockInfo(param) {
 
 function displayBlockInfo(blocknumber) {
     if (blocknumber === -1) {
-        blocknumber = $("blocks_blockNumber").val();
+        blocknumber = $("#blocks_blockNumber").val();
         blocknumber = Number(blocknumber);
     }
     if (blocknumber > 0) {
