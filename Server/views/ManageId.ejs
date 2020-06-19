@@ -8,7 +8,7 @@
 
 <body>
 <h1> Global Info : </h1>
-<p>Total number of clients : <%= num %></p>
+<p>Total number of clients : <%= total_clients %></p>
 <ul>
     <li> Id : <%= product.returnValues.referenceId %>  </li>
     <li> Provider : <%= product.returnValues.provider %>  </li>
@@ -20,8 +20,8 @@
 <p>To do : </p>
 <br>
 <ul>
-    <li> Send Info( K2xORK) : <%= 8 %> clients <a href="/">Do</a> </li>
-    <li> Verify hashes and send K2 : <%= 2 %> clients <a href="/">Do</a> </li>
+    <li> Send Info( K2xORK) : <%= num_clients_step1 %> clients <a href="/">Do</a> </li>
+    <li> Verify hashes and send K2 : <%= num_clients_step2 %> clients <a href="/">Do</a> </li>
     <li> Dispute : <%= 1 %> clients <a href="/">Do</a> </li>
 
 </ul>

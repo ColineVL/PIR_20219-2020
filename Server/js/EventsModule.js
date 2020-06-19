@@ -84,6 +84,24 @@ module.exports = {
         }, function (error, events) {}) // TODO Eventually do something here
         return res1;
     },
+    /*Get all emits testifying that a client sent the encrypted key hashed for a certain product of reference id : id*/
+    GetEncryptedHashKeysResponses: async function (id) {
+        let res1 = await contractws.getPastEvents("encryptedKeyHash", {
+            filter: {referenceId: id},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1;
+    },
+    /*Get all emits testifying that a the provider sent the encrypted key K2 for a certain product of reference id : id*/
+    GetEncryptedKeysSent: async function (id) {
+        let res1 = await contractws.getPastEvents("encryptedEncodedKeyEvent", {
+            filter: {referenceId: id},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1;
+    },
 
 }
 
