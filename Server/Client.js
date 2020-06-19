@@ -165,8 +165,14 @@ app.use('/public', express.static(__dirname + '/public'))
     /*Information and management of Ongoing transactions buyer-side ..*/
     .get('/SendClientHash', async (req, res) => {
         if (Account) {
-            let Id = req.query.id;
-            let product = await EventsModule.GetRef(Id)
+            let id = req.query.id;
+            let product = await EventsModule.GetRef(id)
+
+            let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/../Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
+
+            let Pub_Seller = await EventsModule.GetPubDiffieSeller(seller_address,id);
+            let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
+
 
             let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, Account.address)
             let eventPhase2 = await EventsModule.GetKeySentSpecific(Id,Account.address)

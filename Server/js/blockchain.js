@@ -213,10 +213,6 @@ async function sendCryptedK2(id, privateKey) {
 /*Function for the client to send the hash of K xor K2 to the provider*/
 async function sendClientHash(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
-    const all_clients = await transactions.GetClients(Account,id);
-    let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
-    let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2) // So I compute a  need a list of addresses
-    let ClientsToDo = await EventsModule.ComputeLeft(all_clients,Address_ListClientsWhoReceivedK2) // Then i find who is left...
 
     let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/../Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
     // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
