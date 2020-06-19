@@ -180,10 +180,11 @@ app.use('/public', express.static(__dirname + '/public'))
             let HashTobeSent = crypto.Hash(decryptedToBeHashed)
 
 
-            await readwrite.WriteAsRefBuyer(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt',hashed,K2)
+            await readwrite.WriteAsRefBuyer(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt',decryptedToBeHashed)
             let done = 0 // value to verify later that everything went correctly
-            let receipt =
+            let receipt = transactions.SendHashToProvider(Account,id,HashTobeSent)
             // Now we can do the OTP
+            if (receiot)
             res.render('ManageBuy.ejs',{Id: Id, product:product[0], eventPhase1:eventPhase1, eventPhase2:eventPhase2});
         } else {
             res.render('homeClient.ejs',{account : Account});
