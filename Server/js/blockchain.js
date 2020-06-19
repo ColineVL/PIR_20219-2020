@@ -210,6 +210,38 @@ async function sendCryptedK2(id, privateKey) {
     return [ClientsToDo.length, done];
 }
 
+/*Function for the client to send the hash of K xor K2 to the provider*/
+async function sendClientHash(id, privateKey) {
+    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+    const all_clients = await transactions.GetClients(Account,id);
+    let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
+    let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2) // So I compute a  need a list of addresses
+    let ClientsToDo = await EventsModule.ComputeLeft(all_clients,Address_ListClientsWhoReceivedK2) // Then i find who is left...
+
+    let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/../Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
+    // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
+
+    let done = 0 // To check how many were succesful at the end...
+    for (let i = 0; i < ClientsToDo.length  ; i++) {
+        let client_address = ClientsToDo[i];
+
+        let Pub_Client = await EventsModule.GetPubDiffieClient(client_address,id);
+        let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
+        let K2 = crypto.RandomBytes(7);
+
+        let toSend = crypto.OTP(K2,crypto.OTP(secret,K2)).slice(0,4);
+        let hashed = crypto.Hash(toSend);
+
+        await readwrite.WriteAsRefSeller(__dirname +'/../Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt',hashed,K2)
+
+        let receipt = await transactions.SendK2ToClient(Account,id, client_address, toSend);
+        if (receipt) {
+            done += 1;
+        }
+    }
+    return [ClientsToDo.length, done];
+}
+
 /********************************
  * Exports
  ********************************/
