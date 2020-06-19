@@ -71,7 +71,11 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/ConnexionForm', function(req, res) {
         res.render('ConnexionForm.ejs', {account : Account});
     })
-
+    /* Emulating Signout by deleting account*/
+    .get('/Signout', function(req, res) {
+        Account = undefined;
+        res.redirect('/');
+    })
 
     /* Handler to process the connection */
     .post('/Connexion/', async (req, res) => {
