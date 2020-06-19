@@ -239,7 +239,12 @@ function callbackGetReferences(param) {
     references = param;
     let html = "";
     references.forEach(function (reference) {
-        html += "<li onclick=getRefInfo(" + reference.returnValues["referenceId"] + ")>" + reference.returnValues["referenceId"] + "</li>";
+        html += "<details>";
+        html += "<summary>" + reference.returnValues["referenceId"] + "</summary>";
+        html += "<p>" + reference.returnValues["description"] + "</p>";
+        html += "<p>(Wei) " + reference.returnValues["price"] + "</p>";
+        html += "<p class='link' onclick=getRefInfo(" + reference.returnValues["referenceId"] + ")>Get more info</p>";
+        html += "</details>";
     });
     $("#forSale_list").html(html);
 }
@@ -250,15 +255,16 @@ function getReferences() {
 
 /** Reference info **/
 function getRefInfo(id) {
-    let product = references[id].returnValues;
-    let keysToDisplay = ["contractEndTime", "price", "public key", "referenceId"];
+    addItem(productInfoItem);
+    const product = references[id].returnValues;
+    const keysToDisplay = ["contractEndTime", "description", "price", "provider", "publicKeyDH", "referenceId"];
     let html = "<table><tbody>";
-    for (let key in keysToDisplay) {
+    keysToDisplay.forEach(function (key) {
         html += "<tr>";
         html += "<td>" + key.capitalize() + "</td>";
         html += "<td>" + product[key] + "</td>";
         html += "</tr>";
-    }
+    });
     html += "</tbody></table>";
-    return html;
+    $('#productInfo_info').html(html);
 }

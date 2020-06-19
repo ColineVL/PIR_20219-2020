@@ -51,6 +51,11 @@ const forSaleItem = {
     name: "forSaleItem",
 };
 
+const productInfoItem = {
+    title: "Info about the product",
+    name: "productInfoItem"
+}
+
 const ongoingTransactionsItem = {
     title: "Ongoing transactions",
     name: "ongoingTransactionsItem"
@@ -206,6 +211,15 @@ myLayout.registerComponent('forSaleItem', function (container, state) {
         '<div class="container">' +
         '<h1>For sale items:</h1>' +
         '<ul id="forSale_list"></ul>' +
+        '</div>'
+    );
+});
+
+myLayout.registerComponent('productInfoItem', function (container, state) {
+    container.getElement().html(
+        '<div class="container">' +
+        '<h1>Product info:</h1>' +
+        '<ul id="productInfo_info"></ul>' +
         '</div>'
     );
 });

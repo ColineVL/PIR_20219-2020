@@ -13,6 +13,15 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         _;
     }
 
+    modifier isPayed(uint _referenceId) {
+        uint _price = getReferenceCurrentPrice(_referenceId);
+        // The ether sent must be bigger to the current price but not higher than the initial one to avoid paying more
+        require(msg.value >= _price);
+        require(msg.value <= dataReferences[_referenceId].initialPrice);
+        _;
+    }
+
+
     /*
     ---------------------------------------------
     Client buy mechanism functions
@@ -22,15 +31,13 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     event NewClient(
         uint indexed referenceId,
         address indexed client,
+        uint fund,
         bytes32 publicKeyDH);
 
-    function buyReference(uint _referenceId, bytes32 _publicKeyDH) payable external {
+    function buyReference(uint _referenceId, bytes32 _publicKeyDH) isPayed(_referenceId) payable external {
         // Checks if referenceId is valid
         // !!!!!!!!!!!! Check if < or <= Maybe remove line if it will automatically give index out of bound
         require(_referenceId <= dataReferences.length);
-
-        // Checks if the client's ether corresponds to the set price
-        require(msg.value == dataReferences[_referenceId].price);
 
         // Checks that client did not already buy reference
         require(dataReferences[_referenceId].isClient[msg.sender] == false);
@@ -39,7 +46,10 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         dataReferences[_referenceId].clients.push(msg.sender);
         dataReferences[_referenceId].isClient[msg.sender] = true;
 
-        emit NewClient(_referenceId, msg.sender, _publicKeyDH);
+        dataReferences[_referenceId].clientFunds[msg.sender] = msg.value;
+        dataReferences[_referenceId].withdrawableFunds += msg.value;
+
+        emit NewClient(_referenceId, msg.sender, msg.value, _publicKeyDH);
     }
 
     event encryptedKeyHash(
@@ -48,7 +58,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         bytes32 encryptedKeyHash);
 
 
-    function setEncryptedHashedKey(uint _referenceId, bytes32 _encryptedKeyHash) external isClient (_referenceId) {
+    function setEncryptedHashedKey(uint _referenceId, bytes32 _encryptedKeyHash) external isClient(_referenceId) {
 
         /*
         Condition to allow the client to provide once the hash of the encrypted key
@@ -77,7 +87,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
 
     function raiseDispute(uint _referenceId) payable external isClient(_referenceId) {
         // Checks if provider hasn't already withdrew funds
-        require(dataReferences[_referenceId].withdrawnFunds == false);
+        require(dataReferences[_referenceId].withdrawableFunds >= dataReferences[_referenceId].clientFunds[msg.sender]);
 
         // Checks if the dispute fee is payed
         require(msg.value == disputePrice);
@@ -93,7 +103,9 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         // Adds the number of disputes
         dataReferences[_referenceId].clientDisputes = dataReferences[_referenceId].clientDisputes.add(1);
 
-    emit raiseDisputeEvent(_referenceId, msg.sender, now);
+        dataReferences[_referenceId].clientFunds[msg.sender] += msg.value;
+        dataReferences[_referenceId].withdrawableFunds -= msg.value;
+        emit raiseDisputeEvent(_referenceId, msg.sender, now);
     }
 
 
@@ -117,7 +129,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         dataReferences[_referenceId].resolvedDispute[msg.sender] = true;
 
         // Refunding to client
-        uint funds = dataReferences[_referenceId].price + disputePrice;
+        uint funds = dataReferences[_referenceId].clientFunds[msg.sender];
         (msg.sender).transfer(funds);
 
         emit withdrawRefund(_referenceId, msg.sender, funds);

@@ -20,8 +20,8 @@ contract Depreciation_Contract is Ownable{
     uint referenceIdCounter = 0;
 
     struct DataReference{ // Contains reference ANd price
-        uint referenceId;
-        uint price;
+//      uint referenceId;
+        uint initialPrice;
         uint referenceKey; //Take care of hackers, must be long enough ... to be determined
         /*
         contractDuration is too long, it must be shortened with:
@@ -29,15 +29,24 @@ contract Depreciation_Contract is Ownable{
            - Put require statement in createDataReference
         */
 
+
+        // Needed to calculate depreciation value
+        uint128 deployTime;
         /*
-        Should not be allowed to be changed by anyone, even the owner to avoid scams and ...
-        ... withholding funds for a longer time than anticipated
+            Should not be allowed to be changed by anyone, even the owner to avoid scams and ...
+            ... withholding funds for a longer time than anticipated
         */
-        uint contractEndTime;
+        uint128 endTime;
+
+        /*
+            Value depreciation factors.
+            1: linear depreciation | 2: quadratic depreciation. Any other value constant price (no depreciation)
+        */
+        uint8 depreciationType;
 
         address provider;
         // Necessary to check if the provider withdrew undisputed funds so he does not withdraw other's funds
-        bool withdrawnFunds;
+        uint withdrawableFunds;
 
         /*
             Client parameters
@@ -45,6 +54,7 @@ contract Depreciation_Contract is Ownable{
 
         // List of clients that bought the contract
         address[] clients;
+        mapping (address => uint) clientFunds;
 
         // Needed to track how many funds are undisputed and what can the provider withdraw
         uint clientDisputes;
@@ -73,15 +83,41 @@ contract Depreciation_Contract is Ownable{
 
     uint internal disputePrice = 0.02 ether;
 
-    // Gives access to the smart contract's owner to change disputePrice since ether/USD pair is not stable
-//    function setDisputePrice(uint _price) onlyOwner external{
-//        disputePrice = _price;
-//    }
+    // Gives access to the smart contract's owner to change disputePrice
+    function setDisputePrice(uint _price) onlyOwner external{
+        disputePrice = _price;
+    }
 
-    /*
-    TODO FUNCTIONS
-    Settle dispute
-    */
+
+    function getReferenceCurrentPrice(uint _referenceId) view public returns(uint price){
+        uint _price = dataReferences[_referenceId].initialPrice;
+        uint8 depreciationType = dataReferences[_referenceId].depreciationType;
+
+        // Linear value depreciation
+        if(depreciationType == 1){
+            // reference time length timeLength: T(end) - T(deploy)
+            uint timeLength = uint (dataReferences[_referenceId].endTime - dataReferences[_referenceId].deployTime);
+            // time elapsed from the beginning of contract T: now - deployTime
+            uint timeElapsed = now - uint (dataReferences[_referenceId].deployTime);
+
+            _price = _price - (_price * timeElapsed / timeLength);
+
+        }
+
+        // Quadratic value depreciation
+        else if(depreciationType == 2){
+            // reference time length timeLength: T(end) - T(deploy)
+            uint timeLength = uint (dataReferences[_referenceId].endTime - dataReferences[_referenceId].deployTime);
+            // time elapsed from the beginning of contract T: now - deployTime
+            uint timeElapsed = now - uint (dataReferences[_referenceId].deployTime);
+
+            _price = _price.mul(timeElapsed).div(timeLength).mul(timeElapsed).div(timeLength)
+            - 2*_price.mul(timeElapsed).div(timeElapsed) + _price;
+        }
+
+        // if no depreciation type index is correct it will return the initial price (constant value / no depreciation)
+        return _price;
+    }
 
 
 }

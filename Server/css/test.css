@@ -90,6 +90,11 @@ a {
     font-family: Arial, sans-serif;
 }
 
+
+#layoutContainer .container {
+    margin: 15px 10px 10px 10px;
+}
+
 #layoutContainer h1 {
     font-size: 20px;
 }
@@ -98,9 +103,22 @@ a {
     font-size: 18px;
 }
 
+#layoutContainer .message {
+    text-align: center;
+    font-style: italic;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
 #layoutContainer p {
     font-size: 15px;
     margin: 7px;
+}
+
+#layoutContainer .link {
+    font-size: 13px;
+    margin: 7px;
+    font-style: italic;
 }
 
 #layoutContainer td {
@@ -132,17 +150,17 @@ a {
     content: "Node " counter(node) ": ";
 }
 
-
-#layoutContainer .container {
-    margin: 15px 10px 10px 10px;
+#layoutContainer #blocks_list li {
+    list-style-type: 'square';
 }
 
-#layoutContainer .message {
-    text-align: center;
-    font-style: italic;
-    font-size: 15px;
-    margin-bottom: 5px;
+details {
+    padding: 5px 5px 0;
 }
+
+
+
+
 
 /* Style inputs, select elements and textareas */
 #layoutContainer input[type=text], select, textarea {
