@@ -267,7 +267,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SendCryptedK2/', async (req, res) => {
         if (Account) {
             const id = req.query.id ;
-            let [num, done] = await bc.sendCryptedK2(K, id, Account.privateKey);
+            let [num, done] = await bc.sendCryptedK2(id, Account.privateKey);
             res.render('SentToClients.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});
