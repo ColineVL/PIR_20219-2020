@@ -167,14 +167,19 @@ async function manageID(id, privateKey) {
     const account = web3.eth.accounts.privateKeyToAccount(privateKey);
     let product = await EventsModule.GetRef(id);
     const clients = await transactions.GetClients(account,id);
+
+
     let total_clients = clients.length;
     // Ca bugue ici
 
     let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
     let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length;
 
-    let Clients_WhoRespondedToHash = await EventsModule.GetEncryptedHashKeysResponses(id)
-    let num_clients_step2 = total_clients -num_clients_step1 - Clients_WhoRespondedToHash.length;
+    let KeysSent = await EventsModule.GetKeysSent(id);
+    let ReceivedHashes = await EventsModule.GetClientsWhoSentHashes(id)
+
+    let num_clients_step2 = ReceivedHashes.length - KeysSent.length
+
     return [product, total_clients, num_clients_step1, num_clients_step2];
 }
 
@@ -220,6 +225,57 @@ async function sendCryptedK2(K,id, privateKey) {
         }
     }
     return [ClientsToDo.length, done];
+}
+/*Function to handle sending the appropriate K2 to every client which responded with a correct hash*/
+async function sendK2(K,id, privateKey) {
+    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+
+    let ClientsWhoSentHashes = await EventsModule.GetClientsWhoSentHashes(id); // This is a list of events corresponding to clients who sent me a hash
+    let ClientsReceivedK2 = await EventsModule.GetKeysSent(id); // This is a list of events corresponding to the clients I already answered concerning their hashes
+    let Address_ListClientsWhoSentHashes = await EventsModule.EventsToAddresses(ClientsWhoSentHashes)  // Transformed into a list of addresses
+    let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsReceivedK2)  // Transformed into a list of addresses
+    let ClientsToDo = await EventsModule.ComputeLeft(Address_ListClientsWhoSentHashes,Address_ListClientsWhoReceivedK2) // Then i find who is left...
+
+    console.log(ClientsToDo)
+    console.log(Address_ListClientsWhoSentHashes)
+    console.log(Address_ListClientsWhoReceivedK2)
+
+    //
+    // let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/../Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
+    // // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
+    //
+    // let done = 0 // To check how many were succesful at the end...
+    // for (let i = 0; i < ClientsToDo.length  ; i++) {
+    //     let client_address = ClientsToDo[i];
+    //
+    //     let Pub_Client = await EventsModule.GetPubDiffieClient(client_address,id);
+    //     let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
+    //     let K2 = crypto.RandomBytes(7);
+    //
+    //     let toEncrypt = crypto.OTP(K,K2)
+    //     let toSend = crypto.OTP(secret,toEncrypt)//.slice(0,4);
+    //     let hashed = crypto.Hash(toEncrypt);
+    //
+    //     console.log("Sellerer secret computed:") // TODO Delete this
+    //     console.log(secret)
+    //     console.log("***************************")
+    //     console.log("Seller KxorK2:") // TODO Delete this
+    //     console.log(toEncrypt)
+    //     console.log("***************************")
+    //     console.log("Seller KxorK2xorK3:") // TODO Delete this
+    //     console.log(toSend)
+    //     console.log("***************************")
+    //     console.log("Seller hash:") // TODO Delete this
+    //     console.log(hashed)
+    //     console.log("***************************")
+    //     await readwrite.WriteAsRefSeller(__dirname +'/../Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt',hashed,K2)
+    //
+    //     let receipt = await transactions.SendK2ToClient(Account,id, client_address, toSend);
+    //     if (receipt) {
+    //         done += 1;
+    //     }
+    // }
+    return 0;//[ClientsToDo.length, done];
 }
 
 /*Function for the client to send the hash of K xor K2 to the provider*/
@@ -290,5 +346,6 @@ module.exports = {
     buyProduct,
     manageID,
     sendCryptedK2,
-    sendClientHash
+    sendClientHash,
+    sendK2
 };
