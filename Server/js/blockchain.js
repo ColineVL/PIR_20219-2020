@@ -219,7 +219,7 @@ async function sendCryptedK2(K,id, privateKey) {
         console.log("***************************")
         await readwrite.WriteAsRefSeller(__dirname +'/../Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt',hashed,K2)
 
-        let receipt = await transactions.SendK2ToClient(Account,id, client_address, toSend);
+        let receipt = await transactions.SendEncryptedK2ToClient(Account,id, client_address, toSend);
         if (receipt) {
             done += 1;
         }
@@ -246,19 +246,11 @@ async function sendK2(K,id, privateKey) {
 
         let correctHash = myRef_obj.hash;
         let receivedHash = await EventsModule.GetHashFromClientClient(client_address,id);
-        let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
-        let K2 = crypto.RandomBytes(7);
-
-        let toEncrypt = crypto.OTP(K,K2)
-        let toSend = crypto.OTP(secret,toEncrypt)//.slice(0,4);
-        let hashed = crypto.Hash(toEncrypt);
-
-
-        await readwrite.WriteAsRefSeller(__dirname +'/../Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt',hashed,K2)
-
-        let receipt = await transactions.SendK2ToClient(Account,id, client_address, toSend);
-        if (receipt) {
-            done += 1;
+        if (correctHash == receivedHash){
+            let receipt = await transactions.SendK2ToClient(Account,id, client_address, myRef_obj.K2);
+            if (receipt) {
+                done += 1;
+            }
         }
     }
     return [ClientsToDo.length, done];
