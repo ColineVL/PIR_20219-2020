@@ -78,10 +78,11 @@ module.exports = {
     /*Get references being sold by a specific id*/
     GetSoldRefs: async function (address) {
         let res1 = await contractws.getPastEvents("NewDataReference", {
-            filter: {address: address},
+            filter: {provider: address},
             fromBlock: 0,
             toBlock: 'latest'
         }, function (error, events) {}) // TODO Eventually do something here
+        console.log(res1);
         return res1;
     },
     /*Get all emits testifying that a client sent the encrypted key hashed for a certain product of reference id : id*/
