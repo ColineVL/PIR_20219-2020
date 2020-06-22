@@ -236,46 +236,32 @@ async function sendK2(K,id, privateKey) {
     let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsReceivedK2)  // Transformed into a list of addresses
     let ClientsToDo = await EventsModule.ComputeLeft(Address_ListClientsWhoSentHashes,Address_ListClientsWhoReceivedK2) // Then i find who is left...
 
-    console.log(ClientsToDo)
-    console.log(Address_ListClientsWhoSentHashes)
-    console.log(Address_ListClientsWhoReceivedK2)
+    // Now We have to: Verify each hash received with the ones we had saved
 
-    //
-    // let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/../Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
-    // // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
-    //
-    // let done = 0 // To check how many were succesful at the end...
-    // for (let i = 0; i < ClientsToDo.length  ; i++) {
-    //     let client_address = ClientsToDo[i];
-    //
-    //     let Pub_Client = await EventsModule.GetPubDiffieClient(client_address,id);
-    //     let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
-    //     let K2 = crypto.RandomBytes(7);
-    //
-    //     let toEncrypt = crypto.OTP(K,K2)
-    //     let toSend = crypto.OTP(secret,toEncrypt)//.slice(0,4);
-    //     let hashed = crypto.Hash(toEncrypt);
-    //
-    //     console.log("Sellerer secret computed:") // TODO Delete this
-    //     console.log(secret)
-    //     console.log("***************************")
-    //     console.log("Seller KxorK2:") // TODO Delete this
-    //     console.log(toEncrypt)
-    //     console.log("***************************")
-    //     console.log("Seller KxorK2xorK3:") // TODO Delete this
-    //     console.log(toSend)
-    //     console.log("***************************")
-    //     console.log("Seller hash:") // TODO Delete this
-    //     console.log(hashed)
-    //     console.log("***************************")
-    //     await readwrite.WriteAsRefSeller(__dirname +'/../Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt',hashed,K2)
-    //
-    //     let receipt = await transactions.SendK2ToClient(Account,id, client_address, toSend);
-    //     if (receipt) {
-    //         done += 1;
-    //     }
-    // }
-    return 0;//[ClientsToDo.length, done];
+    let done = 0 // To check how many were succesful at the end...
+    for (let i = 0; i < ClientsToDo.length  ; i++) {
+        let myRef_obj = await readwrite.ReadAsObjectRefSeller(__dirname +'/../Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt');
+
+
+        let client_address = ClientsToDo[i];
+
+        let Pub_Client = await EventsModule.GetPubDiffieClient(client_address,id);
+        let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
+        let K2 = crypto.RandomBytes(7);
+
+        let toEncrypt = crypto.OTP(K,K2)
+        let toSend = crypto.OTP(secret,toEncrypt)//.slice(0,4);
+        let hashed = crypto.Hash(toEncrypt);
+
+
+        await readwrite.WriteAsRefSeller(__dirname +'/../Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt',hashed,K2)
+
+        let receipt = await transactions.SendK2ToClient(Account,id, client_address, toSend);
+        if (receipt) {
+            done += 1;
+        }
+    }
+    return [ClientsToDo.length, done];
 }
 
 /*Function for the client to send the hash of K xor K2 to the provider*/
