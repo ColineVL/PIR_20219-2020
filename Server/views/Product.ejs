@@ -14,9 +14,15 @@
         <li> Price : <%= product.returnValues.price %>  </li>
         <li> End Time : <%= product.returnValues.contractEndTime %>  </li>
         <li> Description : <%= product.returnValues.description %>  </li>
+        <li> Assurance funds by the provider : <%= product.returnValues.redeemFunds %>  </li>
+        <li> Minimum Data : <%= product.returnValues.minimumData %>  </li>
+        <li> Time of Deployment : <%= product.returnValues.deployTime %>  </li>
+        <li> Time of End : <%= product.returnValues.endTime %>  </li>
+        <li> Type of Depreciation : <%= product.returnValues.depreciationType %>  </li>
     </ul>
 
     <a href="/ForSale">Back</a>
+    <br>
     <a href="/buy/?id=<%= product.returnValues.referenceId %> "> Buy </a>
 </body>
 </html>
