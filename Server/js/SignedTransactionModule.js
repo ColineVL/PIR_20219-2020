@@ -145,7 +145,7 @@ module.exports = {
     /*Function to view the clients of a certain reference*/
     GetClients: async function (account,id) {
         let clients = await contract.methods.getClients(id).call({from : account.address})
-            .catch(function(error){});
+            .catch(function(error){console.log(error);});
         return clients;
     },
 

@@ -130,8 +130,8 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /** Sell **/
     .get('/sellNewProduct/:json', async (req, res) => {
-        let result = await bc.sellItem(req.params.json);
-        res.json(result);
+        let receipt = await bc.sellItem(req.params.json);
+        res.json(receipt);
     })
 
     .get('/ongoingSales/:address', async (req, res) => {
@@ -140,9 +140,15 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     .get('/manageId/:id/:privateKey', async (req, res) => {
-        const resultat = await bc.manageID(req.params.id, req.params.privateKey);
-        // resultat = [product, total_clients, num_clients_step1, num_clients_step2]
-        res.json(resultat);
+        const result = await bc.manageID(req.params.id, req.params.privateKey);
+        // result = [product, total_clients, num_clients_step1, num_clients_step2]
+        res.json(result);
+    })
+
+    .get('/sendCryptedK2/:id/:privateKey', async (req, res) => {
+        let result = await bc.sendCryptedK2(req.params.id, req.params.privateKey);
+        // result = [num, done]
+        res.json(result);
     })
 
 

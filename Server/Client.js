@@ -256,6 +256,7 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Interface to manage a certain id being sold*/
     .get('/ManageId/', async (req, res) => {
         if (Account) {
+            console.log(req.query.id, Account.privateKey);
             const id = req.query.id ;
             const [product, total_clients, num_clients_step1, num_clients_step2] = await bc.manageID(id, Account.privateKey);
             // TODO finish coding function.. to get number of disputes

@@ -145,11 +145,12 @@ async function sellItem(price, description, durationDays, account,  minData, dep
         let event = await EventsModule.GetYourRef(account.address, blockNumber)
         let id = event[0].returnValues.referenceId;
         Diffie.refId = id;
+        receipt.id = id;
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
         await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt',K)
         return receipt;
     } catch (err) {
-        return err
+        return err;
     }
 }
 
@@ -183,7 +184,6 @@ async function manageID(id, privateKey) {
 
 
     let total_clients = clients.length;
-    // Ca bugue ici
 
     let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
     let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length;

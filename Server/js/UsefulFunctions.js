@@ -1,7 +1,6 @@
 /** Variables **/
 let myAccount = "notConnected";
 let references;
-let boughtData;
 
 /** To get a response from the server **/
 function loadXMLDoc(page, successCallback) {
@@ -83,13 +82,15 @@ function callbackConnect(account) {
     if (account["error"]) {
         $('#myAccount_message').html(account["error"]);
     } else {
-        let address = $("#myAccount_connection_address").val();
-        if (account.address == address) {
-            myAccount = account;
-            loadMyAccount();
-        } else {
-            $('#myAccount_message').html("Address and private key don't match. Make sure your address begins with 0x.");
-        }
+        // let address = $("#myAccount_connection_address").val();
+        // if (account.address == address) {
+        myAccount = account;
+        loadOngoingSales();
+        getBoughtData();
+        loadMyAccount();
+        // } else {
+        //     $('#myAccount_message').html("Address and private key don't match. Make sure your address begins with 0x.");
+        // }
     }
 }
 
@@ -273,7 +274,7 @@ function getRefForSaleInfo(id) {
 }
 
 function getBoughtItemInfo(id) {
-    const product = boughtData[id];
+    const product = myAccount.boughtData[id];
     const keysToDisplay = ["publicKeyDH"];
     addItem(boughtProductInfoItem);
     const html = displayProductInfo(product, keysToDisplay);
@@ -298,7 +299,7 @@ function displayProductInfo(product, keysToDisplay) {
 
 /** Get bought data **/
 function comparisonBoughtData(data1, data2) {
-    if (data1.returnValues["referenceId"] < data2.returnValues["referenceId"]) {
+    if (parseInt(data1.returnValues["referenceId"], 10) < parseInt(data2.returnValues["referenceId"], 10)) {
         return -1;
     } else {
         return 1;
@@ -306,9 +307,8 @@ function comparisonBoughtData(data1, data2) {
 }
 
 function callbackGetBoughtData(Ids) {
-    // TODO apparemment ça trie pas...
     Ids.sort(comparisonBoughtData);
-    boughtData = {};
+    myAccount.boughtData = {};
     let html = "";
     for (const data of Ids) {
         html += "<details>";
@@ -316,7 +316,7 @@ function callbackGetBoughtData(Ids) {
         // TODO afficher des infos, au minimum la description
         html += "<p class='link' onclick=getBoughtItemInfo(" + data.returnValues["referenceId"] + ")>Get more info</p>";
         html += "</details>";
-        boughtData[data.returnValues["referenceId"]] = data.returnValues;
+        myAccount.boughtData[data.returnValues["referenceId"]] = data.returnValues;
     }
     $("#boughtData_list").html(html);
 }
@@ -334,14 +334,28 @@ function getBoughtData() {
 
 /** Buy product **/
 function callbackBuy(param) {
+    myAccount.boughtData[param.returnValues["referenceId"]] = param.returnValues;
     // TODO en cas de problème
     $('#forSaleProductInfo_message').show();
     $('#forSaleProductInfo_message').text("Bought!");
+
 }
 
 async function buyProduct() {
     const id = $('#productInfo_referenceID').text();
-    loadXMLDoc("buy/" + id + "/" + myAccount.privateKey, callbackBuy);
+    // Check if the product is already bought: we shouldn't buy it twice
+    if (myAccount.boughtData.hasOwnProperty(id)) {
+        $("#forSaleProductInfo_message").show();
+        $("#forSaleProductInfo_message").html("You already bought this product.");
+    }
+    // Check if I am the seller
+    if (myAccount.forSale.includes(id)) {
+        $("#forSaleProductInfo_message").show();
+        $("#forSaleProductInfo_message").html("You can't buy this product as you are the seller.");
+    }
+    else {
+        loadXMLDoc("buy/" + id + "/" + myAccount.privateKey, callbackBuy);
+    }
 }
 
 /********************************
@@ -359,6 +373,8 @@ function callbackSellNewProduct(param) {
         $("#sellNew_message").text("The offer is on the blockchain!");
         $("#sellNew_blockNumber").text(param["blockNumber"]);
         $("#sellNew_gasUsed").text(param["cumulativeGasUsed"]);
+        $("#sellNew_referenceId").text(param["id"]);
+        myAccount.forSale.push(param["id"]);
     } catch (err) {
         console.log(err);
     }
@@ -381,6 +397,7 @@ function sellNewProduct() {
 }
 
 function callbackOngoingSales(Ids) {
+    myAccount.forSale = [];
     let html = "";
     for (const data of Ids) {
         html += "<details>";
@@ -390,6 +407,7 @@ function callbackOngoingSales(Ids) {
         html += "<p>End time: " + data.returnValues["contractEndTime"] + "</p>";
         html += "<p class='link' onclick=manageItem(" + data.returnValues["referenceId"] + ")>Manage this Id</p>";
         html += "</details>";
+        myAccount.forSale.push(data.returnValues["referenceId"]);
     }
     $("#ongoing_beingSold").html(html);
 }
@@ -406,9 +424,26 @@ function loadOngoingSales() {
 }
 
 function callbackManageId(param) {
-    console.log(param);
+    const [product, total_clients, num_clients_step1, num_clients_step2] = param;
+    const tableProduct = displayProductInfo(product[0].returnValues, ["provider", "price", "contractEndTime", "description"]);
+    $("#manageId_produit").html(tableProduct);
+    $("#manageId_totalNumberClients").text(total_clients);
+    $("#manageId_NumClientsStep1").text(num_clients_step1);
+    $("#manageId_NumClientsStep2").text(num_clients_step2);
+    $("#manageId_totalNumberClients").text(total_clients);
 }
 
 function manageItem(id) {
+    addItem(manageIdItem);
     loadXMLDoc("manageId/" + id + "/" + myAccount.privateKey, callbackManageId);
+}
+
+function callbackSendCryptedK2(param) {
+    const [num, done] = param;
+    $("#manageId_message").html("Successfully sent info to " + done + " clients out of " + num + " expected!");
+}
+
+function sendCryptedK2() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("sendCryptedK2/" + id + "/" + myAccount.privateKey, callbackSendCryptedK2);
 }

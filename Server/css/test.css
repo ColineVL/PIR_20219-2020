@@ -103,6 +103,10 @@ a {
     font-size: 18px;
 }
 
+#layoutContainer h3 {
+    font-size: 16px;
+}
+
 #layoutContainer .message {
     text-align: center;
     font-style: italic;
@@ -122,6 +126,10 @@ a {
 #layoutContainer p {
     font-size: 15px;
     margin: 7px;
+}
+
+#layoutContainer var {
+    font-style: normal;
 }
 
 #layoutContainer .link {
@@ -202,6 +210,7 @@ details {
 
 #layoutContainer table {
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 /* Floating column for labels: 25% width */
