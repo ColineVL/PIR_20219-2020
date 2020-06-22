@@ -159,9 +159,11 @@ app.use('/public', express.static(__dirname + '/public'))
     /*Information and management of Ongoing transactions buyer-side ..*/
     .get('/ManageIdBuyer', async (req, res) => {
         if (Account) {
-            let Id = req.query.id;
+            let Id = req.query.id +1 ;
             let product = await EventsModule.GetRef(Id)
 
+            console.log(Id)
+            console.log(product)
             let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, Account.address)
             let eventPhase2 = await EventsModule.GetKeySentSpecific(Id,Account.address)
 

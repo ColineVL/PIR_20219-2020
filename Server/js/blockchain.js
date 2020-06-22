@@ -164,7 +164,7 @@ async function buyProduct(id, product, privateKey) {
     let currentPrice = await transactions.GetCurrentPrice(account,id-1);
     console.log(currentPrice);
 
-    const receipt = await transactions.BuyReference(account,id,Diffie.PubDH,currentPrice);
+    const receipt = await transactions.BuyReference(account,id-1,Diffie.PubDH,currentPrice);
 
     console.log(receipt)
 

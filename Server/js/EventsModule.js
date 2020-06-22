@@ -48,7 +48,7 @@ module.exports = {
     /*Get a specific reference by it's Id*/
     GetRef: async function (refId) {
         let res1 = await contractws.getPastEvents("NewDataReference", {
-            filter: {referenceId: refId.toString()},
+            filter: {referenceId: refId},
             fromBlock: 0,
             toBlock: 'latest'
         }, function (error, events) {}) // TODO Eventually do something here
