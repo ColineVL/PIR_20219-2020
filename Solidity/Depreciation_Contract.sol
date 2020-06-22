@@ -4,9 +4,8 @@ pragma solidity >=0.5.0 <0.7.0;
 
 // To avoid overflow
 import "./node_modules/@openzeppelin/contracts/math/SafeMath.sol";
-import "./node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
-contract Depreciation_Contract is Ownable{
+contract Depreciation_Contract{
 
     using SafeMath for uint256;
     using SafeMath for uint128;
@@ -21,14 +20,19 @@ contract Depreciation_Contract is Ownable{
     uint referenceIdCounter = 0;
 
     struct DataReference{ // Contains reference ANd price
-//      uint referenceId;
+
         uint initialPrice;
+        uint redeemFunds;
+
         uint referenceKey; //Take care of hackers, must be long enough ... to be determined
         /*
         contractDuration is too long, it must be shortened with:
            - Changing data type with a risk not to optimize storage
            - Put require statement in createDataReference
         */
+
+        uint128 minimumData;
+        uint128 numberOfData;
 
 
         // Needed to calculate depreciation value
@@ -57,16 +61,14 @@ contract Depreciation_Contract is Ownable{
         address[] clients;
         mapping (address => uint) clientFunds;
 
-        // Needed to track how many funds are undisputed and what can the provider withdraw
-        uint clientDisputes;
-
         // Needed to give access for a client to call dispute function or recall funds
         mapping (address => bool) isClient;
         // Needed so a client does not raise multiple disputes so he claims his money as well as others if he is right
         mapping (address => bool) raisedDispute;
-        // Needed to check if dispute is resolved or not to not claim same dispute multiple times
-        mapping (address => bool) resolvedDispute;
-        mapping (address => uint) timeOfDispute;
+        // Needed to return a table of clients disputes
+        uint128 numberOfDisputes;
+        // Needed to distribute redeemFunds
+        uint128 completedClients;
         // !!!!!!!!!! Needs to be sent in private channel
         // !!!!!!!!!! mapping (address => bytes32) encryptedKey;
 
@@ -83,12 +85,6 @@ contract Depreciation_Contract is Ownable{
     DataReference[] public dataReferences;
 
     uint internal disputePrice = 0.02 ether;
-
-    // Gives access to the smart contract's owner to change disputePrice
-    function setDisputePrice(uint _price) onlyOwner external{
-        disputePrice = _price;
-    }
-
 
     function getReferenceCurrentPrice(uint _referenceId) view public returns(uint price){
         uint _price = dataReferences[_referenceId].initialPrice;
@@ -118,6 +114,11 @@ contract Depreciation_Contract is Ownable{
 
         // if no depreciation type index is correct it will return the initial price (constant value / no depreciation)
         return _price;
+    }
+
+
+    function getNumberOfData(uint _referenceId) external returns(uint128 numberOfData){
+        return dataReferences[_referenceId].numberOfData;
     }
 
 
