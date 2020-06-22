@@ -224,6 +224,7 @@ app.use('/public', express.static(__dirname + '/public'))
             let jsonInfo = {"price":price, "contractEndTime":endTime, "descr":description, "privateKey":Account.privateKey};
 
             let result = await bc.sellItem(jsonInfo);
+            console.log(jsonInfo)
             console.log(result);
             if (result === "ok") {
                 res.redirect('/ForSale');
