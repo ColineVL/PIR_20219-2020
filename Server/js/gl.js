@@ -71,6 +71,10 @@ const boughtDataItem = {
     name: "boughtDataItem"
 };
 
+const manageIdItem = {
+    title: "Manage ID",
+    name: "manageIdItem"
+};
 
 /********************************
  * Sell Items
@@ -279,6 +283,23 @@ myLayout.registerComponent('ongoingSalesItem', function (container, state) {
         '<h1>Products being sold :</h1>' +
         '<ul id="ongoing_beingSold"></ul>' +
         '</div>' +
+        '</div>'
+    );
+});
+
+myLayout.registerComponent('manageIdItem', function (container, state) {
+    container.getElement().html(
+        '<div class="container">' +
+        '<p>Total number of clients: <var id="manageId_totalNumberClients"></var></p>' +
+        '<h3>Product:</h3>' +
+        '<div id="manageId_produit"></div>' +
+        '<h3>To do:</h3>' +
+        '<ul>' +
+        '<li onclick="sendCryptedK2()">Send Info (K2xORK): <var id="manageId_NumClientsStep1"></var> clients</li>' +
+        '<li>Verify hashes and send K2: <var id="manageId_NumClientsStep2"></var> clients</li>' +
+        '<li>Dispute: <var id="manageId_NumDispute"></var> clients</li>' +
+        '</ul>' +
+        '<p class="message" id="manageId_message"></p>' +
         '</div>'
     );
 });

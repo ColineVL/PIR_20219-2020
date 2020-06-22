@@ -83,13 +83,13 @@ function callbackConnect(account) {
     if (account["error"]) {
         $('#myAccount_message').html(account["error"]);
     } else {
-        let address = $("#myAccount_connection_address").val();
-        if (account.address == address) {
-            myAccount = account;
-            loadMyAccount();
-        } else {
-            $('#myAccount_message').html("Address and private key don't match. Make sure your address begins with 0x.");
-        }
+        // let address = $("#myAccount_connection_address").val();
+        // if (account.address == address) {
+        myAccount = account;
+        loadMyAccount();
+        // } else {
+        //     $('#myAccount_message').html("Address and private key don't match. Make sure your address begins with 0x.");
+        // }
     }
 }
 
@@ -406,9 +406,27 @@ function loadOngoingSales() {
 }
 
 function callbackManageId(param) {
-    console.log(param);
+    const [product, total_clients, num_clients_step1, num_clients_step2] = param;
+    console.log(product);
+    const tableProduct = displayProductInfo(product[0].returnValues, ["provider", "price", "contractEndTime", "description"]);
+    $("#manageId_produit").html(tableProduct);
+    $("#manageId_totalNumberClients").text(total_clients);
+    $("#manageId_NumClientsStep1").text(num_clients_step1);
+    $("#manageId_NumClientsStep2").text(num_clients_step2);
+    $("#manageId_totalNumberClients").text(total_clients);
 }
 
 function manageItem(id) {
+    addItem(manageIdItem);
     loadXMLDoc("manageId/" + id + "/" + myAccount.privateKey, callbackManageId);
+}
+
+function callbackSendCryptedK2(param) {
+    const [num, done] = param;
+    $("#manageId_message").html("Successfully sent info to " + done + " clients out of " + num + " expected!");
+}
+
+function sendCryptedK2() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("sendCryptedK2/" + id + "/" + myAccount.privateKey, callbackSendCryptedK2);
 }
