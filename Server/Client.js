@@ -281,7 +281,7 @@ app.use('/public', express.static(__dirname + '/public'))
             const id = req.query.id ;
             let res = await bc.sendK2(K, id, Account.privateKey);
             let [num, done] = [0,0] //await bc.sendK2(K, id, Account.privateKey);
-            res.render('SentToClients.ejs', {num: num, done: done});
+            res.render('SentK2.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});
         }
