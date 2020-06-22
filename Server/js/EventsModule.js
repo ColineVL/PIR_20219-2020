@@ -123,6 +123,17 @@ module.exports = {
         return res1;
     },
 
+    /*Get emits testifying that clients ent me hashes for a certain product of reference id : id*/
+    GetClientsWhoSentHashes: async function (id) {
+        let res1 = await contractws.getPastEvents("encryptedKeyHash", {
+            filter: { referenceId: id},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1;
+    },
+
+
 
     /*Useful function that transforms a list of events into a list of addresses concerned by the event*/
     /*note that the event has to be coded such that the attribute of the addresses is "client" !*/

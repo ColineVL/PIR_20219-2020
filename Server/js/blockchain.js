@@ -258,7 +258,7 @@ async function sendClientHash(id, privateKey) {
 
     await readwrite.WriteAsRefBuyer(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt',decryptedToBeHashed)
     let done = 0 // value to verify later that everything went correctly
-    let receipt = transactions.SendHashToProvider(Account,id,Buffer.from(HashTobeSent,'hex'))
+    let receipt = transactions.SendHashToProvider(Account,id,HashTobeSent)
     // Now we can do the OTP
     if (receipt){
         done =1;

@@ -116,12 +116,12 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
 
     // console.log(events.callback())
     console.log("**********************************");
-    let res1 =  contractws.getPastEvents("NewClient", {
-        filter: {address: account1},
+    let res1 =  contractws.getPastEvents("encryptedKeyHash", {
+        filter: {referenceId: 47},
         fromBlock: 0,
         toBlock: 'latest'
-    }, function(error, events){ console.log(events[0].returnValues.publicKeyDH)
-        console.log(web3.utils.hexToBytes(events[0].returnValues.publicKeyDH)); })
+    }, function(error, events){ console.log(events)
+        console.log(web3.utils.hexToBytes(events)); })
         .then(function(events){
             // console.log(events.returnValues )// same results as the optional callback above
         });

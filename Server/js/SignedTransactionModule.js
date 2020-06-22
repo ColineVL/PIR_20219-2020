@@ -154,7 +154,7 @@ module.exports = {
         let bin = web3.utils.bytesToHex(Hash);
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
-        const dataref = contract.methods.setEncryptedHashedKey(id, bin).encodeABI();
+        const dataref = contract.methods.setEncryptedHashedKey(id, Hash).encodeABI();
         const rawTx = {
             nonce: web3.utils.numberToHex(txnCount),
             gasPrice: web3.utils.numberToHex(1500),
