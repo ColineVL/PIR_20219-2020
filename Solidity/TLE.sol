@@ -9,7 +9,7 @@ contract TLE_Contract is Provider_Depreciation_Contract {
 
     struct structTLE {
         string spaceObject;
-        string TLE;
+        bytes32 TLE;
     }
 
     // mapping between referenceId and the data (here two line element as a string)
@@ -17,14 +17,14 @@ contract TLE_Contract is Provider_Depreciation_Contract {
 
     event newTLE(uint indexed referenceId, string TLE);
 
-    function setTLE(uint _referenceId, string memory _spaceObject, string memory _TLE) onlyProvider(_referenceId) public{
+    function setTLE(uint _referenceId, string memory _spaceObject, bytes32 _TLE) onlyProvider(_referenceId) public{
 
         structTLE memory _newObs;
         _newObs.spaceObject = _spaceObject;
         _newObs.TLE = _TLE;
 
         TLEs[_referenceId].push(_newObs);
-        dataReferences[_referenceId].numberOfData += numberOfData;
+        dataReferences[_referenceId].numberOfData ++;
 
         emit newTLE(_referenceId, _spaceObject);
     }

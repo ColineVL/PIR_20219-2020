@@ -92,11 +92,15 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!! Needs comments
     function withdrawDisputeFunds(uint _referenceId, uint funds) internal {
+        // Cannot withdraw more than the available funds
         require(dataReferences[_referenceId].withdrawableFunds >= funds);
-        dataReferences[_referenceId].raisedDispute[msg.sender] = true;
+        // Needed for the view getClientDisputes function
         dataReferences[_referenceId].numberOfDisputes ++;
+        // Needed to prevent multiple raising disputes for one client
         dataReferences[_referenceId].clientFunds[msg.sender] = 0;
+        // Provider cannot withdraw the disputed funds anymore
         dataReferences[_referenceId].withdrawableFunds -= funds;
+        // Funds sent back to the client
         (msg.sender).transfer(funds);
 
         emit withdrawRefund(_referenceId, msg.sender, funds, now);
