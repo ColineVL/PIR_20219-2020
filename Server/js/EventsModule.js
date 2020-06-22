@@ -143,6 +143,15 @@ module.exports = {
         return res1;
     },
 
+    /*Get correct emit from client with the hash he submitted for a particular Id */
+    GetHashFromClientClient: async function (client_address,id) {
+        let res1 = await contractws.getPastEvents("encryptedKeyHash", {
+            filter: { referenceId: id, client: client_address},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1;
+    },
 
 
     /*Useful function that transforms a list of events into a list of addresses concerned by the event*/

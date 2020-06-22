@@ -242,10 +242,10 @@ async function sendK2(K,id, privateKey) {
     for (let i = 0; i < ClientsToDo.length  ; i++) {
         let myRef_obj = await readwrite.ReadAsObjectRefSeller(__dirname +'/../Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt');
 
-
         let client_address = ClientsToDo[i];
 
-        let Pub_Client = await EventsModule.GetPubDiffieClient(client_address,id);
+        let correctHash = myRef_obj.hash;
+        let receivedHash = await EventsModule.GetHashFromClientClient(client_address,id);
         let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
         let K2 = crypto.RandomBytes(7);
 
