@@ -151,6 +151,7 @@ module.exports = {
 
     /*Function to get the current price of a certain reference*/
     GetCurrentPrice: async function (account,id) {
+        console.log(id)
         let price = await contract.methods.getReferenceCurrentPrice(id).call({from : account.address})
             .catch(function(error){});
         console.log(price)

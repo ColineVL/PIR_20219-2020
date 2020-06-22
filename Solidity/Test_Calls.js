@@ -96,7 +96,7 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
     //     console.log(receipt);
     // });
     // // console.log("*************************************");
-    const map = await contract.methods.getReferenceCurrentPrice(0).call({from : account1});
+    const map = await contract.methods.getReferenceCurrentPrice(1).call({from : account1});
     // const clients = await contract.methods.dataRefer.call(transactionObject);
     console.log("price:" + map)
     // console.log(typeof map)

@@ -159,9 +159,9 @@ async function buyProduct(id, product, privateKey) {
     /* Updating object to write and save */
     Diffie.PrivDH = keys[0];
     Diffie.PubDH = keys[1];
-    Diffie.refId =id
+    Diffie.refId =id +1
 
-    let currentPrice = await transactions.GetCurrentPrice(account,id);
+    let currentPrice = await transactions.GetCurrentPrice(account,id-1);
     console.log(currentPrice);
 
     const receipt = await transactions.BuyReference(account,id,Diffie.PubDH,currentPrice);
