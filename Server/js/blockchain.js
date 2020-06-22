@@ -167,9 +167,7 @@ async function manageID(id, privateKey) {
     const account = web3.eth.accounts.privateKeyToAccount(privateKey);
     let product = await EventsModule.GetRef(id);
     const clients = await transactions.GetClients(account,id);
-    console.log(clients);
     let total_clients = clients.length;
-    // Ca bugue ici
 
     let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
     let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length;

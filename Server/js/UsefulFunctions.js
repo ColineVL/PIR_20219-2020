@@ -1,7 +1,6 @@
 /** Variables **/
 let myAccount = "notConnected";
 let references;
-// let boughtData;
 
 /** To get a response from the server **/
 function loadXMLDoc(page, successCallback) {
@@ -298,7 +297,7 @@ function displayProductInfo(product, keysToDisplay) {
 
 /** Get bought data **/
 function comparisonBoughtData(data1, data2) {
-    if (data1.returnValues["referenceId"] < data2.returnValues["referenceId"]) {
+    if (parseInt(data1.returnValues["referenceId"], 10) < parseInt(data2.returnValues["referenceId"], 10)) {
         return -1;
     } else {
         return 1;
@@ -306,7 +305,6 @@ function comparisonBoughtData(data1, data2) {
 }
 
 function callbackGetBoughtData(Ids) {
-    // TODO apparemment ça trie pas...
     Ids.sort(comparisonBoughtData);
     myAccount.boughtData = {};
     let html = "";
@@ -334,7 +332,6 @@ function getBoughtData() {
 
 /** Buy product **/
 function callbackBuy(param) {
-    console.log(param);
     myAccount.boughtData[param.returnValues["referenceId"]] = param.returnValues;
     // TODO en cas de problème
     $('#forSaleProductInfo_message').show();
@@ -348,7 +345,6 @@ async function buyProduct() {
     if (myAccount.boughtData.hasOwnProperty(id)) {
         $("#forSaleProductInfo_message").show();
         $("#forSaleProductInfo_message").html("You already bought this product.");
-        console.log("already bought");
     } else {
         loadXMLDoc("buy/" + id + "/" + myAccount.privateKey, callbackBuy);
     }
@@ -417,7 +413,6 @@ function loadOngoingSales() {
 
 function callbackManageId(param) {
     const [product, total_clients, num_clients_step1, num_clients_step2] = param;
-    console.log(product);
     const tableProduct = displayProductInfo(product[0].returnValues, ["provider", "price", "contractEndTime", "description"]);
     $("#manageId_produit").html(tableProduct);
     $("#manageId_totalNumberClients").text(total_clients);

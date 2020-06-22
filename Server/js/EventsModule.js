@@ -71,8 +71,7 @@ module.exports = {
             filter: {client: address},
             fromBlock: 0,
             toBlock: 'latest'
-        }, function (error, events) {console.log(error);}) // TODO Eventually do something here
-        console.log(res1);
+        }, function (error, events) {}) // TODO Eventually do something here
         return res1;
     },
 
