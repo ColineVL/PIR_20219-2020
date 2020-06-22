@@ -52,7 +52,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         dataReferences.push(newReference);
 
         emit NewDataReference(
-            dataReferences.length,
+            dataReferences.length - 1,
             msg.sender,
             _price,
             msg.value,
@@ -117,11 +117,14 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     event keyDecoder(uint indexed referenceId, address indexed client, uint keyDecoder);
 
     function setKeyDecoder(uint _referenceId, address _client, uint _keyDecoder) onlyProvider(_referenceId) external {
-        // The key once set cannot be modified to avoid scams
-        if (dataReferences[_referenceId].keyDecoder[_client] == 0) {
-            dataReferences[_referenceId].keyDecoder[_client] = _keyDecoder;
-            dataReferences[_referenceId].completedClients ++;
-            emit keyDecoder(_referenceId, _client, _keyDecoder);
+        // Condition necessary so that the provider does not provide a key decoder if the client removed his funds
+        if (dataReferences[_referenceId].clientFunds[_client] > 0) {
+            // The key once set cannot be modified to avoid scams
+            if (dataReferences[_referenceId].keyDecoder[_client] == 0) {
+                dataReferences[_referenceId].keyDecoder[_client] = _keyDecoder;
+                dataReferences[_referenceId].completedClients ++;
+                emit keyDecoder(_referenceId, _client, _keyDecoder);
+            }
         }
     }
 
@@ -151,7 +154,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
             client = dataReferences[_referenceId].clients[i];
 
             // If condition that checks that the client Id has a dispute
-            if (dataReferences[_referenceId].raisedDispute[client]) {
+            if (dataReferences[_referenceId].clientFunds[client] == 0) {
                 clientDisputes[i] = client;
             }
         }

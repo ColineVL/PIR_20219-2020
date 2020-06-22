@@ -63,8 +63,6 @@ contract Depreciation_Contract{
 
         // Needed to give access for a client to call dispute function or recall funds
         mapping (address => bool) isClient;
-        // Needed so a client does not raise multiple disputes so he claims his money as well as others if he is right
-        mapping (address => bool) raisedDispute;
         // Needed to return a table of clients disputes
         uint128 numberOfDisputes;
         // Needed to distribute redeemFunds
