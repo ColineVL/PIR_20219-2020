@@ -7,8 +7,11 @@ var DiffieSchema = { // Schema for storing Diffie-H keys
     Pub_Other: "", // Public key of other individual
 };
 var Reference_SellerSchema = { // Schema for storing reference information for a Seller (keys and messages.)
-    K2: "", // Primary key used to encrypt the info
-    hash:  "",     // a mapping between client addresses and the hashes to send them
+    K2: "", // Appropriate K2 for a client
+    hash:  "",     // hash expected
+};
+var Seller_InfoSchema = { // Schema for storing reference information for a Seller (keys and messages.)
+    K: "", // Primary key used to encrypt the info
 };
 var Reference_ClientSchema = { // Schema for storing reference information for a Client (keys and messages.)
     KxorK2 :   "", // KxorK2 provided by the seller
@@ -42,6 +45,14 @@ module.exports = {
         const RefSeller = Object.create(Reference_SellerSchema);
         RefSeller.hash =hash;
         RefSeller.K2 = K2;
+        await fs.writeFile(path, JSON.stringify(RefSeller), function(err) {
+            if (err) {console.log(err)} // TODO maybe do something here for error
+        })
+        return 0;
+    },
+    WriteAsSellerInfo : async function (path, K) {
+        const RefSeller = Object.create(Seller_InfoSchema);
+        RefSeller.K = K;
         await fs.writeFile(path, JSON.stringify(RefSeller), function(err) {
             if (err) {console.log(err)} // TODO maybe do something here for error
         })

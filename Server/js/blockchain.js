@@ -119,7 +119,7 @@ async function getBlockInfo(blocknumber) {
  * Sell new item
  ********************************/
 
-async function sellItem(price, description, durationDays, account){//jsonInfo) {
+async function sellItem(price, description, durationDays, account,  minData, depreciationType){//jsonInfo) {
     // jsonInfo = JSON.parse(jsonInfo);
     // const price = jsonInfo["price"];
     // const contractEndTime = jsonInfo["durationDays"];
@@ -135,14 +135,18 @@ async function sellItem(price, description, durationDays, account){//jsonInfo) {
     Diffie.PrivDH = keys[0];
     Diffie.PubDH = keys[1];
 
+    let K = crypto.RandomBytes(7); //Reference key with which data is encrypted. TODO use this on TLE
+
+
     /*Send transaction the get the ref_id for the database*/
     try {
-        const receipt = await transactions.SellReference(account, Diffie.PubDH, price, durationInSecs, description);
+        const receipt = await transactions.SellReference(account, Diffie.PubDH, price, durationInSecs, description,  minData, depreciationType);
         let blockNumber = receipt.blockNumber;
         let event = await EventsModule.GetYourRef(account.address, blockNumber)
         let id = event[0].returnValues.referenceId;
         Diffie.refId = id;
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
+        await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt',K)
         return receipt;
     } catch (err) {
         return err
@@ -185,7 +189,7 @@ async function manageID(id, privateKey) {
     return [product, total_clients, num_clients_step1, num_clients_step2];
 }
 
-async function sendCryptedK2(K,id, privateKey) {
+async function sendCryptedK2(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
     const all_clients = await transactions.GetClients(Account,id);
     let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
@@ -193,6 +197,8 @@ async function sendCryptedK2(K,id, privateKey) {
     let ClientsToDo = await EventsModule.ComputeLeft(all_clients,Address_ListClientsWhoReceivedK2) // Then i find who is left...
 
     let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/../Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
+
+    let K = readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
     // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
 
     let done = 0 // To check how many were succesful at the end...

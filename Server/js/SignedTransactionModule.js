@@ -98,11 +98,11 @@ module.exports = {
         return receipt;
     },
 
-    SellReference: async function (account,pubKey,price,endTime,description) {
+    SellReference: async function (account,pubKey,price,duration,description,minData,depreciationType) {
         let pubKey_bin = web3.utils.bytesToHex(pubKey);
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
-        const dataref = contract.methods.createDataReference(price, endTime,pubKey_bin, description).encodeABI();
+        const dataref = contract.methods.createDataReference(price, minData, duration,pubKey_bin, depreciationType, description).encodeABI();
 
         const rawTx = {
             nonce: web3.utils.numberToHex(txnCount),

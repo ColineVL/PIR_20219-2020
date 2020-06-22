@@ -12,9 +12,6 @@ const Web3 = require('web3');
 const provider = 'http://192.168.33.115:8545';
 const web3 = new Web3(new Web3.providers.HttpProvider(provider))
 
-let K = crypto.RandomBytes(7); //TODO put this in bc or crypto, and save it when creating a ref to sell
-
-
 
 // /********************************
 //  * Defining Database N.B : will destruct if server is closed...
@@ -224,9 +221,12 @@ app.use('/public', express.static(__dirname + '/public'))
             const price = req.body.price ;
             const durationDays= req.body.contractDurationDays ;
             const description = req.body.description ;
+            const minData = req.body.minData;
+            const depreciationType = req.body.depreciationType;
+            // TODO Add to JSON
             let jsonInfo = {"price":price, "durationDays":durationDays, "descr":description, "privateKey":Account.privateKey};
 
-            let result = await bc.sellItem(price, description, durationDays, Account);
+            let result = await bc.sellItem(price, description, durationDays, Account, minData, depreciationType);
             console.log(result);
             if (result) {
                 res.redirect('/ForSale');
