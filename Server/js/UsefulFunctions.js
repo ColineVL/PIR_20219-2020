@@ -1,7 +1,7 @@
 /** Variables **/
 let myAccount = "notConnected";
 let references;
-let boughtData;
+// let boughtData;
 
 /** To get a response from the server **/
 function loadXMLDoc(page, successCallback) {
@@ -273,7 +273,7 @@ function getRefForSaleInfo(id) {
 }
 
 function getBoughtItemInfo(id) {
-    const product = boughtData[id];
+    const product = myAccount.boughtData[id];
     const keysToDisplay = ["publicKeyDH"];
     addItem(boughtProductInfoItem);
     const html = displayProductInfo(product, keysToDisplay);
@@ -308,7 +308,7 @@ function comparisonBoughtData(data1, data2) {
 function callbackGetBoughtData(Ids) {
     // TODO apparemment ça trie pas...
     Ids.sort(comparisonBoughtData);
-    boughtData = {};
+    myAccount.boughtData = {};
     let html = "";
     for (const data of Ids) {
         html += "<details>";
@@ -316,7 +316,7 @@ function callbackGetBoughtData(Ids) {
         // TODO afficher des infos, au minimum la description
         html += "<p class='link' onclick=getBoughtItemInfo(" + data.returnValues["referenceId"] + ")>Get more info</p>";
         html += "</details>";
-        boughtData[data.returnValues["referenceId"]] = data.returnValues;
+        myAccount.boughtData[data.returnValues["referenceId"]] = data.returnValues;
     }
     $("#boughtData_list").html(html);
 }
@@ -334,14 +334,24 @@ function getBoughtData() {
 
 /** Buy product **/
 function callbackBuy(param) {
+    console.log(param);
+    myAccount.boughtData[param.returnValues["referenceId"]] = param.returnValues;
     // TODO en cas de problème
     $('#forSaleProductInfo_message').show();
     $('#forSaleProductInfo_message').text("Bought!");
+
 }
 
 async function buyProduct() {
     const id = $('#productInfo_referenceID').text();
-    loadXMLDoc("buy/" + id + "/" + myAccount.privateKey, callbackBuy);
+    // Check if the product is already bought: we shouldn't buy it twice
+    if (myAccount.boughtData.hasOwnProperty(id)) {
+        $("#forSaleProductInfo_message").show();
+        $("#forSaleProductInfo_message").html("You already bought this product.");
+        console.log("already bought");
+    } else {
+        loadXMLDoc("buy/" + id + "/" + myAccount.privateKey, callbackBuy);
+    }
 }
 
 /********************************
