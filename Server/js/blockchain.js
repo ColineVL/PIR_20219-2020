@@ -205,18 +205,6 @@ async function sendCryptedK2(K,id, privateKey) {
         let toSend = crypto.OTP(secret,toEncrypt)//.slice(0,4);
         let hashed = crypto.Hash(toEncrypt);
 
-        console.log("Sellerer secret computed:") // TODO Delete this
-        console.log(secret)
-        console.log("***************************")
-        console.log("Seller KxorK2:") // TODO Delete this
-        console.log(toEncrypt)
-        console.log("***************************")
-        console.log("Seller KxorK2xorK3:") // TODO Delete this
-        console.log(toSend)
-        console.log("***************************")
-        console.log("Seller hash:") // TODO Delete this
-        console.log(hashed)
-        console.log("***************************")
         await readwrite.WriteAsRefSeller(__dirname +'/../Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt',hashed,K2)
 
         let receipt = await transactions.SendEncryptedK2ToClient(Account,id, client_address, toSend);
@@ -248,9 +236,6 @@ async function sendK2(K,id, privateKey) {
 
         let receivedHash = await EventsModule.GetHashFromClientClient(client_address,id);
         if (correctHash == receivedHash){
-
-            console.log(".................. yay! hash was verified!.............")
-
             let receipt = await transactions.SendK2ToClient(Account,id, client_address, myRef_obj.K2);
             if (receipt) {
                 done += 1;
@@ -271,28 +256,12 @@ async function sendClientHash(id, privateKey) {
     let Pub_Seller = await EventsModule.GetPubDiffieSeller(seller_address[0],id); // now getting the sellers public DH key
     let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Seller) // we now have the diffie-Hellman secret key..
 
-    console.log("Buyer secret computed:") // TODO Delete this
-    console.log(secret)
-    console.log("***************************")
 
     let encrypted_event = await EventsModule.GetEncryptedKeySentSpecific(id,Account.address) // Get the K xor K2 xor K3 the provider sent me
     let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey)).slice(0,7) // The actual value
 
-    console.log("Buyer KxorK2xorK3 read:") // TODO Delete this
-    console.log(encrypted)
-    console.log("***************************")
     let decryptedToBeHashed = crypto.OTP(secret,encrypted).slice(0,7);
     let HashTobeSent = crypto.Hash(decryptedToBeHashed)
-
-    console.log("Buyer KxorK2 computed:") // TODO Delete this
-    console.log(decryptedToBeHashed)
-    console.log("***************************")
-    console.log("Buyerer hash:") // TODO Delete this
-    console.log(HashTobeSent)
-    console.log("***************************")
-    console.log(decryptedToBeHashed)
-    console.log(HashTobeSent)
-
 
     await readwrite.WriteAsRefBuyer(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt',decryptedToBeHashed)
     let done = 0 // value to verify later that everything went correctly

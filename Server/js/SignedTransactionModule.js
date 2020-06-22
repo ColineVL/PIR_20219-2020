@@ -169,6 +169,8 @@ module.exports = {
         const rawTxHex = '0x' + serializedTx.toString('hex');
         let receipt = web3.eth.sendSignedTransaction(rawTxHex)
             .catch(function(error){console.log(error)});
+
+        console.log(receipt)
         return receipt;
     },
 

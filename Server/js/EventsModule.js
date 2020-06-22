@@ -194,12 +194,3 @@ module.exports = {
     },
 
 }
-
-// // event NewDataReference(uint referenceId, address provider, uint price, uint contractEndTime);
-// event NewDataReference(
-//     uint indexed referenceId,
-//     address indexed provider,
-//     uint price,
-//     uint contractEndTime,
-//     bytes32 publicKeyDH,
-//     string description);
