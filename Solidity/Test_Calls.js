@@ -118,8 +118,8 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
 
     // console.log(events.callback())
     console.log("**********************************");
-    let res1 =  contractws.getPastEvents("keyDecoder", {
-       // filter: {referenceId: 59, client: account2},
+    let res1 =  contractws.getPastEvents("NewDataReference", {
+       filter: {referenceId: 59},
         fromBlock: 0,
         toBlock: 'latest'
     }, function(error, events){ console.log(events)})
