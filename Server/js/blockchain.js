@@ -119,13 +119,13 @@ async function getBlockInfo(blocknumber) {
  * Sell new item
  ********************************/
 
-async function sellItem(jsonInfo) {
-    jsonInfo = JSON.parse(jsonInfo);
-    const price = jsonInfo["price"];
-    const contractEndTime = jsonInfo["contractEndTime"];
-    const description = jsonInfo["descr"];
-    const privateKey = jsonInfo["privateKey"];
-    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+async function sellItem(price, description, contractEndTime, account){//jsonInfo) {
+    // jsonInfo = JSON.parse(jsonInfo);
+    // const price = jsonInfo["price"];
+    // const contractEndTime = jsonInfo["contractEndTime"];
+    // const description = jsonInfo["descr"];
+    // const privateKey = jsonInfo["privateKey"];
+    // const account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
     /*DH keys, to be stored and public sent*/
     const keys = crypto.DiffieHellmanGenerate(prime);
@@ -178,7 +178,7 @@ async function manageID(id, privateKey) {
     return [product, total_clients, num_clients_step1, num_clients_step2];
 }
 
-async function sendCryptedK2(id, privateKey) {
+async function sendCryptedK2(K,id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
     const all_clients = await transactions.GetClients(Account,id);
     let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
@@ -196,7 +196,7 @@ async function sendCryptedK2(id, privateKey) {
         let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
         let K2 = crypto.RandomBytes(7);
 
-        let toSend = crypto.OTP(K2,crypto.OTP(secret,K2)).slice(0,4);
+        let toSend = crypto.OTP(K,crypto.OTP(secret,K2)).slice(0,4);
         let hashed = crypto.Hash(toSend);
 
         console.log("Sellerer secret computed:") // TODO Delete this
@@ -234,12 +234,12 @@ async function sendClientHash(id, privateKey) {
     console.log("***************************")
 
     let encrypted_event = await EventsModule.GetEncryptedKeySentSpecific(id,Account.address) // Get the K xor K2 xor K3 the provider sent me
-    let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey)) // The actual value
+    let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey)).slice(0,4) // The actual value
 
     console.log("Buyer KxorK2xorK3 read:") // TODO Delete this
     console.log(encrypted)
     console.log("***************************")
-    let decryptedToBeHashed = crypto.OTP(secret,encrypted);
+    let decryptedToBeHashed = crypto.OTP(secret,encrypted).slice(0,4);
     let HashTobeSent = crypto.Hash(decryptedToBeHashed)
 
     console.log("Buyer KxorK2 computed:") // TODO Delete this

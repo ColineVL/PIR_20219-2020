@@ -12,6 +12,8 @@ const Web3 = require('web3');
 const provider = 'http://192.168.33.115:8545';
 const web3 = new Web3(new Web3.providers.HttpProvider(provider))
 
+let K = crypto.RandomBytes(7); //TODO put this in bc or crypto, and save it when creating a ref to sell
+
 
 
 // /********************************
@@ -223,10 +225,9 @@ app.use('/public', express.static(__dirname + '/public'))
             const description = req.body.description ;
             let jsonInfo = {"price":price, "contractEndTime":endTime, "descr":description, "privateKey":Account.privateKey};
 
-            let result = await bc.sellItem(jsonInfo);
-            console.log(jsonInfo)
+            let result = await bc.sellItem(price, description, endTime, Account);
             console.log(result);
-            if (result === "ok") {
+            if (result) {
                 res.redirect('/ForSale');
             } else {
                 res.redirect('/SellError');
@@ -265,7 +266,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SendCryptedK2/', async (req, res) => {
         if (Account) {
             const id = req.query.id ;
-            let [num, done] = await bc.sendCryptedK2(id, Account.privateKey);
+            let [num, done] = await bc.sendCryptedK2(K, id, Account.privateKey);
             res.render('SentToClients.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});
