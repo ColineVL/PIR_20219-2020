@@ -196,11 +196,15 @@ async function sendCryptedK2(K,id, privateKey) {
         let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
         let K2 = crypto.RandomBytes(7);
 
-        let toSend = crypto.OTP(K,crypto.OTP(secret,K2)).slice(0,4);
-        let hashed = crypto.Hash(toSend);
+        let toEncrypt = crypto.OTP(K,K2)
+        let toSend = crypto.OTP(secret,toEncrypt)//.slice(0,4);
+        let hashed = crypto.Hash(toEncrypt);
 
         console.log("Sellerer secret computed:") // TODO Delete this
         console.log(secret)
+        console.log("***************************")
+        console.log("Seller KxorK2:") // TODO Delete this
+        console.log(toEncrypt)
         console.log("***************************")
         console.log("Seller KxorK2xorK3:") // TODO Delete this
         console.log(toSend)
@@ -234,12 +238,12 @@ async function sendClientHash(id, privateKey) {
     console.log("***************************")
 
     let encrypted_event = await EventsModule.GetEncryptedKeySentSpecific(id,Account.address) // Get the K xor K2 xor K3 the provider sent me
-    let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey)).slice(0,4) // The actual value
+    let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey)).slice(0,7) // The actual value
 
     console.log("Buyer KxorK2xorK3 read:") // TODO Delete this
     console.log(encrypted)
     console.log("***************************")
-    let decryptedToBeHashed = crypto.OTP(secret,encrypted).slice(0,4);
+    let decryptedToBeHashed = crypto.OTP(secret,encrypted).slice(0,7);
     let HashTobeSent = crypto.Hash(decryptedToBeHashed)
 
     console.log("Buyer KxorK2 computed:") // TODO Delete this
@@ -254,7 +258,7 @@ async function sendClientHash(id, privateKey) {
 
     await readwrite.WriteAsRefBuyer(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt',decryptedToBeHashed)
     let done = 0 // value to verify later that everything went correctly
-    let receipt = transactions.SendHashToProvider(Account,id,Buffer.from(HashTobeSent.slice(2),'hex'))
+    let receipt = transactions.SendHashToProvider(Account,id,Buffer.from(HashTobeSent,'hex'))
     // Now we can do the OTP
     if (receipt){
         done =1;
