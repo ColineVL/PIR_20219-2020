@@ -55,4 +55,13 @@ module.exports = {
         })
         return 0;
     },
+    ReadAsObjectRefSeller : async function (path) {
+        let res = await fs.readFileSync(path,function(err,data) {})
+        let res_obj = JSON.parse(res);
+        const Ref = Object.create(Reference_SellerSchema);
+
+        Ref.hash = res_obj.hash;
+        Ref.K2 = new Buffer.from(res_obj.K2.data,'hex');
+        return Ref;
+    },
 }

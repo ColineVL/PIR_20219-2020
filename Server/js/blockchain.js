@@ -119,13 +119,15 @@ async function getBlockInfo(blocknumber) {
  * Sell new item
  ********************************/
 
-async function sellItem(jsonInfo) {
-    jsonInfo = JSON.parse(jsonInfo);
-    const price = jsonInfo["price"];
-    const contractEndTime = jsonInfo["contractEndTime"];
-    const description = jsonInfo["descr"];
-    const privateKey = jsonInfo["privateKey"];
-    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+async function sellItem(price, description, durationDays, account){//jsonInfo) {
+    // jsonInfo = JSON.parse(jsonInfo);
+    // const price = jsonInfo["price"];
+    // const contractEndTime = jsonInfo["durationDays"];
+    // const description = jsonInfo["descr"];
+    // const privateKey = jsonInfo["privateKey"];
+    // const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+
+    let durationInSecs = durationDays *24*60*60
 
     /*DH keys, to be stored and public sent*/
     const keys = crypto.DiffieHellmanGenerate(prime);
@@ -135,7 +137,7 @@ async function sellItem(jsonInfo) {
 
     /*Send transaction the get the ref_id for the database*/
     try {
-        const receipt = await transactions.SellReference(account, Diffie.PubDH, price, contractEndTime, description);
+        const receipt = await transactions.SellReference(account, Diffie.PubDH, price, durationInSecs, description);
         let blockNumber = receipt.blockNumber;
         let event = await EventsModule.GetYourRef(account.address, blockNumber)
         let id = event[0].returnValues.referenceId;
@@ -168,17 +170,22 @@ async function manageID(id, privateKey) {
     const account = web3.eth.accounts.privateKeyToAccount(privateKey);
     let product = await EventsModule.GetRef(id);
     const clients = await transactions.GetClients(account,id);
+
+
     let total_clients = clients.length;
 
     let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
     let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length;
 
-    let Clients_WhoRespondedToHash = await EventsModule.GetEncryptedHashKeysResponses(id)
-    let num_clients_step2 = total_clients -num_clients_step1 - Clients_WhoRespondedToHash.length;
+    let KeysSent = await EventsModule.GetKeysSent(id);
+    let ReceivedHashes = await EventsModule.GetClientsWhoSentHashes(id)
+
+    let num_clients_step2 = ReceivedHashes.length - KeysSent.length
+
     return [product, total_clients, num_clients_step1, num_clients_step2];
 }
 
-async function sendCryptedK2(id, privateKey) {
+async function sendCryptedK2(K,id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
     const all_clients = await transactions.GetClients(Account,id);
     let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
@@ -196,14 +203,45 @@ async function sendCryptedK2(id, privateKey) {
         let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
         let K2 = crypto.RandomBytes(7);
 
-        let toSend = crypto.OTP(K2,crypto.OTP(secret,K2)).slice(0,4);
-        let hashed = crypto.Hash(toSend);
+        let toEncrypt = crypto.OTP(K,K2)
+        let toSend = crypto.OTP(secret,toEncrypt)//.slice(0,4);
+        let hashed = crypto.Hash(toEncrypt);
 
         await readwrite.WriteAsRefSeller(__dirname +'/../Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt',hashed,K2)
 
-        let receipt = await transactions.SendK2ToClient(Account,id, client_address, toSend);
+        let receipt = await transactions.SendEncryptedK2ToClient(Account,id, client_address, toSend);
         if (receipt) {
             done += 1;
+        }
+    }
+    return [ClientsToDo.length, done];
+}
+/*Function to handle sending the appropriate K2 to every client which responded with a correct hash*/
+async function sendK2(K,id, privateKey) {
+    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+
+    let ClientsWhoSentHashes = await EventsModule.GetClientsWhoSentHashes(id); // This is a list of events corresponding to clients who sent me a hash
+    let ClientsReceivedK2 = await EventsModule.GetKeysSent(id); // This is a list of events corresponding to the clients I already answered concerning their hashes
+    let Address_ListClientsWhoSentHashes = await EventsModule.EventsToAddresses(ClientsWhoSentHashes)  // Transformed into a list of addresses
+    let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsReceivedK2)  // Transformed into a list of addresses
+    let ClientsToDo = await EventsModule.ComputeLeft(Address_ListClientsWhoSentHashes,Address_ListClientsWhoReceivedK2) // Then i find who is left...
+
+    // Now We have to: Verify each hash received with the ones we had saved
+
+    let done = 0 // To check how many were succesful at the end...
+    for (let i = 0; i < ClientsToDo.length  ; i++) {
+        let myRef_obj = await readwrite.ReadAsObjectRefSeller(__dirname +'/../Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt');
+
+        let client_address = ClientsToDo[i];
+
+        let correctHash = myRef_obj.hash;
+
+        let receivedHash = await EventsModule.GetHashFromClientClient(client_address,id);
+        if (correctHash == receivedHash){
+            let receipt = await transactions.SendK2ToClient(Account,id, client_address, myRef_obj.K2);
+            if (receipt) {
+                done += 1;
+            }
         }
     }
     return [ClientsToDo.length, done];
@@ -215,24 +253,21 @@ async function sendClientHash(id, privateKey) {
 
     let product = await EventsModule.GetRef(id)
 
-    let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/../Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
-    let seller_address = await EventsModule.EventsToAddresses(product)
-    let Pub_Seller = await EventsModule.GetPubDiffieSeller(seller_address[0],id);
-    let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Seller)
+    let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/../Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt'); //Loading my DH keys from the database
+    let seller_address = await EventsModule.EventsToAddresses(product) //getting the seller's address neeeded to get his public key
+    let Pub_Seller = await EventsModule.GetPubDiffieSeller(seller_address[0],id); // now getting the sellers public DH key
+    let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Seller) // we now have the diffie-Hellman secret key..
+
 
     let encrypted_event = await EventsModule.GetEncryptedKeySentSpecific(id,Account.address) // Get the K xor K2 xor K3 the provider sent me
-    let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey)) // The actual value
+    let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey)).slice(0,7) // The actual value
 
-    let decryptedToBeHashed = crypto.OTP(secret,encrypted);
+    let decryptedToBeHashed = crypto.OTP(secret,encrypted).slice(0,7);
     let HashTobeSent = crypto.Hash(decryptedToBeHashed)
-
-    console.log(decryptedToBeHashed)
-    console.log(HashTobeSent)
-
 
     await readwrite.WriteAsRefBuyer(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt',decryptedToBeHashed)
     let done = 0 // value to verify later that everything went correctly
-    let receipt = transactions.SendHashToProvider(Account,id,Buffer.from(HashTobeSent.slice(2),'hex'))
+    let receipt = transactions.SendHashToProvider(Account,id,HashTobeSent)
     // Now we can do the OTP
     if (receipt){
         done =1;
@@ -264,5 +299,6 @@ module.exports = {
     buyProduct,
     manageID,
     sendCryptedK2,
-    sendClientHash
+    sendClientHash,
+    sendK2
 };

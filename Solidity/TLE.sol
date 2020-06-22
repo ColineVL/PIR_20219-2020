@@ -24,6 +24,8 @@ contract TLE_Contract is Provider_Depreciation_Contract {
         _newObs.TLE = _TLE;
 
         TLEs[_referenceId].push(_newObs);
+        dataReferences[_referenceId].numberOfData += numberOfData;
+
         emit newTLE(_referenceId, _spaceObject);
     }
 

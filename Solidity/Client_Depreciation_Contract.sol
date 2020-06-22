@@ -14,6 +14,11 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     }
 
     modifier isPayed(uint _referenceId) {
+        // Checks that the provider did not publish the reference key already
+        require(dataReferences[_referenceId].referenceKey == 0);
+        // Checks that the contract time did not end
+        require(now < dataReferences[_referenceId].endTime);
+
         uint _price = getReferenceCurrentPrice(_referenceId);
         // The ether sent must be bigger to the current price but not higher than the initial one to avoid paying more
         require(msg.value >= _price);
@@ -39,7 +44,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         // !!!!!!!!!!!! Check if < or <= Maybe remove line if it will automatically give index out of bound
         require(_referenceId <= dataReferences.length);
 
-        // Checks that client did not already buy reference
+        // Checks that client did not already buy the reference
         require(dataReferences[_referenceId].isClient[msg.sender] == false);
 
         // Adds clients to reference list
@@ -79,60 +84,68 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     ---------------------------------------------
     */
 
-
-    event raiseDisputeEvent(
+    event withdrawRefund(
         uint indexed referenceId,
         address indexed client,
-        uint indexed time);
+        uint funds,
+        uint time);
 
-    function raiseDispute(uint _referenceId) payable external isClient(_referenceId) {
-        // Checks if provider hasn't already withdrew funds
-        require(dataReferences[_referenceId].withdrawableFunds >= dataReferences[_referenceId].clientFunds[msg.sender]);
-
-        // Checks if the dispute fee is payed
-        require(msg.value == disputePrice);
-
-        // Checks if dispute was not already raised to avoid paying twice
-        // If time = 0 it means time was never set, thus dispute never set
-        require(dataReferences[_referenceId].timeOfDispute[msg.sender] == 0);
-        dataReferences[_referenceId].timeOfDispute[msg.sender] = now;
-
-        // Sets true to avoid raising same dispute may times and paying more than once
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!! Needs comments
+    function withdrawDisputeFunds(uint _referenceId, uint funds) internal {
+        require(dataReferences[_referenceId].withdrawableFunds >= funds);
         dataReferences[_referenceId].raisedDispute[msg.sender] = true;
+        dataReferences[_referenceId].numberOfDisputes ++;
+        dataReferences[_referenceId].clientFunds[msg.sender] = 0;
+        dataReferences[_referenceId].withdrawableFunds -= funds;
+        (msg.sender).transfer(funds);
 
-        // Adds the number of disputes
-        dataReferences[_referenceId].clientDisputes = dataReferences[_referenceId].clientDisputes.add(1);
-
-        dataReferences[_referenceId].clientFunds[msg.sender] += msg.value;
-        dataReferences[_referenceId].withdrawableFunds -= msg.value;
-        emit raiseDisputeEvent(_referenceId, msg.sender, now);
+        emit withdrawRefund(_referenceId, msg.sender, funds, now);
     }
 
 
-    event withdrawRefund (
-        uint indexed referenceId,
-        address indexed client,
-        uint indexed funds);
+    function raiseDispute(uint _referenceId) external isClient(_referenceId) {
 
-    function withdrawDisputeFunds(uint _referenceId) external {
-
-        // Checks if the client already paid the fees. Also handles if he is indeed a client
-        require(dataReferences[_referenceId].raisedDispute[msg.sender] == true);
-
-        // Checks if the time delay for the provider to respond is respected
-        require(now > dataReferences[_referenceId].timeOfDispute[msg.sender] + 3 days);
-
-        // Checks if the client or provider hasn't withdrew funds
-        require(dataReferences[_referenceId].resolvedDispute[msg.sender] == false);
-
-        // Sets resolvedDispute to true to avoid withdrawing funds multiple times
-        dataReferences[_referenceId].resolvedDispute[msg.sender] = true;
-
-        // Refunding to client
         uint funds = dataReferences[_referenceId].clientFunds[msg.sender];
-        (msg.sender).transfer(funds);
 
-        emit withdrawRefund(_referenceId, msg.sender, funds);
+        /*
+            Checks if client hasn't already withdrew his funds.
+            This is needed so he does not withdraw redeemFunds multiple times
+        */
+
+        require(funds > 0);
+
+        // Checks if provider hasn't already withdrew funds
+        require(dataReferences[_referenceId].withdrawableFunds >= funds);
+
+        // !!!!!!!!!!!!!!!!!!!!!!!!!! Add comments
+        if (dataReferences[_referenceId].keyDecoder[msg.sender] == 0) {
+            withdrawDisputeFunds(_referenceId, funds);
+        }
+
+        else if (dataReferences[_referenceId].referenceKey != 0) {
+
+            uint _xor = dataReferences[_referenceId].referenceKey ^ dataReferences[_referenceId].keyDecoder[msg.sender];
+
+            // Condition comparing the hashes of encoded keys to determine if the right key was given
+            if (keccak256(abi.encode(_xor)) != dataReferences[_referenceId].encryptedKeyHash[msg.sender]) {
+                funds = funds.add((dataReferences[_referenceId].redeemFunds/dataReferences[_referenceId].completedClients));
+                withdrawDisputeFunds(_referenceId, funds);
+            }
+
+            // Condition for number of data
+            else if (dataReferences[_referenceId].numberOfData < dataReferences[_referenceId].minimumData){
+                funds = funds.add((dataReferences[_referenceId].redeemFunds/dataReferences[_referenceId].completedClients));
+                withdrawDisputeFunds(_referenceId, funds);
+            }
+
+        }
+
+        // Equivalent to: now > contract end time AND client received keyDecoder (hash is correct) AND referenceKey was never published
+        else if (now > dataReferences[_referenceId].endTime) {
+            withdrawDisputeFunds(_referenceId, funds);
+        }
+
+
     }
 
 }

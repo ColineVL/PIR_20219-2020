@@ -10,6 +10,9 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         uint indexed referenceId,
         address indexed provider,
         uint price,
+        uint redeemFunds,
+        uint128 minimumData,
+        uint128 deployTime,
         uint128 endTime,
         bytes32 publicKeyDH,
         uint8 depreciationType,
@@ -17,16 +20,24 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
 
     //function createDataReference
     function createDataReference(uint _price,
+        uint128 _minimumData,
         uint128 _referenceDuration,
         bytes32 _publicKeyDH,
         uint8 _depreciationType,
-        string memory _description) public {
+        string memory _description) payable public {
 
         // Creating new data reference
         DataReference memory newReference;
 
-        // Sets price and depreciation type in ether. Provider won't be able to change it later.
+        // Sets price and depreciation. Provider won't be able to change it later.
         newReference.initialPrice = _price;
+
+        newReference.redeemFunds = msg.value;
+
+        newReference.withdrawableFunds = msg.value;
+
+        newReference.minimumData = _minimumData;
+
         newReference.depreciationType = _depreciationType;
 
         newReference.deployTime = uint128(now);
@@ -44,13 +55,16 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
             dataReferences.length,
             msg.sender,
             _price,
+            msg.value,
+            _minimumData,
+            uint128(now),
             newReference.endTime,
             _publicKeyDH,
             _depreciationType,
             _description);
 
-//        // !!!!!!!!!!!!! Maybe we will not use data ID counter also use SafeMath to add the counter
-//        referenceIdCounter = referenceIdCounter.add(1);
+        //        // !!!!!!!!!!!!! Maybe we will not use data ID counter also use SafeMath to add the counter
+        //        referenceIdCounter = referenceIdCounter.add(1);
 
     }
 
@@ -94,7 +108,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
 
     function setReferenceKey(uint _referenceId, uint _referenceKey) onlyProvider(_referenceId) external {
         // The key once set cannot be modified to avoid scams
-        if (dataReferences[_referenceId].referenceKey != 0) {
+        if (dataReferences[_referenceId].referenceKey == 0) {
             dataReferences[_referenceId].referenceKey = _referenceKey;
             emit referenceKey(_referenceId, _referenceKey);
         }
@@ -104,14 +118,15 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
 
     function setKeyDecoder(uint _referenceId, address _client, uint _keyDecoder) onlyProvider(_referenceId) external {
         // The key once set cannot be modified to avoid scams
-        if (dataReferences[_referenceId].keyDecoder[_client] != 0) {
+        if (dataReferences[_referenceId].keyDecoder[_client] == 0) {
             dataReferences[_referenceId].keyDecoder[_client] = _keyDecoder;
+            dataReferences[_referenceId].completedClients ++;
             emit keyDecoder(_referenceId, _client, _keyDecoder);
         }
     }
 
     function getClients(uint _referenceId) onlyProvider(_referenceId) external view returns (address[] memory){
-    return dataReferences[_referenceId].clients;
+        return dataReferences[_referenceId].clients;
     }
 
     /*
@@ -121,13 +136,12 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     */
 
     function getClientDisputes(uint _referenceId) onlyProvider(_referenceId) view external
-    returns (address[] memory, bool[] memory) {
+    returns (address[] memory) {
 
-        uint numberOfDisputes = dataReferences[_referenceId].clientDisputes;
+        uint numberOfDisputes = dataReferences[_referenceId].numberOfDisputes;
 
         // Initializing the tables
         address[] memory clientDisputes = new address[](numberOfDisputes);
-        bool[] memory resolvedStatus = new bool[](numberOfDisputes);
 
         // Just to be used for for loop
         address client;
@@ -139,45 +153,9 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
             // If condition that checks that the client Id has a dispute
             if (dataReferences[_referenceId].raisedDispute[client]) {
                 clientDisputes[i] = client;
-                resolvedStatus[i] = dataReferences[_referenceId].resolvedDispute[client];
             }
         }
-        return (clientDisputes, resolvedStatus);
-    }
-
-
-    event settleDisputeEvent(
-        uint indexed referenceId,
-        address indexed winner,
-        address indexed loser,
-        uint funds);
-
-    function settleDispute(uint _referenceId, address payable _client) onlyProvider(_referenceId) payable external {
-        require(msg.value == disputePrice);
-        // Checks that the client raised a dispute so that the provider won't pay for no reason
-        require(dataReferences[_referenceId].raisedDispute[_client] == true);
-        // Checks that provider didn't already set the dispute so he does not withdraw same funds many times
-        require(dataReferences[_referenceId].resolvedDispute[_client] == false);
-        dataReferences[_referenceId].resolvedDispute[_client] = true;
-
-        // Total funds to be transferred to the rightful owner
-        uint funds = dataReferences[_referenceId].clientFunds[_client] + msg.value;
-
-        // Computes the hashes of the encrypted key given by the provider
-        bytes32 checkEncryptedKeyHash = keccak256(abi.encodePacked(
-                dataReferences[_referenceId].referenceKey ^ dataReferences[_referenceId].keyDecoder[_client]));
-
-        if (checkEncryptedKeyHash == dataReferences[_referenceId].encryptedKeyHash[_client]) {
-            // Sends funds to the provider
-            (msg.sender).transfer(funds);
-            emit settleDisputeEvent(_referenceId, msg.sender, _client, funds);
-        }
-        else {
-            // Sends funds to the client
-            _client.transfer(funds);
-            emit settleDisputeEvent(_referenceId, _client, msg.sender, funds);
-        }
-
+        return (clientDisputes);
     }
 
 }

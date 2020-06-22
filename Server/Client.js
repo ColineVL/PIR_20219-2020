@@ -12,6 +12,8 @@ const Web3 = require('web3');
 const provider = 'http://192.168.33.115:8545';
 const web3 = new Web3(new Web3.providers.HttpProvider(provider))
 
+let K = crypto.RandomBytes(7); //TODO put this in bc or crypto, and save it when creating a ref to sell
+
 
 
 // /********************************
@@ -165,14 +167,15 @@ app.use('/public', express.static(__dirname + '/public'))
 
             let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, Account.address)
             let eventPhase2 = await EventsModule.GetKeySentSpecific(Id,Account.address)
+
             let num_event2 = eventPhase2.length
-            let num_event1 = eventPhase1.length -num_event2 // Because in that case it is already done
+            let num_event1 = eventPhase1.length - num_event2 // Because in that case it is already done
             res.render('ManageBuy.ejs',{Id: Id, product:product[0], num_event1:num_event1, num_event2:num_event2});
         } else {
             res.render('homeClient.ejs',{account : Account});
         }
     })
-    /*Information and management of Ongoing transactions buyer-side ..*/
+    /*Send the hash I compute to the provider ..*/
     .get('/SendClientHash', async (req, res) => {
         if (Account) {
             let id = req.query.id;
@@ -219,13 +222,13 @@ app.use('/public', express.static(__dirname + '/public'))
         if (Account) {
             /* Info to be sent*/
             const price = req.body.price ;
-            const endTime= req.body.contractEndTime ;
+            const durationDays= req.body.contractDurationDays ;
             const description = req.body.description ;
-            let jsonInfo = {"price":price, "contractEndTime":endTime, "descr":description, "privateKey":Account.privateKey};
+            let jsonInfo = {"price":price, "durationDays":durationDays, "descr":description, "privateKey":Account.privateKey};
 
-            let result = await bc.sellItem(jsonInfo);
+            let result = await bc.sellItem(price, description, durationDays, Account);
             console.log(result);
-            if (result === "ok") {
+            if (result) {
                 res.redirect('/ForSale');
             } else {
                 res.redirect('/SellError');
@@ -261,12 +264,23 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    /* Interface to sned K2 keys to the ones who have'nt got it yet*/
+    /* Interface to send crypted version of K2 keys to the ones who haven't got it yet*/
     .get('/SendCryptedK2/', async (req, res) => {
         if (Account) {
             const id = req.query.id ;
-            let [num, done] = await bc.sendCryptedK2(id, Account.privateKey);
+            let [num, done] = await bc.sendCryptedK2(K, id, Account.privateKey);
             res.render('SentToClients.ejs', {num: num, done: done});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
+
+    /* Interface to send K2 keys to the ones who responded with a hash*/
+    .get('/SendClientK2/', async (req, res) => {
+        if (Account) {
+            const id = req.query.id ;
+            let [num, done] = await bc.sendK2(K, id, Account.privateKey);
+            res.render('SentK2.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});
         }
