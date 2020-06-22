@@ -54,7 +54,7 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
 //
 (async () => {
     const nonceval = await web3.eth.getTransactionCount(account1, "pending"); //'0x' + new Date().getTime();
-    console.log(nonceval)
+
     var fTx1 = {
         nonce: nonceval,
         to : contract_address,
@@ -96,9 +96,9 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
     //     console.log(receipt);
     // });
     // // console.log("*************************************");
-    // const map = await contract.methods.getClients(0).call({from : account1});
-    // // const clients = await contract.methods.dataRefer.call(transactionObject);
-    // console.log(map)
+    const map = await contract.methods.getReferenceCurrentPrice(0).call({from : account1});
+    // const clients = await contract.methods.dataRefer.call(transactionObject);
+    console.log("price:" + map)
     // console.log(typeof map)
     // // const data = await contract.methods.getData().call(transactionObject);
     // console.log("data refs :" + map.clients);
@@ -118,14 +118,14 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
 
     // console.log(events.callback())
     console.log("**********************************");
-    let res1 =  contractws.getPastEvents("NewDataReference", {
-       filter: {referenceId: 59},
-        fromBlock: 0,
-        toBlock: 'latest'
-    }, function(error, events){ console.log(events)})
-        .then(function(events){
-            console.log(events)// same results as the optional callback above
-        });
+    // let res1 =  contractws.getPastEvents("NewDataReference", {
+    //    filter: {referenceId: 59},
+    //     fromBlock: 0,
+    //     toBlock: 'latest'
+    // }, function(error, events){ console.log(events)})
+    //     .then(function(events){
+    //         console.log(events)// same results as the optional callback above
+    //     });
 })();
 
 

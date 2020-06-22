@@ -160,10 +160,17 @@ async function buyProduct(id, product, privateKey) {
     Diffie.PrivDH = keys[0];
     Diffie.PubDH = keys[1];
     Diffie.refId =id
-    const receipt = await transactions.BuyReference(account,product[0],Diffie.PubDH);
+
+    let currentPrice = await transactions.GetCurrentPrice(account,id);
+    console.log(currentPrice);
+
+    const receipt = await transactions.BuyReference(account,id,Diffie.PubDH,currentPrice);
+
+    console.log(receipt)
+
     if (receipt) {
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
-        return ("ok");
+        return (currentPrice);
     } else {
         return ("error");
     }

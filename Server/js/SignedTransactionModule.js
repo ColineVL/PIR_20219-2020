@@ -73,20 +73,42 @@ module.exports = {
         const rawTxHex = '0x' + serializedTx.toString('hex');
         return web3.eth.sendSignedTransaction(rawTxHex);
     },
-    BuyReference: async function (account, product, pubKey) {
+    BuyReference: async function (account, product, pubKey, currentPrice) {
         // web3.transactionConfirmationBlocks = 1;
 
         let pubKey_bin = web3.utils.bytesToHex(pubKey);
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
         const dataref = contract.methods.buyReference(product.returnValues.referenceId,pubKey_bin).encodeABI();
-
         const rawTx = {
             nonce: web3.utils.numberToHex(txnCount),
             gasPrice: web3.utils.numberToHex(1500),
             gasLimit: web3.utils.numberToHex(4700000),
             to: ContractAddress,
-            value: parseInt(product.returnValues.price,10),
+            value: parseInt(currentPrice,10),
+            data: dataref
+        };
+        const tx = new Tx(rawTx);
+        tx.sign(privateKey);
+        const serializedTx = tx.serialize();
+        const rawTxHex = '0x' + serializedTx.toString('hex');
+        let receipt = web3.eth.sendSignedTransaction(rawTxHex)
+            .catch(function(error){console.log(error)});
+        return receipt;
+    },
+    BuyReference: async function (account, referenceId, pubKey, currentPrice) {
+        // web3.transactionConfirmationBlocks = 1;
+
+        let pubKey_bin = web3.utils.bytesToHex(pubKey);
+        const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
+        const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
+        const dataref = contract.methods.buyReference(referenceId,pubKey_bin).encodeABI();
+        const rawTx = {
+            nonce: web3.utils.numberToHex(txnCount),
+            gasPrice: web3.utils.numberToHex(1500),
+            gasLimit: web3.utils.numberToHex(4700000),
+            to: ContractAddress,
+            value: parseInt(currentPrice,10),
             data: dataref
         };
         const tx = new Tx(rawTx);
@@ -126,6 +148,15 @@ module.exports = {
             .catch(function(error){});
         return clients;
     },
+
+    /*Function to get the current price of a certain reference*/
+    GetCurrentPrice: async function (account,id) {
+        let price = await contract.methods.getReferenceCurrentPrice(id).call({from : account.address})
+            .catch(function(error){});
+        console.log(price)
+        return price;
+    },
+
     /*Send K2 xor K to the correct client (via the contract) from the provider*/
     SendEncryptedK2ToClient: async function (account,id, client_address, encryptedEncodedKey) {
         let bin = web3.utils.bytesToHex(encryptedEncodedKey);

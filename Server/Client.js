@@ -130,7 +130,7 @@ app.use('/public', express.static(__dirname + '/public'))
             if (result === "error") {
                 res.redirect('/BuyError');
             } else {
-                res.render('Product.ejs', {product: product[0]});
+                res.render('Bought.ejs', {product: product[0], price: result});
             }
         } else {
             res.render('homeClient.ejs',{account : Account});
