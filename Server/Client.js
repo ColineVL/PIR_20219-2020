@@ -263,11 +263,22 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    /* Interface to sned K2 keys to the ones who have'nt got it yet*/
+    /* Interface to send crypted version of K2 keys to the ones who haven't got it yet*/
     .get('/SendCryptedK2/', async (req, res) => {
         if (Account) {
             const id = req.query.id ;
             let [num, done] = await bc.sendCryptedK2(K, id, Account.privateKey);
+            res.render('SentToClients.ejs', {num: num, done: done});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
+
+    /* Interface to send K2 keys to the ones who responded with a hash*/
+    .get('/SendClientK2/', async (req, res) => {
+        if (Account) {
+            const id = req.query.id ;
+            let [num, done] = await bc.sendK2(K, id, Account.privateKey);
             res.render('SentToClients.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});
