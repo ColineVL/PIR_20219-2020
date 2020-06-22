@@ -117,7 +117,7 @@ contract Depreciation_Contract{
     }
 
 
-    function getNumberOfData(uint _referenceId) external returns(uint128 numberOfData){
+    function getNumberOfData(uint _referenceId) view external returns(uint128 numberOfData){
         return dataReferences[_referenceId].numberOfData;
     }
 
