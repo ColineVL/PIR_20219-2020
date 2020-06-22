@@ -167,16 +167,15 @@ app.use('/public', express.static(__dirname + '/public'))
 
             let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, Account.address)
             let eventPhase2 = await EventsModule.GetKeySentSpecific(Id,Account.address)
-            let eventReceivedHashes = await EventsModule.GetClientsWhoSentHashes(Id)
 
-            let num_event2 = eventReceivedHashes.length - eventPhase2.length
-            let num_event1 = eventPhase1.length -num_event2 // Because in that case it is already done
+            let num_event2 = eventPhase2.length
+            let num_event1 = eventPhase1.length - num_event2 // Because in that case it is already done
             res.render('ManageBuy.ejs',{Id: Id, product:product[0], num_event1:num_event1, num_event2:num_event2});
         } else {
             res.render('homeClient.ejs',{account : Account});
         }
     })
-    /*Information and management of Ongoing transactions buyer-side ..*/
+    /*Send the hash I compute to the provider ..*/
     .get('/SendClientHash', async (req, res) => {
         if (Account) {
             let id = req.query.id;
@@ -279,8 +278,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SendClientK2/', async (req, res) => {
         if (Account) {
             const id = req.query.id ;
-            let res = await bc.sendK2(K, id, Account.privateKey);
-            let [num, done] = [0,0] //await bc.sendK2(K, id, Account.privateKey);
+            let [num, done] = await bc.sendK2(K, id, Account.privateKey);
             res.render('SentK2.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});

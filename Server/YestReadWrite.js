@@ -32,7 +32,7 @@ app.use('/public', express.static(__dirname + '/public'))
         let ob = JSON.parse(res)
         console.log(ob)
         console.log(ob.hash);
-        console.log(new Buffer.from(ob.hash,'hex'))
+        console.log(typeof ob.hash)
 
 
             // let res = await fs.readFileSync(path,function(err,data) {})

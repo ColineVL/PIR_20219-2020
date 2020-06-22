@@ -18,6 +18,8 @@ var web3ws = new Web3(new Web3.providers.WebsocketProvider('ws://192.168.33.115:
 var account1= "0xfe3b557e8fb62b89f4916b721be55ceb828dbd73";
 var key1 =new Buffer.from('8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','hex');
 
+var account2= "0x627306090abaB3A6e1400e9345bC60c78a8BEf57";
+
 
 var contract_address = '0x42699A7612A82f1d9C36148af9C77354759b210b' ; // '0x3Ace09BBA3b8507681146252d3Dd33cD4E2d4F63'
 /////////////////////////////////////////////////////////////////////////////////////////:
@@ -117,13 +119,12 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
     // console.log(events.callback())
     console.log("**********************************");
     let res1 =  contractws.getPastEvents("encryptedKeyHash", {
-        filter: {referenceId: 47},
+        filter: {referenceId: 57, client: account2},
         fromBlock: 0,
         toBlock: 'latest'
-    }, function(error, events){ console.log(events)
-        console.log(web3.utils.hexToBytes(events)); })
+    }, function(error, events){ console.log(events)})
         .then(function(events){
-            // console.log(events.returnValues )// same results as the optional callback above
+            console.log(events.)// same results as the optional callback above
         });
 })();
 

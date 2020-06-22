@@ -245,8 +245,12 @@ async function sendK2(K,id, privateKey) {
         let client_address = ClientsToDo[i];
 
         let correctHash = myRef_obj.hash;
+
         let receivedHash = await EventsModule.GetHashFromClientClient(client_address,id);
         if (correctHash == receivedHash){
+
+            console.log(".................. yay! hash was verified!.............")
+
             let receipt = await transactions.SendK2ToClient(Account,id, client_address, myRef_obj.K2);
             if (receipt) {
                 done += 1;

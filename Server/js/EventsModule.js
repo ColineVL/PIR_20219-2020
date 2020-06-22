@@ -143,17 +143,6 @@ module.exports = {
         return res1;
     },
 
-    /*Get correct emit from client with the hash he submitted for a particular Id */
-    GetHashFromClientClient: async function (client_address,id) {
-        let res1 = await contractws.getPastEvents("encryptedKeyHash", {
-            filter: { referenceId: id, client: client_address},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
-    },
-
-
     /*Useful function that transforms a list of events into a list of addresses concerned by the event*/
     /*note that the event has to be coded such that the attribute of the addresses is "client" !*/
     EventsToAddresses: function (events) {
@@ -193,6 +182,17 @@ module.exports = {
         }, function (error, events) {}) // TODO Eventually do something here
         return new Buffer.from(web3.utils.hexToBytes(res1[0].returnValues.publicKeyDH)).slice(0,4); //TODO Check lengths for slices..
     },
+
+    /*Get correct emit from client with the hash he submitted for a particular Id */
+    GetHashFromClientClient: async function (client_address,id) {
+        let res1 = await contractws.getPastEvents("encryptedKeyHash", {
+            filter: { referenceId: id, client: client_address},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1[0].returnValues.encryptedKeyHash;
+    },
+
 }
 
 // // event NewDataReference(uint referenceId, address provider, uint price, uint contractEndTime);
