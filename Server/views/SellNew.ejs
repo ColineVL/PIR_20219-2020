@@ -13,14 +13,27 @@
     <label for="price">Price</label>
     <input type="text" id="price" name="price">
     <br>
+    <label for="minData">Minimum Data</label>
+    <input type="text" id="minData" name="minData">
+    <br>
     <label for="contractDurationDays">Contract Duration in days</label>
     <input type="text" id="contractDurationDays" name="contractDurationDays">
     <br>
     <label for="description">Product Description</label>
     <input type="text" id="description" name="description">
     <br>
+    <label for="depreciationType">Type of Depreciation</label>
+    <input type="text" id="depreciationType" name="depreciationType">
+    <br>
     <input type="submit" value="Submit">
 </form>
+<p>Possible Depreciation types :
+<ul>
+    <li>1: Linear depreciation</li>
+    <li>2: Quadratic depreciation</li>
+    <li>0 or any other integer: no depreciation</li>
+</ul>
+</p>
 
 </body>
 </html>
