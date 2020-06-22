@@ -119,13 +119,15 @@ async function getBlockInfo(blocknumber) {
  * Sell new item
  ********************************/
 
-async function sellItem(price, description, contractEndTime, account){//jsonInfo) {
+async function sellItem(price, description, durationDays, account){//jsonInfo) {
     // jsonInfo = JSON.parse(jsonInfo);
     // const price = jsonInfo["price"];
-    // const contractEndTime = jsonInfo["contractEndTime"];
+    // const contractEndTime = jsonInfo["durationDays"];
     // const description = jsonInfo["descr"];
     // const privateKey = jsonInfo["privateKey"];
     // const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+
+    let durationInSecs = durationDays *24*60*60
 
     /*DH keys, to be stored and public sent*/
     const keys = crypto.DiffieHellmanGenerate(prime);
@@ -135,7 +137,7 @@ async function sellItem(price, description, contractEndTime, account){//jsonInfo
 
     /*Send transaction the get the ref_id for the database*/
     try {
-        const receipt = await transactions.SellReference(account, Diffie.PubDH, price, contractEndTime, description);
+        const receipt = await transactions.SellReference(account, Diffie.PubDH, price, durationInSecs, description);
         let blockNumber = receipt.blockNumber;
         let event = await EventsModule.GetYourRef(account.address, blockNumber)
         let id = event[0].returnValues.referenceId;

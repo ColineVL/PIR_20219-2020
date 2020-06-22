@@ -222,11 +222,11 @@ app.use('/public', express.static(__dirname + '/public'))
         if (Account) {
             /* Info to be sent*/
             const price = req.body.price ;
-            const endTime= req.body.contractEndTime ;
+            const durationDays= req.body.contractDurationDays ;
             const description = req.body.description ;
-            let jsonInfo = {"price":price, "contractEndTime":endTime, "descr":description, "privateKey":Account.privateKey};
+            let jsonInfo = {"price":price, "durationDays":durationDays, "descr":description, "privateKey":Account.privateKey};
 
-            let result = await bc.sellItem(price, description, endTime, Account);
+            let result = await bc.sellItem(price, description, durationDays, Account);
             console.log(result);
             if (result) {
                 res.redirect('/ForSale');
