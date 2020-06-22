@@ -140,10 +140,11 @@ async function sellItem(jsonInfo) {
         let event = await EventsModule.GetYourRef(account.address, blockNumber)
         let id = event[0].returnValues.referenceId;
         Diffie.refId = id;
+        receipt.id = id;
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
         return receipt;
     } catch (err) {
-        return err
+        return err;
     }
 }
 

@@ -130,8 +130,8 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /** Sell **/
     .get('/sellNewProduct/:json', async (req, res) => {
-        let result = await bc.sellItem(req.params.json);
-        res.json(result);
+        let receipt = await bc.sellItem(req.params.json);
+        res.json(receipt);
     })
 
     .get('/ongoingSales/:address', async (req, res) => {

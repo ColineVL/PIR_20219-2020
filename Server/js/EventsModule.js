@@ -82,7 +82,6 @@ module.exports = {
             fromBlock: 0,
             toBlock: 'latest'
         }, function (error, events) {}) // TODO Eventually do something here
-        console.log(res1);
         return res1;
     },
     /*Get all emits testifying that a client sent the encrypted key hashed for a certain product of reference id : id*/

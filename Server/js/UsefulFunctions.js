@@ -85,6 +85,8 @@ function callbackConnect(account) {
         // let address = $("#myAccount_connection_address").val();
         // if (account.address == address) {
         myAccount = account;
+        loadOngoingSales();
+        getBoughtData();
         loadMyAccount();
         // } else {
         //     $('#myAccount_message').html("Address and private key don't match. Make sure your address begins with 0x.");
@@ -345,7 +347,13 @@ async function buyProduct() {
     if (myAccount.boughtData.hasOwnProperty(id)) {
         $("#forSaleProductInfo_message").show();
         $("#forSaleProductInfo_message").html("You already bought this product.");
-    } else {
+    }
+    // Check if I am the seller
+    if (myAccount.forSale.includes(id)) {
+        $("#forSaleProductInfo_message").show();
+        $("#forSaleProductInfo_message").html("You can't buy this product as you are the seller.");
+    }
+    else {
         loadXMLDoc("buy/" + id + "/" + myAccount.privateKey, callbackBuy);
     }
 }
@@ -365,6 +373,8 @@ function callbackSellNewProduct(param) {
         $("#sellNew_message").text("The offer is on the blockchain!");
         $("#sellNew_blockNumber").text(param["blockNumber"]);
         $("#sellNew_gasUsed").text(param["cumulativeGasUsed"]);
+        $("#sellNew_referenceId").text(param["id"]);
+        myAccount.forSale.push(param["id"]);
     } catch (err) {
         console.log(err);
     }
@@ -387,6 +397,7 @@ function sellNewProduct() {
 }
 
 function callbackOngoingSales(Ids) {
+    myAccount.forSale = [];
     let html = "";
     for (const data of Ids) {
         html += "<details>";
@@ -396,6 +407,7 @@ function callbackOngoingSales(Ids) {
         html += "<p>End time: " + data.returnValues["contractEndTime"] + "</p>";
         html += "<p class='link' onclick=manageItem(" + data.returnValues["referenceId"] + ")>Manage this Id</p>";
         html += "</details>";
+        myAccount.forSale.push(data.returnValues["referenceId"]);
     }
     $("#ongoing_beingSold").html(html);
 }
