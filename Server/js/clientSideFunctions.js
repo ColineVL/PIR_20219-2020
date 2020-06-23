@@ -244,7 +244,7 @@ function callbackGetReferences(param) {
         html += "<details>";
         html += "<summary>" + reference.returnValues["referenceId"] + "</summary>";
         html += "<p>" + reference.returnValues["description"] + "</p>";
-        html += "<p>(Wei) " + reference.returnValues["price"] + "</p>";
+        html += "<p>Minimum data: " + reference.returnValues["minimumData"] + "</p>";
         html += "<p class='link' onclick=getRefForSaleInfo(" + reference.returnValues["referenceId"] + ")>Get more info</p>";
         html += "</details>";
         references[reference.returnValues["referenceId"]] = reference.returnValues;
@@ -259,9 +259,53 @@ function getReferences() {
 /** Product info **/
 function getRefForSaleInfo(id) {
     const product = references[id];
-    const keysToDisplay = ["description", "price", "contractEndTime", "provider", "publicKeyDH"];
+
+    let html = "<table><tbody>";
+    html += "<tr>";
+    html += "<td>Reference Id</td>";
+    html += "<td id='productInfo_referenceID'>" + product["referenceId"] + "</td>";
+    html += "</tr>";
+
+    html += "<tr>";
+    html += "<td>Description</td>";
+    html += "<td>" + product["description"] + "</td>";
+    html += "</tr>";
+
+    html += "<tr>";
+    html += "<td>Current price</td>";
+    html += "<td id='productInfo_currentPrice'>" + product["price"] + "</td>";
+    html += "</tr>";
+
+    const keysToDisplay = ["provider", "insuranceDeposit", "minimumData", "depreciationType"];
+    const keysNames = ["Provider", "Insurance funds by the provider", "Minimum Data", "Type of Depreciation"];
+    for (let i=0; i<keysToDisplay.length; i++) {
+        let key = keysToDisplay[i];
+        let keyName = keysNames[i];
+        html += "<tr>";
+        html += "<td>" + keyName + "</td>";
+        html += "<td>" + product[key] + "</td>";
+        html += "</tr>";
+    }
+
+    html += "<tr>";
+    html += "<td>Time of Deployment</td>";
+    let deployTime = Number(product["deployTime"]);
+    deployTime = new Date(deployTime);
+    deployTime = deployTime.toLocaleString();
+    html += "<td>" + deployTime + "</td>";
+    html += "</tr>";
+
+    html += "<tr>";
+    html += "<td>End Timet</td>";
+    let endTime = Number(product["endTime"]);
+    endTime = new Date(endTime);
+    endTime = endTime.toLocaleString();
+    html += "<td>" + endTime + "</td>";
+    html += "</tr>";
+
+    html += "</tbody></table>";
+
     addItem(forSaleproductInfoItem);
-    const html = displayProductInfo(product, keysToDisplay);
     $('#forSaleProductInfo_info').html(html);
     if (myAccount === "notConnected") {
         $('#forSaleProductInfo_message').show();
@@ -277,22 +321,24 @@ function getBoughtItemInfo(id) {
     const product = myAccount.boughtData[id];
     const keysToDisplay = ["publicKeyDH"];
     addItem(boughtProductInfoItem);
-    const html = displayProductInfo(product, keysToDisplay);
+    const html = displayProductInfo(product, keysToDisplay, keysToDisplay);
     $('#boughtProductInfo_info').html(html);
 }
 
-function displayProductInfo(product, keysToDisplay) {
+function displayProductInfo(product, keysToDisplay, keysNames) {
     let html = "<table><tbody>";
     html += "<tr>";
     html += "<td>ReferenceId</td>";
     html += "<td id='productInfo_referenceID'>" + product["referenceId"] + "</td>";
     html += "</tr>";
-    keysToDisplay.forEach(function (key) {
+    for (let i=0; i<keysToDisplay.length; i++) {
+        let key = keysToDisplay[i];
+        let keyName = keysNames[i];
         html += "<tr>";
-        html += "<td>" + key.capitalize() + "</td>";
+        html += "<td>" + keyName + "</td>";
         html += "<td>" + product[key] + "</td>";
         html += "</tr>";
-    });
+    }
     html += "</tbody></table>";
     return html;
 }

@@ -228,7 +228,7 @@ myLayout.registerComponent('forSaleproductInfoItem', function (container, state)
     container.getElement().html(
         '<div class="container">' +
         '<h1>For sale product info:</h1>' +
-        '<ul id="forSaleProductInfo_info"></ul>' +
+        '<div id="forSaleProductInfo_info"></div>' +
         '<button id="forSaleProductInfo_buyButton" onclick="buyProduct()">Buy</button>' +
         '<p class="message" id="forSaleProductInfo_message"></p>' +
         '</div>'

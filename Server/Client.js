@@ -12,33 +12,6 @@ const Web3 = require('web3');
 const provider = 'http://192.168.33.115:8545';
 const web3 = new Web3(new Web3.providers.HttpProvider(provider))
 
-
-// /********************************
-//  * Defining Database N.B : will destruct if server is closed...
-//  ********************************/
-// var DiffieSchema = { // Schema for storing Diffie-H keys
-//     refId: "", // Id of the reference for which this applies
-//     PubDH:   "", // Public key of Diffie-h
-//     PrivDH: "", // Private key of Diffie-h
-//     Pub_Other: "", // Public key of other individual
-// };
-// var Reference_ClientSchema = { // Schema for storing reference information for a Client (keys and messages.)
-//     public_key: "", // User ethereum public key
-//     refId: "", // Id of the reference for which this applies
-//     KxorK2 :   "", // KxorK2 provided by the seller
-//     K2: "", // K2 provided later by the seller
-// };
-// var Reference_SellerSchema = { // Schema for storing reference information for a Seller (keys and messages.)
-//     public_key:  "", // User ethereum public key
-//     refId: "", // Id of the reference for which this applies
-//     K: "", // Primary key used to encrypt the info
-//     K2:  [],     // a mapping between client addresses and the hashes to send them
-// };
-
-// const Diffie = Object.create(DiffieSchema);
-// const Reference_Seller = Object.create(Reference_SellerSchema);
-// const Reference_Client = Object.create(Reference_ClientSchema);
-
 /********************************
  * Create the app
  ********************************/
@@ -106,8 +79,6 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
         let Ids =await EventsModule.GetAvailableRefs(); // TODO: Verify FUNCTION HERE TO GET REFERENCES
-        // let price
-        //     let endDate =
         res.render('ForSale.ejs',{account : Account, Ids: Ids})//, price:price, endDate:endDate});
     })
 
