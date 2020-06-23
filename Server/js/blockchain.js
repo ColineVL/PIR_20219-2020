@@ -202,7 +202,7 @@ async function sendEncryptedEncodedKey(id, privateKey) {
 
     let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/../Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
 
-    let K = readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
+    let K = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
     // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
 
     let done = 0 // To check how many were succesful at the end...
@@ -214,6 +214,7 @@ async function sendEncryptedEncodedKey(id, privateKey) {
         let K2 = crypto.RandomBytes(7);
 
         let toEncrypt = crypto.OTP(K,K2)
+
         let toSend = crypto.OTP(secret,toEncrypt)//.slice(0,4);
         let hashed = crypto.Hash(toEncrypt);
 
@@ -247,10 +248,7 @@ async function sendDecoderKey(id, privateKey) {
         let correctHash = myRef_obj.hash;
 
         let receivedHash = await EventsModule.GetHashFromClientClient(client_address,id);
-        console.log("Received Hash" + receivedHash)
-        console.log("Correct Hash" + correctHash)
-        console.log("sent K2 :" )
-        console.log(myRef_obj.K2)
+
         if (correctHash == receivedHash){
             let receipt = await transactions.sendDecoderKey(Account,id, client_address, myRef_obj.K2);
             if (receipt) {
@@ -284,7 +282,6 @@ async function sendClientHash(id, privateKey) {
     let receipt = transactions.SendHashToProvider(Account,id,HashTobeSent)
     // Now we can do the OTP
 
-    console.log("sent hash : " + HashTobeSent)
     if (receipt){
         done =1;
     }
@@ -295,14 +292,14 @@ async function sendClientHash(id, privateKey) {
 async function ComputeK(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
-    let RefBuyer = readwrite.ReadAsObjectRefClient(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt')
-    let K2 = EventsModule.GetClientDecoder(id,Account.address);
-    RefBuyer.K2 = K2;
+    let RefBuyer = await readwrite.ReadAsObjectRefClient(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt')
+    let K2_event = await EventsModule.GetClientDecoder(id,Account.address);
 
-    console.log(RefBuyer.KxorK2)
-    console.log(K2)
-    await readwrite.WriteAsRefBuyer(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt',RefBuyer.KxorK2, RefBuyer.K2)
-    let K = crypto.OTP(RefBuyer.KxorK2, RefBuyer.K2)
+    let K2 = Buffer.from(web3.utils.hexToBytes(K2_event[0].returnValues.keyDecoder)).slice(0,7) // The actual value
+
+    RefBuyer.K2 = K2;
+   await readwrite.WriteAsRefBuyer(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt',RefBuyer.KxorK2, RefBuyer.K2)
+    let K =  crypto.OTP(RefBuyer.KxorK2, RefBuyer.K2)
 
     console.log(K)
     return K;

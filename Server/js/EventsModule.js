@@ -200,7 +200,7 @@ module.exports = {
             fromBlock: 0,
             toBlock: 'latest'
         }, function (error, events) {}) // TODO Eventually do something here
-        return new Buffer.from(web3.utils.hexToBytes(res1[0].returnValues.keyDecoder)).slice(0,4);
+        return res1;
     },
 
 }
