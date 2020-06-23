@@ -162,10 +162,10 @@ async function buyProduct(id, product, privateKey) {
     Diffie.PubDH = keys[1];
     Diffie.refId =id +1
 
-    let currentPrice = await transactions.GetCurrentPrice(account,id-1);
+    let currentPrice = await transactions.GetCurrentPrice(account,id);
     console.log(currentPrice);
 
-    const receipt = await transactions.BuyReference(account,id-1,Diffie.PubDH,currentPrice);
+    const receipt = await transactions.BuyReference(account,id,Diffie.PubDH,currentPrice);
 
     console.log(receipt)
 
@@ -230,7 +230,7 @@ async function sendCryptedK2(id, privateKey) {
     return [ClientsToDo.length, done];
 }
 /*Function to handle sending the appropriate K2 to every client which responded with a correct hash*/
-async function sendK2(K,id, privateKey) {
+async function sendK2(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
     let ClientsWhoSentHashes = await EventsModule.GetClientsWhoSentHashes(id); // This is a list of events corresponding to clients who sent me a hash

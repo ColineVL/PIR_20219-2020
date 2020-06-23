@@ -85,9 +85,6 @@ app.use('/public', express.static(__dirname + '/public'))
             res.redirect(''); // Redirecting home to confirm connection
         }
         catch(err) { // If an error is raised, try reconnecting
-            console.log(typeof err)
-            console.log(typeof err == "object")
-            console.log(Object.keys(err))
             res.render('ConnexionForm.ejs', {error : err, account : Account});
         };
     })
@@ -159,11 +156,9 @@ app.use('/public', express.static(__dirname + '/public'))
     /*Information and management of Ongoing transactions buyer-side ..*/
     .get('/ManageIdBuyer', async (req, res) => {
         if (Account) {
-            let Id = req.query.id +1 ;
+            let Id = req.query.id ;
             let product = await EventsModule.GetRef(Id)
 
-            console.log(Id)
-            console.log(product)
             let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, Account.address)
             let eventPhase2 = await EventsModule.GetKeySentSpecific(Id,Account.address)
 
@@ -281,7 +276,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SendClientK2/', async (req, res) => {
         if (Account) {
             const id = req.query.id ;
-            let [num, done] = await bc.sendK2(K, id, Account.privateKey);
+            let [num, done] = await bc.sendK2(id, Account.privateKey);
             res.render('SentK2.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});

@@ -59,7 +59,7 @@ module.exports = {
         return 0;
     },
     WriteAsRefBuyer : async function (path, KxorK2) {
-        const RefBuyer = Object.create(Reference_ClientSchema );
+        const RefBuyer = Object.create(Reference_ClientSchema);
         RefBuyer.KxorK2 = KxorK2;
         await fs.writeFile(path, JSON.stringify(RefBuyer), function(err) {
             if (err) {console.log(err)} // TODO maybe do something here for error
@@ -75,4 +75,11 @@ module.exports = {
         Ref.K2 = new Buffer.from(res_obj.K2.data,'hex');
         return Ref;
     },
+    Read_K : async function (path) {
+    let res = await fs.readFileSync(path,function(err,data) {})
+    let res_obj = JSON.parse(res);
+    const Ref = Object.create(Seller_InfoSchema);
+    Ref.K = new Buffer.from(res_obj.K.data,'hex');
+    return Ref.K;
+},
 }
