@@ -1,6 +1,8 @@
 /** Variables **/
-let myAccount = "notConnected";
+let connected = false;
 let references;
+let myAddress;
+let myBalance;
 
 /** To get a response from the server **/
 function loadXMLDoc(page, successCallback) {
@@ -61,37 +63,31 @@ function displayTable(dict) {
  ********************************/
 
 /** Load my account **/
-function callbackGetMyBalance(param) {
-    $("#myAccount_value").html(param);
-}
+// function callbackGetMyBalance(param) {
+//     $("#myAccount_value").html(param);
+// }
 
 function loadMyAccount() {
-    if (myAccount === "notConnected") {
-        $('#myAccount_connected').hide();
-        $('#myAccount_notConnected').show();
-    } else {
+    if (connected) {
         $('#myAccount_notConnected').hide();
         $('#myAccount_connected').show();
-        $('#myAccount_address').html(myAccount.address);
-        loadXMLDoc("getbalance/" + myAccount.address, callbackGetMyBalance);
+        $('#myAccount_address').html(myAddress);
+        $("#myAccount_value").html(myBalance);
+    } else {
+        $('#myAccount_connected').hide();
+        $('#myAccount_notConnected').show();
+        // loadXMLDoc("getbalance/" + myAccount.address, callbackGetMyBalance);
     }
 }
 
 /** Connection **/
-function callbackConnect(account) {
-    if (account["error"]) {
-        $('#myAccount_message').html(account["error"]);
-    } else {
-        // let address = $("#myAccount_connection_address").val();
-        // if (account.address == address) {
-        myAccount = account;
-        loadOngoingSales();
-        getBoughtData();
-        loadMyAccount();
-        // } else {
-        //     $('#myAccount_message').html("Address and private key don't match. Make sure your address begins with 0x.");
-        // }
-    }
+function callbackConnect(json) {
+    connected = true;
+    // loadOngoingSales();
+    // getBoughtData();
+    myAddress = json["address"];
+    myBalance = json["balance"];
+    loadMyAccount();
 }
 
 function connect() {
@@ -100,8 +96,11 @@ function connect() {
 }
 
 function disconnect() {
-    myAccount = "notConnected";
+    connected = false;
     loadMyAccount();
+    const xhttp = new XMLHttpRequest();
+    xhttp.open("GET", 'signout', true);
+    xhttp.send();
 }
 
 /** Creation of a new account **/
@@ -114,13 +113,11 @@ function createNewAccount() {
     loadXMLDoc("newaccount", callbackNewAccount);
 }
 
-function callbackConnectNewAccount(account) {
-    if (account["error"]) {
-        $('#myAccount_message').html(account["error"]);
-    } else {
-        myAccount = account;
-        loadMyAccount();
-    }
+function callbackConnectNewAccount(json) {
+    connected = true;
+    myAddress = json["address"];
+    myBalance = json["balance"];
+    loadMyAccount();
 }
 
 function logInWithNewAccount() {
@@ -280,7 +277,7 @@ function callbackgetRefForSaleInfo(product) {
 
     const keysToDisplay = ["provider", "insuranceDeposit", "minimumData", "depreciationType"];
     const keysNames = ["Provider", "Insurance funds by the provider", "Minimum Data", "Type of Depreciation"];
-    for (let i=0; i<keysToDisplay.length; i++) {
+    for (let i = 0; i < keysToDisplay.length; i++) {
         let key = keysToDisplay[i];
         let keyName = keysNames[i];
         html += "<tr>";
@@ -333,7 +330,7 @@ function displayProductInfo(product, keysToDisplay, keysNames) {
     html += "<td>ReferenceId</td>";
     html += "<td id='productInfo_referenceID'>" + product["referenceId"] + "</td>";
     html += "</tr>";
-    for (let i=0; i<keysToDisplay.length; i++) {
+    for (let i = 0; i < keysToDisplay.length; i++) {
         let key = keysToDisplay[i];
         let keyName = keysNames[i];
         html += "<tr>";
@@ -400,8 +397,7 @@ async function buyProduct() {
     if (myAccount.forSale.includes(id)) {
         $("#forSaleProductInfo_message").show();
         $("#forSaleProductInfo_message").html("You can't buy this product as you are the seller.");
-    }
-    else {
+    } else {
         loadXMLDoc("buy/" + id + "/" + myAccount.privateKey, callbackBuy);
     }
 }

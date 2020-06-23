@@ -27,7 +27,7 @@ app.use(express.json());
 
 app.use(session({
     'secret': '343ji43j4n3jn4jk3n'
-}))
+}));
 
 
 // let Account = undefined;
