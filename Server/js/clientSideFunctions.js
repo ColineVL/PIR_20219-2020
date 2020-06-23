@@ -58,6 +58,24 @@ function displayTable(dict) {
     return html;
 }
 
+function displayProductInfo(product, keysToDisplay, keysNames) {
+    let html = "<table><tbody>";
+    html += "<tr>";
+    html += "<td>ReferenceId</td>";
+    html += "<td id='productInfo_referenceID'>" + product["referenceId"] + "</td>";
+    html += "</tr>";
+    for (let i = 0; i < keysToDisplay.length; i++) {
+        let key = keysToDisplay[i];
+        let keyName = keysNames[i];
+        html += "<tr>";
+        html += "<td>" + keyName + "</td>";
+        html += "<td>" + product[key] + "</td>";
+        html += "</tr>";
+    }
+    html += "</tbody></table>";
+    return html;
+}
+
 /********************************
  * Accounts
  ********************************/
@@ -179,7 +197,7 @@ function displayBlockInfo(blocknumber) {
  * Buy menu
  ********************************/
 
-/** Get references **/
+/** Get references for sale **/
 function callbackGetReferences(param) {
     references = {};
     let html = "";
@@ -199,9 +217,14 @@ function getReferences() {
     loadXMLDoc("getreferences", callbackGetReferences);
 }
 
-/** Product info **/
+/** For sale Product info **/
 function getRefForSaleInfo(id) {
-    loadXMLDoc("getrefinfo/" + id + "/" + myAccount.privateKey, callbackgetRefForSaleInfo);
+    if (connected) {
+        loadXMLDoc("getrefinfo/" + id, callbackgetRefForSaleInfo);
+    } else {
+        console.log("You should connect");
+    }
+
 }
 
 function callbackgetRefForSaleInfo(product) {
@@ -262,32 +285,6 @@ function callbackgetRefForSaleInfo(product) {
     }
 }
 
-function getBoughtItemInfo(id) {
-    const product = myAccount.boughtData[id];
-    const keysToDisplay = ["publicKeyDH"];
-    addItem(boughtProductInfoItem);
-    const html = displayProductInfo(product, keysToDisplay, keysToDisplay);
-    $('#boughtProductInfo_info').html(html);
-}
-
-function displayProductInfo(product, keysToDisplay, keysNames) {
-    let html = "<table><tbody>";
-    html += "<tr>";
-    html += "<td>ReferenceId</td>";
-    html += "<td id='productInfo_referenceID'>" + product["referenceId"] + "</td>";
-    html += "</tr>";
-    for (let i = 0; i < keysToDisplay.length; i++) {
-        let key = keysToDisplay[i];
-        let keyName = keysNames[i];
-        html += "<tr>";
-        html += "<td>" + keyName + "</td>";
-        html += "<td>" + product[key] + "</td>";
-        html += "</tr>";
-    }
-    html += "</tbody></table>";
-    return html;
-}
-
 /** Get bought data **/
 function comparisonBoughtData(data1, data2) {
     if (parseInt(data1.returnValues["referenceId"], 10) < parseInt(data2.returnValues["referenceId"], 10)) {
@@ -295,6 +292,17 @@ function comparisonBoughtData(data1, data2) {
     } else {
         return 1;
     }
+}
+
+function callbackGetBoughtItemInfo(product) {
+    const keysToDisplay = ["referenceId"];
+    addItem(boughtProductInfoItem);
+    const html = displayProductInfo(product, keysToDisplay, keysToDisplay);
+    $('#boughtProductInfo_info').html(html);
+}
+
+function getBoughtItemInfo(id) {
+    loadXMLDoc("getboughtiteminfo/" + id, callbackGetBoughtItemInfo);
 }
 
 function callbackGetBoughtData(Ids) {
@@ -313,13 +321,13 @@ function callbackGetBoughtData(Ids) {
 }
 
 function getBoughtData() {
-    if (myAccount === "notConnected") {
-        $('#boughtData_connected').hide();
-        $('#boughtData_notConnected').show();
-    } else {
+    if (connected) {
         $('#boughtData_notConnected').hide();
         $('#boughtData_connected').show();
-        loadXMLDoc("getboughtdata/" + myAccount.address, callbackGetBoughtData);
+        loadXMLDoc("getboughtdata", callbackGetBoughtData);
+    } else {
+        $('#boughtData_connected').hide();
+        $('#boughtData_notConnected').show();
     }
 }
 

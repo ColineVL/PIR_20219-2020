@@ -110,17 +110,23 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(Ids);
     })
 
-    .get('/getrefinfo/:id/:privateKey', async (req, res) => {
+    .get('/getrefinfo/:id', async (req, res) => {
         let product = await EventsModule.GetRef(req.params.id);
         product = product[0].returnValues;
-        const actualPrice = await bc.getCurrentPrice(req.params.privateKey, req.params.id);
+        const actualPrice = await bc.getCurrentPrice(req.session.Account, req.params.id);
         product["actualPrice"] = actualPrice;
         res.json(product);
     })
 
-    .get('/getboughtdata/:address', async (req, res) => {
-        const Ids = await EventsModule.GetBoughtRefs(req.params.address);
+    .get('/getboughtdata/', async (req, res) => {
+        const Ids = await EventsModule.GetBoughtRefs(req.session.Account);
         res.json(Ids);
+    })
+
+    .get('/getboughtiteminfo/:id', async (req, res) => {
+        let product = await EventsModule.GetRef(req.params.id);
+        product = product[0].returnValues;
+        res.json(product);
     })
 
     .get('/buy/:id/:privateKey', async (req, res) => {

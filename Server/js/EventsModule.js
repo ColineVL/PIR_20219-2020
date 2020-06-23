@@ -67,9 +67,9 @@ module.exports = {
     },
 
     /*Get references bought by a specific id*/
-    GetBoughtRefs: async function (address) {
+    GetBoughtRefs: async function (account) {
         let res1 = await contractws.getPastEvents("newClient", {
-            filter: {client: address},
+            filter: {client: account.address},
             fromBlock: 0,
             toBlock: 'latest'
         }, function (error, events) {}) // TODO Eventually do something here

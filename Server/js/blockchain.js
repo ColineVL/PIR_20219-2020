@@ -176,8 +176,7 @@ async function buyProduct(id, privateKey) {
     }
 }
 
-async function getCurrentPrice(privateKey, id) {
-    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+async function getCurrentPrice(account, id) {
     let currentPrice = await transactions.GetCurrentPrice(account, id);
     return currentPrice;
 }
