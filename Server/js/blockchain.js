@@ -26,8 +26,11 @@ const Diffie = database.newDiffieSchema();
 const Reference_Seller = database.newReference_SellerSchema();
 const Reference_Client = database.newReference_ClientSchema();
 
-let prime = crypto.GetPrime(32);
 
+//let prime = crypto.GetPrime(32);
+(async () => {
+    prime = await  readwrite.ReadPrimeAndGen(__dirname + '/../Database/PrimeAndGenerator.txt');
+})();
 
 /********************************
  * Variables
@@ -126,7 +129,6 @@ async function sellItem(price, description, durationDays, durationHours, duratio
     // const description = jsonInfo["descr"];
     // const privateKey = jsonInfo["privateKey"];
     // const account = web3.eth.accounts.privateKeyToAccount(privateKey);
-
     let durationInSecs = ((durationDays*24 +durationHours*60) + durationMinutes)*60 ;
 
     /*DH keys, to be stored and public sent*/
@@ -148,7 +150,7 @@ async function sellItem(price, description, durationDays, durationHours, duratio
         receipt.id = id;
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
         await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt',K)
-        return receipt;
+        return [receipt,id];
     } catch (err) {
         return err;
     }
@@ -175,6 +177,7 @@ async function buyProduct(id, product, privateKey) {
 }
 
 async function manageID(id, privateKey) {
+
     const account = web3.eth.accounts.privateKeyToAccount(privateKey);
     let product = await EventsModule.GetRef(id);
     const clients = await transactions.GetClients(account,id);

@@ -23,16 +23,15 @@ app.use('/public', express.static(__dirname + '/public'))
        //  await readwrite.Write('testing2.txt',JSON.stringify(info));
        //  console.log(info)
 
-        let path = "/home/rsx14/IdeaProjects/PIR/Server/Database/RefSeller45_0x627306090abaB3A6e1400e9345bC60c78a8BEf57.txt";
+        let path = "/home/rsx14/IdeaProjects/PIR/Server/Database/PrimeAndGenerator.txt";
         res = await fs.readFileSync(path, function (err, data) {
             // console.log(JSON.parse(data).PrivDH)
         });
         console.log(res)
         console.log("#########################################################")
-        let ob = JSON.parse(res)
-        console.log(ob)
-        console.log(ob.hash);
-        console.log(typeof ob.hash)
+        let ob = JSON.parse(res);
+        console.log(typeof ob[1])
+
 
 
             // let res = await fs.readFileSync(path,function(err,data) {})

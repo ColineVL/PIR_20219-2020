@@ -93,4 +93,10 @@ module.exports = {
     Ref.K = new Buffer.from(res_obj.K.data,'hex');
     return Ref.K;
     },
+    ReadPrimeAndGen : async function (path) {
+        let res = await fs.readFileSync(path,function(err,data) {})
+        let prime = JSON.parse(res);
+        return prime;
+    },
+
 }

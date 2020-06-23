@@ -173,6 +173,7 @@ console.log(start)
 
 
 
-
-const fer = new Buffer.from("0000",'hex')
+console.log("last")
+const fer = new Buffer.from([181,58,3,198,39,167,252],'hex')
 console.log(fer)
+console.log(fer.toString('hex'))
