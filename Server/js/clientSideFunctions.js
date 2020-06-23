@@ -357,9 +357,8 @@ async function buyProduct() {
 /********************************
  * Sell menu
  ********************************/
-function loadSellNewProductItem() {
-    loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
-}
+
+/** Sell product **/
 
 function callbackSellNewProduct(param) {
     $("#sellNew_message").show();
@@ -392,6 +391,8 @@ function sellNewProduct() {
     }
 }
 
+/** Ongoing sales **/
+
 function callbackOngoingSales(Ids) {
     myAccount.forSale = [];
     let html = "";
@@ -419,9 +420,12 @@ function loadOngoingSales() {
     }
 }
 
+/** Manage Id **/
+
 function callbackManageId(param) {
     const [product, total_clients, num_clients_step1, num_clients_step2] = param;
-    const tableProduct = displayProductInfo(product[0].returnValues, ["provider", "price", "contractEndTime", "description"]);
+    const keys = ["provider", "price", "contractEndTime", "description"];
+    const tableProduct = displayProductInfo(product[0].returnValues, keys, keys);
     $("#manageId_produit").html(tableProduct);
     $("#manageId_totalNumberClients").text(total_clients);
     $("#manageId_NumClientsStep1").text(num_clients_step1);
@@ -431,7 +435,7 @@ function callbackManageId(param) {
 
 function manageItem(id) {
     addItem(manageIdItem);
-    loadXMLDoc("manageId/" + id + "/" + myAccount.privateKey, callbackManageId);
+    loadXMLDoc("manageId/" + id, callbackManageId);
 }
 
 function callbackSendCryptedK2(param) {

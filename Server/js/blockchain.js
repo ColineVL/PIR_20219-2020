@@ -179,23 +179,15 @@ async function getCurrentPrice(account, id) {
     return currentPrice;
 }
 
-async function manageID(id, privateKey) {
-
-    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+async function manageID(id, account) {
     let product = await EventsModule.GetRef(id);
     const clients = await transactions.GetClients(account, id);
-
-
     let total_clients = clients.length;
-
     let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
     let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length;
-
     let KeysSent = await EventsModule.GetKeysSent(id);
     let ReceivedHashes = await EventsModule.GetClientsWhoSentHashes(id)
-
     let num_clients_step2 = ReceivedHashes.length - KeysSent.length
-
     return [product, total_clients, num_clients_step1, num_clients_step2];
 }
 

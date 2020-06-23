@@ -160,8 +160,9 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(Ids);
     })
 
-    .get('/manageId/:id/:privateKey', async (req, res) => {
-        const result = await bc.manageID(req.params.id, req.params.privateKey);
+    .get('/manageId/:id', async (req, res) => {
+        const result = await bc.manageID(req.params.id, req.session.Account);
+        console.log(result);
         // result = [product, total_clients, num_clients_step1, num_clients_step2]
         res.json(result);
     })
