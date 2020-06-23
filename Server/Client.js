@@ -187,6 +187,18 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /*Send the hash I compute to the provider ..*/
+    .get('/computeK', async (req, res) => {
+        if (Account) {
+            let id = req.query.id;
+
+            let K = await bc.ComputeK(id, Account.privateKey)
+            res.render('KeyClient.ejs',{K: K, id:id});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
+
     /************ Bought ************/
 
     /* Interface for a buyer */
@@ -231,7 +243,7 @@ app.use('/public', express.static(__dirname + '/public'))
             let jsonInfo = {"price":price, "durationDays":durationDays, "descr":description, "privateKey":Account.privateKey};
 
             let result = await bc.sellItem(price, description, durationDays, Account, minData, depreciationType,deposit);
-            console.log(result);
+
             if (result) {
                 res.redirect('/ForSale');
             } else {
@@ -258,7 +270,7 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Interface to manage a certain id being sold*/
     .get('/ManageId/', async (req, res) => {
         if (Account) {
-            console.log(req.query.id, Account.privateKey);
+            console.log(req.query.id, Account.privateKey); //TODO DELETE
             const id = req.query.id ;
             const [product, total_clients, num_clients_step1, num_clients_step2] = await bc.manageID(id, Account.privateKey);
             // TODO finish coding function.. to get number of disputes

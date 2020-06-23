@@ -193,4 +193,14 @@ module.exports = {
         return res1[0].returnValues.encryptedKeyHash;
     },
 
+    /*Get K2 from the event emitted by the seller, for me, for a particular Id */
+    GetClientK2: async function (id,my_address) {
+        let res1 = await contractws.getPastEvents("keyDecoder", {
+            filter: { referenceId: id, client: my_address},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return new Buffer.from(web3.utils.hexToBytes(res1[0].returnValues.keyDecoder)).slice(0,4);
+    },
+
 }
