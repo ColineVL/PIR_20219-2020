@@ -22,11 +22,6 @@ const blockInfoItem = {
     name: "blockInfoItem",
 };
 
-const createTransactionItem = {
-    title: "Make a signed transaction",
-    name: "createTransactionItem",
-};
-
 const resultTransactionItem = {
     title: "Transaction completed",
     name: "resultTransactionItem",
@@ -155,28 +150,28 @@ myLayout.registerComponent('newAccountItem', function (container, state) {
     );
 });
 
-myLayout.registerComponent('createTransactionItem', function (container, state) {
-    let htmlform = '';
-    const form = {
-        transaction_sender: "Sender:",
-        transaction_privateKey: "Private Key:",
-        transaction_receiver: "Receiver:",
-        transaction_amount: "Amount:"
-    };
-    for (let value in form) {
-        htmlform += "<label for=" + value + ">" + form[value] + "</label>";
-        htmlform += "<input id=" + value + " type='text'>";
-        htmlform += "<br>";
-    }
-    htmlform += "<button onclick='makeTransaction()'>Submit</button>";
-    container.getElement().html(
-        '<div class="container">' +
-        '<h1>Fill in the form to make a transaction</h1>' +
-        '<p id="transaction_message"></p>' +
-        htmlform +
-        '</div>'
-    );
-});
+// myLayout.registerComponent('createTransactionItem', function (container, state) {
+//     let htmlform = '';
+//     const form = {
+//         transaction_sender: "Sender:",
+//         transaction_privateKey: "Private Key:",
+//         transaction_receiver: "Receiver:",
+//         transaction_amount: "Amount:"
+//     };
+//     for (let value in form) {
+//         htmlform += "<label for=" + value + ">" + form[value] + "</label>";
+//         htmlform += "<input id=" + value + " type='text'>";
+//         htmlform += "<br>";
+//     }
+//     htmlform += "<button onclick='makeTransaction()'>Submit</button>";
+//     container.getElement().html(
+//         '<div class="container">' +
+//         '<h1>Fill in the form to make a transaction</h1>' +
+//         '<p id="transaction_message"></p>' +
+//         htmlform +
+//         '</div>'
+//     );
+// });
 
 myLayout.registerComponent('resultTransactionItem', function (container, state) {
     container.getElement().html(
@@ -341,8 +336,6 @@ addMenuItem(boughtDataItem);
 $('#menuContainer').append("<h2>Sell</h2>");
 addMenuItem(sellNewItem);
 addMenuItem(ongoingSalesItem);
-$('#menuContainer').append("<h2>Debug</h2>");
-addMenuItem(createTransactionItem);
 $('#menuContainer').append("<h3><a href='closeserver'>Close server</a></h3>");
 
 /********************************

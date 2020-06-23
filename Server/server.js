@@ -103,11 +103,6 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(info);
     })
 
-    .get('/maketransaction/:jsonInfo', async (req, res) => {
-        const receipt = await bc.createTransaction(req.params.jsonInfo);
-        res.json(receipt);
-    })
-
     /** Buy **/
 
     .get('/getreferences/', async (req, res) => {

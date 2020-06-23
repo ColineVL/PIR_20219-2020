@@ -176,38 +176,6 @@ function displayBlockInfo(blocknumber) {
 }
 
 /********************************
- * Transaction
- ********************************/
-
-/** Make a transaction **/
-function callbackMakeTransaction(param) {
-    addItem(resultTransactionItem);
-    param = displayTable(param);
-    $("#resultTransaction_receipt").html(param);
-}
-
-function makeTransaction() {
-    let sender = $("#transaction_sender").val();
-    let receiver = $("#transaction_receiver").val();
-    let privateKey = $("#transaction_privateKey").val();
-    let amount = $("#transaction_amount").val();
-
-    if (sender === "" || receiver === "" || privateKey === "" || amount === "") {
-        $("#transaction_message").html("Please complete the whole form.");
-    } else {
-        // TODO si la transaction échoue ?
-        $("#transaction_message").html("Transaction completed!");
-        let json = {
-            sender: sender,
-            receiver: receiver,
-            privateKey: privateKey,
-            amount: amount,
-        };
-        loadXMLDoc("maketransaction/" + JSON.stringify(json), callbackMakeTransaction);
-    }
-}
-
-/********************************
  * Buy menu
  ********************************/
 
