@@ -85,9 +85,6 @@ app.use('/public', express.static(__dirname + '/public'))
             res.redirect(''); // Redirecting home to confirm connection
         }
         catch(err) { // If an error is raised, try reconnecting
-            console.log(typeof err)
-            console.log(typeof err == "object")
-            console.log(Object.keys(err))
             res.render('ConnexionForm.ejs', {error : err, account : Account});
         };
     })
@@ -109,16 +106,22 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
         let Ids =await EventsModule.GetAvailableRefs(); // TODO: Verify FUNCTION HERE TO GET REFERENCES
-
-        res.render('ForSale.ejs',{account : Account, Ids: Ids});
+        // let price
+        //     let endDate =
+        res.render('ForSale.ejs',{account : Account, Ids: Ids})//, price:price, endDate:endDate});
     })
 
     /* See a specific reference */
     .get('/ProductId/', async (req, res) => {
-        const id = req.query.id ;
-        let product = await EventsModule.GetRef(id)
+        if (Account) {
+            const id = req.query.id ;
+            let product = await EventsModule.GetRef(id)
+            let price= await transactions.GetCurrentPrice(Account,id)
 
-        res.render('Product.ejs', {product: product[0]});
+            res.render('Product.ejs', {product: product[0], price:price});
+        } else{
+            res.render('BuyerMenu.ejs',{account : Account});
+        }
     })
 
     /* Buy a specific reference */
@@ -159,11 +162,9 @@ app.use('/public', express.static(__dirname + '/public'))
     /*Information and management of Ongoing transactions buyer-side ..*/
     .get('/ManageIdBuyer', async (req, res) => {
         if (Account) {
-            let Id = req.query.id +1 ;
+            let Id = req.query.id ;
             let product = await EventsModule.GetRef(Id)
 
-            console.log(Id)
-            console.log(product)
             let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, Account.address)
             let eventPhase2 = await EventsModule.GetKeySentSpecific(Id,Account.address)
 
@@ -181,6 +182,18 @@ app.use('/public', express.static(__dirname + '/public'))
             let done = await bc.sendClientHash(id, Account.privateKey)
 
             res.render('SentHash.ejs',{done: done});
+        } else {
+            res.render('homeClient.ejs',{account : Account});
+        }
+    })
+
+    /*Send the hash I compute to the provider ..*/
+    .get('/computeK', async (req, res) => {
+        if (Account) {
+            let id = req.query.id;
+
+            let K = await bc.ComputeK(id, Account.privateKey)
+            res.render('KeyClient.ejs',{K: K, id:id});
         } else {
             res.render('homeClient.ejs',{account : Account});
         }
@@ -221,15 +234,18 @@ app.use('/public', express.static(__dirname + '/public'))
         if (Account) {
             /* Info to be sent*/
             const price = req.body.price ;
-            const durationDays= req.body.contractDurationDays ;
+            const durationDays= req.body.DurationDays ;
+            const durationHours= req.body.DurationHours ;
+            const durationMinutes= req.body.DurationMinutes ;
             const description = req.body.description ;
             const minData = req.body.minData;
             const depreciationType = req.body.depreciationType;
+            const deposit = req.body.insuranceDeposit;
             // TODO Add to JSON
             let jsonInfo = {"price":price, "durationDays":durationDays, "descr":description, "privateKey":Account.privateKey};
 
-            let result = await bc.sellItem(price, description, durationDays, Account, minData, depreciationType);
-            console.log(result);
+            let result = await bc.sellItem(price, description, durationDays, durationHours, durationMinutes, Account, minData, depreciationType,deposit);
+
             if (result) {
                 res.redirect('/ForSale');
             } else {
@@ -256,7 +272,7 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Interface to manage a certain id being sold*/
     .get('/ManageId/', async (req, res) => {
         if (Account) {
-            console.log(req.query.id, Account.privateKey);
+            console.log(req.query.id, Account.privateKey); //TODO DELETE
             const id = req.query.id ;
             const [product, total_clients, num_clients_step1, num_clients_step2] = await bc.manageID(id, Account.privateKey);
             // TODO finish coding function.. to get number of disputes
@@ -267,10 +283,10 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     /* Interface to send crypted version of K2 keys to the ones who haven't got it yet*/
-    .get('/SendCryptedK2/', async (req, res) => {
+    .get('/SendEncryptedEncodedKey/', async (req, res) => {
         if (Account) {
             const id = req.query.id ;
-            let [num, done] = await bc.sendCryptedK2(id, Account.privateKey);
+            let [num, done] = await bc.sendEncryptedEncodedKey(id, Account.privateKey);
             res.render('SentToClients.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});
@@ -278,10 +294,10 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     /* Interface to send K2 keys to the ones who responded with a hash*/
-    .get('/SendClientK2/', async (req, res) => {
+    .get('/SendDecoderKey/', async (req, res) => {
         if (Account) {
             const id = req.query.id ;
-            let [num, done] = await bc.sendK2(K, id, Account.privateKey);
+            let [num, done] = await bc.sendDecoderKey(id, Account.privateKey);
             res.render('SentK2.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});

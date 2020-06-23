@@ -10,7 +10,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         uint indexed referenceId,
         address indexed provider,
         uint price,
-        uint redeemFunds,
+        uint insuranceDeposit,
         uint128 minimumData,
         uint128 deployTime,
         uint128 endTime,
@@ -32,7 +32,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         // Sets price and depreciation. Provider won't be able to change it later.
         newReference.initialPrice = _price;
 
-        newReference.redeemFunds = msg.value;
+        newReference.insuranceDeposit = msg.value;
 
         newReference.withdrawableFunds = msg.value;
 
@@ -104,9 +104,9 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         (msg.sender).transfer(funds);
     }
 
-    event referenceKey(uint indexed referenceId, uint referenceKey);
+    event referenceKey(uint indexed referenceId, bytes32 referenceKey);
 
-    function setReferenceKey(uint _referenceId, uint _referenceKey) onlyProvider(_referenceId) external {
+    function setReferenceKey(uint _referenceId, bytes32 _referenceKey) onlyProvider(_referenceId) external {
         // The key once set cannot be modified to avoid scams
         if (dataReferences[_referenceId].referenceKey == 0) {
             dataReferences[_referenceId].referenceKey = _referenceKey;
@@ -114,9 +114,9 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         }
     }
 
-    event keyDecoder(uint indexed referenceId, address indexed client, uint keyDecoder);
+    event keyDecoder(uint indexed referenceId, address indexed client, bytes32 keyDecoder);
 
-    function setKeyDecoder(uint _referenceId, address _client, uint _keyDecoder) onlyProvider(_referenceId) external {
+    function setKeyDecoder(uint _referenceId, address _client, bytes32 _keyDecoder) onlyProvider(_referenceId) external {
         // Condition necessary so that the provider does not provide a key decoder if the client removed his funds
         if (dataReferences[_referenceId].clientFunds[_client] > 0) {
             // The key once set cannot be modified to avoid scams

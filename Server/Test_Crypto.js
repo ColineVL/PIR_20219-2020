@@ -168,3 +168,11 @@ console.log(web3.utils.bytesToHex(Kop))
 
 const start = Date.now();
 console.log(start)
+
+
+
+
+const cryptop = require('./CryptoModule');
+let pri = cryptop.GetPrime(32);
+
+console.log(pri)
