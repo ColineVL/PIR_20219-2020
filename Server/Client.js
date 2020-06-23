@@ -52,27 +52,32 @@ app.use(express.urlencoded());
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
-let Account = undefined;
+app.use(session({
+    'secret': '343ji43j4n3jn4jk3n'
+}))
 
+
+// let Account = undefined;
 app.use('/public', express.static(__dirname + '/public'))
+
 
     /* Home view */
     .get('', async (req, res) => {
-        if (Account) {
-            let funds = await bc.getBalance(Account.address);
-            res.render('homeClient.ejs',{account : Account, funds: funds});
+        if (req.session.Account) {
+            let funds = await bc.getBalance(req.session.Account.address);
+            res.render('homeClient.ejs',{account : req.session.Account, funds: funds});
         } else {
-            res.render('homeClient.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : req.session.Account});
         }
     })
 
     /* Form view to connect with private key*/
     .get('/ConnexionForm', function(req, res) {
-        res.render('ConnexionForm.ejs', {account : Account});
+        res.render('ConnexionForm.ejs', {account : req.session.Account});
     })
     /* Emulating Signout by deleting account*/
     .get('/Signout', function(req, res) {
-        Account = undefined;
+        req.session.Account = undefined;
         res.redirect('/');
     })
 
@@ -80,12 +85,12 @@ app.use('/public', express.static(__dirname + '/public'))
     .post('/Connexion/', async (req, res) => {
         try {
             // let account = web3.eth.accounts.privateKeyToAccount(req.body.prKey);
-            let account = await bc.getAccount(req.body.prKey);
-            Account = account;
+            req.session.Account = await bc.getAccount(req.body.prKey);
+            // Account = account;
             res.redirect(''); // Redirecting home to confirm connection
         }
         catch(err) { // If an error is raised, try reconnecting
-            res.render('ConnexionForm.ejs', {error : err, account : Account});
+            res.render('ConnexionForm.ejs', {error : err, account : req.session.Account});
         };
     })
 
@@ -93,11 +98,11 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /* Interface for a buyer */
     .get('/BuyerMenu', async (req, res) => {
-        if (Account) {
-            let funds = await bc.getBalance(Account.address)
-            res.render('BuyerMenu.ejs',{account : Account, funds: funds});
+        if (req.session.Account) {
+            let funds = await bc.getBalance(req.session.Account.address)
+            res.render('BuyerMenu.ejs',{account : req.session.Account, funds: funds});
         } else{
-            res.render('BuyerMenu.ejs',{account : Account});
+            res.render('BuyerMenu.ejs',{account : req.session.Account});
         }
     })
 
@@ -108,35 +113,35 @@ app.use('/public', express.static(__dirname + '/public'))
         let Ids =await EventsModule.GetAvailableRefs(); // TODO: Verify FUNCTION HERE TO GET REFERENCES
         // let price
         //     let endDate =
-        res.render('ForSale.ejs',{account : Account, Ids: Ids})//, price:price, endDate:endDate});
+        res.render('ForSale.ejs',{account : req.session.Account, Ids: Ids})//, price:price, endDate:endDate});
     })
 
     /* See a specific reference */
     .get('/ProductId/', async (req, res) => {
-        if (Account) {
+        if (req.session.Account) {
             const id = req.query.id ;
             let product = await EventsModule.GetRef(id)
-            let price= await transactions.GetCurrentPrice(Account,id)
+            let price= await transactions.GetCurrentPrice(req.session.Account,id)
 
             res.render('Product.ejs', {product: product[0], price:price});
         } else{
-            res.render('BuyerMenu.ejs',{account : Account});
+            res.render('BuyerMenu.ejs',{account : req.session.Account});
         }
     })
 
     /* Buy a specific reference */
     .get('/Buy/', async (req, res) => {
-        if (Account) {
+        if (req.session.Account) {
             const id = req.query.id ;
             let product = await EventsModule.GetRef(id)
-            let result = await bc.buyProduct(id, product, Account.privateKey);
+            let result = await bc.buyProduct(id, product, req.session.Account.privateKey);
             if (result === "error") {
                 res.redirect('/BuyError');
             } else {
                 res.render('Bought.ejs', {product: product[0], price: result});
             }
         } else {
-            res.render('homeClient.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : req.session.Account});
         }
     })
 
@@ -149,53 +154,53 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /*Information and management of Ongoing transactions buyer-side ..*/
     .get('/OngoingBuy', async (req, res) => {
-        if (Account) {
-            let Ids = await EventsModule.GetBoughtRefs(Account.address);
+        if (req.session.Account) {
+            let Ids = await EventsModule.GetBoughtRefs(req.session.Account.address);
             let IdsDone = []; // TODO: Still no idea how to do this
 
             res.render('OngoingBuys.ejs',{Ids: Ids, IdsDone: IdsDone});
         } else {
-            res.render('homeClient.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : req.session.Account});
         }
     })
 
     /*Information and management of Ongoing transactions buyer-side ..*/
     .get('/ManageIdBuyer', async (req, res) => {
-        if (Account) {
+        if (req.session.Account) {
             let Id = req.query.id ;
             let product = await EventsModule.GetRef(Id)
 
-            let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, Account.address)
-            let eventPhase2 = await EventsModule.GetKeySentSpecific(Id,Account.address)
+            let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, req.session.Account.address)
+            let eventPhase2 = await EventsModule.GetKeySentSpecific(Id,req.session.Account.address)
 
             let num_event2 = eventPhase2.length
             let num_event1 = eventPhase1.length - num_event2 // Because in that case it is already done
             res.render('ManageBuy.ejs',{Id: Id, product:product[0], num_event1:num_event1, num_event2:num_event2});
         } else {
-            res.render('homeClient.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : req.session.Account});
         }
     })
     /*Send the hash I compute to the provider ..*/
     .get('/SendClientHash', async (req, res) => {
-        if (Account) {
+        if (req.session.Account) {
             let id = req.query.id;
-            let done = await bc.sendClientHash(id, Account.privateKey)
+            let done = await bc.sendClientHash(id, req.session.Account.privateKey)
 
             res.render('SentHash.ejs',{done: done});
         } else {
-            res.render('homeClient.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : req.session.Account});
         }
     })
 
     /*Send the hash I compute to the provider ..*/
     .get('/computeK', async (req, res) => {
-        if (Account) {
+        if (req.session.Account) {
             let id = req.query.id;
 
-            let K = await bc.ComputeK(id, Account.privateKey)
+            let K = await bc.ComputeK(id, req.session.Account.privateKey)
             res.render('KeyClient.ejs',{K: K, id:id});
         } else {
-            res.render('homeClient.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : req.session.Account});
         }
     })
 
@@ -203,11 +208,11 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /* Interface for a buyer */
     .get('/Bought', async (req, res) => {
-        if (Account) {
-            let Ids =await EventsModule.GetBoughtRefs(Account.address); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+        if (req.session.Account) {
+            let Ids =await EventsModule.GetBoughtRefs(req.session.Account.address); // TODO: Verify FUNCTION HERE TO GET REFERENCES
             res.render('BoughtInfo.ejs',{Ids: Ids});
         } else {
-            res.render('homeClient.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : req.session.Account});
         }
     })
 
@@ -217,35 +222,35 @@ app.use('/public', express.static(__dirname + '/public'))
     /********* Global part *********/
     /* Seller Menu */
     .get('/SellerMenu', async (req, res) => {
-        if (Account) {
-            let funds = await bc.getBalance(Account.address)
-            res.render('SellerMenu.ejs',{account : Account, funds: funds});
+        if (req.session.Account) {
+            let funds = await bc.getBalance(req.session.Account.address)
+            res.render('SellerMenu.ejs',{account : req.session.Account, funds: funds});
         } else{
-            res.render('SellerMenu.ejs',{account : Account});
+            res.render('SellerMenu.ejs',{account : req.session.Account});
         }
     })
     .get('/ProductInfoSeller', async (req, res) => {
-        if (Account) {
+        if (req.session.Account) {
             let id = req.query.id
-            let K = await readwrite.Read_K(__dirname + '/Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
+            let K = await readwrite.Read_K(__dirname + '/Database/SellerInfo' + id.toString() + '_' + req.session.Account.address.toString() + '.txt')
 
-            let num = await transactions.GetClients(Account,id)
+            let num = await transactions.GetClients(req.session.Account,id)
 
 
             res.render('ProductInfoSeller.ejs',{num : num.length, K: K, id:id});
         } else{
-            res.render('SellerMenu.ejs',{account : Account});
+            res.render('SellerMenu.ejs',{account : req.session.Account});
         }
     })
 
 
     /* Sell a new product */
     .get('/SellNew', async (req, res) => {
-        res.render('SellNew.ejs',{account : Account});
+        res.render('SellNew.ejs',{account : req.session.Account});
     })
 
     .post('/PostProduct', async(req, res) =>{
-        if (Account) {
+        if (req.session.Account) {
             /* Info to be sent*/
             const price = req.body.price ;
             const durationDays= req.body.DurationDays ;
@@ -256,9 +261,9 @@ app.use('/public', express.static(__dirname + '/public'))
             const depreciationType = req.body.depreciationType;
             const deposit = req.body.insuranceDeposit;
             // TODO Add to JSON
-            let jsonInfo = {"price":price, "durationDays":durationDays, "descr":description, "privateKey":Account.privateKey};
+            let jsonInfo = {"price":price, "durationDays":durationDays, "descr":description, "privateKey":req.session.Account.privateKey};
 
-            let result = await bc.sellItem(price, description, durationDays, durationHours, durationMinutes, Account, minData, depreciationType,deposit);
+            let result = await bc.sellItem(price, description, durationDays, durationHours, durationMinutes, req.session.Account, minData, depreciationType,deposit);
 
             if (result[0]) {
                 res.redirect('/ProductInfoSeller?id='+ result[1]);
@@ -266,7 +271,7 @@ app.use('/public', express.static(__dirname + '/public'))
                 res.redirect('/SellError');
             }
         } else {
-            res.render('homeClient.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : req.session.Account});
         }
     })
 
@@ -274,46 +279,46 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /*See ongoing sales*/
     .get('/OngoingSales', async (req, res) => {
-        if (Account) {
-            let Ids =await EventsModule.GetSoldRefs(Account.address); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+        if (req.session.Account) {
+            let Ids =await EventsModule.GetSoldRefs(req.session.Account.address); // TODO: Verify FUNCTION HERE TO GET REFERENCES
             let IdsDone = [];
             res.render('OngoingSales.ejs',{Ids: Ids, IdsDone: IdsDone});
         } else {
-            res.render('homeClient.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : req.session.Account});
         }
     })
 
     /* Interface to manage a certain id being sold*/
     .get('/ManageId/', async (req, res) => {
-        if (Account) {
+        if (req.session.Account) {
             const id = req.query.id ;
-            const [product, total_clients, num_clients_step1, num_clients_step2] = await bc.manageID(id, Account.privateKey);
+            const [product, total_clients, num_clients_step1, num_clients_step2] = await bc.manageID(id, req.session.Account.privateKey);
             // TODO finish coding function.. to get number of disputes
             res.render('ManageId.ejs', {product: product[0], Id: id, total_clients: total_clients, num_clients_step1: num_clients_step1, num_clients_step2: num_clients_step2});
         } else {
-            res.render('homeClient.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : req.session.Account});
         }
     })
 
     /* Interface to send crypted version of K2 keys to the ones who haven't got it yet*/
     .get('/SendEncryptedEncodedKey/', async (req, res) => {
-        if (Account) {
+        if (req.session.Account) {
             const id = req.query.id ;
-            let [num, done] = await bc.sendEncryptedEncodedKey(id, Account.privateKey);
+            let [num, done] = await bc.sendEncryptedEncodedKey(id, req.session.Account.privateKey);
             res.render('SentToClients.ejs', {num: num, done: done});
         } else {
-            res.render('homeClient.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : req.session.Account});
         }
     })
 
     /* Interface to send K2 keys to the ones who responded with a hash*/
     .get('/SendDecoderKey/', async (req, res) => {
-        if (Account) {
+        if (req.session.Account) {
             const id = req.query.id ;
-            let [num, done] = await bc.sendDecoderKey(id, Account.privateKey);
+            let [num, done] = await bc.sendDecoderKey(id, req.session.Account.privateKey);
             res.render('SentK2.ejs', {num: num, done: done});
         } else {
-            res.render('homeClient.ejs',{account : Account});
+            res.render('homeClient.ejs',{account : req.session.Account});
         }
     })
 
