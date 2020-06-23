@@ -377,15 +377,28 @@ function callbackSellNewProduct(param) {
 
 function sellNewProduct() {
     /* Info to be sent */
-    let price = $("#sellNew_price").val();
-    let contractEndTime = $("#sellNew_contractEndTime").val();
-    let descr = $("#sellNew_description").val();
-    let json = {price: price, contractEndTime: contractEndTime, descr: descr, privateKey: myAccount.privateKey};
+    let json = {
+        initialPrice: $("#sellNew_price").val(),
+        durationDays: $("#sellNew_durationDays").val(),
+        durationHours: $("#sellNew_durationHours").val(),
+        durationMinutes: $("#sellNew_durationMinutes").val(),
+        description: $("#sellNew_description").val(),
+        minData: $("#sellNew_minData").val(),
+        depreciationType: document.querySelector('input[name="depreciationType"]:checked').value,
+        deposit: $("#sellNew_insuranceDeposit").val(),
+    };
 
-    if (price === "" || contractEndTime === "" || descr === "") {
-        $("#sellNew_message").show();
-        $("#sellNew_message").html("Please complete the whole form.");
-    } else {
+    let complete = false;
+    for (const property in json) {
+        if (json.property === "") {
+            $("#sellNew_message").show();
+            $("#sellNew_message").html("Please complete the whole form.");
+            break;
+        } else {
+            complete = true;
+        }
+    }
+    if (complete) {
         $("#sellNew_message").hide();
         loadXMLDoc("sellNewProduct/" + JSON.stringify(json), callbackSellNewProduct);
     }

@@ -7,6 +7,7 @@
     <div id="sellNew_connected">
         <h1> Fill in the form to sell a new product</h1>
         <p class="message" id="sellNew_message"></p>
+
         <table id="sellNew_receipt">
             <tr>
                 <td>Id of your new reference</td>
@@ -21,21 +22,49 @@
                 <td id="sellNew_gasUsed">/</td>
             </tr>
         </table>
+
         <div class="row">
             <div class="col-25">
                 <label for="sellNew_price">Price</label>
             </div>
             <div class="col-75">
-                <input id="sellNew_price" type="text">
+                <input id="sellNew_price" type="number" min="0">
             </div>
         </div>
 
         <div class="row">
             <div class="col-25">
-                <label for="sellNew_contractEndTime">Contract end time</label>
+                <label for="sellNew_minData">Minimum Data</label>
             </div>
             <div class="col-75">
-                <input id="sellNew_contractEndTime" type="text">
+                <input id="sellNew_minData" type="number" min="0">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-25">
+                <label for="sellNew_durationDays">Reference Duration in days</label>
+            </div>
+            <div class="col-75">
+                <input id="sellNew_durationDays" type="number" min="0">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-25">
+                <label for="sellNew_durationHours">Reference Duration in hours</label>
+            </div>
+            <div class="col-75">
+                <input id="sellNew_durationHours" type="number" min="0" max="59">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-25">
+                <label for="sellNew_durationMinutes">Reference Duration in minutes</label>
+            </div>
+            <div class="col-75">
+                <input id="sellNew_durationMinutes" type="number" min="0" max="59">
             </div>
         </div>
 
@@ -45,6 +74,29 @@
             </div>
             <div class="col-75">
                 <input id="sellNew_description" type="text">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-25">
+                <label for="sellNew_insuranceDeposit">Insurance Deposit (in Ether)</label>
+            </div>
+            <div class="col-75">
+                <input id="sellNew_insuranceDeposit" type="number" min="0">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-25">
+                <label for="sellNew_depreciationType">Type of Depreciation</label>
+            </div>
+            <div class="col-75" id="sellNew_depreciationType">
+                <input id="linear" type="radio" value="1" name="depreciationType">
+                <label for="linear">Linear deprecation</label>
+                <input id="none" type="radio" value="0" name="depreciationType">
+                <label for="none">No deprecation</label>
+                <input id="quadratic" type="radio" value="2" name="depreciationType">
+                <label for="quadratic">Quadratic deprecation</label>
             </div>
         </div>
 

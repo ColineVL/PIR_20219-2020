@@ -149,7 +149,7 @@ app.use('/public', express.static(__dirname + '/public'))
     /************ Sell a product ************/
 
     .get('/sellNewProduct/:json', async (req, res) => {
-        let receipt = await bc.sellItem(req.params.json);
+        let receipt = await bc.sellItemColine(req.params.json, req.session.Account);
         res.json(receipt);
     })
 
@@ -162,7 +162,6 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/manageId/:id', async (req, res) => {
         const result = await bc.manageID(req.params.id, req.session.Account);
-        console.log(result);
         // result = [product, total_clients, num_clients_step1, num_clients_step2]
         res.json(result);
     })

@@ -121,13 +121,8 @@ async function getBlockInfo(blocknumber) {
  * Sell new item
  ********************************/
 
-async function sellItem(price, description, durationDays, durationHours, durationMinutes, account, minData, depreciationType, deposit) {//jsonInfo) {
-    // jsonInfo = JSON.parse(jsonInfo);
-    // const price = jsonInfo["price"];
-    // const contractEndTime = jsonInfo["durationDays"];
-    // const description = jsonInfo["descr"];
-    // const privateKey = jsonInfo["privateKey"];
-    // const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+async function sellItemZiad(price, description, durationDays, durationHours, durationMinutes, account, minData, depreciationType, deposit) {
+
     let durationInSecs = ((durationDays * 24 + durationHours * 60) + durationMinutes) * 60;
 
     /*DH keys, to be stored and public sent*/
@@ -137,7 +132,6 @@ async function sellItem(price, description, durationDays, durationHours, duratio
     Diffie.PubDH = keys[1];
 
     let K = crypto.RandomBytes(7); //Reference key with which data is encrypted. TODO use this on TLE
-
 
     /*Send transaction the get the ref_id for the database*/
     try {
@@ -150,6 +144,44 @@ async function sellItem(price, description, durationDays, durationHours, duratio
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
         await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt', K)
         return [receipt, id];
+    } catch (err) {
+        return err;
+    }
+}
+
+async function sellItemColine(jsonInfo, account) {
+    jsonInfo = JSON.parse(jsonInfo);
+
+    const initialPrice = jsonInfo["initialPrice"];
+    const durationDays = jsonInfo["durationDays"];
+    const durationHours = jsonInfo["durationHours"];
+    const durationMinutes = jsonInfo["durationMinutes"];
+    const description = jsonInfo["description"];
+    const minData = jsonInfo["minData"];
+    const depreciationType = jsonInfo["depreciationType"];
+    const deposit = jsonInfo["deposit"];
+    const durationInSecs = ((durationDays * 24 + durationHours * 60) + durationMinutes) * 60;
+
+    /*DH keys, to be stored and public sent*/
+    const keys = crypto.DiffieHellmanGenerate(prime);
+    /* Updating object to write and save */
+    Diffie.PrivDH = keys[0];
+    Diffie.PubDH = keys[1];
+
+    let K = crypto.RandomBytes(7); //Reference key with which data is encrypted. TODO use this on TLE
+
+
+    /*Send transaction the get the ref_id for the database*/
+    try {
+        const receipt = await transactions.SellReference(account, Diffie.PubDH, initialPrice, durationInSecs, description, minData, depreciationType, deposit);
+        let blockNumber = receipt.blockNumber;
+        let event = await EventsModule.GetYourRef(account.address, blockNumber)
+        let id = event[0].returnValues.referenceId;
+        Diffie.refId = id;
+        await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
+        await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt', K)
+        receipt.id = id;
+        return receipt;
     } catch (err) {
         return err;
     }
@@ -191,8 +223,7 @@ async function manageID(id, account) {
     return [product, total_clients, num_clients_step1, num_clients_step2];
 }
 
-async function getClients(privateKey, id) {
-    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+async function getClients(account, id) {
     let num = await transactions.GetClients(account,id)
     return num;
 }
@@ -330,7 +361,8 @@ module.exports = {
     getAccount,
     createNewAccount,
     createTransaction,
-    sellItem,
+    sellItemZiad,
+    sellItemColine,
     buyProduct,
     manageID,
     sendEncryptedEncodedKey,

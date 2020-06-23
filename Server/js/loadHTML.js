@@ -18,11 +18,11 @@ function callbackLoadHTMLMyAccount(html) {
 function callbackLoadHTMLsellNew(html) {
     $("#forSale").html(html);
     $("#sellNew_receipt").hide();
-    if (myAccount === "notConnected") {
-        $('#sellNew_connected').hide();
-        $('#sellNew_notConnected').show();
-    } else {
+    if (connected) {
         $('#sellNew_notConnected').hide();
         $('#sellNew_connected').show();
+    } else {
+        $('#sellNew_connected').hide();
+        $('#sellNew_notConnected').show();
     }
 }

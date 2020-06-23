@@ -240,7 +240,6 @@ myLayout.registerComponent('boughtDataItem', function (container, state) {
 
 myLayout.registerComponent('sellNewItem', function (container, state) {
     container.getElement().html('<div id="forSale">');
-    loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
 });
 
 myLayout.registerComponent('ongoingSalesItem', function (container, state) {
@@ -319,6 +318,13 @@ function addMenuItem(newItem) {
     }
     if (newItem.name === "ongoingSalesItem") {
         element.click(loadOngoingSales);
+    }
+    if (newItem.name === "sellNewItem") {
+        element.click( () => {
+            loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
+        });
+
+
     }
 }
 

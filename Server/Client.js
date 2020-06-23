@@ -205,7 +205,7 @@ app.use('/public', express.static(__dirname + '/public'))
             let id = req.query.id;
             let K = await readwrite.Read_K(__dirname + '/Database/SellerInfo' + id.toString() + '_' + req.session.Account.address.toString() + '.txt')
 
-            let num = await bc.GetClients(req.session.Account, id)
+            let num = await bc.getClients(req.session.Account, id)
 
 
             res.render('ProductInfoSeller.ejs', {num: num.length, K: K, id: id});
@@ -239,7 +239,7 @@ app.use('/public', express.static(__dirname + '/public'))
                 "privateKey": req.session.Account.privateKey
             };
 
-            let result = await bc.sellItem(initialPrice, description, durationDays, durationHours, durationMinutes, req.session.Account, minData, depreciationType, deposit);
+            let result = await bc.sellItemZiad(initialPrice, description, durationDays, durationHours, durationMinutes, req.session.Account, minData, depreciationType, deposit);
 
             if (result[0]) {
                 res.redirect('/ProductInfoSeller?id=' + result[1]);
