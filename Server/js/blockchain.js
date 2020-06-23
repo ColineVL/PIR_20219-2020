@@ -155,9 +155,7 @@ async function sellItem(price, description, durationDays, durationHours, duratio
     }
 }
 
-async function buyProduct(id, privateKey) {
-
-    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+async function buyProduct(id, account) {
     const keys = crypto.DiffieHellmanGenerate(prime);
     /* Updating object to write and save */
     Diffie.PrivDH = keys[0];

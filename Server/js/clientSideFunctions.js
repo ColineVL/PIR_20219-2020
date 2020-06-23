@@ -1,8 +1,7 @@
 /** Variables **/
 let connected = false;
 let references;
-let myAddress;
-let myBalance;
+let myAccount = {};
 
 /** To get a response from the server **/
 function loadXMLDoc(page, successCallback) {
@@ -85,8 +84,8 @@ function loadMyAccount() {
     if (connected) {
         $('#myAccount_notConnected').hide();
         $('#myAccount_connected').show();
-        $('#myAccount_address').html(myAddress);
-        $("#myAccount_value").html(myBalance);
+        $('#myAccount_address').html(myAccount.address);
+        $("#myAccount_value").html(myAccount.balance);
     } else {
         $('#myAccount_connected').hide();
         $('#myAccount_notConnected').show();
@@ -96,10 +95,10 @@ function loadMyAccount() {
 /** Connection **/
 function callbackConnect(json) {
     connected = true;
-    // loadOngoingSales();
-    // getBoughtData();
-    myAddress = json["address"];
-    myBalance = json["balance"];
+    loadOngoingSales();
+    getBoughtData();
+    myAccount.address = json["address"];
+    myAccount.balance = json["balance"];
     loadMyAccount();
 }
 
@@ -128,8 +127,8 @@ function createNewAccount() {
 
 function callbackConnectNewAccount(json) {
     connected = true;
-    myAddress = json["address"];
-    myBalance = json["balance"];
+    myAccount.address = json["address"];
+    myAccount.balance = json["balance"];
     loadMyAccount();
 }
 
@@ -337,7 +336,6 @@ function callbackBuy(param) {
     // TODO en cas de problème
     $('#forSaleProductInfo_message').show();
     $('#forSaleProductInfo_message').text("Bought!");
-
 }
 
 async function buyProduct() {
@@ -352,7 +350,7 @@ async function buyProduct() {
         $("#forSaleProductInfo_message").show();
         $("#forSaleProductInfo_message").html("You can't buy this product as you are the seller.");
     } else {
-        loadXMLDoc("buy/" + id + "/" + myAccount.privateKey, callbackBuy);
+        loadXMLDoc("buy/" + id, callbackBuy);
     }
 }
 
@@ -411,13 +409,13 @@ function callbackOngoingSales(Ids) {
 }
 
 function loadOngoingSales() {
-    if (myAccount === "notConnected") {
-        $('#ongoing_connected').hide();
-        $('#ongoing_notConnected').show();
-    } else {
+    if (connected) {
         $('#ongoing_notConnected').hide();
         $('#ongoing_connected').show();
-        loadXMLDoc("ongoingSales/" + myAccount.address, callbackOngoingSales);
+        loadXMLDoc("ongoingSales", callbackOngoingSales);
+    } else {
+        $('#ongoing_connected').hide();
+        $('#ongoing_notConnected').show();
     }
 }
 

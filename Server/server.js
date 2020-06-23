@@ -64,13 +64,14 @@ let server = app.listen(8081, function () {
 /********************************
  * Register the URLs
  ********************************/
+
 app.use('/public', express.static(__dirname + '/public'))
 
     .get('', function (req, res) {
         res.render('home.ejs');
     })
 
-    /** Main gets **/
+    /************ Sign in and out ************/
 
     .get('/connect/:privateKey', async (req, res) => {
         req.session.Account = await bc.getAccount(req.params.privateKey);
@@ -88,6 +89,8 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json([info["address"], info["privateKey"]]);
     })
 
+    /************ Nodes and blocks ************/
+
     .get('/updatenodelist/', async (req, res) => {
         const list = await bc.getNodelistIDS();
         res.json(list);
@@ -103,7 +106,7 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(info);
     })
 
-    /** Buy **/
+    /************ For sale products ************/
 
     .get('/getreferences/', async (req, res) => {
         const Ids = await EventsModule.GetAvailableRefs();
@@ -118,6 +121,8 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(product);
     })
 
+    /************ Bought products ************/
+
     .get('/getboughtdata/', async (req, res) => {
         const Ids = await EventsModule.GetBoughtRefs(req.session.Account);
         res.json(Ids);
@@ -129,9 +134,11 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(product);
     })
 
-    .get('/buy/:id/:privateKey', async (req, res) => {
+    /************ Buy a product ************/
+
+    .get('/buy/:id', async (req, res) => {
         let product = await EventsModule.GetRef(req.params.id);
-        let result = await bc.buyProduct(req.params.id, product, req.params.privateKey);
+        let result = await bc.buyProduct(req.params.id, req.session.Account);
         if (result === "error") {
             res.json(result);
         } else {
@@ -139,15 +146,17 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /************ Sell a product ************/
 
-    /** Sell **/
     .get('/sellNewProduct/:json', async (req, res) => {
         let receipt = await bc.sellItem(req.params.json);
         res.json(receipt);
     })
 
-    .get('/ongoingSales/:address', async (req, res) => {
-        let Ids = await EventsModule.GetSoldRefs(req.params.address); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+    /************ Ongoing sales ************/
+
+    .get('/ongoingSales/', async (req, res) => {
+        let Ids = await EventsModule.GetSoldRefs(req.session.Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
         res.json(Ids);
     })
 
@@ -164,7 +173,7 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
 
-    /** Close the server **/
+    /************ Close the server ************/
 
     .get('/closeserver', function (req, res) {
         res.render('closeServer.ejs');
