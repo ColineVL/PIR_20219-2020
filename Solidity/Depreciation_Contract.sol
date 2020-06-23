@@ -2,7 +2,7 @@
 
 pragma solidity >=0.5.0 <0.7.0;
 
-// To avoid overflow
+// To avoid overflow in certain functions
 import "./node_modules/@openzeppelin/contracts/math/SafeMath.sol";
 
 contract Depreciation_Contract{
@@ -67,8 +67,6 @@ contract Depreciation_Contract{
         uint128 numberOfDisputes;
         // Needed to distribute redeemFunds
         uint128 completedClients;
-        // !!!!!!!!!! Needs to be sent in private channel
-        // !!!!!!!!!! mapping (address => bytes32) encryptedKey;
 
         /*
             The client provides the encryptedKey's hash that would allow the provided to provider the decoding key
@@ -81,6 +79,15 @@ contract Depreciation_Contract{
 
     // Public will set up getters for each (easier for web3js call/send functions)
     DataReference[] public dataReferences;
+
+    /*
+        Get functions
+    */
+
+    function getNumberOfData(uint _referenceId) view external returns(uint128 numberOfData){
+        return dataReferences[_referenceId].numberOfData;
+    }
+
 
     function getReferenceCurrentPrice(uint _referenceId) view public returns(uint price){
         uint _price = dataReferences[_referenceId].initialPrice;
@@ -110,11 +117,6 @@ contract Depreciation_Contract{
 
         // if no depreciation type index is correct it will return the initial price (constant value / no depreciation)
         return _price;
-    }
-
-
-    function getNumberOfData(uint _referenceId) view external returns(uint128 numberOfData){
-        return dataReferences[_referenceId].numberOfData;
     }
 
 

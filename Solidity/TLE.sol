@@ -12,18 +12,22 @@ contract TLE_Contract is Provider_Depreciation_Contract {
         string TLE;
     }
 
-    // mapping between referenceId and the data (here two line element as a string)
+    // mapping between referenceId and the data
     mapping (uint => structTLE[]) public TLEs;
 
     event newTLE(uint indexed referenceId, string TLE);
 
     function setTLE(uint _referenceId, string memory _spaceObject, string memory _TLE) onlyProvider(_referenceId) public{
 
+        /*
+            Creating a two line element object and inserting data
+        */
         structTLE memory _newObs;
         _newObs.spaceObject = _spaceObject;
         _newObs.TLE = _TLE;
-
         TLEs[_referenceId].push(_newObs);
+
+        // Needed to see at the end if the provider uploaded the number of data promised
         dataReferences[_referenceId].numberOfData ++;
 
         emit newTLE(_referenceId, _spaceObject);

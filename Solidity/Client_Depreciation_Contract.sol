@@ -9,7 +9,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
 
     // Checks if the msg.sender bought the referenceId
     modifier isClient(uint _referenceId) {
-        require(dataReferences[_referenceId].isClient[msg.sender] == true);
+        require(dataReferences[_referenceId].clientFunds[msg.sender] > 0);
         _;
     }
 
@@ -95,16 +95,20 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         uint funds,
         uint time);
 
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!! Needs comments
     function withdrawDisputeFunds(uint _referenceId, uint funds) internal {
+
         // Cannot withdraw more than the available funds
         require(dataReferences[_referenceId].withdrawableFunds >= funds);
+
         // Needed for the view getClientDisputes function
         dataReferences[_referenceId].numberOfDisputes ++;
+
         // Needed to prevent multiple raising disputes for one client
         dataReferences[_referenceId].clientFunds[msg.sender] = 0;
+
         // Provider cannot withdraw the disputed funds anymore
         dataReferences[_referenceId].withdrawableFunds -= funds;
+
         // Funds sent back to the client
         (msg.sender).transfer(funds);
 
@@ -112,7 +116,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     }
 
 
-    function raiseDispute(uint _referenceId) external isClient(_referenceId) {
+    function raiseDispute(uint _referenceId) external {
 
         uint funds = dataReferences[_referenceId].clientFunds[msg.sender];
 
@@ -126,7 +130,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         // Checks if provider hasn't already withdrew funds
         require(dataReferences[_referenceId].withdrawableFunds >= funds);
 
-        // !!!!!!!!!!!!!!!!!!!!!!!!!! Add comments
+        // If provider hasn't send any decoder key the client can directly take back his funds
         if (dataReferences[_referenceId].keyDecoder[msg.sender] == 0) {
             withdrawDisputeFunds(_referenceId, funds);
         }
