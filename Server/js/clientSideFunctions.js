@@ -242,8 +242,8 @@ function callbackGetReferences(param) {
     let html = "";
     param.forEach(function (reference) {
         html += "<details>";
-        html += "<summary>" + reference.returnValues["referenceId"] + "</summary>";
-        html += "<p>" + reference.returnValues["description"] + "</p>";
+        html += "<summary>" + reference.returnValues["description"] + "</summary>";
+        html += "<p>Reference Id: " + reference.returnValues["referenceId"] + "</p>";
         html += "<p>Minimum data: " + reference.returnValues["minimumData"] + "</p>";
         html += "<p class='link' onclick=getRefForSaleInfo(" + reference.returnValues["referenceId"] + ")>Get more info</p>";
         html += "</details>";
@@ -258,9 +258,10 @@ function getReferences() {
 
 /** Product info **/
 function getRefForSaleInfo(id) {
-    const product = references[id];
-    console.log(product);
+    loadXMLDoc("getrefinfo/" + id + "/" + myAccount.privateKey, callbackgetRefForSaleInfo);
+}
 
+function callbackgetRefForSaleInfo(product) {
     let html = "<table><tbody>";
     html += "<tr>";
     html += "<td>Reference Id</td>";

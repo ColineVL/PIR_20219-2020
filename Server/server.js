@@ -107,11 +107,11 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(Ids);
     })
 
-    .get('/getrefinfo/:id', async (req, res) => {
-        const product = await EventsModule.GetRef(req.params.id);
-        // const actualPrice = await
-        // requete chercher le prix actuel, le changer dans product
-
+    .get('/getrefinfo/:id/:privateKey', async (req, res) => {
+        let product = await EventsModule.GetRef(req.params.id);
+        product = product[0].returnValues;
+        const actualPrice = await bc.getCurrentPrice(req.params.privateKey, req.params.id);
+        product["actualPrice"] = actualPrice;
         res.json(product);
     })
 
