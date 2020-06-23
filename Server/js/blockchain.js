@@ -26,8 +26,11 @@ const Diffie = database.newDiffieSchema();
 const Reference_Seller = database.newReference_SellerSchema();
 const Reference_Client = database.newReference_ClientSchema();
 
-let prime = crypto.GetPrime(32);
 
+//let prime = crypto.GetPrime(32);
+(async () => {
+    prime = await  readwrite.ReadPrimeAndGen(__dirname + '/../Database/PrimeAndGenerator.txt');
+})();
 
 /********************************
  * Variables
@@ -126,7 +129,6 @@ async function sellItem(price, description, durationDays, durationHours, duratio
     // const description = jsonInfo["descr"];
     // const privateKey = jsonInfo["privateKey"];
     // const account = web3.eth.accounts.privateKeyToAccount(privateKey);
-
     let durationInSecs = ((durationDays*24 +durationHours*60) + durationMinutes)*60 ;
 
     /*DH keys, to be stored and public sent*/
@@ -148,7 +150,7 @@ async function sellItem(price, description, durationDays, durationHours, duratio
         receipt.id = id;
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
         await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt',K)
-        return receipt;
+        return [receipt,id];
     } catch (err) {
         return err;
     }
@@ -175,6 +177,7 @@ async function buyProduct(id, product, privateKey) {
 }
 
 async function manageID(id, privateKey) {
+
     const account = web3.eth.accounts.privateKeyToAccount(privateKey);
     let product = await EventsModule.GetRef(id);
     const clients = await transactions.GetClients(account,id);
@@ -202,7 +205,7 @@ async function sendEncryptedEncodedKey(id, privateKey) {
 
     let myDH_obj = await readwrite.ReadAsObjectDH(__dirname +'/../Database/DH' +id.toString() + '_' + Account.address.toString() +'.txt');
 
-    let K = readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
+    let K = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
     // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
 
     let done = 0 // To check how many were succesful at the end...
@@ -214,6 +217,7 @@ async function sendEncryptedEncodedKey(id, privateKey) {
         let K2 = crypto.RandomBytes(7);
 
         let toEncrypt = crypto.OTP(K,K2)
+
         let toSend = crypto.OTP(secret,toEncrypt)//.slice(0,4);
         let hashed = crypto.Hash(toEncrypt);
 
@@ -247,10 +251,7 @@ async function sendDecoderKey(id, privateKey) {
         let correctHash = myRef_obj.hash;
 
         let receivedHash = await EventsModule.GetHashFromClientClient(client_address,id);
-        console.log("Received Hash" + receivedHash)
-        console.log("Correct Hash" + correctHash)
-        console.log("sent K2 :" )
-        console.log(myRef_obj.K2)
+
         if (correctHash == receivedHash){
             let receipt = await transactions.sendDecoderKey(Account,id, client_address, myRef_obj.K2);
             if (receipt) {
@@ -284,7 +285,6 @@ async function sendClientHash(id, privateKey) {
     let receipt = transactions.SendHashToProvider(Account,id,HashTobeSent)
     // Now we can do the OTP
 
-    console.log("sent hash : " + HashTobeSent)
     if (receipt){
         done =1;
     }
@@ -295,14 +295,14 @@ async function sendClientHash(id, privateKey) {
 async function ComputeK(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
-    let RefBuyer = readwrite.ReadAsObjectRefClient(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt')
-    let K2 = EventsModule.GetClientDecoder(id,Account.address);
-    RefBuyer.K2 = K2;
+    let RefBuyer = await readwrite.ReadAsObjectRefClient(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt')
+    let K2_event = await EventsModule.GetClientDecoder(id,Account.address);
 
-    console.log(RefBuyer.KxorK2)
-    console.log(K2)
-    await readwrite.WriteAsRefBuyer(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt',RefBuyer.KxorK2, RefBuyer.K2)
-    let K = crypto.OTP(RefBuyer.KxorK2, RefBuyer.K2)
+    let K2 = Buffer.from(web3.utils.hexToBytes(K2_event[0].returnValues.keyDecoder)).slice(0,7) // The actual value
+
+    RefBuyer.K2 = K2;
+   await readwrite.WriteAsRefBuyer(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt',RefBuyer.KxorK2, RefBuyer.K2)
+    let K =  crypto.OTP(RefBuyer.KxorK2, RefBuyer.K2)
 
     console.log(K)
     return K;

@@ -172,7 +172,8 @@ console.log(start)
 
 
 
-const cryptop = require('./CryptoModule');
-let pri = cryptop.GetPrime(32);
 
-console.log(pri)
+console.log("last")
+const fer = new Buffer.from([181,58,3,198,39,167,252],'hex')
+console.log(fer)
+console.log(fer.toString('hex'))

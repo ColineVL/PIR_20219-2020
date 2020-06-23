@@ -224,6 +224,20 @@ app.use('/public', express.static(__dirname + '/public'))
             res.render('SellerMenu.ejs',{account : Account});
         }
     })
+    .get('/ProductInfoSeller', async (req, res) => {
+        if (Account) {
+            let id = req.query.id
+            let K = await readwrite.Read_K(__dirname + '/Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
+
+            let num = await transactions.GetClients(Account,id)
+
+
+            res.render('ProductInfoSeller.ejs',{num : num.length, K: K, id:id});
+        } else{
+            res.render('SellerMenu.ejs',{account : Account});
+        }
+    })
+
 
     /* Sell a new product */
     .get('/SellNew', async (req, res) => {
@@ -246,8 +260,8 @@ app.use('/public', express.static(__dirname + '/public'))
 
             let result = await bc.sellItem(price, description, durationDays, durationHours, durationMinutes, Account, minData, depreciationType,deposit);
 
-            if (result) {
-                res.redirect('/ForSale');
+            if (result[0]) {
+                res.redirect('/ProductInfoSeller?id='+ result[1]);
             } else {
                 res.redirect('/SellError');
             }
@@ -272,7 +286,6 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Interface to manage a certain id being sold*/
     .get('/ManageId/', async (req, res) => {
         if (Account) {
-            console.log(req.query.id, Account.privateKey); //TODO DELETE
             const id = req.query.id ;
             const [product, total_clients, num_clients_step1, num_clients_step2] = await bc.manageID(id, Account.privateKey);
             // TODO finish coding function.. to get number of disputes
