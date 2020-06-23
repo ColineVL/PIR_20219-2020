@@ -250,7 +250,7 @@ async function sendDecoderKey(id, privateKey) {
         console.log("Received Hash" + receivedHash)
         console.log("Correct Hash" + correctHash)
         console.log("sent K2 :" )
-        console.log(K2)
+        console.log(myRef_obj.K2)
         if (correctHash == receivedHash){
             let receipt = await transactions.sendDecoderKey(Account,id, client_address, myRef_obj.K2);
             if (receipt) {
