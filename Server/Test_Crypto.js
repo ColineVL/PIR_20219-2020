@@ -169,6 +169,10 @@ console.log(web3.utils.bytesToHex(Kop))
 const start = Date.now();
 console.log(start)
 
-let decoder = 24112735903389906;
 
-console.log(decode_buff)
+
+
+const cryptop = require('./CryptoModule');
+let pri = cryptop.GetPrime(32);
+
+console.log(pri)
