@@ -6,10 +6,10 @@ import "./Client_Depreciation_Contract.sol";
 
 contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
 
-    event NewDataReference(
+    event newDataReference(
         uint indexed referenceId,
         address indexed provider,
-        uint price,
+        uint initialPrice,
         uint insuranceDeposit,
         uint128 minimumData,
         uint128 deployTime,
@@ -19,29 +19,27 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         string description);
 
     //function createDataReference
-    function createDataReference(uint _price,
+    function createDataReference(uint _initialPrice,
         uint128 _minimumData,
         uint128 _referenceDuration,
         bytes32 _publicKeyDH,
         uint8 _depreciationType,
         string memory _description) payable public {
 
-        // Creating new data reference
+
+        /*
+            Creating data reference object and inserting data
+        */
+
         DataReference memory newReference;
 
         // Sets price and depreciation. Provider won't be able to change it later.
-        newReference.initialPrice = _price;
-
+        newReference.initialPrice = _initialPrice;
         newReference.insuranceDeposit = msg.value;
-
         newReference.withdrawableFunds = msg.value;
-
         newReference.minimumData = _minimumData;
-
         newReference.depreciationType = _depreciationType;
-
         newReference.deployTime = uint128(now);
-
         newReference.endTime = _referenceDuration + uint128(now);
         // To avoid overflow and any malicious attempts to withdraw money when not supposed
         require(newReference.endTime > uint128(now));
@@ -51,10 +49,10 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         // Adding reference to the blockchain's storage
         dataReferences.push(newReference);
 
-        emit NewDataReference(
+        emit newDataReference(
             dataReferences.length - 1,
             msg.sender,
-            _price,
+            _initialPrice,
             msg.value,
             _minimumData,
             uint128(now),
@@ -62,10 +60,6 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
             _publicKeyDH,
             _depreciationType,
             _description);
-
-        //        // !!!!!!!!!!!!! Maybe we will not use data ID counter also use SafeMath to add the counter
-        //        referenceIdCounter = referenceIdCounter.add(1);
-
     }
 
     // Give access to the provider only
@@ -107,6 +101,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     event referenceKey(uint indexed referenceId, bytes32 referenceKey);
 
     function setReferenceKey(uint _referenceId, bytes32 _referenceKey) onlyProvider(_referenceId) external {
+
         // The key once set cannot be modified to avoid scams
         if (dataReferences[_referenceId].referenceKey == 0) {
             dataReferences[_referenceId].referenceKey = _referenceKey;
@@ -117,8 +112,10 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     event keyDecoder(uint indexed referenceId, address indexed client, bytes32 keyDecoder);
 
     function setKeyDecoder(uint _referenceId, address _client, bytes32 _keyDecoder) onlyProvider(_referenceId) external {
+
         // Condition necessary so that the provider does not provide a key decoder if the client removed his funds
         if (dataReferences[_referenceId].clientFunds[_client] > 0) {
+
             // The key once set cannot be modified to avoid scams
             if (dataReferences[_referenceId].keyDecoder[_client] == 0) {
                 dataReferences[_referenceId].keyDecoder[_client] = _keyDecoder;
@@ -153,12 +150,13 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
 
             client = dataReferences[_referenceId].clients[i];
 
-            // If condition that checks that the client Id has a dispute
+            // If condition that checks that the client Id has claimed his funds (raised a dispute)
             if (dataReferences[_referenceId].clientFunds[client] == 0) {
                 clientDisputes[i] = client;
             }
         }
         return (clientDisputes);
     }
+
 
 }
