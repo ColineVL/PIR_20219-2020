@@ -32,11 +32,6 @@ const resultTransactionItem = {
     name: "resultTransactionItem",
 };
 
-const checkABalanceItem = {
-    title: "Check a balance",
-    name: "checkABalanceItem",
-};
-
 const newAccountItem = {
     title: "Create an account",
     name: "newAccountItem",
@@ -156,27 +151,6 @@ myLayout.registerComponent('newAccountItem', function (container, state) {
         '<p>Your private key:</p>' +
         '<p id="newAccount_privatekey"></p>' +
         '<button onclick="logInWithNewAccount()">Sign in with this account</button>' +
-        '</div>'
-    );
-});
-
-myLayout.registerComponent('checkABalanceItem', function (container, state) {
-    container.getElement().html(
-        '<div class="container">' +
-        '<h1>Enter an address to get a balance.</h1>' +
-        '<p class="message" id="balance_message"></p>' +
-        '<input id="balance_addressAsked" type="text">' +
-        '<button onclick="getBalance()">Check balance</button>' +
-        '<table id="balance_table">' +
-        '<tr>' +
-        '<td>Address</td>' +
-        '<td id="balance_address">/</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Balance (in ETH)</td>' +
-        '<td id="balance_value">/</td>' +
-        '</tr>' +
-        '</table>' +
         '</div>'
     );
 });
@@ -369,7 +343,6 @@ addMenuItem(sellNewItem);
 addMenuItem(ongoingSalesItem);
 $('#menuContainer').append("<h2>Debug</h2>");
 addMenuItem(createTransactionItem);
-addMenuItem(checkABalanceItem);
 $('#menuContainer').append("<h3><a href='closeserver'>Close server</a></h3>");
 
 /********************************

@@ -103,13 +103,6 @@ app.use('/public', express.static(__dirname + '/public'))
         res.json(info);
     })
 
-    .get('/getbalance/:addressToCheck', async (req, res) => {
-        const bal = await bc.getBalance(req.params.addressToCheck);
-        res.json(bal);
-    })
-
-
-
     .get('/maketransaction/:jsonInfo', async (req, res) => {
         const receipt = await bc.createTransaction(req.params.jsonInfo);
         res.json(receipt);

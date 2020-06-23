@@ -63,10 +63,6 @@ function displayTable(dict) {
  ********************************/
 
 /** Load my account **/
-// function callbackGetMyBalance(param) {
-//     $("#myAccount_value").html(param);
-// }
-
 function loadMyAccount() {
     if (connected) {
         $('#myAccount_notConnected').hide();
@@ -76,7 +72,6 @@ function loadMyAccount() {
     } else {
         $('#myAccount_connected').hide();
         $('#myAccount_notConnected').show();
-        // loadXMLDoc("getbalance/" + myAccount.address, callbackGetMyBalance);
     }
 }
 
@@ -123,23 +118,6 @@ function callbackConnectNewAccount(json) {
 function logInWithNewAccount() {
     let privateKey = $("#newAccount_privatekey").text();
     loadXMLDoc("connect/" + privateKey, callbackConnectNewAccount);
-}
-
-/** Get the balance of an account **/
-function callbackGetBalance(param) {
-    $("#balance_value").html(param);
-}
-
-function getBalance() {
-    let addressToCheck = $("#balance_addressAsked").val();
-    if (addressToCheck === "") {
-        $("#balance_message").show();
-        $("#balance_message").html("Please enter an address");
-    } else {
-        $("#balance_message").hide();
-        loadXMLDoc("getbalance/" + addressToCheck, callbackGetBalance);
-        $("#balance_address").html(addressToCheck);
-    }
 }
 
 /********************************
