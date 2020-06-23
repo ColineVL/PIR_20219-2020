@@ -78,6 +78,10 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
 
     }
 
+    function getKeyDecoder(uint _referenceKey) isClient(_referenceKey) view external returns (bytes32){
+        return dataReferences[_referenceKey].keyDecoder[msg.sender];
+    }
+
     /*
     ---------------------------------------------
     Client dispute functions
@@ -128,7 +132,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
 
         else if (dataReferences[_referenceId].referenceKey != 0) {
 
-            uint _xor = dataReferences[_referenceId].referenceKey ^ dataReferences[_referenceId].keyDecoder[msg.sender];
+            bytes32 _xor = dataReferences[_referenceId].referenceKey ^ dataReferences[_referenceId].keyDecoder[msg.sender];
 
             // Condition comparing the hashes of encoded keys to determine if the right key was given
             if (keccak256(abi.encode(_xor)) != dataReferences[_referenceId].encryptedKeyHash[msg.sender]) {
@@ -148,8 +152,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         else if (now > dataReferences[_referenceId].endTime) {
             withdrawDisputeFunds(_referenceId, funds);
         }
-
-
     }
+
 
 }

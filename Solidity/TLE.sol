@@ -29,8 +29,15 @@ contract TLE_Contract is Provider_Depreciation_Contract {
         emit newTLE(_referenceId, _spaceObject);
     }
 
-    function getTLEs (uint _referenceId) external view returns(structTLE[] memory){
-        return TLEs[_referenceId];
+    function getTLEs (uint _referenceId) external view returns(bytes32 ,structTLE[] memory){
+        if((now < dataReferences[_referenceId].endTime) && (dataReferences[_referenceId].referenceKey == 0)){
+            // Conditions to check if the request comes from a client or not
+            require(dataReferences[_referenceId].keyDecoder[msg.sender] != 0 || msg.sender == dataReferences[_referenceId].provider);
+            return (dataReferences[_referenceId].keyDecoder[msg.sender], TLEs[_referenceId]);
+        }
+        else{
+            return (dataReferences[_referenceId].referenceKey, TLEs[_referenceId]);
+        }
     }
 
 }

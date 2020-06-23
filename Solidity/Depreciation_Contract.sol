@@ -24,7 +24,7 @@ contract Depreciation_Contract{
         uint initialPrice;
         uint redeemFunds;
 
-        uint referenceKey; //Take care of hackers, must be long enough ... to be determined
+        bytes32 referenceKey; //Take care of hackers, must be long enough ... to be determined
         /*
         contractDuration is too long, it must be shortened with:
            - Changing data type with a risk not to optimize storage
@@ -75,7 +75,7 @@ contract Depreciation_Contract{
             Also this is used to compare this hash with the real key later provided publicly by the provider
         */
         mapping (address => bytes32) encryptedKeyHash;
-        mapping (address => uint) keyDecoder;
+        mapping (address => bytes32) keyDecoder;
     }
 
 
