@@ -106,16 +106,22 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Availabe References to buy */
     .get('/ForSale', async (req, res) => {
         let Ids =await EventsModule.GetAvailableRefs(); // TODO: Verify FUNCTION HERE TO GET REFERENCES
-
-        res.render('ForSale.ejs',{account : Account, Ids: Ids});
+        // let price
+        //     let endDate =
+        res.render('ForSale.ejs',{account : Account, Ids: Ids})//, price:price, endDate:endDate});
     })
 
     /* See a specific reference */
     .get('/ProductId/', async (req, res) => {
-        const id = req.query.id ;
-        let product = await EventsModule.GetRef(id)
+        if (Account) {
+            const id = req.query.id ;
+            let product = await EventsModule.GetRef(id)
+            let price= await transactions.GetCurrentPrice(Account,id)
 
-        res.render('Product.ejs', {product: product[0]});
+            res.render('Product.ejs', {product: product[0], price:price});
+        } else{
+            res.render('BuyerMenu.ejs',{account : Account});
+        }
     })
 
     /* Buy a specific reference */
@@ -220,10 +226,11 @@ app.use('/public', express.static(__dirname + '/public'))
             const description = req.body.description ;
             const minData = req.body.minData;
             const depreciationType = req.body.depreciationType;
+            const deposit = req.body.insuranceDeposit;
             // TODO Add to JSON
             let jsonInfo = {"price":price, "durationDays":durationDays, "descr":description, "privateKey":Account.privateKey};
 
-            let result = await bc.sellItem(price, description, durationDays, Account, minData, depreciationType);
+            let result = await bc.sellItem(price, description, durationDays, Account, minData, depreciationType,deposit);
             console.log(result);
             if (result) {
                 res.redirect('/ForSale');

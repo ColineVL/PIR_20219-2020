@@ -168,3 +168,9 @@ console.log(web3.utils.bytesToHex(Kop))
 
 const start = Date.now();
 console.log(start)
+
+const event = Date.now()//new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
+
+const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+console.log(event.toLocaleDateString('en-UK', options));
