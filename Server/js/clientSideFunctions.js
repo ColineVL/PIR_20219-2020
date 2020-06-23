@@ -259,6 +259,7 @@ function getReferences() {
 /** Product info **/
 function getRefForSaleInfo(id) {
     const product = references[id];
+    console.log(product);
 
     let html = "<table><tbody>";
     html += "<tr>";
@@ -273,7 +274,7 @@ function getRefForSaleInfo(id) {
 
     html += "<tr>";
     html += "<td>Current price</td>";
-    html += "<td id='productInfo_currentPrice'>" + product["price"] + "</td>";
+    html += "<td id='productInfo_currentPrice'>" + product["actualPrice"] + "</td>";
     html += "</tr>";
 
     const keysToDisplay = ["provider", "insuranceDeposit", "minimumData", "depreciationType"];
@@ -296,7 +297,7 @@ function getRefForSaleInfo(id) {
     html += "</tr>";
 
     html += "<tr>";
-    html += "<td>End Timet</td>";
+    html += "<td>End Time</td>";
     let endTime = Number(product["endTime"]);
     endTime = new Date(endTime);
     endTime = endTime.toLocaleString();

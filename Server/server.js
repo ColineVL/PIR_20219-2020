@@ -108,7 +108,10 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     .get('/getrefinfo/:id', async (req, res) => {
-        const product = Ids[id];
+        const product = await EventsModule.GetRef(req.params.id);
+        // const actualPrice = await
+        // requete chercher le prix actuel, le changer dans product
+
         res.json(product);
     })
 

@@ -2,15 +2,15 @@ const express = require('express');
 const session = require('cookie-session'); // Charge le middleware de sessions
 const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
 const bc = require('./js/blockchain');
-const transactions = require('./js/SignedTransactionModule');
-const crypto = require('./js/CryptoModule');
+// const transactions = require('./js/SignedTransactionModule');
+// const crypto = require('./js/CryptoModule');
 const EventsModule = require('./js/EventsModule');
 const readwrite = require('./js/ReadWriteModule');
 
-let prime = crypto.GetPrime(32);
-const Web3 = require('web3');
-const provider = 'http://192.168.33.115:8545';
-const web3 = new Web3(new Web3.providers.HttpProvider(provider))
+// let prime = crypto.GetPrime(32);
+// const Web3 = require('web3');
+// const provider = 'http://192.168.33.115:8545';
+// const web3 = new Web3(new Web3.providers.HttpProvider(provider))
 
 /********************************
  * Create the app
@@ -87,7 +87,7 @@ app.use('/public', express.static(__dirname + '/public'))
         if (Account) {
             const id = req.query.id ;
             let product = await EventsModule.GetRef(id)
-            let price= await transactions.GetCurrentPrice(Account,id)
+            let price = await bc.getCurrentPrice(Account.privateKey,id);
 
             res.render('Product.ejs', {product: product[0], price:price});
         } else{
@@ -100,7 +100,7 @@ app.use('/public', express.static(__dirname + '/public'))
         if (Account) {
             const id = req.query.id ;
             let product = await EventsModule.GetRef(id)
-            let result = await bc.buyProduct(id, product, Account.privateKey);
+            let result = await bc.buyProduct(id, Account.privateKey);
             if (result === "error") {
                 res.redirect('/BuyError');
             } else {
@@ -197,10 +197,10 @@ app.use('/public', express.static(__dirname + '/public'))
     })
     .get('/ProductInfoSeller', async (req, res) => {
         if (Account) {
-            let id = req.query.id
+            let id = req.query.id;
             let K = await readwrite.Read_K(__dirname + '/Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
 
-            let num = await transactions.GetClients(Account,id)
+            let num = await bc.getClients(Account.privateKey,id)
 
 
             res.render('ProductInfoSeller.ejs',{num : num.length, K: K, id:id});
@@ -218,7 +218,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .post('/PostProduct', async(req, res) =>{
         if (Account) {
             /* Info to be sent*/
-            const price = req.body.price ;
+            const initialPrice = req.body.price ;
             const durationDays= req.body.DurationDays ;
             const durationHours= req.body.DurationHours ;
             const durationMinutes= req.body.DurationMinutes ;
@@ -227,9 +227,9 @@ app.use('/public', express.static(__dirname + '/public'))
             const depreciationType = req.body.depreciationType;
             const deposit = req.body.insuranceDeposit;
             // TODO Add to JSON
-            let jsonInfo = {"price":price, "durationDays":durationDays, "descr":description, "privateKey":Account.privateKey};
+            let jsonInfo = {"price":initialPrice, "durationDays":durationDays, "descr":description, "privateKey":Account.privateKey};
 
-            let result = await bc.sellItem(price, description, durationDays, durationHours, durationMinutes, Account, minData, depreciationType,deposit);
+            let result = await bc.sellItem(initialPrice, description, durationDays, durationHours, durationMinutes, Account, minData, depreciationType,deposit);
 
             if (result[0]) {
                 res.redirect('/ProductInfoSeller?id='+ result[1]);
