@@ -235,6 +235,8 @@ app.use('/public', express.static(__dirname + '/public'))
             /* Info to be sent*/
             const price = req.body.price ;
             const durationDays= req.body.contractDurationDays ;
+            const durationHours= req.body.contractDurationHours ;
+            const durationMinutes= req.body.contractDurationMinutes ;
             const description = req.body.description ;
             const minData = req.body.minData;
             const depreciationType = req.body.depreciationType;
@@ -242,7 +244,7 @@ app.use('/public', express.static(__dirname + '/public'))
             // TODO Add to JSON
             let jsonInfo = {"price":price, "durationDays":durationDays, "descr":description, "privateKey":Account.privateKey};
 
-            let result = await bc.sellItem(price, description, durationDays, Account, minData, depreciationType,deposit);
+            let result = await bc.sellItem(price, description, durationDays, durationHours, durationMinutes, Account, minData, depreciationType,deposit);
 
             if (result) {
                 res.redirect('/ForSale');

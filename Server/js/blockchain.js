@@ -119,7 +119,7 @@ async function getBlockInfo(blocknumber) {
  * Sell new item
  ********************************/
 
-async function sellItem(price, description, durationDays, account,  minData, depreciationType, deposit){//jsonInfo) {
+async function sellItem(price, description, durationDays, durationHours, durationMinutes, account,  minData, depreciationType, deposit){//jsonInfo) {
     // jsonInfo = JSON.parse(jsonInfo);
     // const price = jsonInfo["price"];
     // const contractEndTime = jsonInfo["durationDays"];
@@ -127,7 +127,7 @@ async function sellItem(price, description, durationDays, account,  minData, dep
     // const privateKey = jsonInfo["privateKey"];
     // const account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
-    let durationInSecs = durationDays *24*60*60
+    let durationInSecs = ((durationDays*24 +durationHours*60) + durationMinutes)*60 ;
 
     /*DH keys, to be stored and public sent*/
     const keys = crypto.DiffieHellmanGenerate(prime);
