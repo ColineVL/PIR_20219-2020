@@ -234,9 +234,9 @@ app.use('/public', express.static(__dirname + '/public'))
         if (Account) {
             /* Info to be sent*/
             const price = req.body.price ;
-            const durationDays= req.body.contractDurationDays ;
-            const durationHours= req.body.contractDurationHours ;
-            const durationMinutes= req.body.contractDurationMinutes ;
+            const durationDays= req.body.DurationDays ;
+            const durationHours= req.body.DurationHours ;
+            const durationMinutes= req.body.DurationMinutes ;
             const description = req.body.description ;
             const minData = req.body.minData;
             const depreciationType = req.body.depreciationType;
@@ -283,10 +283,10 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     /* Interface to send crypted version of K2 keys to the ones who haven't got it yet*/
-    .get('/SendCryptedK2/', async (req, res) => {
+    .get('/SendEncryptedEncodedKey/', async (req, res) => {
         if (Account) {
             const id = req.query.id ;
-            let [num, done] = await bc.sendCryptedK2(id, Account.privateKey);
+            let [num, done] = await bc.sendEncryptedEncodedKey(id, Account.privateKey);
             res.render('SentToClients.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});
@@ -294,10 +294,10 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     /* Interface to send K2 keys to the ones who responded with a hash*/
-    .get('/SendClientK2/', async (req, res) => {
+    .get('/SendDecoderKey/', async (req, res) => {
         if (Account) {
             const id = req.query.id ;
-            let [num, done] = await bc.sendK2(id, Account.privateKey);
+            let [num, done] = await bc.sendDecoderKey(id, Account.privateKey);
             res.render('SentK2.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs',{account : Account});

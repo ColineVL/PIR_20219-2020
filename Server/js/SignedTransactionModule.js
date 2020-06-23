@@ -134,8 +134,8 @@ module.exports = {
         return price;
     },
 
-    /*Send K2 xor K to the correct client (via the contract) from the provider*/
-    SendEncryptedK2ToClient: async function (account,id, client_address, encryptedEncodedKey) {
+    /*Send K2 xor K xor K3 to the correct client (via the contract) from the provider*/
+    sendEncryptedEncodedKey: async function (account,id, client_address, encryptedEncodedKey) {
         let bin = web3.utils.bytesToHex(encryptedEncodedKey);
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
@@ -158,7 +158,7 @@ module.exports = {
     },
 
     /*Send correct K2 to the correct client (via the contract) from the provider*/
-    SendK2ToClient: async function (account,id, client_address, Key) {
+    sendDecoderKey: async function (account,id, client_address, Key) {
         let bin = web3.utils.bytesToHex(Key);
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")

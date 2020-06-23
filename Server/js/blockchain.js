@@ -193,7 +193,7 @@ async function manageID(id, privateKey) {
     return [product, total_clients, num_clients_step1, num_clients_step2];
 }
 
-async function sendCryptedK2(id, privateKey) {
+async function sendEncryptedEncodedKey(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
     const all_clients = await transactions.GetClients(Account,id);
     let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
@@ -219,7 +219,7 @@ async function sendCryptedK2(id, privateKey) {
 
         await readwrite.WriteAsRefSeller(__dirname +'/../Database/RefSeller' +id.toString() + '_' + ClientsToDo[i] +'.txt',hashed,K2)
 
-        let receipt = await transactions.SendEncryptedK2ToClient(Account,id, client_address, toSend);
+        let receipt = await transactions.sendEncryptedEncodedKey(Account,id, client_address, toSend);
         if (receipt) {
             done += 1;
         }
@@ -227,7 +227,7 @@ async function sendCryptedK2(id, privateKey) {
     return [ClientsToDo.length, done];
 }
 /*Function to handle sending the appropriate K2 to every client which responded with a correct hash*/
-async function sendK2(id, privateKey) {
+async function sendDecoderKey(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
     let ClientsWhoSentHashes = await EventsModule.GetClientsWhoSentHashes(id); // This is a list of events corresponding to clients who sent me a hash
@@ -252,7 +252,7 @@ async function sendK2(id, privateKey) {
         console.log("sent K2 :" )
         console.log(K2)
         if (correctHash == receivedHash){
-            let receipt = await transactions.SendK2ToClient(Account,id, client_address, myRef_obj.K2);
+            let receipt = await transactions.sendDecoderKey(Account,id, client_address, myRef_obj.K2);
             if (receipt) {
                 done += 1;
             }
@@ -296,7 +296,7 @@ async function ComputeK(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
     let RefBuyer = readwrite.ReadAsObjectRefClient(__dirname +'/../Database/RefBuyer' + id.toString() + '_' + Account.address +'.txt')
-    let K2 = EventsModule.GetClientK2(id,Account.address);
+    let K2 = EventsModule.GetClientDecoder(id,Account.address);
     RefBuyer.K2 = K2;
 
     console.log(RefBuyer.KxorK2)
@@ -330,8 +330,8 @@ module.exports = {
     sellItem,
     buyProduct,
     manageID,
-    sendCryptedK2,
+    sendEncryptedEncodedKey,
     sendClientHash,
-    sendK2,
+    sendDecoderKey,
     ComputeK,
 };

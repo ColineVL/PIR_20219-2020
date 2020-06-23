@@ -10,7 +10,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         uint indexed referenceId,
         address indexed provider,
         uint price,
-        uint redeemFunds,
+        uint insuranceDeposit,
         uint128 minimumData,
         uint128 deployTime,
         uint128 endTime,
@@ -32,7 +32,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         // Sets price and depreciation. Provider won't be able to change it later.
         newReference.initialPrice = _price;
 
-        newReference.redeemFunds = msg.value;
+        newReference.insuranceDeposit = msg.value;
 
         newReference.withdrawableFunds = msg.value;
 

@@ -33,11 +33,12 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     ---------------------------------------------
     */
 
-    event NewClient(
+    event newClient(
         uint indexed referenceId,
         address indexed client,
         uint fund,
-        bytes32 publicKeyDH);
+        bytes32 publicKeyDH,
+        uint time);
 
     function buyReference(uint _referenceId, bytes32 _publicKeyDH) isPayed(_referenceId) payable external {
         // Checks if referenceId is valid
@@ -54,27 +55,27 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         dataReferences[_referenceId].clientFunds[msg.sender] = msg.value;
         dataReferences[_referenceId].withdrawableFunds += msg.value;
 
-        emit NewClient(_referenceId, msg.sender, msg.value, _publicKeyDH);
+        emit newClient(_referenceId, msg.sender, msg.value, _publicKeyDH, now);
     }
 
-    event encryptedKeyHash(
+    event encodedKeyHash(
         uint indexed referenceId,
         address indexed client,
-        bytes32 encryptedKeyHash);
+        bytes32 encodedKeyHash);
 
 
-    function setEncryptedHashedKey(uint _referenceId, bytes32 _encryptedKeyHash) external isClient(_referenceId) {
+    function setEncodedHashedKey(uint _referenceId, bytes32 _encodedKeyHash) external isClient(_referenceId) {
 
         /*
         Condition to allow the client to provide once the hash of the encrypted key
         Necessary to avoid confusion for the provider or changing the value after the provider has posted the decoder
         */
 
-        if (dataReferences[_referenceId].encryptedKeyHash[msg.sender] == 0) {
-            dataReferences[_referenceId].encryptedKeyHash[msg.sender] == _encryptedKeyHash;
+        if (dataReferences[_referenceId].encodedKeyHash[msg.sender] == 0) {
+            dataReferences[_referenceId].encodedKeyHash[msg.sender] == _encodedKeyHash;
         }
 
-        emit encryptedKeyHash(_referenceId, msg.sender, _encryptedKeyHash);
+        emit encodedKeyHash(_referenceId, msg.sender, _encodedKeyHash);
 
     }
 
@@ -117,7 +118,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
 
         /*
             Checks if client hasn't already withdrew his funds.
-            This is needed so he does not withdraw redeemFunds multiple times
+            This is needed so he does not withdraw insuranceDeposit multiple times
         */
 
         require(funds > 0);
@@ -135,14 +136,14 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
             bytes32 _xor = dataReferences[_referenceId].referenceKey ^ dataReferences[_referenceId].keyDecoder[msg.sender];
 
             // Condition comparing the hashes of encoded keys to determine if the right key was given
-            if (keccak256(abi.encode(_xor)) != dataReferences[_referenceId].encryptedKeyHash[msg.sender]) {
-                funds = funds.add((dataReferences[_referenceId].redeemFunds/dataReferences[_referenceId].completedClients));
+            if (keccak256(abi.encode(_xor)) != dataReferences[_referenceId].encodedKeyHash[msg.sender]) {
+                funds = funds.add((dataReferences[_referenceId].insuranceDeposit / dataReferences[_referenceId].completedClients));
                 withdrawDisputeFunds(_referenceId, funds);
             }
 
             // Condition for number of data
-            else if (dataReferences[_referenceId].numberOfData < dataReferences[_referenceId].minimumData){
-                funds = funds.add((dataReferences[_referenceId].redeemFunds/dataReferences[_referenceId].completedClients));
+            else if (dataReferences[_referenceId].numberOfData < dataReferences[_referenceId].minimumData) {
+                funds = funds.add((dataReferences[_referenceId].insuranceDeposit / dataReferences[_referenceId].completedClients));
                 withdrawDisputeFunds(_referenceId, funds);
             }
 

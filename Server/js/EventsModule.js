@@ -67,7 +67,7 @@ module.exports = {
 
     /*Get references bought by a specific id*/
     GetBoughtRefs: async function (address) {
-        let res1 = await contractws.getPastEvents("NewClient", {
+        let res1 = await contractws.getPastEvents("newClient", {
             filter: {client: address},
             fromBlock: 0,
             toBlock: 'latest'
@@ -125,7 +125,7 @@ module.exports = {
 
     /*Get emits testifying that clients ent me hashes for a certain product of reference id : id*/
     GetClientsWhoSentHashes: async function (id) {
-        let res1 = await contractws.getPastEvents("encryptedKeyHash", {
+        let res1 = await contractws.getPastEvents("encodedKeyHash", {
             filter: { referenceId: id},
             fromBlock: 0,
             toBlock: 'latest'
@@ -165,7 +165,7 @@ module.exports = {
 
     /*Get the DH Public Key of a provider for a certain id*/
     GetPubDiffieClient: async function (address_client, id) {
-        let res1 = await contractws.getPastEvents("NewClient", {
+        let res1 = await contractws.getPastEvents("newClient", {
             filter: {referenceId: id, address: address_client},
             fromBlock: 0,
             toBlock: 'latest'
@@ -185,16 +185,16 @@ module.exports = {
 
     /*Get correct emit from client with the hash he submitted for a particular Id */
     GetHashFromClientClient: async function (client_address,id) {
-        let res1 = await contractws.getPastEvents("encryptedKeyHash", {
+        let res1 = await contractws.getPastEvents("encodedKeyHash", {
             filter: { referenceId: id, client: client_address},
             fromBlock: 0,
             toBlock: 'latest'
         }, function (error, events) {}) // TODO Eventually do something here
-        return res1[0].returnValues.encryptedKeyHash;
+        return res1[0].returnValues.encodedKeyHash;
     },
 
-    /*Get K2 from the event emitted by the seller, for me, for a particular Id */
-    GetClientK2: async function (id,my_address) {
+    /*Get Decoder (K2) from the event emitted by the seller, for me, for a particular Id */
+    GetClientDecoder: async function (id,my_address) {
         let res1 = await contractws.getPastEvents("keyDecoder", {
             filter: { referenceId: id, client: my_address},
             fromBlock: 0,

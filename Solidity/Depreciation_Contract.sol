@@ -22,7 +22,7 @@ contract Depreciation_Contract{
     struct DataReference{ // Contains reference ANd price
 
         uint initialPrice;
-        uint redeemFunds;
+        uint insuranceDeposit;
 
         bytes32 referenceKey; //Take care of hackers, must be long enough ... to be determined
         /*
@@ -74,15 +74,13 @@ contract Depreciation_Contract{
             The client provides the encryptedKey's hash that would allow the provided to provider the decoding key
             Also this is used to compare this hash with the real key later provided publicly by the provider
         */
-        mapping (address => bytes32) encryptedKeyHash;
+        mapping (address => bytes32) encodedKeyHash;
         mapping (address => bytes32) keyDecoder;
     }
 
 
     // Public will set up getters for each (easier for web3js call/send functions)
     DataReference[] public dataReferences;
-
-    uint internal disputePrice = 0.02 ether;
 
     function getReferenceCurrentPrice(uint _referenceId) view public returns(uint price){
         uint _price = dataReferences[_referenceId].initialPrice;
