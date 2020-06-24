@@ -19,8 +19,12 @@
 <p>To do : </p>
 <br>
 <ul>
-    <li> Encrypted Encoded Key Received, Send hash : <%= num_event1 %> clients <a href="/SendClientHash/?id=<%=Id%>">Do </a> </li>
-    <li> Decoder Key received : <%= num_event2 %> clients <a href="/computeK/?id=<%=Id%>">Do</a> </li>
+    <% if (num_event1 > 1){%>
+        <li> Encrypted Encoded Key Received, Send hash : <%= num_event1 %> action to do <a href="/SendClientHash/?id=<%=Id%>">Send </a> </li>
+    <% }else{ %>
+        <li> Encrypted Encoded Key Received, Send hash :Done </li>
+    <% } %>
+    <li> Decoder Key received : <%= num_event2 %> clients <a href="/computeK/?id=<%=Id%>">Compute</a> </li>
     <br>
     <li> Set a Dispute or get a refund : <a href="/DisputeConfirmation/?id=<%=Id%>">Dispute</a> </li>
 </ul>

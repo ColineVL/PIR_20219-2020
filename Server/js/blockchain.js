@@ -244,11 +244,29 @@ async function manageID(id, account) {
 
         let Key = 0
         if (KeyEvent.length > 0) {
-            console.log("in")
             let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1])).slice(0, 7)
             Key = buffer.toString('hex');
         }
         return [product, total_clients, num_clients_step1, num_clients_step2, Key];
+
+    } catch (e) {
+        throw e;
+    }
+}
+
+/*Computes information for managing an Id Buyer side*/
+async function manageIDBuyer(id, account) {
+    try {
+        let product = await EventsModule.GetRef(id);
+
+        let eventEncryptedReceived = await EventsModule.GetEncryptedKeySentSpecific(id, account.address)
+        let eventDecoderReceived = await EventsModule.GetKeySentSpecific(id, account.address)
+        let eventHashSent = await EventsModule.GetHashFromClient(account.address,id)
+
+        let num_event2 = eventDecoderReceived.length
+        let num_event1 = eventEncryptedReceived.length - eventHashSent.length // Because in that case it is already done
+
+        return [product[0], num_event1, num_event2];
 
     } catch (e) {
         throw e;
@@ -368,7 +386,8 @@ async function sendDecoderKey(id, privateKey) {
 
             let correctHash = myRef_obj.hash;
 
-            let receivedHash = await EventsModule.GetHashFromClientClient(client_address, id);
+            let eventReceivedHash = await EventsModule.GetHashFromClient(client_address, id);
+            let receivedHash =eventReceivedHash[0].returnValues.encodedKeyHash
 
             if (correctHash == receivedHash) {
                 let receipt = await transactions.sendDecoderKey(Account, id, client_address, myRef_obj.K2);
@@ -404,7 +423,8 @@ async function sendDecoderKeyMalicious(id, privateKey) {
 
         let correctHash = myRef_obj.hash;
 
-        let receivedHash = await EventsModule.GetHashFromClientClient(client_address, id);
+        let eventReceivedHash = await EventsModule.GetHashFromClient(client_address, id);
+        let receivedHash = eventReceivedHash[0].returnValues.encodedKeyHash
 
         let K_Malicious = crypto.RandomBytes(7);
 
@@ -501,11 +521,7 @@ async function DisputeInfoClient(id, privateKey) {
         let encoderEvent = await EventsModule.GetKeySentSpecific(id, Account.address)
         let buyEvent = await EventsModule.GetBoughtRefSpecific(id, Account.address)
 
-        console.log(encoderEvent)
-        console.log("******************")
-        console.log(buyEvent)
-        console.log("******************")
-        console.log(buyEvent[0].returnValues.fund)
+
         return [encoderEvent.length, buyEvent[0].returnValues.fund];
     } catch (e) {
         throw e;
@@ -592,6 +608,7 @@ module.exports = {
     sellItemColine,
     buyProduct,
     manageID,
+    manageIDBuyer,
     sendEncryptedEncodedKey,
     sendClientHash,
     sendDecoderKey,
