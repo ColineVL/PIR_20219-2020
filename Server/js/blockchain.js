@@ -350,6 +350,20 @@ async function DisputeInfoClient(id, privateKey) {
     return [encoderEvent.length,buyEvent[0].returnValues.fund];
 }
 
+/*Function to to raise a dispute, or to retrieve your money*/
+async function Dispute(id, privateKey) {
+    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+
+    let bool = false;
+    let receipt = await transactions.RaiseDispute(Account,id)
+    if (receipt){
+        bool = true
+    }
+    let disputeEvent = await EventsModule.GetDispute(Account.address,id)
+
+    return [bool,disputeEvent[0].returnValues.funds];
+}
+
 
 /********************************
  * Exports
@@ -382,4 +396,5 @@ module.exports = {
     getCurrentPrice,
     getClients,
     DisputeInfoClient,
+    Dispute,
 };

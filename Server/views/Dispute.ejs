@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Refund result</title>
+
+</head>
+
+<body>
+<%if (info[0]) {%>
+    <h1>Transaction was succesful</h1>
+    <p> (You received : <%=info[1] %> wei) </p>
+<%} else {%>
+    <h1>Unsuccessful You received : <%=info[1] %> wei </h1>
+<%}%>
+
+
+<br>
+<a href="/" style="color: green "> Home </a>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
