@@ -557,12 +557,14 @@ async function withdrawFundsProvider(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
     let receipt = await transactions.withdrawFundsProvider(Account,id)
+
+    let withdrawEvent = await EventsModule.ReferenceKeySent(id);
     if (receipt){
-        console.log(receipt)
+        console.log("okkkkk")
     }
 
 
-    return [receipt];
+    return withdrawEvent;
 }
 
 

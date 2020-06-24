@@ -385,7 +385,7 @@ app.use('/public', express.static(__dirname + '/public'))
         if (req.session.Account) {
             const id = req.query.id;
             let result = await bc.withdrawFundsProvider(id, req.session.Account.privateKey);
-            res.render('Withdrawn.ejs', {id: id, receipt: result});
+            res.render('Withdrawn.ejs', {id: id, result: result[0]});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
