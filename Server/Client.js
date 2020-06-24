@@ -192,7 +192,7 @@ app.use('/public', express.static(__dirname + '/public'))
         if (req.session.Account) {
             let id = req.query.id;
 
-            res.render('Dispute',{id:id};
+            res.render('Dispute',{id:id});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
