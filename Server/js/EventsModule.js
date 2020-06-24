@@ -170,7 +170,7 @@ module.exports = {
         }
     },
 
-    /*Get emits testifying that clients ent me hashes for a certain product of reference id : id*/
+    /*Get emits testifying that clients sent me hashes for a certain product of reference id : id*/
     GetClientsWhoSentHashes: async function (id) {
         try {
             let res1 = await contractws.getPastEvents("encodedKeyHash", {
@@ -247,14 +247,14 @@ module.exports = {
     },
 
     /*Get correct emit from client with the hash he submitted for a particular Id */
-    GetHashFromClientClient: async function (client_address, id) {
+    GetHashFromClient: async function (client_address, id) {
         try {
             let res1 = await contractws.getPastEvents("encodedKeyHash", {
                 filter: {referenceId: id, client: client_address},
                 fromBlock: 0,
                 toBlock: 'latest'
             });
-            return res1[0].returnValues.encodedKeyHash;
+            return res1;
         } catch (e) {
             throw e;
         }
@@ -284,7 +284,7 @@ module.exports = {
     },
 
     /* Check for event detailing the funds withdrawn by the Provider for a particular Id */
-    ReferenceKeySent: async function (id) {
+    WithdrawFundsEvent: async function (id) {
         let res1 = await contractws.getPastEvents("withdrawFundsEvent", {
             filter: { referenceId: id},
             fromBlock: 0,

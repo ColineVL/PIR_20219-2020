@@ -140,14 +140,9 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/ManageIdBuyer', async (req, res) => {
         if (req.session.Account) {
             let Id = req.query.id;
-            let product = await EventsModule.GetRef(Id)
+            let result = await bc.manageIDBuyer(Id,req.session.Account)
 
-            let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, req.session.Account.address)
-            let eventPhase2 = await EventsModule.GetKeySentSpecific(Id, req.session.Account.address);
-
-            let num_event2 = eventPhase2.length;
-            let num_event1 = eventPhase1.length - num_event2 // Because in that case it is already done
-            res.render('ManageBuy.ejs', {Id: Id, product: product[0], num_event1: num_event1, num_event2: num_event2});
+            res.render('ManageBuy.ejs', {Id: Id, product: result[0], num_event1: result[1], num_event2: result[2]});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
@@ -395,6 +390,10 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SellError', async (req, res) => {
         res.render('SellError.ejs');
     })
+
+
+
+    /************************************  Eve (Listen to everything) ***************************/
 
     /* If user asks for an innexistant view, we redirect him to the homepage */
     .use(function (req, res, next) {
