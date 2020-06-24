@@ -337,9 +337,19 @@ async function ComputeK(id, privateKey) {
     await readwrite.WriteAsRefBuyer(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt', RefBuyer.KxorK2, RefBuyer.K2)
     let K = crypto.OTP(RefBuyer.KxorK2, RefBuyer.K2)
 
-    console.log(K)
     return K;
 }
+
+/*Function to Check if it is possible to raise a dispute, or to retrieve your money*/
+async function DisputeInfoClient(id, privateKey) {
+    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+
+    let encoderEvent = await EventsModule.GetKeySentSpecific(id, Account.address)
+    let buyEvent = await EventsModule.GetBoughtRefSpecific(id, Account.address)
+
+    return [encoderEvent.length,buyEvent[0].returnValues.fund];
+}
+
 
 /********************************
  * Exports
@@ -371,4 +381,5 @@ module.exports = {
     ComputeK,
     getCurrentPrice,
     getClients,
+    DisputeInfoClient,
 };

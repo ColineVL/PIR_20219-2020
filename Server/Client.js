@@ -180,8 +180,8 @@ app.use('/public', express.static(__dirname + '/public'))
         if (req.session.Account) {
             let id = req.query.id;
 
-            // let info =
-            res.render('DisputeConfirmation.ejs', {id: id});
+            let info = await bc.DisputeInfoClient(id, req.session.Account.privateKey);
+            res.render('DisputeConfirmation.ejs', {id: id, info:info});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
