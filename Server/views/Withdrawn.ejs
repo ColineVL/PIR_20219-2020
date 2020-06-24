@@ -7,7 +7,12 @@
 </head>
 
 <body>
-<h1>You successfully withdrew xxx   from <%= id %>  ! </h1>
+<%if (result) {%>
+    <h1>You successfully withdrew <%=result.returnValues.funds %> from <%= id %>  ! </h1>
+<%} else {%>
+    <h1>Operation unsuccessful</h1>
+<%}%>
+
 <br>
 <br>
 <a href="/">Home</a>

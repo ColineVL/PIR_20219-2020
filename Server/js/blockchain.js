@@ -123,7 +123,7 @@ async function getBlockInfo(blocknumber) {
 
 async function sellItemZiad(price, description, durationDays, durationHours, durationMinutes, account, minData, depreciationType, deposit) {
 
-    let durationInSecs = ((durationDays * 24 + durationHours * 60) + durationMinutes) * 60;
+    let durationInSecs = ((durationDays * 24 + durationHours )* 60 + durationMinutes) * 60;
 
     /*DH keys, to be stored and public sent*/
     const keys = crypto.DiffieHellmanGenerate(prime);
@@ -488,12 +488,14 @@ async function withdrawFundsProvider(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
     let receipt = await transactions.withdrawFundsProvider(Account,id)
+
+    let withdrawEvent = await EventsModule.ReferenceKeySent(id);
     if (receipt){
-        console.log(receipt)
+        console.log("okkkkk")
     }
 
 
-    return [receipt];
+    return withdrawEvent;
 }
 
 

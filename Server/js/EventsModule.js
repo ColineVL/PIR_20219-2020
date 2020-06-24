@@ -221,4 +221,14 @@ module.exports = {
         }, function (error, events) {}) // TODO Eventually do something here
         return res1;
     },
+
+    /* Check for event detailing the funds withdrawn by the Provider for a particular Id */
+    ReferenceKeySent: async function (id) {
+        let res1 = await contractws.getPastEvents("withdrawFundsEvent", {
+            filter: { referenceId: id},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1;
+    },
 }
