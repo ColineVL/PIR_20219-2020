@@ -414,7 +414,7 @@ function callbackManageIdBuyer(param) {
 
     const keys = ["provider", "initialPrice", "description"];
     const keysNames = ["Provider", "Initial price", "Description"];
-    const tableProduct = displayProductInfo(product[0].returnValues, keys, keysNames);
+    const tableProduct = displayProductInfo(product.returnValues, keys, keysNames);
     $("#manageIdBuyer_produit").html(tableProduct);
 }
 
@@ -539,16 +539,79 @@ function callbackErrorManageIdSeller(err) {
 }
 
 function manageIdSeller(id) {
+    $("#manageIdSeller_message").hide();
     loadXMLDoc("manageIdSeller/" + id, callbackManageIdSeller, callbackErrorManageIdSeller);
 }
 
-function callbackSendCryptedK2(param) {
+/** Seller step 1 **/
+
+function callbackEncodedEncryptedKey(param) {
     const [num, done] = param;
+    $("#manageIdSeller_message").show()
     $("#manageIdSeller_message").html("Successfully sent info to " + done + " clients out of " + num + " expected!");
 }
 
-function sendCryptedK2() {
+function sendEncodedEncryptedKey() {
     const id = $('#productInfo_referenceID').text();
-    loadXMLDoc("sendCryptedK2/" + id + "/" + myAccount.privateKey, callbackSendCryptedK2);
+    loadXMLDoc("sendEncodedEncryptedKey/" + id, callbackEncodedEncryptedKey, callbackError);
 }
 
+/** Seller step 2 **/
+function callbackSendDecoderKey(result) {
+    $("#manageIdSeller_message").show();
+    let [num, done] = result;
+    $("#manageIdSeller_message").html("Successfully sent K2 to " + done + " clients out of " + num + " expected!<br>The others were ignored because a wrong hash was sent.");
+}
+
+function sendDecoderKey() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("sendDecoderKey/" + id, callbackSendDecoderKey, callbackError);
+}
+
+/** Seller post key **/
+function callbackpostRefKey(result) {
+    $("#manageIdSeller_message").show();
+    console.log(result);
+    let [receipt, refKey] = result;
+    $("#manageIdSeller_message").html("Successfully sent the Reference Key to the contract.");
+}
+
+function postRefKey() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("postRefKey/" + id, callbackpostRefKey, callbackError);
+}
+
+/** Error **/
+
+function callbackError(err) {
+    console.error(err);
+}
+
+/** Make a transaction **/
+function callbackMakeTransaction(param) {
+    addItem(resultTransactionItem);
+    param = displayTable(param);
+    $("#resultTransaction_receipt").html(param);
+}
+
+function makeTransaction() {
+    let sender = document.getElementById("transaction_sender").value;
+    let receiver = document.getElementById("transaction_receiver").value;
+    let privateKey = document.getElementById("transaction_privateKey").value;
+    let amount = document.getElementById("transaction_amount").value;
+
+    if (sender === "" || receiver === "" || privateKey === "" || amount === "") {
+        document.getElementById("message").innerHTML = "Please complete the whole form.";
+        $("#transaction_message").html("Please complete the whole form.");
+    } else {
+        // TODO si la transaction échoue ?
+        $("#transaction_message").html("Transaction completed!");
+        let json = {
+            sender: sender,
+            receiver: receiver,
+            privateKey: privateKey,
+            amount: amount,
+        };
+        loadXMLDoc("maketransaction/" + JSON.stringify(json), callbackMakeTransaction);
+    }
+}

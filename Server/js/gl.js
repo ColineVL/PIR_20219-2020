@@ -1,6 +1,10 @@
 /********************************
  * Main Items
  ********************************/
+const makeTransactionItem = {
+    title: "make transaction",
+    name: "makeTransactionItem"
+}
 
 const myAccountItem = {
     title: "My account",
@@ -155,28 +159,28 @@ myLayout.registerComponent('newAccountItem', function (container, state) {
     );
 });
 
-// myLayout.registerComponent('createTransactionItem', function (container, state) {
-//     let htmlform = '';
-//     const form = {
-//         transaction_sender: "Sender:",
-//         transaction_privateKey: "Private Key:",
-//         transaction_receiver: "Receiver:",
-//         transaction_amount: "Amount:"
-//     };
-//     for (let value in form) {
-//         htmlform += "<label for=" + value + ">" + form[value] + "</label>";
-//         htmlform += "<input id=" + value + " type='text'>";
-//         htmlform += "<br>";
-//     }
-//     htmlform += "<button onclick='makeTransaction()'>Submit</button>";
-//     container.getElement().html(
-//         '<div class="container">' +
-//         '<h1>Fill in the form to make a transaction</h1>' +
-//         '<p id="transaction_message"></p>' +
-//         htmlform +
-//         '</div>'
-//     );
-// });
+myLayout.registerComponent('makeTransactionItem', function (container, state) {
+    let htmlform = '';
+    const form = {
+        transaction_sender: "Sender:",
+        transaction_privateKey: "Private Key:",
+        transaction_receiver: "Receiver:",
+        transaction_amount: "Amount:"
+    };
+    for (let value in form) {
+        htmlform += "<label for=" + value + ">" + form[value] + "</label>";
+        htmlform += "<input id=" + value + " type='text'>";
+        htmlform += "<br>";
+    }
+    htmlform += "<button onclick='makeTransaction()'>Submit</button>";
+    container.getElement().html(
+        '<div class="container">' +
+        '<h1>Fill in the form to make a transaction</h1>' +
+        '<p id="transaction_message"></p>' +
+        htmlform +
+        '</div>'
+    );
+});
 
 myLayout.registerComponent('resultTransactionItem', function (container, state) {
     container.getElement().html(
@@ -242,7 +246,7 @@ myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
         '<h3>To do:</h3>' +
         '<ul>' +
         '<li>Encrypted encoded key received, send hash</li>' +
-        '<li>Decoder key received</li>' +
+        '<li>Decoder key received, compute</li>' +
         '<li>Set a dispute or get a refund</li>' +
         '</ul>' +
         '<p class="message" id="manageIdSeller_message"></p>' +
@@ -294,9 +298,9 @@ myLayout.registerComponent('manageIdSellerItem', function (container, state) {
         '<div id="manageIdSeller_produit"></div>' +
         '<h3>To do:</h3>' +
         '<ul>' +
-        '<li onclick="sendCryptedK2()">Send Encrypted Encoded Key (K2xorKxorK3): <var id="manageIdSeller_NumClientsStep1"></var> clients</li>' +
-        '<li>Verify hashes and send Decoder Key (K2): <var id="manageIdSeller_NumClientsStep2"></var> clients</li>' +
-        '<li id="manageIdSeller_keyNotReleased" onclick="function()">Release reference key (key not released yet)</li>' +
+        '<li onclick="sendEncodedEncryptedKey()">Send Encrypted Encoded Key (K2xorKxorK3): <var id="manageIdSeller_NumClientsStep1"></var> clients</li>' +
+        '<li onclick="sendDecoderKey()">Verify hashes and send Decoder Key (K2): <var id="manageIdSeller_NumClientsStep2"></var> clients</li>' +
+        '<li id="manageIdSeller_keyNotReleased" onclick="postRefKey()">Release reference key (key not released yet)</li>' +
         '<li id="manageIdSeller_keyReleased">Key is released: <var id="manageIdSeller_releasedKey"></var></li>' +
         '</ul>' +
         '<p class="message" id="manageIdSeller_message"></p>' +
@@ -375,6 +379,7 @@ $('#menuContainer').append("<h2>Sell</h2>");
 addMenuItem(sellNewItem);
 addMenuItem(ongoingSalesItem);
 $('#menuContainer').append("<h3><a href='closeserver'>Close server</a></h3>");
+addMenuItem(makeTransactionItem);
 
 /********************************
  * Create items out of the menu

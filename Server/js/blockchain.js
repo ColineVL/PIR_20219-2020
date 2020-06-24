@@ -232,7 +232,6 @@ async function getCurrentPrice(account, id) {
  ********************************/
 
 async function manageID(id, account) {
-    console.log(id, account);
     try {
         let product = await EventsModule.GetRef(id);
         const clients = await transactions.GetClients(account, id);
@@ -245,7 +244,7 @@ async function manageID(id, account) {
 
         let KeyEvent = await EventsModule.ReferenceKeySent(id);
 
-        let Key = 0
+        let Key = 0;
         if (KeyEvent.length > 0) {
             let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1])).slice(0, 7)
             Key = buffer.toString('hex');
@@ -286,9 +285,8 @@ async function getClients(account, id) {
 
 }
 
-async function sendEncryptedEncodedKey(id, privateKey) {
+async function sendEncryptedEncodedKey(id, Account) {
     try {
-        const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
         const all_clients = await transactions.GetClients(Account, id);
         let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
         let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2) // So I compute a  need a list of addresses
@@ -369,10 +367,8 @@ async function sendEncryptedEncodedKeyMalicious(id, privateKey) {
 }
 
 /*Function to handle sending the appropriate K2 to every client which responded with a correct hash*/
-async function sendDecoderKey(id, privateKey) {
+async function sendDecoderKey(id, Account) {
     try {
-        const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
-
         let ClientsWhoSentHashes = await EventsModule.GetClientsWhoSentHashes(id); // This is a list of events corresponding to clients who sent me a hash
         let ClientsReceivedK2 = await EventsModule.GetKeysSent(id); // This is a list of events corresponding to the clients I already answered concerning their hashes
         let Address_ListClientsWhoSentHashes = await EventsModule.EventsToAddresses(ClientsWhoSentHashes)  // Transformed into a list of addresses
@@ -552,8 +548,7 @@ async function Dispute(id, privateKey) {
 }
 
 /*For a provider to release the reference Key*/
-async function sendReferenceKey(id, privateKey) {
-    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+async function sendReferenceKey(id, Account) {
     let refKey = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
 
     let receipt = await transactions.sendRefKey(Account, id, refKey)

@@ -179,14 +179,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/manageIdBuyer/:id', async (req, res) => {
         try {
-            let product = await EventsModule.GetRef(req.params.id);
-            let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(req.params.id, req.session.Account.address);
-            let eventPhase2 = await EventsModule.GetKeySentSpecific(req.params.id, req.session.Account.address);
-
-            let num_event2 = eventPhase2.length;
-            let num_event1 = eventPhase1.length - num_event2 // Because in that case it is already done
-
-            let result = [product, num_event1, num_event2];
+            let result = await bc.manageIDBuyer(req.params.id, req.session.Account)
             res.json(result);
         } catch (e) {
             console.log(e);
@@ -227,9 +220,10 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    .get('/sendCryptedK2/:id/:privateKey', async (req, res) => {
+    /** Seller step 1 **/
+    .get('/sendEncodedEncryptedKey/:id', async (req, res) => {
         try {
-            let result = await bc.sendCryptedK2(req.params.id, req.params.privateKey);
+            let result = await bc.sendEncryptedEncodedKey(req.params.id, req.session.Account);
             // result = [num, done]
             res.json(result);
         } catch (e) {
@@ -237,7 +231,33 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    /************ Ongoing buys ************/
+    /** Seller step 2 **/
+    .get('/sendDecoderKey/:id', async (req, res) => {
+        try {
+            let result = await bc.sendDecoderKey(req.params.id, req.session.Account);
+            // result = [num, done]
+            res.json(result);
+        } catch (e) {
+            console.error(e);
+            res.status(500).json(e.message);
+        }
+    })
+
+    /** Seller release key **/
+    .get('/postRefKey/:id', async (req, res) => {
+        try {
+            let result = await bc.sendReferenceKey(req.params.id, req.session.Account);            // result = [num, done]
+            res.json(result);
+        } catch (e) {
+            console.error(e);
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/maketransaction/:jsonInfo', async (req, res) => {
+        let receipt = await bc.createTransaction(req.params.jsonInfo);
+        res.json(receipt);
+    })
 
 
 
@@ -254,3 +274,4 @@ app.use('/public', express.static(__dirname + '/public'))
     .use(function (req, res) {
         res.redirect('/');
     })
+

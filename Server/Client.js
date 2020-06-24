@@ -336,7 +336,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SendDecoderKey/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
-            let [num, done] = await bc.sendDecoderKey(id, req.session.Account.privateKey);
+            let [num, done] = await bc.sendDecoderKey(id, req.session.Account);
             res.render('SentK2.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -353,11 +353,14 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    /* Interface topublicly post the reference Key K*/
+    /* Interface to publicly post the reference Key K*/
     .get('/PostRefKey/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
-            let result = await bc.sendReferenceKey(id, req.session.Account.privateKey);
+            let result = await bc.sendReferenceKey(id, req.session.Account);
+            console.log(result);
+            console.log(result[1]);
+            console.log(result[1].toString('hex'));
             res.render('SentRefKey.ejs', {id: id, receipt: result[0], refKey:result[1]});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
