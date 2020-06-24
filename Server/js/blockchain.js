@@ -141,9 +141,11 @@ async function sellItemZiad(price, description, durationDays, durationHours, dur
 
     let K = crypto.RandomBytes(7); //Reference key with which data is encrypted. TODO use this on TLE
 
+    let priceInEther = web3.utils.toWei(price,'ether')
+
     /*Send transaction the get the ref_id for the database*/
     try {
-        const receipt = await transactions.SellReference(account, Diffie.PubDH, price, durationInSecs, description, minData, depreciationType, deposit);
+        const receipt = await transactions.SellReference(account, Diffie.PubDH, priceInEther, durationInSecs, description, minData, depreciationType, deposit);
         let blockNumber = receipt.blockNumber;
         let event = await EventsModule.GetYourRef(account.address, blockNumber)
         let id = event[0].returnValues.referenceId;
