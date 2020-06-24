@@ -188,10 +188,10 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    .get('/manageId/:id', async (req, res) => {
+    .get('/manageIdSeller/:id', async (req, res) => {
         try {
             const result = await bc.manageID(req.params.id, req.session.Account);
-            // result = [product, total_clients, num_clients_step1, num_clients_step2]
+            // result = [product, total_clients, num_clients_step1, num_clients_step2, Key]
             res.json(result);
         } catch (e) {
             res.status(500).json(e.message);

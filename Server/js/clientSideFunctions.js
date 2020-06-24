@@ -433,7 +433,7 @@ function callbackOngoingSales(Ids) {
         html += "<details>";
         html += "<summary>" + data.returnValues["description"] + "</summary>";
         html += "<p>Reference Id: " + data.returnValues["referenceId"] + "</p>";
-        html += "<p class='link' onclick=manageItemSeller(" + data.returnValues["referenceId"] + ")>Manage this Id</p>";
+        html += "<p class='link' onclick=ManageIdSeller(" + data.returnValues["referenceId"] + ")>Manage this Id</p>";
         html += "</details>";
         myAccount.forSale.push(data.returnValues["referenceId"]);
     }
@@ -460,28 +460,30 @@ function loadOngoingSales() {
 
 function callbackManageIdSeller(param) {
     const [product, total_clients, num_clients_step1, num_clients_step2] = param;
+
     const keys = ["provider", "initialPrice", "description"];
     const keysNames = ["Provider", "Initial price", "Description"];
     const tableProduct = displayProductInfo(product[0].returnValues, keys, keysNames);
-    $("#manageId_produit").html(tableProduct);
-    $("#manageId_totalNumberClients").text(total_clients);
-    $("#manageId_NumClientsStep1").text(num_clients_step1);
-    $("#manageId_NumClientsStep2").text(num_clients_step2);
-    $("#manageId_totalNumberClients").text(total_clients);
+    $("#manageIdSeller_produit").html(tableProduct);
+
+    $("#manageIdSeller_totalNumberClients").text(total_clients);
+    $("#manageIdSeller_NumClientsStep1").text(num_clients_step1);
+    $("#manageIdSeller_NumClientsStep2").text(num_clients_step2);
+    $("#manageIdSeller_totalNumberClients").text(total_clients);
 }
 
 function callbackErrorManageIdSeller(err) {
     console.log(err);
 }
 
-function manageItemSeller(id) {
+function ManageIdSeller(id) {
     addItem(manageIdItem);
-    loadXMLDoc("manageId/" + id, callbackManageIdSeller, callbackErrorManageIdSeller);
+    loadXMLDoc("manageIdSeller/" + id, callbackManageIdSeller, callbackErrorManageIdSeller);
 }
 
 function callbackSendCryptedK2(param) {
     const [num, done] = param;
-    $("#manageId_message").html("Successfully sent info to " + done + " clients out of " + num + " expected!");
+    $("#manageIdSeller_message").html("Successfully sent info to " + done + " clients out of " + num + " expected!");
 }
 
 function sendCryptedK2() {

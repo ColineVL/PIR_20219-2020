@@ -61,9 +61,9 @@ const boughtDataItem = {
     name: "boughtDataItem"
 };
 
-const manageIdItem = {
+const manageIdSellerItem = {
     title: "Manage ID",
-    name: "manageIdItem"
+    name: "manageIdSellerItem"
 };
 
 /********************************
@@ -259,19 +259,19 @@ myLayout.registerComponent('ongoingSalesItem', function (container, state) {
     );
 });
 
-myLayout.registerComponent('manageIdItem', function (container, state) {
+myLayout.registerComponent('manageIdSellerItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<p>Total number of clients: <var id="manageId_totalNumberClients"></var></p>' +
+        '<p>Total number of clients: <var id="manageIdSeller_totalNumberClients"></var></p>' +
         '<h3>Product:</h3>' +
-        '<div id="manageId_produit"></div>' +
+        '<div id="manageIdSeller_produit"></div>' +
         '<h3>To do:</h3>' +
         '<ul>' +
-        '<li onclick="sendCryptedK2()">Send Info (K2xORK): <var id="manageId_NumClientsStep1"></var> clients</li>' +
-        '<li>Verify hashes and send K2: <var id="manageId_NumClientsStep2"></var> clients</li>' +
-        '<li>Dispute: <var id="manageId_NumDispute"></var> clients</li>' +
+        '<li onclick="sendCryptedK2()">Send Info (K2xORK): <var id="manageIdSeller_NumClientsStep1"></var> clients</li>' +
+        '<li>Verify hashes and send K2: <var id="manageIdSeller_NumClientsStep2"></var> clients</li>' +
+        '<li>Dispute: <var id="manageIdSeller_NumDispute"></var> clients</li>' +
         '</ul>' +
-        '<p class="message" id="manageId_message"></p>' +
+        '<p class="message" id="manageIdSeller_message"></p>' +
         '</div>'
     );
 });
