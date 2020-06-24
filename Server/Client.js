@@ -191,8 +191,8 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/Dispute', async (req, res) => {
         if (req.session.Account) {
             let id = req.query.id;
-
-            let info = bc.Dispute(id, req.session.Account.privateKey)
+            // TODO ADD to received funds, the real funds received: maybe received insurance deposit as well...
+            let info = await bc.Dispute(id, req.session.Account.privateKey)
             res.render('Dispute.ejs',{id:id,info:info});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});

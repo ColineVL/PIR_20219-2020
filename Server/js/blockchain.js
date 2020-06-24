@@ -229,7 +229,6 @@ async function manageID(id, account) {
         let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1])).slice(0, 7)
         Key = buffer.toString('hex');
     }
-    console.log(Key)
     return [product, total_clients, num_clients_step1, num_clients_step2, Key];
 }
 
@@ -357,6 +356,11 @@ async function DisputeInfoClient(id, privateKey) {
     let encoderEvent = await EventsModule.GetKeySentSpecific(id, Account.address)
     let buyEvent = await EventsModule.GetBoughtRefSpecific(id, Account.address)
 
+    console.log(encoderEvent)
+    console.log("******************")
+    console.log(buyEvent)
+    console.log("******************")
+    console.log(buyEvent[0].returnValues.fund)
     return [encoderEvent.length,buyEvent[0].returnValues.fund];
 }
 
