@@ -220,7 +220,15 @@ async function manageID(id, account) {
     let KeysSent = await EventsModule.GetKeysSent(id);
     let ReceivedHashes = await EventsModule.GetClientsWhoSentHashes(id)
     let num_clients_step2 = ReceivedHashes.length - KeysSent.length
-    return [product, total_clients, num_clients_step1, num_clients_step2];
+
+    let KeyEvent = await EventsModule.ReferenceKeySent(id);
+
+    let Key =0
+    if (KeyEvent.length >0){
+        let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues.referenceKey)).slice(0, 7)
+        Key = buffer.toString('hex');
+    }
+    return [product, total_clients, num_clients_step1, num_clients_step2, Key];
 }
 
 async function getClients(account, id) {

@@ -212,5 +212,13 @@ module.exports = {
         }, function (error, events) {}) // TODO Eventually do something here
         return res1;
     },
-
+    /* Check for event detailing if a the Reference Key K was posted for a particular Id */
+    ReferenceKeySent: async function (id) {
+        let res1 = await contractws.getPastEvents("referenceKey", {
+            filter: { referenceId: id},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {}) // TODO Eventually do something here
+        return res1;
+    },
 }

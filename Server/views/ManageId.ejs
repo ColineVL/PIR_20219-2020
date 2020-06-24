@@ -24,6 +24,14 @@
     <li> Verify hashes and send Decoder Key (K2) : <%= num_clients_step2 %> clients <a href="/SendDecoderKey/?id=<%=Id%>">Do</a> </li>
     <li> Dispute : <%= 1 %> clients <a href="/">Do</a> </li>
 
+    <br>
+    <%if (Key > 0) {%>
+        <li> Key released :<%= Key %>> <a href="/ProductInfoSeller/?id=<%=Id%>">Check</a> </li>
+    <%} else {%>
+        <li> Key not released yet, <a href="/PostRefKey/?id=<%=Id%>">Release Reference Key</a> </li>
+
+    <%}%>
+
 </ul>
 <a href="/ForSale">Back</a>
 

@@ -293,14 +293,15 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/ManageId/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
-            const [product, total_clients, num_clients_step1, num_clients_step2] = await bc.manageID(id, req.session.Account);
+            const [product, total_clients, num_clients_step1, num_clients_step2, Key] = await bc.manageID(id, req.session.Account);
             // TODO finish coding function.. to get number of disputes
             res.render('ManageId.ejs', {
                 product: product[0],
                 Id: id,
                 total_clients: total_clients,
                 num_clients_step1: num_clients_step1,
-                num_clients_step2: num_clients_step2
+                num_clients_step2: num_clients_step2,
+                Key: Key,
             });
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -324,6 +325,17 @@ app.use('/public', express.static(__dirname + '/public'))
             const id = req.query.id;
             let [num, done] = await bc.sendDecoderKey(id, req.session.Account.privateKey);
             res.render('SentK2.ejs', {num: num, done: done});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
+    /* Interface topublicly post the reference Key K*/
+    .get('/PostRefKey/', async (req, res) => {
+        if (req.session.Account) {
+            const id = req.query.id;
+            let res = await bc.sendDecoderKey(id, req.session.Account.privateKey);
+            res.render('SentK2.ejs', {id: id, res: res});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
