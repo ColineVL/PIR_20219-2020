@@ -131,7 +131,7 @@ async function getBlockInfo(blocknumber) {
  * Sell new item
  ********************************/
 
-async function sellItemZiad(price, description, durationDays, durationHours, durationMinutes, account, minData, depreciationType, deposit) {
+async function sellItemZiad(price, description, durationDays, durationHours, durationMinutes, account, minData, depreciationType, insurance) {
     let durationInSecs = durationDays * 86400 + durationHours * 3600 + durationMinutes * 60;
     /*DH keys, to be stored and public sent*/
     const keys = crypto.DiffieHellmanGenerate(prime);
@@ -141,11 +141,13 @@ async function sellItemZiad(price, description, durationDays, durationHours, dur
 
     let K = crypto.RandomBytes(7); //Reference key with which data is encrypted. TODO use this on TLE
 
-    let priceInEther = web3.utils.toWei(price,'ether')
+    let priceInEther = web3.utils.toWei(price,'ether');
+
+    let insuranceInEther = web3.utils.toWei(insurance,'ether');
 
     /*Send transaction the get the ref_id for the database*/
     try {
-        const receipt = await transactions.SellReference(account, Diffie.PubDH, priceInEther, durationInSecs, description, minData, depreciationType, deposit);
+        const receipt = await transactions.SellReference(account, Diffie.PubDH, priceInEther, durationInSecs, description, minData, depreciationType, insuranceInEther);
         let blockNumber = receipt.blockNumber;
         let event = await EventsModule.GetYourRef(account.address, blockNumber)
         let id = event[0].returnValues.referenceId;
@@ -155,7 +157,7 @@ async function sellItemZiad(price, description, durationDays, durationHours, dur
         await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt', K)
         return [receipt, id];
     } catch (err) {
-        return err;
+        throw err;
     }
 }
 
@@ -315,13 +317,10 @@ async function sendEncryptedEncodedKey(id, Account) {
             try {
                 let receipt = await transactions.sendEncryptedEncodedKey(Account, id, client_address, toSend);
                 done += 1;
-            } catch (e) {
-                console.log(e);
             }
-            // let receipt = await transactions.sendEncryptedEncodedKey(Account, id, client_address, toSend);
-            // if (receipt) {
-            //     done += 1;
-            // }
+            catch(e){
+                throw e;
+            }
         }
         return [ClientsToDo.length, done];
     } catch (e) {
@@ -540,7 +539,7 @@ async function Dispute(id, privateKey) {
         }
         let disputeEvent = await EventsModule.GetDispute(Account.address, id)
 
-        return [bool, disputeEvent[0].returnValues.funds];
+        return [bool, disputeEvent];
     } catch (e) {
         throw e;
     }

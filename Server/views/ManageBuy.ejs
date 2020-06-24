@@ -19,7 +19,7 @@
 <p>To do : </p>
 <br>
 <ul>
-    <% if (num_event1 > 1){%>
+    <% if (num_event1 > 0){%>
         <li> Encrypted Encoded Key Received, Send hash : <%= num_event1 %> action to do <a href="/SendClientHash/?id=<%=Id%>">Send </a> </li>
     <% }else{ %>
         <li> Encrypted Encoded Key Received, Send hash :Done </li>

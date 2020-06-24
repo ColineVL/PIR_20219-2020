@@ -93,7 +93,7 @@ app.use('/public', express.static(__dirname + '/public'))
             const id = req.query.id;
             let product = await EventsModule.GetRef(id)
             let price = await bc.getCurrentPrice(req.session.Account, id)
-            console.log("duree " + (product[0].returnValues.endTime - product[0].returnValues.deployTime));
+
             res.render('Product.ejs', {product: product[0], price: price});
         } else {
             res.render('BuyerMenu.ejs', {account: req.session.Account});
@@ -110,7 +110,6 @@ app.use('/public', express.static(__dirname + '/public'))
                 res.render('Bought.ejs', {product: product[0], price: result});
             } catch (e) {
                 res.redirect('/BuyError');
-                console.error(e);
             }
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});

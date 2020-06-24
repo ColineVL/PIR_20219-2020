@@ -8,7 +8,7 @@
 
 <body>
 <%if (result) {%>
-    <h1>You successfully withdrew <%=result.returnValues.funds %> from <%= id %>  ! </h1>
+    <h1>You successfully withdrew <%= result.returnValues.funds %> from <%= id %>  ! </h1>
 <%} else {%>
     <h1>Operation unsuccessful</h1>
 <%}%>
