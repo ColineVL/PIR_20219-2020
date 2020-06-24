@@ -10,18 +10,15 @@ function loadXMLDoc(page, successCallback) {
         if (this.readyState === 4 && this.status === 200) {
             try {
                 let result = JSON.parse(this.responseText);
+                console.log(result);
                 successCallback(result);
             } catch (e) {
-                failureCallback(e);
+                console.error(e);
             }
         }
     }
     xhttp.open("GET", page, true);
     xhttp.send();
-}
-
-function failureCallback(err) {
-    console.log(err);
 }
 
 /** Display functions **/
@@ -332,10 +329,16 @@ function getBoughtData() {
 
 /** Buy product **/
 function callbackBuy(param) {
-    myAccount.boughtData[param.returnValues["referenceId"]] = param.returnValues;
-    // TODO en cas de problème
-    $('#forSaleProductInfo_message').show();
-    $('#forSaleProductInfo_message').text("Bought!");
+    try {
+        console.log(param);
+        myAccount.boughtData[param.returnValues["referenceId"]] = param.returnValues;
+        $('#forSaleProductInfo_message').show();
+        $('#forSaleProductInfo_message').text("Bought!");
+    } catch (e) {
+        console.log(e);
+        $('#forSaleProductInfo_message').show();
+        $('#forSaleProductInfo_message').text("Error");
+    }
 }
 
 async function buyProduct() {
@@ -361,6 +364,7 @@ async function buyProduct() {
 /** Sell product **/
 
 function callbackSellNewProduct(param) {
+    console.log(param);
     $("#sellNew_message").show();
     $("#sellNew_message").html(param);
     try {
@@ -370,7 +374,9 @@ function callbackSellNewProduct(param) {
         $("#sellNew_gasUsed").text(param["cumulativeGasUsed"]);
         $("#sellNew_referenceId").text(param["id"]);
         myAccount.forSale.push(param["id"]);
+        console.log("dans try coté client !");
     } catch (err) {
+        console.log("dans catch coté client !");
         console.log(err);
     }
 }

@@ -137,20 +137,31 @@ app.use('/public', express.static(__dirname + '/public'))
     /************ Buy a product ************/
 
     .get('/buy/:id', async (req, res) => {
-        let product = await EventsModule.GetRef(req.params.id);
-        let result = await bc.buyProduct(req.params.id, req.session.Account);
-        if (result === "error") {
-            res.json(result);
-        } else {
+        try {
+            let product = await EventsModule.GetRef(req.params.id);
+            let currentPrice = await bc.buyProduct(req.params.id, req.session.Account);
             res.json(product[0]);
+        } catch (e) {
+            res.json(e);
         }
     })
 
     /************ Sell a product ************/
 
     .get('/sellNewProduct/:json', async (req, res) => {
-        let receipt = await bc.sellItemColine(req.params.json, req.session.Account);
-        res.json(receipt);
+        try {
+            let receipt = await bc.sellItemColine(req.params.json, req.session.Account);
+            console.log("dans try");
+            res.json(receipt);
+        } catch (e) {
+            console.log("dans catch");
+            console.error(e.stack);
+            res.status(500).json("We had an error.");
+            // res.json(e);
+            // res.status(500).json(e);
+            // throw(e);
+            // next(e);
+        }
     })
 
     /************ Ongoing sales ************/
@@ -185,4 +196,10 @@ app.use('/public', express.static(__dirname + '/public'))
     /** Redirection to home if the page is not found **/
     .use(function (req, res) {
         res.redirect('/');
-    });
+    })
+
+    // /** Errors **/
+    // .use(function (err, req, res, next) {
+    //     console.error(err.stack);
+    //     res.status(500).send("We had an error.");
+    // });

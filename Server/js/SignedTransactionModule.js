@@ -310,208 +310,219 @@ const contract = new web3.eth.Contract(abi, ContractAddress); //TODO give correc
 module.exports = {
     createAndSendSignedTransaction: async function (prov, valueInEther, privateKey_notBuffered, addressFrom, addressTo) {
         // web3 initialization - must point to the HTTP JSON-RPC endpoint
-        web3.transactionConfirmationBlocks = 1;
-
-        const privateKey = new Buffer.from(privateKey_notBuffered, 'hex');
-        const txnCount = await web3.eth.getTransactionCount(addressFrom, "pending")
-        const rawTx = {
-            nonce: web3.utils.numberToHex(txnCount),
-            gasPrice: web3.utils.numberToHex(1500),
-            gasLimit: web3.utils.numberToHex(4700000),
-            to: '0x' + addressTo,
-            value: web3.utils.numberToHex(web3.utils.toWei(valueInEther.toString(), 'ether'))
-        };
-        const tx = new Tx(rawTx);
-        tx.sign(privateKey);
-        const serializedTx = tx.serialize();
-        const rawTxHex = '0x' + serializedTx.toString('hex');
-        return web3.eth.sendSignedTransaction(rawTxHex);
+        try {
+            web3.transactionConfirmationBlocks = 1;
+            const privateKey = new Buffer.from(privateKey_notBuffered, 'hex');
+            const txnCount = await web3.eth.getTransactionCount(addressFrom, "pending")
+            const rawTx = {
+                nonce: web3.utils.numberToHex(txnCount),
+                gasPrice: web3.utils.numberToHex(1500),
+                gasLimit: web3.utils.numberToHex(4700000),
+                to: '0x' + addressTo,
+                value: web3.utils.numberToHex(web3.utils.toWei(valueInEther.toString(), 'ether'))
+            };
+            const tx = new Tx(rawTx);
+            tx.sign(privateKey);
+            const serializedTx = tx.serialize();
+            const rawTxHex = '0x' + serializedTx.toString('hex');
+            return web3.eth.sendSignedTransaction(rawTxHex);
+        } catch (e) {
+            throw e;
+        }
     },
     createAndSendSignedTransactionData: async function (prov, valueInEther, privateKey_notBuffered, addressFrom, addressTo, data) {
         // web3.transactionConfirmationBlocks = 1;
+        try {
+            const privateKey = new Buffer.from(privateKey_notBuffered, 'hex');
+            const txnCount = await web3.eth.getTransactionCount(addressFrom, "pending")
+            const rawTx = {
+                nonce: web3.utils.numberToHex(txnCount),
+                gasPrice: web3.utils.numberToHex(1500),
+                gasLimit: web3.utils.numberToHex(4700000),
+                to: addressTo,
+                value: web3.utils.numberToHex(web3.utils.toWei(valueInEther.toString(), 'ether')),
+                data: data
+            };
+            const tx = new Tx(rawTx);
+            tx.sign(privateKey);
+            const serializedTx = tx.serialize();
+            const rawTxHex = '0x' + serializedTx.toString('hex');
+            return web3.eth.sendSignedTransaction(rawTxHex);
+        } catch (e) {
+            throw e;
+        }
 
-        const privateKey = new Buffer.from(privateKey_notBuffered, 'hex');
-        const txnCount = await web3.eth.getTransactionCount(addressFrom, "pending")
-        const rawTx = {
-            nonce: web3.utils.numberToHex(txnCount),
-            gasPrice: web3.utils.numberToHex(1500),
-            gasLimit: web3.utils.numberToHex(4700000),
-            to: addressTo,
-            value: web3.utils.numberToHex(web3.utils.toWei(valueInEther.toString(), 'ether')),
-            data: data
-        };
-        const tx = new Tx(rawTx);
-        tx.sign(privateKey);
-        const serializedTx = tx.serialize();
-        const rawTxHex = '0x' + serializedTx.toString('hex');
-        return web3.eth.sendSignedTransaction(rawTxHex);
     },
     BuyReference: async function (account, referenceId, pubKey, currentPrice) {
         // web3.transactionConfirmationBlocks = 1;
+        try {
+            let pubKey_bin = web3.utils.bytesToHex(pubKey);
+            const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
+            const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
+            const dataref = contract.methods.buyReference(referenceId, pubKey_bin).encodeABI();
+            const rawTx = {
+                nonce: web3.utils.numberToHex(txnCount),
+                gasPrice: web3.utils.numberToHex(1500),
+                gasLimit: web3.utils.numberToHex(4700000),
+                to: ContractAddress,
+                value: parseInt(currentPrice, 10),
+                data: dataref
+            };
+            const tx = new Tx(rawTx);
+            tx.sign(privateKey);
+            const serializedTx = tx.serialize();
+            const rawTxHex = '0x' + serializedTx.toString('hex');
+            let receipt = await web3.eth.sendSignedTransaction(rawTxHex);
+            return receipt;
+        } catch (e) {
+            throw e;
+        }
 
-        let pubKey_bin = web3.utils.bytesToHex(pubKey);
-        const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
-        const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
-        const dataref = contract.methods.buyReference(referenceId, pubKey_bin).encodeABI();
-        const rawTx = {
-            nonce: web3.utils.numberToHex(txnCount),
-            gasPrice: web3.utils.numberToHex(1500),
-            gasLimit: web3.utils.numberToHex(4700000),
-            to: ContractAddress,
-            value: parseInt(currentPrice, 10),
-            data: dataref
-        };
-        const tx = new Tx(rawTx);
-        tx.sign(privateKey);
-        const serializedTx = tx.serialize();
-        const rawTxHex = '0x' + serializedTx.toString('hex');
-        let receipt = web3.eth.sendSignedTransaction(rawTxHex)
-            .catch(function (error) {
-                console.log(error)
-            });
-        return receipt;
     },
 
     SellReference: async function (account, pubKey, price, duration, description, minData, depreciationType, insuranceDeposit) {
-        let pubKey_bin = web3.utils.bytesToHex(pubKey);
-        const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
-        const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
-        const dataref = contract.methods.createDataReference(price, minData, duration, pubKey_bin, depreciationType, description).encodeABI();
-
-        const rawTx = {
-            nonce: web3.utils.numberToHex(txnCount),
-            gasPrice: web3.utils.numberToHex(1500),
-            gasLimit: web3.utils.numberToHex(4700000),
-            to: ContractAddress,
-            data: dataref,
-            value: parseInt(insuranceDeposit, 10),
-        };
-        const tx = new Tx(rawTx);
-        tx.sign(privateKey);
-        const serializedTx = tx.serialize();
-        const rawTxHex = '0x' + serializedTx.toString('hex');
         try {
+            let pubKey_bin = web3.utils.bytesToHex(pubKey);
+            const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
+            const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
+            const dataref = contract.methods.createDataReference(price, minData, duration, pubKey_bin, depreciationType, description).encodeABI();
+
+            const rawTx = {
+                nonce: web3.utils.numberToHex(txnCount),
+                gasPrice: web3.utils.numberToHex(1500),
+                gasLimit: web3.utils.numberToHex(4700000),
+                to: ContractAddress,
+                data: dataref,
+                value: parseInt(insuranceDeposit, 10),
+            };
+            const tx = new Tx(rawTx);
+            tx.sign(privateKey);
+            const serializedTx = tx.serialize();
+            const rawTxHex = '0x' + serializedTx.toString('hex');
             let receipt = await web3.eth.sendSignedTransaction(rawTxHex);
-            console.log(receipt);
             return receipt;
-        } catch (err) {
-            return err;
+        } catch (e) {
+            throw e;
         }
     },
 
     /*Function to view the clients of a certain reference*/
     GetClients: async function (account, id) {
-        let clients = await contract.methods.getClients(id).call({from: account.address})
-            .catch(function (error) {
-                console.log(error);
-            });
-        return clients;
+        try {
+            let clients = await contract.methods.getClients(id).call({from: account.address});
+            return clients;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Function to get the current price of a certain reference*/
     GetCurrentPrice: async function (account, id) {
-        let price = await contract.methods.getReferenceCurrentPrice(id).call({from: account.address})
-            .catch(function (error) {
-                console.log(error);
-            });
-        return price;
+        try {
+            let price = await contract.methods.getReferenceCurrentPrice(id).call({from: account.address});
+            return price;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Send K2 xor K xor K3 to the correct client (via the contract) from the provider*/
     sendEncryptedEncodedKey: async function (account, id, client_address, encryptedEncodedKey) {
-        let bin = web3.utils.bytesToHex(encryptedEncodedKey);
-        const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
-        const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
-        const dataref = contract.methods.setEncryptedEncodedKey(id, client_address, bin).encodeABI();
+        try {
+            let bin = web3.utils.bytesToHex(encryptedEncodedKey);
+            const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
+            const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
+            const dataref = contract.methods.setEncryptedEncodedKey(id, client_address, bin).encodeABI();
 
-        const rawTx = {
-            nonce: web3.utils.numberToHex(txnCount),
-            gasPrice: web3.utils.numberToHex(1500),
-            gasLimit: web3.utils.numberToHex(4700000),
-            to: ContractAddress,
-            data: dataref
-        };
-        const tx = new Tx(rawTx);
-        tx.sign(privateKey);
-        const serializedTx = tx.serialize();
-        const rawTxHex = '0x' + serializedTx.toString('hex');
-        let receipt = web3.eth.sendSignedTransaction(rawTxHex)
-            .catch(function (error) {
-                console.log(error)
-            });
-        return receipt;
+            const rawTx = {
+                nonce: web3.utils.numberToHex(txnCount),
+                gasPrice: web3.utils.numberToHex(1500),
+                gasLimit: web3.utils.numberToHex(4700000),
+                to: ContractAddress,
+                data: dataref
+            };
+            const tx = new Tx(rawTx);
+            tx.sign(privateKey);
+            const serializedTx = tx.serialize();
+            const rawTxHex = '0x' + serializedTx.toString('hex');
+            let receipt = web3.eth.sendSignedTransaction(rawTxHex);
+            return receipt;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Send correct K2 to the correct client (via the contract) from the provider*/
     sendDecoderKey: async function (account, id, client_address, Key) {
-        let bin = web3.utils.bytesToHex(Key);
-        const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
-        const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
-        const dataref = contract.methods.setKeyDecoder(id, client_address, bin).encodeABI();
+        try {
+            let bin = web3.utils.bytesToHex(Key);
+            const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
+            const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
+            const dataref = contract.methods.setKeyDecoder(id, client_address, bin).encodeABI();
 
-        const rawTx = {
-            nonce: web3.utils.numberToHex(txnCount),
-            gasPrice: web3.utils.numberToHex(1500),
-            gasLimit: web3.utils.numberToHex(4700000),
-            to: ContractAddress,
-            data: dataref
-        };
-        const tx = new Tx(rawTx);
-        tx.sign(privateKey);
-        const serializedTx = tx.serialize();
-        const rawTxHex = '0x' + serializedTx.toString('hex');
-        let receipt = web3.eth.sendSignedTransaction(rawTxHex)
-            .catch(function (error) {
-                console.log(error)
-            });
-        return receipt;
+            const rawTx = {
+                nonce: web3.utils.numberToHex(txnCount),
+                gasPrice: web3.utils.numberToHex(1500),
+                gasLimit: web3.utils.numberToHex(4700000),
+                to: ContractAddress,
+                data: dataref
+            };
+            const tx = new Tx(rawTx);
+            tx.sign(privateKey);
+            const serializedTx = tx.serialize();
+            const rawTxHex = '0x' + serializedTx.toString('hex');
+            let receipt = await web3.eth.sendSignedTransaction(rawTxHex);
+            return receipt;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Send the hash to the provider (via the contract)*/
     SendHashToProvider: async function (account, id, Hash) {
-
-        const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
-        const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
-        const dataref = contract.methods.setEncodedHashedKey(id, Hash).encodeABI();
-        const rawTx = {
-            nonce: web3.utils.numberToHex(txnCount),
-            gasPrice: web3.utils.numberToHex(1500),
-            gasLimit: web3.utils.numberToHex(4700000),
-            to: ContractAddress,
-            data: dataref
-        };
-        const tx = new Tx(rawTx);
-        tx.sign(privateKey);
-        const serializedTx = tx.serialize();
-        const rawTxHex = '0x' + serializedTx.toString('hex');
-        let receipt = web3.eth.sendSignedTransaction(rawTxHex)
-            .catch(function (error) {
-                console.log(error)
-            });
-        return receipt;
+        try {
+            const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
+            const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
+            const dataref = contract.methods.setEncodedHashedKey(id, Hash).encodeABI();
+            const rawTx = {
+                nonce: web3.utils.numberToHex(txnCount),
+                gasPrice: web3.utils.numberToHex(1500),
+                gasLimit: web3.utils.numberToHex(4700000),
+                to: ContractAddress,
+                data: dataref
+            };
+            const tx = new Tx(rawTx);
+            tx.sign(privateKey);
+            const serializedTx = tx.serialize();
+            const rawTxHex = '0x' + serializedTx.toString('hex');
+            let receipt = await web3.eth.sendSignedTransaction(rawTxHex);
+            return receipt;
+        } catch (e) {
+            throw e;
+        }
     },
     /*For a client to raise a dispute (or withdraw his money if still possible)*/
     RaiseDispute: async function (account, id) {
-
-        const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
-        const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
-        const dataref = contract.methods.raiseDispute(id).encodeABI();
-        const rawTx = {
-            nonce: web3.utils.numberToHex(txnCount),
-            gasPrice: web3.utils.numberToHex(1500),
-            gasLimit: web3.utils.numberToHex(4700000),
-            to: ContractAddress,
-            data: dataref
-        };
-        const tx = new Tx(rawTx);
-        tx.sign(privateKey);
-        const serializedTx = tx.serialize();
-        const rawTxHex = '0x' + serializedTx.toString('hex');
-        let receipt = web3.eth.sendSignedTransaction(rawTxHex)
-            .catch(function (error) {
-                console.log(error)
-            });
-        return receipt;
+        try {
+            const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
+            const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
+            const dataref = contract.methods.raiseDispute(id).encodeABI();
+            const rawTx = {
+                nonce: web3.utils.numberToHex(txnCount),
+                gasPrice: web3.utils.numberToHex(1500),
+                gasLimit: web3.utils.numberToHex(4700000),
+                to: ContractAddress,
+                data: dataref
+            };
+            const tx = new Tx(rawTx);
+            tx.sign(privateKey);
+            const serializedTx = tx.serialize();
+            const rawTxHex = '0x' + serializedTx.toString('hex');
+            let receipt = await web3.eth.sendSignedTransaction(rawTxHex);
+            return receipt;
+        } catch (e) {
+            throw e;
+        }
     },
 
 };
