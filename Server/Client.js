@@ -93,7 +93,7 @@ app.use('/public', express.static(__dirname + '/public'))
             const id = req.query.id;
             let product = await EventsModule.GetRef(id)
             let price = await bc.getCurrentPrice(req.session.Account, id)
-
+            console.log("duree " + (product[0].returnValues.endTime - product[0].returnValues.deployTime));
             res.render('Product.ejs', {product: product[0], price: price});
         } else {
             res.render('BuyerMenu.ejs', {account: req.session.Account});
@@ -103,13 +103,14 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Buy a specific reference */
     .get('/Buy/', async (req, res) => {
         if (req.session.Account) {
-            const id = req.query.id;
-            let product = await EventsModule.GetRef(id)
-            let result = await bc.buyProduct(id, req.session.Account);
-            if (result === "error") {
-                res.redirect('/BuyError');
-            } else {
+            try {
+                const id = req.query.id;
+                let product = await EventsModule.GetRef(id)
+                let result = await bc.buyProduct(id, req.session.Account);
                 res.render('Bought.ejs', {product: product[0], price: result});
+            } catch (e) {
+                res.redirect('/BuyError');
+                console.error(e);
             }
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -268,13 +269,6 @@ app.use('/public', express.static(__dirname + '/public'))
             const minData = req.body.minData;
             const depreciationType = req.body.depreciationType;
             const deposit = req.body.insuranceDeposit;
-            // TODO Add to JSON
-            let jsonInfo = {
-                "price": initialPrice,
-                "durationDays": durationDays,
-                "descr": description,
-                "privateKey": req.session.Account.privateKey
-            };
 
             let result = await bc.sellItemZiad(initialPrice, description, durationDays, durationHours, durationMinutes, req.session.Account, minData, depreciationType, deposit);
 

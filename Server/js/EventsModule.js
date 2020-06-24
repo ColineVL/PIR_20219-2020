@@ -27,8 +27,6 @@ const contractws = new web3ws.eth.Contract(abi, ContractAddress);
 ; //TODO give correct address when available
 
 
-
-
 module.exports = {
     /*Get all references */
     GetAvailableRefs: async function (endTime, priceMax, provider) {
@@ -38,135 +36,182 @@ module.exports = {
             fromBlock: 0,
             filter: {price: [0, priceMax], contractEndTime: [0, endTime]}
         }
-        let res1 = await contractws.getPastEvents("newDataReference", {
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {
-        }) // TODO Eventually do something here
-        return res1;
+        try {
+            let res1 = await contractws.getPastEvents("newDataReference", {
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Get a specific reference by it's Id*/
     GetRef: async function (refId) {
-        let res1 = await contractws.getPastEvents("newDataReference", {
-            filter: {referenceId: refId},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
+        try {
+            let res1 = await contractws.getPastEvents("newDataReference", {
+                filter: {referenceId: refId},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Get the reference you just put up for sale (useful for sellers database)*/
     GetYourRef: async function (address, blockNumber) {
-        let res1 = await contractws.getPastEvents("newDataReference", {
-            filter: {address: address},
-            fromBlock: blockNumber-1,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
+        try {
+            let res1 = await contractws.getPastEvents("newDataReference", {
+                filter: {address: address},
+                fromBlock: blockNumber - 1,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Get references bought by a specific account*/
     GetBoughtRefs: async function (account) {
-        let res1 = await contractws.getPastEvents("newClient", {
-            filter: {client: account.address},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
+        try {
+            let res1 = await contractws.getPastEvents("newClient", {
+                filter: {client: account.address},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
     /*Get references bought by a specific client for a specific id*/
-    GetBoughtRefSpecific: async function (id,account) {
-        let res1 = await contractws.getPastEvents("newClient", {
-            filter: {client: account.address, referenceId: id},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
+    GetBoughtRefSpecific: async function (id, account) {
+        try {
+            let res1 = await contractws.getPastEvents("newClient", {
+                filter: {client: account.address, referenceId: id},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Get references being sold by a specific id*/
     GetSoldRefs: async function (account) {
-        let res1 = await contractws.getPastEvents("newDataReference", {
-            filter: {provider: account.address},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
+        try {
+            let res1 = await contractws.getPastEvents("newDataReference", {
+                filter: {provider: account.address},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
     /*Get emit for a refund of a certain client for a certain product of reference id : id*/
-    GetDispute: async function (clientAddress,id) {
-        let res1 = await contractws.getPastEvents("withdrawRefund", {
-            filter: {referenceId: id, client: clientAddress},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
+    GetDispute: async function (clientAddress, id) {
+        try {
+            let res1 = await contractws.getPastEvents("withdrawRefund", {
+                filter: {referenceId: id, client: clientAddress},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
     /*Get all emits testifying that a the provider sent the encrypted key K2 for a certain product of reference id : id*/
     GetEncryptedKeysSent: async function (id) {
-        let res1 = await contractws.getPastEvents("encryptedEncodedKeyEvent", {
-            filter: {referenceId: id},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
+        try {
+            let res1 = await contractws.getPastEvents("encryptedEncodedKeyEvent", {
+                filter: {referenceId: id},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Get emit testifying that a the provider sent the encrypted key K2 for a certain product of reference id : id*/
-    GetEncryptedKeySentSpecific: async function (id,myaddress) {
-        let res1 = await contractws.getPastEvents("encryptedEncodedKeyEvent", {
-            filter: {client: myaddress, referenceId: id},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
+    GetEncryptedKeySentSpecific: async function (id, myaddress) {
+        try {
+            let res1 = await contractws.getPastEvents("encryptedEncodedKeyEvent", {
+                filter: {client: myaddress, referenceId: id},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Get emit testifying that a the provider sent me the K2 for a certain product of reference id : id*/
     GetKeySentSpecific: async function (id, myaddress) {
-        let res1 = await contractws.getPastEvents("keyDecoder", {
-            filter: {client: myaddress, referenceId: id},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
+        try {
+            let res1 = await contractws.getPastEvents("keyDecoder", {
+                filter: {client: myaddress, referenceId: id},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Get emits testifying that clients ent me hashes for a certain product of reference id : id*/
     GetClientsWhoSentHashes: async function (id) {
-        let res1 = await contractws.getPastEvents("encodedKeyHash", {
-            filter: { referenceId: id},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
+        try {
+            let res1 = await contractws.getPastEvents("encodedKeyHash", {
+                filter: {referenceId: id},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Get all emits testifying that K2 was sent for a certain product of reference id : id*/
     GetKeysSent: async function (id) {
-        let res1 = await contractws.getPastEvents("keyDecoder", {
-            filter: {referenceId: id},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
+        try {
+            let res1 = await contractws.getPastEvents("keyDecoder", {
+                filter: {referenceId: id},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Useful function that transforms a list of events into a list of addresses concerned by the event*/
     /*note that the event has to be coded such that the attribute of the addresses is "client" !*/
     EventsToAddresses: function (events) {
         let res = [];
-        for (let i = 0; i < events.length ; i++) {
+        for (let i = 0; i < events.length; i++) {
             res.push(events[i].returnValues.client)
         }
         return res;
     },
     /*Computes the list of elements in list1 and not list2*/
-    ComputeLeft : function (list1,list2) {
+    ComputeLeft: function (list1, list2) {
         let res = [];
-        for (let i = 0; i < list1.length ; i++) {
-            if ( !(list2.indexOf(list1[i]) >= 0) ) {
+        for (let i = 0; i < list1.length; i++) {
+            if (!(list2.indexOf(list1[i]) >= 0)) {
                 res.push(list1[i])
             }
         }
@@ -175,42 +220,58 @@ module.exports = {
 
     /*Get the DH Public Key of a provider for a certain id*/
     GetPubDiffieClient: async function (address_client, id) {
-        let res1 = await contractws.getPastEvents("newClient", {
-            filter: {referenceId: id, address: address_client},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return new Buffer.from(web3.utils.hexToBytes(res1[0].returnValues.publicKeyDH)).slice(0,4); //TODO Check lengths for slices..
+        try {
+            let res1 = await contractws.getPastEvents("newClient", {
+                filter: {referenceId: id, address: address_client},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return new Buffer.from(web3.utils.hexToBytes(res1[0].returnValues.publicKeyDH)).slice(0, 4); //TODO Check lengths for slices..
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Get the DH Public Key of a seller for a certain id*/
     GetPubDiffieSeller: async function (address_seller, id) {
-        let res1 = await contractws.getPastEvents("newDataReference", {
-            filter: {referenceId: id, address: address_seller},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return new Buffer.from(web3.utils.hexToBytes(res1[0].returnValues.publicKeyDH)).slice(0,4); //TODO Check lengths for slices..
+        try {
+            let res1 = await contractws.getPastEvents("newDataReference", {
+                filter: {referenceId: id, address: address_seller},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return new Buffer.from(web3.utils.hexToBytes(res1[0].returnValues.publicKeyDH)).slice(0, 4); //TODO Check lengths for slices..
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Get correct emit from client with the hash he submitted for a particular Id */
-    GetHashFromClientClient: async function (client_address,id) {
-        let res1 = await contractws.getPastEvents("encodedKeyHash", {
-            filter: { referenceId: id, client: client_address},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1[0].returnValues.encodedKeyHash;
+    GetHashFromClientClient: async function (client_address, id) {
+        try {
+            let res1 = await contractws.getPastEvents("encodedKeyHash", {
+                filter: {referenceId: id, client: client_address},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1[0].returnValues.encodedKeyHash;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Get Decoder (K2) from the event emitted by the seller, for me, for a particular Id */
-    GetClientDecoder: async function (id,my_address) {
-        let res1 = await contractws.getPastEvents("keyDecoder", {
-            filter: { referenceId: id, client: my_address},
-            fromBlock: 0,
-            toBlock: 'latest'
-        }, function (error, events) {}) // TODO Eventually do something here
-        return res1;
+    GetClientDecoder: async function (id, my_address) {
+        try {
+            let res1 = await contractws.getPastEvents("keyDecoder", {
+                filter: {referenceId: id, client: my_address},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            return res1;
+        } catch (e) {
+            throw e;
+        }
     },
     /* Check for event detailing if a the Reference Key K was posted for a particular Id */
     ReferenceKeySent: async function (id) {
