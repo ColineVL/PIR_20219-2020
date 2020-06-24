@@ -2,56 +2,36 @@
 
 pragma solidity >=0.5.0 <0.7.0;
 
-// To avoid overflow in certain functions
-import "./node_modules/@openzeppelin/contracts/math/SafeMath.sol";
-
 contract Depreciation_Contract{
 
-    using SafeMath for uint256;
-    using SafeMath for uint128;
-
-    // CHECK ALL TYPES and PUBLIC STUFF
-
-    // To avoid overflow
-    //    using SafeMath for uint256;
-    // Import it later
-    //    using SafeMath32 for uint32;
-
-    uint referenceIdCounter = 0;
-
-    struct DataReference{ // Contains reference ANd price
+    struct DataReference{ // Contains reference info and price
 
         uint initialPrice;
         uint insuranceDeposit;
+        // Necessary to keep track what can the provider withdraw
+        uint withdrawableFunds;
 
-        bytes32 referenceKey; //Take care of hackers, must be long enough ... to be determined
-        /*
-        contractDuration is too long, it must be shortened with:
-           - Changing data type with a risk not to optimize storage
-           - Put require statement in createDataReference
-        */
+        address provider;
 
-        uint128 minimumData;
-        uint128 numberOfData;
+        //Must be long enough to avoid BruteForce
+        bytes32 referenceKey;
 
-
+        // Tightly packed data 4x64 = 256
+        uint64 minimumData;
+        uint64 numberOfData;
         // Needed to calculate depreciation value
-        uint128 deployTime;
+        uint64 deployTime;
         /*
             Should not be allowed to be changed by anyone, even the owner to avoid scams and ...
             ... withholding funds for a longer time than anticipated
         */
-        uint128 endTime;
+        uint64 endTime;
 
         /*
             Value depreciation factors.
-            1: linear depreciation | 2: quadratic depreciation. Any other value constant price (no depreciation)
+            1: linear depreciation | 2: quadratic depreciation. Any other value: constant price (no depreciation)
         */
         uint8 depreciationType;
-
-        address provider;
-        // Necessary to check if the provider withdrew undisputed funds so he does not withdraw other's funds
-        uint withdrawableFunds;
 
         /*
             Client parameters
@@ -76,12 +56,12 @@ contract Depreciation_Contract{
         mapping (address => bytes32) keyDecoder;
     }
 
-
-    // Public will set up getters for each (easier for web3js call/send functions)
-    DataReference[] public dataReferences;
+    DataReference[] dataReferences;
 
     /*
-        Get functions
+    ---------------------------------------------
+                      Getters
+    ---------------------------------------------
     */
 
     function getNumberOfData(uint _referenceId) view external returns(uint128 numberOfData){
@@ -89,6 +69,7 @@ contract Depreciation_Contract{
     }
 
 
+    // Needed so the client and the smart contract know the current depreciated value
     function getReferenceCurrentPrice(uint _referenceId) view public returns(uint price){
         uint _price = dataReferences[_referenceId].initialPrice;
         uint8 depreciationType = dataReferences[_referenceId].depreciationType;
