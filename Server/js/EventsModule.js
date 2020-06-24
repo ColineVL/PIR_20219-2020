@@ -284,7 +284,7 @@ module.exports = {
     },
 
     /* Check for event detailing the funds withdrawn by the Provider for a particular Id */
-    ReferenceKeySent: async function (id) {
+    WithdrawFundsEvent: async function (id) {
         let res1 = await contractws.getPastEvents("withdrawFundsEvent", {
             filter: { referenceId: id},
             fromBlock: 0,

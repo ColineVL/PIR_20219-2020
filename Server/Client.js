@@ -301,6 +301,7 @@ app.use('/public', express.static(__dirname + '/public'))
             const id = req.query.id;
             const [product, total_clients, num_clients_step1, num_clients_step2, Key] = await bc.manageID(id, req.session.Account);
             // TODO finish coding function.. to get number of disputes
+            console.log(Key)
             res.render('ManageId.ejs', {
                 product: product[0],
                 Id: id,

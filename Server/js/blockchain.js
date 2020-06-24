@@ -244,7 +244,7 @@ async function manageID(id, account) {
 
         let Key = 0
         if (KeyEvent.length > 0) {
-
+            console.log("in")
             let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1])).slice(0, 7)
             Key = buffer.toString('hex');
         }
@@ -558,7 +558,7 @@ async function withdrawFundsProvider(id, privateKey) {
 
     let receipt = await transactions.withdrawFundsProvider(Account,id)
 
-    let withdrawEvent = await EventsModule.ReferenceKeySent(id);
+    let withdrawEvent = await EventsModule.WithdrawFundsEvent(id);
     if (receipt){
         console.log("okkkkk")
     }
