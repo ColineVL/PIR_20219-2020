@@ -164,6 +164,18 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /*Send a fake hash I compute to the provider ..*/
+    .get('/SendClientHashMalicious', async (req, res) => {
+        if (req.session.Account) {
+            let id = req.query.id;
+            let done = await bc.sendClientHashMalicious(id, req.session.Account.privateKey)
+
+            res.render('SentHash.ejs', {done: done});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
     /*Send the hash I compute to the provider ..*/
     .get('/computeK', async (req, res) => {
         if (req.session.Account) {
@@ -192,8 +204,8 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/Dispute', async (req, res) => {
         if (req.session.Account) {
             let id = req.query.id;
-
-            let info = bc.Dispute(id, req.session.Account.privateKey)
+            // TODO ADD to received funds, the real funds received: maybe received insurance deposit as well...
+            let info = await bc.Dispute(id, req.session.Account.privateKey)
             res.render('Dispute.ejs',{id:id,info:info});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -287,14 +299,15 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/ManageId/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
-            const [product, total_clients, num_clients_step1, num_clients_step2] = await bc.manageID(id, req.session.Account);
+            const [product, total_clients, num_clients_step1, num_clients_step2, Key] = await bc.manageID(id, req.session.Account);
             // TODO finish coding function.. to get number of disputes
             res.render('ManageId.ejs', {
                 product: product[0],
                 Id: id,
                 total_clients: total_clients,
                 num_clients_step1: num_clients_step1,
-                num_clients_step2: num_clients_step2
+                num_clients_step2: num_clients_step2,
+                Key: Key,
             });
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -323,6 +336,17 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /* Interface topublicly post the reference Key K*/
+    .get('/PostRefKey/', async (req, res) => {
+        if (req.session.Account) {
+            const id = req.query.id;
+            let result = await bc.sendReferenceKey(id, req.session.Account.privateKey);
+            res.render('SentRefKey.ejs', {id: id, receipt: result[0], refKey:result[1]});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
     /*If something has gone wrong..*/
     .get('/SellError', async (req, res) => {
         res.render('SellError.ejs');
@@ -333,4 +357,4 @@ app.use('/public', express.static(__dirname + '/public'))
         res.redirect('/');
     })
 
-    .listen(8086);
+    .listen(8087);

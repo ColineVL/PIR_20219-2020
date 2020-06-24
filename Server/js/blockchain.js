@@ -63,7 +63,7 @@ async function getAccount(privateKey) {
         let account = web3.eth.accounts.privateKeyToAccount(privateKey);
         return account;
     } catch (err) {
-        return err;
+        throw err;
     }
 }
 
@@ -81,10 +81,8 @@ async function refreshNodesList() {
             nodelistIDS.push(peers[i].id);
         }
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
-
-
 }
 
 /********************************
@@ -198,7 +196,7 @@ async function sellItemColine(jsonInfo, account) {
         receipt.id = id;
         return receipt;
     } catch (err) {
-        throw new Error(err);
+        throw err;
     }
 }
 
@@ -214,7 +212,7 @@ async function buyProduct(id, account) {
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
         return (currentPrice);
     } catch (e) {
-        return e;
+        throw e;
     }
 }
 
@@ -223,7 +221,7 @@ async function getCurrentPrice(account, id) {
         let currentPrice = await transactions.GetCurrentPrice(account, id);
         return currentPrice;
     } catch (e) {
-        return e;
+        throw e;
     }
 
 }
@@ -238,19 +236,27 @@ async function manageID(id, account) {
         let KeysSent = await EventsModule.GetKeysSent(id);
         let ReceivedHashes = await EventsModule.GetClientsWhoSentHashes(id)
         let num_clients_step2 = ReceivedHashes.length - KeysSent.length
-        return [product, total_clients, num_clients_step1, num_clients_step2];
+
+        let KeyEvent = await EventsModule.ReferenceKeySent(id);
+
+        let Key = 0
+        if (KeyEvent.length > 0) {
+
+            let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1])).slice(0, 7)
+            Key = buffer.toString('hex');
+        }
+        return [product, total_clients, num_clients_step1, num_clients_step2, Key];
+
     } catch (e) {
-        return e;
+        throw e;
     }
-
 }
-
 async function getClients(account, id) {
     try {
         let num = await transactions.GetClients(account,id)
         return num;
     } catch (e) {
-        return e;
+        throw e;
     }
 
 }
@@ -296,7 +302,7 @@ async function sendEncryptedEncodedKey(id, privateKey) {
         }
         return [ClientsToDo.length, done];
     } catch (e) {
-        return e;
+        throw e;
     }
 
 }
@@ -333,7 +339,7 @@ async function sendDecoderKey(id, privateKey) {
         }
         return [ClientsToDo.length, done];
     } catch (e) {
-        return e;
+        throw e;
     }
 
 }
@@ -357,6 +363,7 @@ async function sendClientHash(id, privateKey) {
         let decryptedToBeHashed = crypto.OTP(secret, encrypted).slice(0, 7);
         let HashTobeSent = crypto.Hash(decryptedToBeHashed)
 
+
         await readwrite.WriteAsRefBuyer(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt', decryptedToBeHashed)
         let done = 0 // value to verify later that everything went correctly
         let receipt = transactions.SendHashToProvider(Account, id, HashTobeSent)
@@ -367,7 +374,26 @@ async function sendClientHash(id, privateKey) {
         }
         return done;
     } catch (e) {
-        return e;
+        throw e;
+    }
+}
+
+/*Function for the client to send a fake hash of K xor K2 to the provider*/
+async function sendClientHashMalicious(id, privateKey) {
+    try {
+        const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+        let HashTobeSent = crypto.Hash((new Buffer.from("fakeClientHash")))
+
+        let done = 0 // value to verify later that everything went correctly
+        let receipt = transactions.SendHashToProvider(Account, id, HashTobeSent)
+        // Now we can do the OTP
+
+        if (receipt) {
+            done = 1;
+        }
+        return done;
+    } catch (e) {
+        throw e;
     }
 
 }
@@ -388,7 +414,7 @@ async function ComputeK(id, privateKey) {
 
         return K;
     } catch (e) {
-        return e;
+        throw e;
     }
 
 }
@@ -401,9 +427,14 @@ async function DisputeInfoClient(id, privateKey) {
         let encoderEvent = await EventsModule.GetKeySentSpecific(id, Account.address)
         let buyEvent = await EventsModule.GetBoughtRefSpecific(id, Account.address)
 
-        return [encoderEvent.length,buyEvent[0].returnValues.fund];
+        console.log(encoderEvent)
+        console.log("******************")
+        console.log(buyEvent)
+        console.log("******************")
+        console.log(buyEvent[0].returnValues.fund)
+        return [encoderEvent.length, buyEvent[0].returnValues.fund];
     } catch (e) {
-        return e;
+        throw e;
     }
 
 }
@@ -414,17 +445,27 @@ async function Dispute(id, privateKey) {
         const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
         let bool = false;
-        let receipt = await transactions.RaiseDispute(Account,id)
-        if (receipt){
+        let receipt = await transactions.RaiseDispute(Account, id)
+        if (receipt) {
             bool = true
         }
-        let disputeEvent = await EventsModule.GetDispute(Account.address,id)
+        let disputeEvent = await EventsModule.GetDispute(Account.address, id)
 
-        return [bool,disputeEvent[0].returnValues.funds];
+        return [bool, disputeEvent[0].returnValues.funds];
     } catch (e) {
-        return e;
+        throw e;
     }
 
+}
+
+/*For a provider to release the reference Key*/
+async function sendReferenceKey(id, privateKey) {
+    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+    let refKey = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
+
+    let receipt = await transactions.sendRefKey(Account, id, refKey)
+
+    return [receipt, refKey];
 }
 
 
@@ -460,4 +501,6 @@ module.exports = {
     getClients,
     DisputeInfoClient,
     Dispute,
+    sendReferenceKey,
+    sendClientHashMalicious
 };
