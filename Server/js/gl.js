@@ -51,9 +51,9 @@ const boughtProductInfoItem = {
     name: "boughtProductInfoItem"
 }
 
-const ongoingTransactionsItem = {
-    title: "Ongoing transactions",
-    name: "ongoingTransactionsItem"
+const ongoingBuysItem = {
+    title: "Ongoing buys",
+    name: "ongoingBuysItem"
 };
 
 const boughtDataItem = {
@@ -64,6 +64,11 @@ const boughtDataItem = {
 const manageIdSellerItem = {
     title: "Manage ID",
     name: "manageIdSellerItem"
+};
+
+const manageIdBuyerItem = {
+    title: "Manage ID",
+    name: "manageIdBuyerItem"
 };
 
 /********************************
@@ -214,11 +219,33 @@ myLayout.registerComponent('boughtProductInfoItem', function (container, state) 
     );
 });
 
-myLayout.registerComponent('ongoingTransactionsItem', function (container, state) {
+myLayout.registerComponent('ongoingBuysItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<h1>Transactions:</h1>' +
-        '<ul id="ongoing_list"></ul>' +
+        '<div id="ongoingBuys_notConnected">' +
+        '<p class="message">You are not connected...</p>' +
+        '</div>' +
+        '<div id="ongoingBuys_connected">' +
+        '<h1>Products being bought :</h1>' +
+        '<p id="ongoingBuys_message" class="message"></p>' +
+        '<ul id="ongoingBuys_beingBought"></ul>' +
+        '</div>' +
+        '</div>'
+    );
+});
+
+myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
+    container.getElement().html(
+        '<div class="container">' +
+        '<h3>Product:</h3>' +
+        '<div id="manageIdBuyer_produit"></div>' +
+        '<h3>To do:</h3>' +
+        '<ul>' +
+        '<li>Encrypted encoded key received, send hash</li>' +
+        '<li>Decoder key received</li>' +
+        '<li>Set a dispute or get a refund</li>' +
+        '</ul>' +
+        '<p class="message" id="manageIdSeller_message"></p>' +
         '</div>'
     );
 });
@@ -267,9 +294,10 @@ myLayout.registerComponent('manageIdSellerItem', function (container, state) {
         '<div id="manageIdSeller_produit"></div>' +
         '<h3>To do:</h3>' +
         '<ul>' +
-        '<li onclick="sendCryptedK2()">Send Info (K2xORK): <var id="manageIdSeller_NumClientsStep1"></var> clients</li>' +
-        '<li>Verify hashes and send K2: <var id="manageIdSeller_NumClientsStep2"></var> clients</li>' +
-        '<li>Dispute: <var id="manageIdSeller_NumDispute"></var> clients</li>' +
+        '<li onclick="sendCryptedK2()">Send Encrypted Encoded Key (K2xorKxorK3): <var id="manageIdSeller_NumClientsStep1"></var> clients</li>' +
+        '<li>Verify hashes and send Decoder Key (K2): <var id="manageIdSeller_NumClientsStep2"></var> clients</li>' +
+        '<li id="manageIdSeller_keyNotReleased" onclick="function()">Release reference key (key not released yet)</li>' +
+        '<li id="manageIdSeller_keyReleased">Key is released: <var id="manageIdSeller_releasedKey"></var></li>' +
         '</ul>' +
         '<p class="message" id="manageIdSeller_message"></p>' +
         '</div>'
@@ -322,6 +350,9 @@ function addMenuItem(newItem) {
     if (newItem.name === "ongoingSalesItem") {
         element.click(loadOngoingSales);
     }
+    if (newItem.name === "ongoingBuysItem") {
+        element.click(loadOngoingBuys);
+    }
     if (newItem.name === "sellNewItem") {
         element.click( () => {
             loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
@@ -338,7 +369,7 @@ addMenuItem(listNodesItem);
 addMenuItem(newAccountItem);
 $('#menuContainer').append("<h2>Buy</h2>");
 addMenuItem(forSaleItem);
-addMenuItem(ongoingTransactionsItem);
+addMenuItem(ongoingBuysItem);
 addMenuItem(boughtDataItem);
 $('#menuContainer').append("<h2>Sell</h2>");
 addMenuItem(sellNewItem);

@@ -230,6 +230,7 @@ async function getCurrentPrice(account, id) {
  ********************************/
 
 async function manageID(id, account) {
+    console.log(id, account);
     try {
         let product = await EventsModule.GetRef(id);
         const clients = await transactions.GetClients(account, id);
@@ -244,6 +245,7 @@ async function manageID(id, account) {
 
         let Key = 0
         if (KeyEvent.length > 0) {
+            console.log("dedans");
 
             let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1])).slice(0, 7)
             Key = buffer.toString('hex');

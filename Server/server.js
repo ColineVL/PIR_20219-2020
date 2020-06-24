@@ -166,6 +166,34 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /************ Ongoing buys ************/
+
+    .get('/ongoingBuys/', async (req, res) => {
+        try {
+            let Ids = await EventsModule.GetBoughtRefs(req.session.Account.address);
+            res.json(Ids);
+        } catch (e) {
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/manageIdBuyer/:id', async (req, res) => {
+        try {
+            let product = await EventsModule.GetRef(req.params.id);
+            let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(req.params.id, req.session.Account.address);
+            let eventPhase2 = await EventsModule.GetKeySentSpecific(req.params.id, req.session.Account.address);
+
+            let num_event2 = eventPhase2.length;
+            let num_event1 = eventPhase1.length - num_event2 // Because in that case it is already done
+
+            let result = [product, num_event1, num_event2];
+            res.json(result);
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
+
     /************ Sell a product ************/
 
     .get('/sellNewProduct/:json', async (req, res) => {
@@ -194,6 +222,7 @@ app.use('/public', express.static(__dirname + '/public'))
             // result = [product, total_clients, num_clients_step1, num_clients_step2, Key]
             res.json(result);
         } catch (e) {
+            console.log(e);
             res.status(500).json(e.message);
         }
     })

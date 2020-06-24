@@ -374,6 +374,58 @@ async function buyProduct() {
     }
 }
 
+/** Ongoing buys **/
+
+function callbackOngoingBuys(Ids) {
+    $("#ongoingBuys_message").hide();
+    myAccount.buying = [];
+    let html = "";
+    for (const data of Ids) {
+        html += "<details>";
+        html += "<summary>" + data.returnValues["description"] + "</summary>";
+        html += "<p>Reference Id: " + data.returnValues["referenceId"] + "</p>";
+        html += "<p class='link' onclick=manageIdBuyer(" + data.returnValues["referenceId"] + ")>Manage this Id</p>";
+        html += "</details>";
+        myAccount.buying.push(data.returnValues["referenceId"]);
+    }
+    $("#ongoingBuys_beingBought").html(html);
+}
+
+function callbackErrorOngoingBuys(err) {
+    $("#ongoingBuys_message").show();
+    $("#ongoingBuys_message").html(err);
+}
+
+function loadOngoingBuys() {
+    if (connected) {
+        $('#ongoingBuys_notConnected').hide();
+        $('#ongoingBuys_connected').show();
+        loadXMLDoc("ongoingBuys", callbackOngoingBuys, callbackErrorOngoingBuys);
+    } else {
+        $('#ongoingBuys_connected').hide();
+        $('#ongoingBuys_notConnected').show();
+    }
+}
+
+/** Manage Id **/
+function callbackManageIdBuyer(param) {
+    addItem(manageIdBuyerItem);
+    const [product, total_clients, num_clients_step1, num_clients_step2, key] = param;
+
+    const keys = ["provider", "initialPrice", "description"];
+    const keysNames = ["Provider", "Initial price", "Description"];
+    const tableProduct = displayProductInfo(product[0].returnValues, keys, keysNames);
+    $("#manageIdBuyer_produit").html(tableProduct);
+}
+
+function callbackErrorManageIdBuyer(err) {
+    console.log(err);
+}
+
+function manageIdBuyer(id) {
+    loadXMLDoc("manageIdBuyer/" + id, callbackManageIdBuyer, callbackErrorManageIdBuyer);
+}
+
 /********************************
  * Sell menu
  ********************************/
@@ -433,7 +485,7 @@ function callbackOngoingSales(Ids) {
         html += "<details>";
         html += "<summary>" + data.returnValues["description"] + "</summary>";
         html += "<p>Reference Id: " + data.returnValues["referenceId"] + "</p>";
-        html += "<p class='link' onclick=ManageIdSeller(" + data.returnValues["referenceId"] + ")>Manage this Id</p>";
+        html += "<p class='link' onclick=manageIdSeller(" + data.returnValues["referenceId"] + ")>Manage this Id</p>";
         html += "</details>";
         myAccount.forSale.push(data.returnValues["referenceId"]);
     }
@@ -459,7 +511,8 @@ function loadOngoingSales() {
 /** Manage Id **/
 
 function callbackManageIdSeller(param) {
-    const [product, total_clients, num_clients_step1, num_clients_step2] = param;
+    addItem(manageIdSellerItem);
+    const [product, total_clients, num_clients_step1, num_clients_step2, key] = param;
 
     const keys = ["provider", "initialPrice", "description"];
     const keysNames = ["Provider", "Initial price", "Description"];
@@ -470,14 +523,22 @@ function callbackManageIdSeller(param) {
     $("#manageIdSeller_NumClientsStep1").text(num_clients_step1);
     $("#manageIdSeller_NumClientsStep2").text(num_clients_step2);
     $("#manageIdSeller_totalNumberClients").text(total_clients);
+
+    if (key === 0) {
+        $('#manageIdSeller_keyReleased').hide();
+        $('#manageIdSeller_keyNotReleased').show();
+    } else {
+        $('#manageIdSeller_keyNotReleased').hide();
+        $('#manageIdSeller_keyReleased').show();
+        $('#manageIdSeller_releasedKey').html(key);
+    }
 }
 
 function callbackErrorManageIdSeller(err) {
     console.log(err);
 }
 
-function ManageIdSeller(id) {
-    addItem(manageIdItem);
+function manageIdSeller(id) {
     loadXMLDoc("manageIdSeller/" + id, callbackManageIdSeller, callbackErrorManageIdSeller);
 }
 
@@ -490,3 +551,4 @@ function sendCryptedK2() {
     const id = $('#productInfo_referenceID').text();
     loadXMLDoc("sendCryptedK2/" + id + "/" + myAccount.privateKey, callbackSendCryptedK2);
 }
+
