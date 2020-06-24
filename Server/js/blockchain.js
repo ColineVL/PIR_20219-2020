@@ -478,9 +478,9 @@ async function sendReferenceKeyMalicious(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
     let refKeyMalicious = crypto.RandomBytes(7);
 
-    let receipt = await transactions.sendRefKey(Account,id,refKey)
+    let receipt = await transactions.sendRefKey(Account,id,refKeyMalicious)
 
-    return [receipt,refKey];
+    return [receipt,refKeyMalicious];
 }
 
 
