@@ -151,7 +151,6 @@ async function sellItemZiad(price, description, durationDays, durationHours, dur
 
 async function sellItemColine(jsonInfo, account) {
     jsonInfo = JSON.parse(jsonInfo);
-
     const initialPrice = jsonInfo["initialPrice"];
     const durationDays = jsonInfo["durationDays"];
     const durationHours = jsonInfo["durationHours"];
@@ -183,6 +182,7 @@ async function sellItemColine(jsonInfo, account) {
         receipt.id = id;
         return receipt;
     } catch (err) {
+        console.log(err);
         return err;
     }
 }

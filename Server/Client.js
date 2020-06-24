@@ -256,13 +256,6 @@ app.use('/public', express.static(__dirname + '/public'))
             const minData = req.body.minData;
             const depreciationType = req.body.depreciationType;
             const deposit = req.body.insuranceDeposit;
-            // TODO Add to JSON
-            let jsonInfo = {
-                "price": initialPrice,
-                "durationDays": durationDays,
-                "descr": description,
-                "privateKey": req.session.Account.privateKey
-            };
 
             let result = await bc.sellItemZiad(initialPrice, description, durationDays, durationHours, durationMinutes, req.session.Account, minData, depreciationType, deposit);
 
