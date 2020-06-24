@@ -7,6 +7,8 @@ import "./Provider_Depreciation_Contract.sol";
 
 contract TLE_Contract is Provider_Depreciation_Contract {
 
+    event newTLE(uint indexed referenceId, string spaceObject);
+
     struct structTLE {
         string spaceObject;
         string TLE;
@@ -15,7 +17,6 @@ contract TLE_Contract is Provider_Depreciation_Contract {
     // mapping between referenceId and the data
     mapping (uint => structTLE[]) public TLEs;
 
-    event newTLE(uint indexed referenceId, string TLE);
 
     function setTLE(uint _referenceId, string memory _spaceObject, string memory _TLE) onlyProvider(_referenceId) public{
 
@@ -32,6 +33,7 @@ contract TLE_Contract is Provider_Depreciation_Contract {
 
         emit newTLE(_referenceId, _spaceObject);
     }
+
 
     function getTLEs (uint _referenceId) external view returns(bytes32 ,structTLE[] memory){
         if((now < dataReferences[_referenceId].endTime) && (dataReferences[_referenceId].referenceKey == 0)){

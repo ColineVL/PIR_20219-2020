@@ -6,8 +6,38 @@ import "./Depreciation_Contract.sol";
 
 contract Client_Depreciation_Contract is Depreciation_Contract {
 
+    /*
+    ---------------------------------------------
+                      Events
+    ---------------------------------------------
+    */
 
-    // Checks if the msg.sender bought the referenceId
+    event newClient(
+        uint indexed referenceId,
+        address indexed client,
+        uint fund,
+        bytes32 publicKeyDH,
+        uint time);
+
+    event encodedKeyHash(
+        uint indexed referenceId,
+        address indexed client,
+        bytes32 encodedKeyHash);
+
+    event withdrawRefund(
+        uint indexed referenceId,
+        address indexed client,
+        uint funds,
+        uint time);
+
+
+    /*
+    ---------------------------------------------
+                      Modifiers
+    ---------------------------------------------
+    */
+
+    // Checks if the msg.sender bought the referenceId and did not withdrew funds
     modifier isClient(uint _referenceId) {
         require(dataReferences[_referenceId].clientFunds[msg.sender] > 0);
         _;
@@ -29,21 +59,12 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
 
     /*
     ---------------------------------------------
-    Client buy mechanism functions
+            Client buy mechanism functions
     ---------------------------------------------
     */
 
-    event newClient(
-        uint indexed referenceId,
-        address indexed client,
-        uint fund,
-        bytes32 publicKeyDH,
-        uint time);
 
     function buyReference(uint _referenceId, bytes32 _publicKeyDH) isPayed(_referenceId) payable external {
-        // Checks if referenceId is valid
-        // !!!!!!!!!!!! Check if < or <= Maybe remove line if it will automatically give index out of bound
-        require(_referenceId <= dataReferences.length);
 
         // Checks that client did not already buy the reference
         require(dataReferences[_referenceId].isClient[msg.sender] == false);
@@ -57,11 +78,6 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
 
         emit newClient(_referenceId, msg.sender, msg.value, _publicKeyDH, now);
     }
-
-    event encodedKeyHash(
-        uint indexed referenceId,
-        address indexed client,
-        bytes32 encodedKeyHash);
 
 
     function setEncodedHashedKey(uint _referenceId, bytes32 _encodedKeyHash) external isClient(_referenceId) {
@@ -85,15 +101,9 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
 
     /*
     ---------------------------------------------
-    Client dispute functions
+              Client dispute functions
     ---------------------------------------------
     */
-
-    event withdrawRefund(
-        uint indexed referenceId,
-        address indexed client,
-        uint funds,
-        uint time);
 
     function withdrawDisputeFunds(uint _referenceId, uint funds) internal {
 
@@ -116,16 +126,14 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     }
 
 
-    function raiseDispute(uint _referenceId) external {
+    /*
+    isClient modifier checks if a client hasn't already withdrew his funds.
+    This is needed so he does not withdraw insuranceDeposit multiple times
+    */
+
+    function raiseDispute(uint _referenceId) isClient(_referenceId) external returns(bool) {
 
         uint funds = dataReferences[_referenceId].clientFunds[msg.sender];
-
-        /*
-            Checks if client hasn't already withdrew his funds.
-            This is needed so he does not withdraw insuranceDeposit multiple times
-        */
-
-        require(funds > 0);
 
         // Checks if provider hasn't already withdrew funds
         require(dataReferences[_referenceId].withdrawableFunds >= funds);
@@ -133,6 +141,8 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         // If provider hasn't send any decoder key the client can directly take back his funds
         if (dataReferences[_referenceId].keyDecoder[msg.sender] == 0) {
             withdrawDisputeFunds(_referenceId, funds);
+            // Client withdrew funds
+            return true;
         }
 
         else if (dataReferences[_referenceId].referenceKey != 0) {
@@ -141,14 +151,18 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
 
             // Condition comparing the hashes of encoded keys to determine if the right key was given
             if (keccak256(abi.encode(_xor)) != dataReferences[_referenceId].encodedKeyHash[msg.sender]) {
-                funds = funds.add((dataReferences[_referenceId].insuranceDeposit / dataReferences[_referenceId].completedClients));
+                funds += (dataReferences[_referenceId].insuranceDeposit / dataReferences[_referenceId].completedClients);
                 withdrawDisputeFunds(_referenceId, funds);
+                // Client withdrew funds
+                return true;
             }
 
             // Condition for number of data
             else if (dataReferences[_referenceId].numberOfData < dataReferences[_referenceId].minimumData) {
-                funds = funds.add((dataReferences[_referenceId].insuranceDeposit / dataReferences[_referenceId].completedClients));
+                funds += (dataReferences[_referenceId].insuranceDeposit / dataReferences[_referenceId].completedClients);
                 withdrawDisputeFunds(_referenceId, funds);
+                // Client withdrew funds
+                return true;
             }
 
         }
@@ -156,8 +170,12 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         // Equivalent to: now > contract end time AND client received keyDecoder (hash is correct) AND referenceKey was never published
         else if (now > dataReferences[_referenceId].endTime) {
             withdrawDisputeFunds(_referenceId, funds);
+            // Client withdrew funds
+            return true;
         }
-    }
 
+        // Client did not withdrew funds
+        return false;
+    }
 
 }
