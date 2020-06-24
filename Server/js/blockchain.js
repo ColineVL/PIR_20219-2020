@@ -483,6 +483,19 @@ async function sendReferenceKeyMalicious(id, privateKey) {
     return [receipt,refKeyMalicious];
 }
 
+/*Function to to raise a dispute, or to retrieve your money*/
+async function withdrawFundsProvider(id, privateKey) {
+    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+
+    let receipt = await transactions.withdrawFundsProvider(Account,id)
+    if (receipt){
+        console.log(receipt)
+    }
+
+
+    return [receipt];
+}
+
 
 
 /********************************
@@ -521,6 +534,7 @@ module.exports = {
     sendClientHashMalicious,
     sendEncryptedEncodedKeyMalicious,
     sendDecoderKeyMalicious,
-    sendReferenceKeyMalicious
+    sendReferenceKeyMalicious,
+    withdrawFundsProvider
 
 };

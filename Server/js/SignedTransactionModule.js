@@ -245,8 +245,8 @@ module.exports = {
             .catch(function(error){console.log(error)});
         return receipt;
     },
-    /*For a provider to send the Reference Key K of a certain product*/
-    sendRefKey: async function (account,id) {
+    /*For a provider to  withdraw funds*/
+    withdrawFundsProvider: async function (account,id) {
 
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")

@@ -386,6 +386,17 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /* Malicious Version K*/
+    .get('/WithdrawFundsProvider/', async (req, res) => {
+        if (req.session.Account) {
+            const id = req.query.id;
+            let result = await bc.withdrawFundsProvider(id, req.session.Account.privateKey);
+            res.render('Withdrawn.ejs', {id: id, receipt: result});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
     /*If something has gone wrong..*/
     .get('/SellError', async (req, res) => {
         res.render('SellError.ejs');
