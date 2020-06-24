@@ -105,7 +105,7 @@ app.use('/public', express.static(__dirname + '/public'))
         if (req.session.Account) {
             const id = req.query.id;
             let product = await EventsModule.GetRef(id)
-            let result = await bc.buyProduct(id, product, req.session.Account);
+            let result = await bc.buyProduct(id, req.session.Account);
             if (result === "error") {
                 res.redirect('/BuyError');
             } else {
