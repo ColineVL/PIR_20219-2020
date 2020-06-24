@@ -33,6 +33,8 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     event referenceKey(uint indexed referenceId, bytes32 referenceKey);
 
     event keyDecoder(uint indexed referenceId, address indexed client, bytes32 keyDecoder);
+
+    event withdrawFundsEvent(uint indexed _referenceId, uint funds);
     /*
     ---------------------------------------------
                       Modifiers
@@ -90,10 +92,11 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     }
 
     // 5 days after the end of the contract/reference the provider can withdraw the available funds
-    function withdrawFunds(uint _referenceId) onlyProvider(_referenceId) external {
+    function withdrawFunds(uint _referenceId) onlyProvider(_referenceId) external{
 
         // Checks if the provider has waited for the time limit for clients to set a dispute
-        require(now > dataReferences[_referenceId].endTime + 5 days);
+        // !!!!!!!!!!!!!!! TODO CHANGE LATER TO 5 DAYS
+        require(now > dataReferences[_referenceId].endTime + 30 seconds);
 
         // Checks that provider gave a key
         require(dataReferences[_referenceId].referenceKey != 0);
@@ -102,7 +105,10 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         uint funds = dataReferences[_referenceId].withdrawableFunds;
         dataReferences[_referenceId].withdrawableFunds = 0;
 
+        require(funds > 0);
+
         (msg.sender).transfer(funds);
+        emit withdrawFundsEvent(_referenceId, funds);
     }
 
     /*

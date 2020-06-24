@@ -103,13 +103,13 @@ app.use('/public', express.static(__dirname + '/public'))
     /* Buy a specific reference */
     .get('/Buy/', async (req, res) => {
         if (req.session.Account) {
-            const id = req.query.id;
-            let product = await EventsModule.GetRef(id)
-            let result = await bc.buyProduct(id, req.session.Account);
-            if (result === "error") {
-                res.redirect('/BuyError');
-            } else {
+            try {
+                const id = req.query.id;
+                let product = await EventsModule.GetRef(id)
+                let result = await bc.buyProduct(id, req.session.Account);
                 res.render('Bought.ejs', {product: product[0], price: result});
+            } catch (e) {
+                res.redirect('/BuyError');
             }
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -139,14 +139,9 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/ManageIdBuyer', async (req, res) => {
         if (req.session.Account) {
             let Id = req.query.id;
-            let product = await EventsModule.GetRef(Id)
+            let result = await bc.manageIDBuyer(Id,req.session.Account)
 
-            let eventPhase1 = await EventsModule.GetEncryptedKeySentSpecific(Id, req.session.Account.address)
-            let eventPhase2 = await EventsModule.GetKeySentSpecific(Id, req.session.Account.address)
-
-            let num_event2 = eventPhase2.length
-            let num_event1 = eventPhase1.length - num_event2 // Because in that case it is already done
-            res.render('ManageBuy.ejs', {Id: Id, product: product[0], num_event1: num_event1, num_event2: num_event2});
+            res.render('ManageBuy.ejs', {Id: Id, product: result[0], num_event1: result[1], num_event2: result[2]});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
@@ -156,6 +151,18 @@ app.use('/public', express.static(__dirname + '/public'))
         if (req.session.Account) {
             let id = req.query.id;
             let done = await bc.sendClientHash(id, req.session.Account.privateKey)
+
+            res.render('SentHash.ejs', {done: done});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
+    /*Send a fake hash I compute to the provider ..*/
+    .get('/SendClientHashMalicious', async (req, res) => {
+        if (req.session.Account) {
+            let id = req.query.id;
+            let done = await bc.sendClientHashMalicious(id, req.session.Account.privateKey)
 
             res.render('SentHash.ejs', {done: done});
         } else {
@@ -191,8 +198,8 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/Dispute', async (req, res) => {
         if (req.session.Account) {
             let id = req.query.id;
-
-            let info = bc.Dispute(id, req.session.Account.privateKey)
+            // TODO ADD to received funds, the real funds received: maybe received insurance deposit as well...
+            let info = await bc.Dispute(id, req.session.Account.privateKey)
             res.render('Dispute.ejs',{id:id,info:info});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -256,13 +263,6 @@ app.use('/public', express.static(__dirname + '/public'))
             const minData = req.body.minData;
             const depreciationType = req.body.depreciationType;
             const deposit = req.body.insuranceDeposit;
-            // TODO Add to JSON
-            let jsonInfo = {
-                "price": initialPrice,
-                "durationDays": durationDays,
-                "descr": description,
-                "privateKey": req.session.Account.privateKey
-            };
 
             let result = await bc.sellItemZiad(initialPrice, description, durationDays, durationHours, durationMinutes, req.session.Account, minData, depreciationType, deposit);
 
@@ -293,14 +293,15 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/ManageId/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
-            const [product, total_clients, num_clients_step1, num_clients_step2] = await bc.manageID(id, req.session.Account);
+            const [product, total_clients, num_clients_step1, num_clients_step2, Key] = await bc.manageID(id, req.session.Account);
             // TODO finish coding function.. to get number of disputes
             res.render('ManageId.ejs', {
                 product: product[0],
                 Id: id,
                 total_clients: total_clients,
                 num_clients_step1: num_clients_step1,
-                num_clients_step2: num_clients_step2
+                num_clients_step2: num_clients_step2,
+                Key: Key,
             });
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -318,12 +319,70 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /* Malicious version, see comment for real version*/
+    .get('/SendEncryptedEncodedKeyMalicious/', async (req, res) => {
+        if (req.session.Account) {
+            const id = req.query.id;
+            let [num, done] = await bc.sendEncryptedEncodedKeyMalicious(id, req.session.Account.privateKey);
+            res.render('SentToClients.ejs', {num: num, done: done});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
+
     /* Interface to send K2 keys to the ones who responded with a hash*/
     .get('/SendDecoderKey/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
-            let [num, done] = await bc.sendDecoderKey(id, req.session.Account.privateKey);
+            let [num, done] = await bc.sendDecoderKey(id, req.session.Account);
             res.render('SentK2.ejs', {num: num, done: done});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+    /* Malicious Version, still verifies hashes thought*/
+    .get('/SendDecoderKeyMalicious/', async (req, res) => {
+        if (req.session.Account) {
+            const id = req.query.id;
+            let [num, done] = await bc.sendDecoderKeyMalicious(id, req.session.Account.privateKey);
+            res.render('SentK2.ejs', {num: num, done: done});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
+    /* Interface to publicly post the reference Key K*/
+    .get('/PostRefKey/', async (req, res) => {
+        if (req.session.Account) {
+            const id = req.query.id;
+            let result = await bc.sendReferenceKey(id, req.session.Account);
+            console.log(result);
+            console.log(result[1]);
+            console.log(result[1].toString('hex'));
+            res.render('SentRefKey.ejs', {id: id, receipt: result[0], refKey:result[1]});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
+    /* Malicious Version K*/
+    .get('/PostRefKeyMalicious/', async (req, res) => {
+        if (req.session.Account) {
+            const id = req.query.id;
+            let result = await bc.sendReferenceKeyMalicious(id, req.session.Account.privateKey);
+            res.render('SentRefKey.ejs', {id: id, receipt: result[0], refKey:result[1]});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
+    /* Malicious Version K*/
+    .get('/WithdrawFundsProvider/', async (req, res) => {
+        if (req.session.Account) {
+            const id = req.query.id;
+            let result = await bc.withdrawFundsProvider(id, req.session.Account.privateKey);
+            res.render('Withdrawn.ejs', {id: id, result: result[0]});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
@@ -334,9 +393,13 @@ app.use('/public', express.static(__dirname + '/public'))
         res.render('SellError.ejs');
     })
 
+
+
+    /************************************  Eve (Listen to everything) ***************************/
+
     /* If user asks for an innexistant view, we redirect him to the homepage */
     .use(function (req, res, next) {
         res.redirect('/');
     })
 
-    .listen(8086);
+    .listen(8087);

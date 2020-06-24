@@ -1,6 +1,10 @@
 /********************************
  * Main Items
  ********************************/
+const makeTransactionItem = {
+    title: "make transaction",
+    name: "makeTransactionItem"
+}
 
 const myAccountItem = {
     title: "My account",
@@ -51,9 +55,9 @@ const boughtProductInfoItem = {
     name: "boughtProductInfoItem"
 }
 
-const ongoingTransactionsItem = {
-    title: "Ongoing transactions",
-    name: "ongoingTransactionsItem"
+const ongoingBuysItem = {
+    title: "Ongoing buys",
+    name: "ongoingBuysItem"
 };
 
 const boughtDataItem = {
@@ -61,9 +65,14 @@ const boughtDataItem = {
     name: "boughtDataItem"
 };
 
-const manageIdItem = {
+const manageIdSellerItem = {
     title: "Manage ID",
-    name: "manageIdItem"
+    name: "manageIdSellerItem"
+};
+
+const manageIdBuyerItem = {
+    title: "Manage ID",
+    name: "manageIdBuyerItem"
 };
 
 /********************************
@@ -121,7 +130,7 @@ myLayout.registerComponent('listBlocksItem', function (container, state) {
         '<h1>Clic on a block to get more info</h1>' +
         '<ul id="blocks_list"></ul>' +
         '<h2>Or search by block number</h2>' +
-        '<input id="blocks_blockNumber" type="number">' +
+        '<input id="blocks_blockNumber" type="number" min="0">' +
         '<button onclick="displayBlockInfo(-1)">Search block</button>' +
         '</div>'
     );
@@ -150,28 +159,28 @@ myLayout.registerComponent('newAccountItem', function (container, state) {
     );
 });
 
-// myLayout.registerComponent('createTransactionItem', function (container, state) {
-//     let htmlform = '';
-//     const form = {
-//         transaction_sender: "Sender:",
-//         transaction_privateKey: "Private Key:",
-//         transaction_receiver: "Receiver:",
-//         transaction_amount: "Amount:"
-//     };
-//     for (let value in form) {
-//         htmlform += "<label for=" + value + ">" + form[value] + "</label>";
-//         htmlform += "<input id=" + value + " type='text'>";
-//         htmlform += "<br>";
-//     }
-//     htmlform += "<button onclick='makeTransaction()'>Submit</button>";
-//     container.getElement().html(
-//         '<div class="container">' +
-//         '<h1>Fill in the form to make a transaction</h1>' +
-//         '<p id="transaction_message"></p>' +
-//         htmlform +
-//         '</div>'
-//     );
-// });
+myLayout.registerComponent('makeTransactionItem', function (container, state) {
+    let htmlform = '';
+    const form = {
+        transaction_sender: "Sender:",
+        transaction_privateKey: "Private Key:",
+        transaction_receiver: "Receiver:",
+        transaction_amount: "Amount:"
+    };
+    for (let value in form) {
+        htmlform += "<label for=" + value + ">" + form[value] + "</label>";
+        htmlform += "<input id=" + value + " type='text'>";
+        htmlform += "<br>";
+    }
+    htmlform += "<button onclick='makeTransaction()'>Submit</button>";
+    container.getElement().html(
+        '<div class="container">' +
+        '<h1>Fill in the form to make a transaction</h1>' +
+        '<p id="transaction_message"></p>' +
+        htmlform +
+        '</div>'
+    );
+});
 
 myLayout.registerComponent('resultTransactionItem', function (container, state) {
     container.getElement().html(
@@ -188,6 +197,7 @@ myLayout.registerComponent('forSaleItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
         '<h1>For sale items:</h1>' +
+        '<p id="forSale_message" class="message"></p>' +
         '<ul id="forSale_list"></ul>' +
         '</div>'
     );
@@ -213,11 +223,33 @@ myLayout.registerComponent('boughtProductInfoItem', function (container, state) 
     );
 });
 
-myLayout.registerComponent('ongoingTransactionsItem', function (container, state) {
+myLayout.registerComponent('ongoingBuysItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<h1>Transactions:</h1>' +
-        '<ul id="ongoing_list"></ul>' +
+        '<div id="ongoingBuys_notConnected">' +
+        '<p class="message">You are not connected...</p>' +
+        '</div>' +
+        '<div id="ongoingBuys_connected">' +
+        '<h1>Products being bought :</h1>' +
+        '<p id="ongoingBuys_message" class="message"></p>' +
+        '<ul id="ongoingBuys_beingBought"></ul>' +
+        '</div>' +
+        '</div>'
+    );
+});
+
+myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
+    container.getElement().html(
+        '<div class="container">' +
+        '<h3>Product:</h3>' +
+        '<div id="manageIdBuyer_produit"></div>' +
+        '<h3>To do:</h3>' +
+        '<ul>' +
+        '<li>Encrypted encoded key received, send hash</li>' +
+        '<li>Decoder key received, compute</li>' +
+        '<li>Set a dispute or get a refund</li>' +
+        '</ul>' +
+        '<p class="message" id="manageIdSeller_message"></p>' +
         '</div>'
     );
 });
@@ -230,6 +262,7 @@ myLayout.registerComponent('boughtDataItem', function (container, state) {
         '</div>' +
         '<div id="boughtData_connected">' +
         '<h1>Bought data:</h1>' +
+        '<p id="boughtData_message" class="message"></p>' +
         '<ul id="boughtData_list"></ul>' +
         '</div>' +
         '</div>'
@@ -245,30 +278,32 @@ myLayout.registerComponent('sellNewItem', function (container, state) {
 myLayout.registerComponent('ongoingSalesItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<div id="ongoing_notConnected">' +
+        '<div id="ongoingSales_notConnected">' +
         '<p class="message">You are not connected...</p>' +
         '</div>' +
-        '<div id="ongoing_connected">' +
+        '<div id="ongoingSales_connected">' +
         '<h1>Products being sold :</h1>' +
-        '<ul id="ongoing_beingSold"></ul>' +
+        '<p id="ongoingSales_message" class="message"></p>' +
+        '<ul id="ongoingSales_beingSold"></ul>' +
         '</div>' +
         '</div>'
     );
 });
 
-myLayout.registerComponent('manageIdItem', function (container, state) {
+myLayout.registerComponent('manageIdSellerItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<p>Total number of clients: <var id="manageId_totalNumberClients"></var></p>' +
+        '<p>Total number of clients: <var id="manageIdSeller_totalNumberClients"></var></p>' +
         '<h3>Product:</h3>' +
-        '<div id="manageId_produit"></div>' +
+        '<div id="manageIdSeller_produit"></div>' +
         '<h3>To do:</h3>' +
         '<ul>' +
-        '<li onclick="sendCryptedK2()">Send Info (K2xORK): <var id="manageId_NumClientsStep1"></var> clients</li>' +
-        '<li>Verify hashes and send K2: <var id="manageId_NumClientsStep2"></var> clients</li>' +
-        '<li>Dispute: <var id="manageId_NumDispute"></var> clients</li>' +
+        '<li onclick="sendEncodedEncryptedKey()">Send Encrypted Encoded Key (K2xorKxorK3): <var id="manageIdSeller_NumClientsStep1"></var> clients</li>' +
+        '<li onclick="sendDecoderKey()">Verify hashes and send Decoder Key (K2): <var id="manageIdSeller_NumClientsStep2"></var> clients</li>' +
+        '<li id="manageIdSeller_keyNotReleased" onclick="postRefKey()">Release reference key (key not released yet)</li>' +
+        '<li id="manageIdSeller_keyReleased">Key is released: <var id="manageIdSeller_releasedKey"></var></li>' +
         '</ul>' +
-        '<p class="message" id="manageId_message"></p>' +
+        '<p class="message" id="manageIdSeller_message"></p>' +
         '</div>'
     );
 });
@@ -319,6 +354,9 @@ function addMenuItem(newItem) {
     if (newItem.name === "ongoingSalesItem") {
         element.click(loadOngoingSales);
     }
+    if (newItem.name === "ongoingBuysItem") {
+        element.click(loadOngoingBuys);
+    }
     if (newItem.name === "sellNewItem") {
         element.click( () => {
             loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
@@ -335,12 +373,13 @@ addMenuItem(listNodesItem);
 addMenuItem(newAccountItem);
 $('#menuContainer').append("<h2>Buy</h2>");
 addMenuItem(forSaleItem);
-addMenuItem(ongoingTransactionsItem);
+addMenuItem(ongoingBuysItem);
 addMenuItem(boughtDataItem);
 $('#menuContainer').append("<h2>Sell</h2>");
 addMenuItem(sellNewItem);
 addMenuItem(ongoingSalesItem);
 $('#menuContainer').append("<h3><a href='closeserver'>Close server</a></h3>");
+addMenuItem(makeTransactionItem);
 
 /********************************
  * Create items out of the menu
