@@ -163,6 +163,18 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /*Send a fake hash I compute to the provider ..*/
+    .get('/SendClientHashMalicious', async (req, res) => {
+        if (req.session.Account) {
+            let id = req.query.id;
+            let done = await bc.sendClientHashMalicious(id, req.session.Account.privateKey)
+
+            res.render('SentHash.ejs', {done: done});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
     /*Send the hash I compute to the provider ..*/
     .get('/computeK', async (req, res) => {
         if (req.session.Account) {

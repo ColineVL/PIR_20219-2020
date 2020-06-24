@@ -333,6 +333,21 @@ async function sendClientHash(id, privateKey) {
     return done;
 }
 
+/*Function for the client to send a fake hash of K xor K2 to the provider*/
+async function sendClientHashMalicious(id, privateKey) {
+    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+    let HashTobeSent = crypto.Hash((new Buffer.from("fakeClientHash")))
+
+    let done = 0 // value to verify later that everything went correctly
+    let receipt = transactions.SendHashToProvider(Account, id, HashTobeSent)
+    // Now we can do the OTP
+
+    if (receipt) {
+        done = 1;
+    }
+    return done;
+}
+
 /*Function for the client to receive K2, compute K and save it*/
 async function ComputeK(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
@@ -423,4 +438,5 @@ module.exports = {
     DisputeInfoClient,
     Dispute,
     sendReferenceKey,
+    sendClientHashMalicious
 };

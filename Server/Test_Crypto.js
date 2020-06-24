@@ -168,12 +168,9 @@ console.log(web3.utils.bytesToHex(Kop))
 
 const start = Date.now();
 console.log(start)
-
-
-
-
-
-console.log("last")
-const fer = new Buffer.from([181,58,3,198,39,167,252],'hex')
-console.log(fer)
-console.log(fer.toString('hex'))
+console.log("...")
+console.log((new Buffer.from("fake")))
+console.log(web3.utils.keccak256(new Buffer.from("fake")))
+console.log(web3.utils.keccak256(new Buffer.from("fakeluytfgiuvjvkjv;")))
+console.log(web3.utils.keccak256(new Buffer.from("fake1")))
+console.log("...")

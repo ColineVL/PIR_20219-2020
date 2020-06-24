@@ -22,11 +22,26 @@
 <ul>
     <li> Send Encrypted Encoded Key( K2xORKxorK3) : <%= num_clients_step1 %> clients <a href="/SendEncryptedEncodedKey/?id=<%=Id%>">Do </a> </li>
     <li> Verify hashes and send Decoder Key (K2) : <%= num_clients_step2 %> clients <a href="/SendDecoderKey/?id=<%=Id%>">Do</a> </li>
-    <li> Dispute : <%= 1 %> clients <a href="/">Do</a> </li>
 
     <br>
     <%if (Key == 0) {%>
         <li> Key not released yet, <a href="/PostRefKey/?id=<%=Id%>">Release Reference Key</a> </li>
+    <%} else {%>
+        <li> Key released :<%= Key %>> <a href="/ProductInfoSeller/?id=<%=Id%>">Check</a> </li>
+
+    <%}%>
+
+</ul>
+
+<p>To do Malicious (or "blind") Version  : </p>
+<br>
+<ul>
+    <li> Send Encrypted Encoded Key( K2xORKxorK3) : <%= num_clients_step1 %> clients <a href="/SendEncryptedEncodedKeyMalicious/?id=<%=Id%>">Do </a> </li>
+    <li> Verify hashes and send Decoder Key (K2) : <%= num_clients_step2 %> clients <a href="/SendDecoderKeyMalicious/?id=<%=Id%>">Do</a> </li>
+
+    <br>
+    <%if (Key == 0) {%>
+    <li> Key not released yet, <a href="/PostRefKeyMalicious/?id=<%=Id%>">Release Reference Key</a> </li>
     <%} else {%>
         <li> Key released :<%= Key %>> <a href="/ProductInfoSeller/?id=<%=Id%>">Check</a> </li>
 
