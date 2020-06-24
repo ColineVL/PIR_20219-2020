@@ -402,8 +402,6 @@ function convertStrToBin(){
     // 32 bits --> 4 bytes
     let str = string2BinaryLine1(example1) + string2BinaryLine2(example2);
 
-    console.log(str);
-
     let array = new Uint8Array((str.length/8));
 
     let num = 0;
@@ -419,13 +417,29 @@ function convertStrToBin(){
         array[i-1] = num;
     }
 
-    console.log("**************************************************");
-    // alert(typeof array);
-    const fer = new Buffer.from(array,'hex');
-    console.log(fer);
-    let bin = web3.utils.bytesToHex(fer);
-    console.log(bin);
+
+
+    let arr1 = array.slice(0,25)
+    let arr2 = array.slice(25);
+
+// alert(typeof array);
+    const fer1 = new Buffer.from(arr1,'hex');
+    const fer2 = new Buffer.from(arr2,'hex');
+
+    let TLE25 = web3.utils.bytesToHex(fer1);
+    let TLE24 = web3.utils.bytesToHex(fer2);
+
+    console.log("TLE1 ***********************");
+    console.log(TLE25);
+    console.log("TLE2 ***********************");
+    console.log(TLE24);
+
+    return array;
 
 }
 
 let chi = convertStrToBin();
+
+module.exports = {
+    convertStrToBin,
+}

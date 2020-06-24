@@ -11,21 +11,23 @@ contract TLE_Contract is Provider_Depreciation_Contract {
 
     struct structTLE {
         string spaceObject;
-        string TLE;
+        bytes25 TLE1;
+        bytes25 TLE2;
     }
 
     // mapping between referenceId and the data
     mapping (uint => structTLE[]) public TLEs;
 
 
-    function setTLE(uint _referenceId, string memory _spaceObject, string memory _TLE) onlyProvider(_referenceId) public{
+    function setTLE(uint _referenceId, string memory _spaceObject, bytes25 _TLE1, bytes24 _TLE2) onlyProvider(_referenceId) public{
 
         /*
             Creating a two line element object and inserting data
         */
         structTLE memory _newObs;
         _newObs.spaceObject = _spaceObject;
-        _newObs.TLE = _TLE;
+        _newObs.TLE1 = _TLE1;
+        _newObs.TLE2 = _TLE2;
         TLEs[_referenceId].push(_newObs);
 
         // Needed to see at the end if the provider uploaded the number of data promised
