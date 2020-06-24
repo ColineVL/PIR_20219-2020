@@ -25,10 +25,10 @@
     <li> Dispute : <%= 1 %> clients <a href="/">Do</a> </li>
 
     <br>
-    <%if (Key > 0) {%>
-        <li> Key released :<%= Key %>> <a href="/ProductInfoSeller/?id=<%=Id%>">Check</a> </li>
-    <%} else {%>
+    <%if (Key == 0) {%>
         <li> Key not released yet, <a href="/PostRefKey/?id=<%=Id%>">Release Reference Key</a> </li>
+    <%} else {%>
+        <li> Key released :<%= Key %>> <a href="/ProductInfoSeller/?id=<%=Id%>">Check</a> </li>
 
     <%}%>
 

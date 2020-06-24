@@ -223,11 +223,13 @@ async function manageID(id, account) {
 
     let KeyEvent = await EventsModule.ReferenceKeySent(id);
 
-    let Key =0
+    let Key = 0
     if (KeyEvent.length >0){
-        let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues.referenceKey)).slice(0, 7)
+
+        let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1])).slice(0, 7)
         Key = buffer.toString('hex');
     }
+    console.log(Key)
     return [product, total_clients, num_clients_step1, num_clients_step2, Key];
 }
 
@@ -372,6 +374,17 @@ async function Dispute(id, privateKey) {
     return [bool,disputeEvent[0].returnValues.funds];
 }
 
+/*For a provider to release the reference Key*/
+async function sendReferenceKey(id, privateKey) {
+    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+    let refKey = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
+
+    let receipt = await transactions.sendRefKey(Account,id,refKey)
+
+    return [receipt,refKey];
+}
+
+
 
 /********************************
  * Exports
@@ -405,4 +418,5 @@ module.exports = {
     getClients,
     DisputeInfoClient,
     Dispute,
+    sendReferenceKey,
 };

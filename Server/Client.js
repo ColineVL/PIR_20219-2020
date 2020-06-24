@@ -334,8 +334,8 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/PostRefKey/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
-            let res = await bc.sendDecoderKey(id, req.session.Account.privateKey);
-            res.render('SentK2.ejs', {id: id, res: res});
+            let result = await bc.sendReferenceKey(id, req.session.Account.privateKey);
+            res.render('SentRefKey.ejs', {id: id, receipt: result[0], refKey:result[1]});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
@@ -351,4 +351,4 @@ app.use('/public', express.static(__dirname + '/public'))
         res.redirect('/');
     })
 
-    .listen(8086);
+    .listen(8087);
