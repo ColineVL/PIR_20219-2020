@@ -175,6 +175,30 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /*Confirm Dispute before raising*/
+    .get('/DisputeConfirmation', async (req, res) => {
+        if (req.session.Account) {
+            let id = req.query.id;
+
+            // let info =
+            res.render('DisputeConfirmation.ejs', {id: id});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
+    /*Raise a dispute if you think a scam happened, or simply withdraw your money if still possible ..*/
+    .get('/Dispute', async (req, res) => {
+        if (req.session.Account) {
+            let id = req.query.id;
+
+            res.render('Dispute',{id:id};
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
+
     /************ Bought ************/
 
     /* Interface for a buyer */
