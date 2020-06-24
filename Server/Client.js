@@ -325,11 +325,33 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /* Malicious version, see comment for real version*/
+    .get('/SendEncryptedEncodedKeyMalicious/', async (req, res) => {
+        if (req.session.Account) {
+            const id = req.query.id;
+            let [num, done] = await bc.sendEncryptedEncodedKeyMalicious(id, req.session.Account.privateKey);
+            res.render('SentToClients.ejs', {num: num, done: done});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
+
     /* Interface to send K2 keys to the ones who responded with a hash*/
     .get('/SendDecoderKey/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
             let [num, done] = await bc.sendDecoderKey(id, req.session.Account.privateKey);
+            res.render('SentK2.ejs', {num: num, done: done});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+    /* Malicious Version, still verifies hashes thought*/
+    .get('/SendDecoderKeyMalicious/', async (req, res) => {
+        if (req.session.Account) {
+            const id = req.query.id;
+            let [num, done] = await bc.sendDecoderKeyMalicious(id, req.session.Account.privateKey);
             res.render('SentK2.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -342,6 +364,28 @@ app.use('/public', express.static(__dirname + '/public'))
             const id = req.query.id;
             let result = await bc.sendReferenceKey(id, req.session.Account.privateKey);
             res.render('SentRefKey.ejs', {id: id, receipt: result[0], refKey:result[1]});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
+    /* Malicious Version K*/
+    .get('/PostRefKeyMalicious/', async (req, res) => {
+        if (req.session.Account) {
+            const id = req.query.id;
+            let result = await bc.sendReferenceKeyMalicious(id, req.session.Account.privateKey);
+            res.render('SentRefKey.ejs', {id: id, receipt: result[0], refKey:result[1]});
+        } else {
+            res.render('homeClient.ejs', {account: req.session.Account});
+        }
+    })
+
+    /* Malicious Version K*/
+    .get('/WithdrawFundsProvider/', async (req, res) => {
+        if (req.session.Account) {
+            const id = req.query.id;
+            let result = await bc.withdrawFundsProvider(id, req.session.Account.privateKey);
+            res.render('Withdrawn.ejs', {id: id, receipt: result});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }

@@ -90,7 +90,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     }
 
     // 5 days after the end of the contract/reference the provider can withdraw the available funds
-    function withdrawFunds(uint _referenceId) onlyProvider(_referenceId) external {
+    function withdrawFunds(uint _referenceId) onlyProvider(_referenceId) external returns(uint){
 
         // Checks if the provider has waited for the time limit for clients to set a dispute
         // !!!!!!!!!!!!!!! TODO CHANGE LATER TO 5 DAYS
@@ -104,6 +104,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         dataReferences[_referenceId].withdrawableFunds = 0;
 
         (msg.sender).transfer(funds);
+        return(funds);
     }
 
     /*
