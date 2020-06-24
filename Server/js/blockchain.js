@@ -272,6 +272,42 @@ async function sendEncryptedEncodedKey(id, privateKey) {
     return [ClientsToDo.length, done];
 }
 
+async function sendEncryptedEncodedKeyMalicious(id, privateKey) {
+    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+    const all_clients = await transactions.GetClients(Account, id);
+    let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
+    let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2) // So I compute a  need a list of addresses
+    let ClientsToDo = await EventsModule.ComputeLeft(all_clients, Address_ListClientsWhoReceivedK2) // Then i find who is left...
+
+    let myDH_obj = await readwrite.ReadAsObjectDH(__dirname + '/../Database/DH' + id.toString() + '_' + Account.address.toString() + '.txt');
+
+    // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
+
+    let done = 0 // To check how many were succesful at the end...
+    for (let i = 0; i < ClientsToDo.length; i++) {
+        let client_address = ClientsToDo[i];
+
+        let Pub_Client = await EventsModule.GetPubDiffieClient(client_address, id);
+        let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
+        let K2 = crypto.RandomBytes(7);
+
+        let K_Malicious = crypto.RandomBytes(7);
+
+        let toEncrypt = crypto.OTP(K_Malicious, K2)
+
+        let toSend = crypto.OTP(secret, toEncrypt)//.slice(0,4);
+        let hashed = crypto.Hash(toEncrypt);
+
+        await readwrite.WriteAsRefSeller(__dirname + '/../Database/RefSeller' + id.toString() + '_' + ClientsToDo[i] + '.txt', hashed, K2)
+
+        let receipt = await transactions.sendEncryptedEncodedKey(Account, id, client_address, toSend);
+        if (receipt) {
+            done += 1;
+        }
+    }
+    return [ClientsToDo.length, done];
+}
+
 /*Function to handle sending the appropriate K2 to every client which responded with a correct hash*/
 async function sendDecoderKey(id, privateKey) {
     const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
@@ -296,6 +332,40 @@ async function sendDecoderKey(id, privateKey) {
 
         if (correctHash == receivedHash) {
             let receipt = await transactions.sendDecoderKey(Account, id, client_address, myRef_obj.K2);
+            if (receipt) {
+                done += 1;
+            }
+        }
+    }
+    return [ClientsToDo.length, done];
+}
+
+/*Malicious Version*/
+async function sendDecoderKeyMalicious(id, privateKey) {
+    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+
+    let ClientsWhoSentHashes = await EventsModule.GetClientsWhoSentHashes(id); // This is a list of events corresponding to clients who sent me a hash
+    let ClientsReceivedK2 = await EventsModule.GetKeysSent(id); // This is a list of events corresponding to the clients I already answered concerning their hashes
+    let Address_ListClientsWhoSentHashes = await EventsModule.EventsToAddresses(ClientsWhoSentHashes)  // Transformed into a list of addresses
+    let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsReceivedK2)  // Transformed into a list of addresses
+    let ClientsToDo = await EventsModule.ComputeLeft(Address_ListClientsWhoSentHashes, Address_ListClientsWhoReceivedK2) // Then i find who is left...
+
+    // Now We have to: Verify each hash received with the ones we had saved
+
+    let done = 0 // To check how many were succesful at the end...
+    for (let i = 0; i < ClientsToDo.length; i++) {
+        let myRef_obj = await readwrite.ReadAsObjectRefSeller(__dirname + '/../Database/RefSeller' + id.toString() + '_' + ClientsToDo[i] + '.txt');
+
+        let client_address = ClientsToDo[i];
+
+        let correctHash = myRef_obj.hash;
+
+        let receivedHash = await EventsModule.GetHashFromClientClient(client_address, id);
+
+        let K_Malicious = crypto.RandomBytes(7);
+
+        if (correctHash == receivedHash) {
+            let receipt = await transactions.sendDecoderKey(Account, id, client_address, K_Malicious);
             if (receipt) {
                 done += 1;
             }
@@ -403,6 +473,16 @@ async function sendReferenceKey(id, privateKey) {
     return [receipt,refKey];
 }
 
+/*For a provider to release the reference Key*/
+async function sendReferenceKeyMalicious(id, privateKey) {
+    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+    let refKeyMalicious = crypto.RandomBytes(7);
+
+    let receipt = await transactions.sendRefKey(Account,id,refKey)
+
+    return [receipt,refKey];
+}
+
 
 
 /********************************
@@ -438,5 +518,9 @@ module.exports = {
     DisputeInfoClient,
     Dispute,
     sendReferenceKey,
-    sendClientHashMalicious
+    sendClientHashMalicious,
+    sendEncryptedEncodedKeyMalicious,
+    sendDecoderKeyMalicious,
+    sendReferenceKeyMalicious
+
 };
