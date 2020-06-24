@@ -74,10 +74,14 @@ app.use('/public', express.static(__dirname + '/public'))
     /************ Sign in and out ************/
 
     .get('/connect/:privateKey', async (req, res) => {
-        req.session.Account = await bc.getAccount(req.params.privateKey);
-        const address = req.session.Account.address;
-        const balance = await bc.getBalance(address);
-        res.json({address: address, balance: balance});
+        try {
+            req.session.Account = await bc.getAccount(req.params.privateKey);
+            const address = req.session.Account.address;
+            const balance = await bc.getBalance(address);
+            res.json({address: address, balance: balance});
+        } catch (e) {
+            res.status(500).json(e.message);
+        }
     })
 
     .get('/signout', function (req, res) {
@@ -109,29 +113,45 @@ app.use('/public', express.static(__dirname + '/public'))
     /************ For sale products ************/
 
     .get('/getreferences/', async (req, res) => {
-        const Ids = await EventsModule.GetAvailableRefs();
-        res.json(Ids);
+        try {
+            const Ids = await EventsModule.GetAvailableRefs();
+            res.json(Ids);
+        } catch (e) {
+            res.status(500).json(e.message);
+        }
     })
 
     .get('/getrefinfo/:id', async (req, res) => {
-        let product = await EventsModule.GetRef(req.params.id);
-        product = product[0].returnValues;
-        const actualPrice = await bc.getCurrentPrice(req.session.Account, req.params.id);
-        product["actualPrice"] = actualPrice;
-        res.json(product);
+        try {
+            let product = await EventsModule.GetRef(req.params.id);
+            product = product[0].returnValues;
+            const actualPrice = await bc.getCurrentPrice(req.session.Account, req.params.id);
+            product["actualPrice"] = actualPrice;
+            res.json(product);
+        } catch (e) {
+            res.status(500).json(e.message);
+        }
     })
 
     /************ Bought products ************/
 
     .get('/getboughtdata/', async (req, res) => {
-        const Ids = await EventsModule.GetBoughtRefs(req.session.Account);
-        res.json(Ids);
+        try {
+            const Ids = await EventsModule.GetBoughtRefs(req.session.Account);
+            res.json(Ids);
+        } catch (e) {
+            res.status(500).json(e.message);
+        }
     })
 
     .get('/getboughtiteminfo/:id', async (req, res) => {
-        let product = await EventsModule.GetRef(req.params.id);
-        product = product[0].returnValues;
-        res.json(product);
+        try {
+            let product = await EventsModule.GetRef(req.params.id);
+            product = product[0].returnValues;
+            res.json(product);
+        } catch (e) {
+            res.status(500).json(e.message);
+        }
     })
 
     /************ Buy a product ************/
@@ -142,7 +162,7 @@ app.use('/public', express.static(__dirname + '/public'))
             let currentPrice = await bc.buyProduct(req.params.id, req.session.Account);
             res.json(product[0]);
         } catch (e) {
-            res.json(e);
+            res.status(500).json(e.message);
         }
     })
 
@@ -151,37 +171,45 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/sellNewProduct/:json', async (req, res) => {
         try {
             let receipt = await bc.sellItemColine(req.params.json, req.session.Account);
-            console.log("dans try");
             res.json(receipt);
         } catch (e) {
-            console.log("dans catch");
-            console.error(e.stack);
-            res.status(500).json("We had an error.");
-            // res.json(e);
-            // res.status(500).json(e);
-            // throw(e);
-            // next(e);
+            res.status(500).json(e.message);
         }
     })
 
     /************ Ongoing sales ************/
 
     .get('/ongoingSales/', async (req, res) => {
-        let Ids = await EventsModule.GetSoldRefs(req.session.Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
-        res.json(Ids);
+        try {
+            let Ids = await EventsModule.GetSoldRefs(req.session.Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+            res.json(Ids);
+        } catch (e) {
+            res.status(500).json(e.message);
+        }
     })
 
     .get('/manageId/:id', async (req, res) => {
-        const result = await bc.manageID(req.params.id, req.session.Account);
-        // result = [product, total_clients, num_clients_step1, num_clients_step2]
-        res.json(result);
+        try {
+            const result = await bc.manageID(req.params.id, req.session.Account);
+            // result = [product, total_clients, num_clients_step1, num_clients_step2]
+            res.json(result);
+        } catch (e) {
+            res.status(500).json(e.message);
+        }
     })
 
     .get('/sendCryptedK2/:id/:privateKey', async (req, res) => {
-        let result = await bc.sendCryptedK2(req.params.id, req.params.privateKey);
-        // result = [num, done]
-        res.json(result);
+        try {
+            let result = await bc.sendCryptedK2(req.params.id, req.params.privateKey);
+            // result = [num, done]
+            res.json(result);
+        } catch (e) {
+            res.status(500).json(e.message);
+        }
     })
+
+    /************ Ongoing buys ************/
+
 
 
     /************ Close the server ************/
@@ -197,9 +225,3 @@ app.use('/public', express.static(__dirname + '/public'))
     .use(function (req, res) {
         res.redirect('/');
     })
-
-    // /** Errors **/
-    // .use(function (err, req, res, next) {
-    //     console.error(err.stack);
-    //     res.status(500).send("We had an error.");
-    // });

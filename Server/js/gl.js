@@ -121,7 +121,7 @@ myLayout.registerComponent('listBlocksItem', function (container, state) {
         '<h1>Clic on a block to get more info</h1>' +
         '<ul id="blocks_list"></ul>' +
         '<h2>Or search by block number</h2>' +
-        '<input id="blocks_blockNumber" type="number">' +
+        '<input id="blocks_blockNumber" type="number" min="0">' +
         '<button onclick="displayBlockInfo(-1)">Search block</button>' +
         '</div>'
     );
@@ -188,6 +188,7 @@ myLayout.registerComponent('forSaleItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
         '<h1>For sale items:</h1>' +
+        '<p id="forSale_message" class="message"></p>' +
         '<ul id="forSale_list"></ul>' +
         '</div>'
     );
@@ -230,6 +231,7 @@ myLayout.registerComponent('boughtDataItem', function (container, state) {
         '</div>' +
         '<div id="boughtData_connected">' +
         '<h1>Bought data:</h1>' +
+        '<p id="boughtData_message" class="message"></p>' +
         '<ul id="boughtData_list"></ul>' +
         '</div>' +
         '</div>'
@@ -245,12 +247,13 @@ myLayout.registerComponent('sellNewItem', function (container, state) {
 myLayout.registerComponent('ongoingSalesItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<div id="ongoing_notConnected">' +
+        '<div id="ongoingSales_notConnected">' +
         '<p class="message">You are not connected...</p>' +
         '</div>' +
-        '<div id="ongoing_connected">' +
+        '<div id="ongoingSales_connected">' +
         '<h1>Products being sold :</h1>' +
-        '<ul id="ongoing_beingSold"></ul>' +
+        '<p id="ongoingSales_message" class="message"></p>' +
+        '<ul id="ongoingSales_beingSold"></ul>' +
         '</div>' +
         '</div>'
     );

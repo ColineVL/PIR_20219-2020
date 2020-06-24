@@ -122,13 +122,9 @@ function refreshBlocksNUMBERSList() {
     })
 }
 
-function getBlockInfo(blocknumber) {
-    try {
-        const block = web3.eth.getBlock(blocknumber);
-        return block;
-    } catch (e) {
-        return e;
-    }
+async function getBlockInfo(blocknumber) {
+    const block = await web3.eth.getBlock(blocknumber);
+    return block;
 }
 
 /********************************
@@ -136,9 +132,7 @@ function getBlockInfo(blocknumber) {
  ********************************/
 
 async function sellItemZiad(price, description, durationDays, durationHours, durationMinutes, account, minData, depreciationType, deposit) {
-
-    let durationInSecs = ((durationDays * 24 + durationHours * 60) + durationMinutes) * 60;
-
+    let durationInSecs = durationDays * 86400 + durationHours * 3600 + durationMinutes * 60;
     /*DH keys, to be stored and public sent*/
     const keys = crypto.DiffieHellmanGenerate(prime);
     /* Updating object to write and save */
@@ -173,7 +167,8 @@ async function sellItemColine(jsonInfo, account) {
     const minData = jsonInfo["minData"];
     const depreciationType = jsonInfo["depreciationType"];
     const deposit = jsonInfo["deposit"];
-    const durationInSecs = ((durationDays * 24 + durationHours * 60) + durationMinutes) * 60;
+    // let durationInSecs = ((durationDays * 24 + durationHours) * 60 + durationMinutes) * 60;
+    let durationInSecs = durationDays * 86400 + durationHours * 3600 + durationMinutes * 60;
 
     /*DH keys, to be stored and public sent*/
     const keys = crypto.DiffieHellmanGenerate(prime);
@@ -199,6 +194,10 @@ async function sellItemColine(jsonInfo, account) {
         throw err;
     }
 }
+
+/********************************
+ * Buy an item
+ ********************************/
 
 async function buyProduct(id, account) {
     const keys = crypto.DiffieHellmanGenerate(prime);
@@ -226,6 +225,10 @@ async function getCurrentPrice(account, id) {
 
 }
 
+/********************************
+ * Manage an Id
+ ********************************/
+
 async function manageID(id, account) {
     try {
         let product = await EventsModule.GetRef(id);
@@ -251,9 +254,10 @@ async function manageID(id, account) {
         throw e;
     }
 }
+
 async function getClients(account, id) {
     try {
-        let num = await transactions.GetClients(account,id)
+        let num = await transactions.GetClients(account, id)
         return num;
     } catch (e) {
         throw e;
