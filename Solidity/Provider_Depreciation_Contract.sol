@@ -116,8 +116,9 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         uint _referenceId,
         address _client,
         bytes32 _encryptedEncodedKey) onlyProvider(_referenceId) external {
-
-        emit encryptedEncodedKeyEvent(_referenceId, _client, _encryptedEncodedKey);
+        // To avoid emitting an empty _encryptedEncodedKey and having trouble with events
+        if (_encryptedEncodedKey != 0)
+            emit encryptedEncodedKeyEvent(_referenceId, _client, _encryptedEncodedKey);
     }
 
 
@@ -126,8 +127,9 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         // Condition necessary so that the provider does not provide a key decoder if the client removed his funds
         if (dataReferences[_referenceId].clientFunds[_client] > 0) {
 
-            // The key once set cannot be modified to avoid scams
-            if (dataReferences[_referenceId].keyDecoder[_client] == 0) {
+            // First condition: the key once set cannot be modified to avoid scams
+            // Second Condition: To avoid emitting an empty _keyDecoder and having trouble with events
+            if (dataReferences[_referenceId].keyDecoder[_client] == 0 && _keyDecoder != 0) {
                 dataReferences[_referenceId].keyDecoder[_client] = _keyDecoder;
                 dataReferences[_referenceId].completedClients ++;
                 emit keyDecoder(_referenceId, _client, _keyDecoder);
@@ -138,8 +140,9 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
 
     function setReferenceKey(uint _referenceId, bytes32 _referenceKey) onlyProvider(_referenceId) external {
 
-        // The key once set cannot be modified to avoid scams
-        if (dataReferences[_referenceId].referenceKey == 0) {
+        // First condition: the key once set cannot be modified to avoid scams
+        // Second Condition: To avoid emitting an empty _referenceKey and having trouble with events
+        if (dataReferences[_referenceId].referenceKey == 0 && _referenceKey != 0) {
             dataReferences[_referenceId].referenceKey = _referenceKey;
             emit referenceKey(_referenceId, _referenceKey);
         }
