@@ -9,7 +9,7 @@
 <body>
 <%if (info[0] == true) {%>
     <h1>Transaction was succesful</h1>
-    <p> (You received : <%=info[1] %> wei) </p>
+    <p> (You received : <%= info[1][0].returnValues.funds %> wei) </p>
 <%} else {%>
     <h1>Unsuccessful </h1>
 <%}%>

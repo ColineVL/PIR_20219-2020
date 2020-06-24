@@ -118,8 +118,8 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
     //
     // console.log(events.callback())
     console.log("**********************************");
-    let res1 =  contractws.getPastEvents("referenceKey", {
-       filter: {referenceId: 0},
+    let res1 =  contractws.getPastEvents("withdrawFundsEvent", {
+       filter: {referenceId: 6},
         fromBlock: 0,
         toBlock: 'latest'
     }, function(error, events){ console.log(events)})

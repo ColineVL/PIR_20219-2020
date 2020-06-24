@@ -105,6 +105,8 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         uint funds = dataReferences[_referenceId].withdrawableFunds;
         dataReferences[_referenceId].withdrawableFunds = 0;
 
+        require(funds > 0);
+
         (msg.sender).transfer(funds);
         emit withdrawFundsEvent(_referenceId, funds);
     }
