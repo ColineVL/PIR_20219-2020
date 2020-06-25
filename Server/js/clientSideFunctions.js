@@ -481,8 +481,49 @@ function computeK() {
 }
 
 /** Dispute **/
+function callbackDisputeNotConfirmed(json) {
+    $('#dispute_notConfirmed').show();
+    $('#dispute_confirmed').hide();
+    $('#dispute_id').html(json["id"]);
+
+    if (json["alreadyDisputed"]) {
+        $('#dispute_alreadyDisputed').show();
+        $('#dispute_alreadyEncoded').hide();
+        $('#dispute_refund').hide();
+    } else if (json["alreadyEncoded"]) {
+        $('#dispute_alreadyDisputed').hide();
+        $('#dispute_alreadyEncoded').show();
+        $('#dispute_refund').hide();
+    } else {
+        $('#dispute_alreadyDisputed').hide();
+        $('#dispute_alreadyEncoded').hide();
+        $('#dispute_refund').show();
+        $('#dispute_possibleRefund').html(json["possibleRefund"]);
+    }
+}
 function dispute() {
-    console.log("yo");
+    const id = $('#productInfo_referenceID').text();
+    addItem(disputeItem);
+    loadXMLDoc("dispute/" + id, callbackDisputeNotConfirmed, callbackErrorManageIdBuyer);
+}
+
+function callbackConfirmDispute(json) {
+    $('#dispute_notConfirmed').hide();
+    $('#dispute_confirmed').show();
+    $('#dispute_id').html(json["id"]);
+    if (json["funds"]>0) {
+        $('#dispute_unsuccessful').hide();
+        $('#dispute_successful').show();
+        $('#dispute_funds').html(json["funds"]);
+    } else {
+        $('#dispute_unsuccessful').show();
+        $('#dispute_successful').hide();
+    }
+}
+
+function confirmDispute() {
+    const id = $('#dispute_id').text();
+    loadXMLDoc("confirmDispute/" + id, callbackConfirmDispute, callbackErrorManageIdBuyer);
 }
 
 /********************************

@@ -187,7 +187,7 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    .get('/sendBuyerHash', async (req, res) => {
+    .get('/sendBuyerHash/:id', async (req, res) => {
         try {
             await bc.sendClientHash(req.params.id, req.session.Account)
             res.json(req.params.id);
@@ -197,10 +197,35 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    .get('/computeK', async (req, res) => {
+    .get('/computeK/:id', async (req, res) => {
         try {
             const K = await bc.ComputeK(req.params.id, req.session.Account)
-            res.json({id:req.params.id, K:K});
+            res.json({id: req.params.id, K: K});
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/dispute/:id', async (req, res) => {
+        try {
+            let [alreadyEncoded, possibleRefund, alreadyDisputed] = await bc.DisputeInfoClient(req.params.id, req.session.Account);
+            res.json({
+                id: req.params.id,
+                alreadyEncoded: alreadyEncoded,
+                possibleRefund: possibleRefund,
+                alreadyDisputed: alreadyDisputed,
+            });
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/confirmDispute/:id', async (req, res) => {
+        try {
+            let funds = await bc.Dispute(req.params.id, req.session.Account);
+            res.json({id: req.params.id, funds:funds);
         } catch (e) {
             console.log(e);
             res.status(500).json(e.message);

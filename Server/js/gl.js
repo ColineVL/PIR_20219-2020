@@ -65,15 +65,15 @@ const boughtDataItem = {
     name: "boughtDataItem"
 };
 
-const manageIdSellerItem = {
-    title: "Manage ID",
-    name: "manageIdSellerItem"
-};
-
 const manageIdBuyerItem = {
     title: "Manage ID",
     name: "manageIdBuyerItem"
 };
+
+const disputeItem = {
+    name: "Dispute",
+    title: "disputeItem"
+}
 
 /********************************
  * Sell Items
@@ -87,6 +87,11 @@ const sellNewItem = {
 const ongoingSalesItem = {
     title: "Ongoing sales",
     name: "ongoingSalesItem"
+};
+
+const manageIdSellerItem = {
+    title: "Manage ID",
+    name: "manageIdSellerItem"
 };
 
 /********************************
@@ -274,6 +279,11 @@ myLayout.registerComponent('boughtDataItem', function (container, state) {
         '</div>' +
         '</div>'
     );
+});
+
+myLayout.registerComponent('disputeItem', function (container, state) {
+    container.getElement().html('<div id="dispute">');
+    loadHTMLDoc("dispute.html", callbackLoadHTMLDispute);
 });
 
 /** Sell items **/

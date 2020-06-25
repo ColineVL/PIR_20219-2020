@@ -511,23 +511,22 @@ async function ComputeK(id, Account) {
 /*Function to Check if it is possible to raise a dispute, or to retrieve your money*/
 async function DisputeInfoClient(id, Account) {
     try {
-        let bool = false
+        let encoderEvent = await EventsModule.GetKeySentSpecific(id, Account.address);
+        let buyEvent = await EventsModule.GetBoughtRefSpecific(id, Account.address);
+        let disputeEvent = await EventsModule.GetDispute(Account.address, id); // Check if already disputed
 
-        let encoderEvent = await EventsModule.GetKeySentSpecific(id, Account.address)
-        let buyEvent = await EventsModule.GetBoughtRefSpecific(id, Account.address)
-        let disputeEvent = await EventsModule.GetDispute(Account.address, id) // Check if already disputed
-        if (disputeEvent.length >0){
-            bool = true
-        }
+        let alreadyDisputed = !!(disputeEvent.length);
+        let alreadyEncoded = !!(encoderEvent.length);
+        let possibleRefund = web3.utils.fromWei(buyEvent[0].returnValues.fund,'ether');
 
-        return [encoderEvent.length, web3.utils.fromWei(buyEvent[0].returnValues.fund,'ether'), bool];
+        return [alreadyEncoded, possibleRefund, alreadyDisputed];
     } catch (e) {
         throw e;
     }
 
 }
 
-/*Function to to raise a dispute, or to retrieve your money*/
+/*Function to raise a dispute, or to retrieve your money*/
 async function Dispute(id, Account) {
     try {
         let funds =0;
