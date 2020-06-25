@@ -227,6 +227,8 @@ app.use('/public', express.static(__dirname + '/public'))
             // result = [num, done]
             res.json(result);
         } catch (e) {
+            console.log(e);
+
             res.status(500).json(e.message);
         }
     })

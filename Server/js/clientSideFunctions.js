@@ -85,6 +85,10 @@ function loadMyAccount() {
         $('#myAccount_connected').show();
         $('#myAccount_address').html(myAccount.address);
         $("#myAccount_value").html(myAccount.balance);
+        loadOngoingSales();
+        getBoughtData();
+        loadOngoingBuys();
+        loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
     } else {
         $('#myAccount_connected').hide();
         $('#myAccount_notConnected').show();
@@ -94,8 +98,6 @@ function loadMyAccount() {
 /** Connection **/
 function callbackConnect(json) {
     connected = true;
-    loadOngoingSales();
-    getBoughtData();
     myAccount.address = json["address"];
     myAccount.balance = json["balance"];
     loadMyAccount();
@@ -381,6 +383,7 @@ function callbackOngoingBuys(Ids) {
     myAccount.buying = [];
     let html = "";
     for (const data of Ids) {
+        console.log(data);
         html += "<details>";
         html += "<summary>" + data.returnValues["description"] + "</summary>";
         html += "<p>Reference Id: " + data.returnValues["referenceId"] + "</p>";
@@ -407,15 +410,48 @@ function loadOngoingBuys() {
     }
 }
 
-/** Manage Id **/
+/** Manage Id Buyer **/
 function callbackManageIdBuyer(param) {
     addItem(manageIdBuyerItem);
-    const [product, total_clients, num_clients_step1, num_clients_step2, key] = param;
 
-    const keys = ["provider", "initialPrice", "description"];
-    const keysNames = ["Provider", "Initial price", "Description"];
-    const tableProduct = displayProductInfo(product.returnValues, keys, keysNames);
+    const [product, hashSent, encryptedEncodedReceived, decoderReceived] = param;
+    console.log(product);
+    const keys = ["provider", "description"];
+    const keysNames = ["Provider", "Description"];
+    const tableProduct = displayProductInfo(product, keys, keysNames);
     $("#manageIdBuyer_produit").html(tableProduct);
+
+    if (!encryptedEncodedReceived) {
+        // Waiting for the encrypted encoded key
+        $('#manageidBuyer_encryptedEncodedWaiting').show();
+        $('#manageidBuyer_sendHash').hide();
+        $('#manageidBuyer_decoderKeyWaiting').hide();
+        $('#manageidBuyer_decoderKeyReceived').hide();
+    } else {
+        // Encrypted encoded key received
+        if (!hashSent) {
+            // Client has to send the hash
+            $('#manageidBuyer_encryptedEncodedWaiting').hide();
+            $('#manageidBuyer_sendHash').show();
+            $('#manageidBuyer_decoderKeyWaiting').hide();
+            $('#manageidBuyer_decoderKeyReceived').hide();
+        } else {
+            // Client has sent the hash
+            if (!decoderReceived) {
+                // Waiting for the decoder key
+                $('#manageidBuyer_encryptedEncodedWaiting').hide();
+                $('#manageidBuyer_sendHash').hide();
+                $('#manageidBuyer_decoderKeyWaiting').show();
+                $('#manageidBuyer_decoderKeyReceived').hide();
+            } else {
+                // Decoder key received, client can compute
+                $('#manageidBuyer_encryptedEncodedWaiting').hide();
+                $('#manageidBuyer_sendHash').hide();
+                $('#manageidBuyer_decoderKeyWaiting').hide();
+                $('#manageidBuyer_decoderKeyReceived').show();
+            }
+        }
+    }
 }
 
 function callbackErrorManageIdBuyer(err) {
@@ -424,6 +460,19 @@ function callbackErrorManageIdBuyer(err) {
 
 function manageIdBuyer(id) {
     loadXMLDoc("manageIdBuyer/" + id, callbackManageIdBuyer, callbackErrorManageIdBuyer);
+}
+
+function sendClientHash() {
+    console.log('salut');
+}
+
+function computeK() {
+    console.log("k");
+}
+
+/** Dispute **/
+function dispute() {
+    console.log("yo");
 }
 
 /********************************
@@ -508,7 +557,7 @@ function loadOngoingSales() {
     }
 }
 
-/** Manage Id **/
+/** Manage Id Seller **/
 
 function callbackManageIdSeller(param) {
     addItem(manageIdSellerItem);
@@ -587,7 +636,7 @@ function callbackError(err) {
     console.error(err);
 }
 
-/** Make a transaction **/
+/** Make a transaction, to delete **/
 function callbackMakeTransaction(param) {
     addItem(resultTransactionItem);
     param = displayTable(param);

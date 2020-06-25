@@ -244,11 +244,15 @@ myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
         '<h3>Product:</h3>' +
         '<div id="manageIdBuyer_produit"></div>' +
         '<h3>To do:</h3>' +
+
         '<ul>' +
-        '<li>Encrypted encoded key received, send hash</li>' +
-        '<li>Decoder key received, compute</li>' +
-        '<li>Set a dispute or get a refund</li>' +
+        '<li id="manageidBuyer_encryptedEncodedWaiting">Waiting for the encrypted encoded key</li>' +
+        '<li onclick="sendClientHash()" id="manageidBuyer_sendHash">Encrypted encoded key received, send hash</li>' +
+        '<li id="manageidBuyer_decoderKeyWaiting">Encrypted encoded key received, you already sent the hash<br>Waiting for the decoder key</li>' +
+        '<li id="manageidBuyer_decoderKeyReceived" onclick="computeK()">Decoder key received, compute</li>' +
+        '<li onclick="dispute()">Set a dispute or get a refund</li>' +
         '</ul>' +
+
         '<p class="message" id="manageIdSeller_message"></p>' +
         '</div>'
     );

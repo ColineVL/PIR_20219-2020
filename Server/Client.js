@@ -139,9 +139,12 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/ManageIdBuyer', async (req, res) => {
         if (req.session.Account) {
             let Id = req.query.id;
-            let result = await bc.manageIDBuyer(Id,req.session.Account)
+            let [product, hashSent, encryptedEncodedReceived, decoderReceived] = await bc.manageIDBuyer(Id,req.session.Account)
+            console.log("hashSent " +hashSent);
+            console.log("encryptedEncodedReceived " +encryptedEncodedReceived);
+            console.log("decoderReceived " +decoderReceived);
 
-            res.render('ManageBuy.ejs', {Id: Id, product: result[0], num_event1: result[1], num_event2: result[2]});
+            res.render('ManageBuy.ejs', {Id: Id, product: product, num_event1: encryptedEncodedReceived, num_event2: decoderReceived});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }

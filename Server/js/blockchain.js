@@ -267,11 +267,11 @@ async function manageIDBuyer(id, account) {
         let eventDecoderReceived = await EventsModule.GetKeySentSpecific(id, account.address)
         let eventHashSent = await EventsModule.GetHashFromClient(account.address,id)
 
-        let num_event2 = eventDecoderReceived.length
-        let num_event1 = eventEncryptedReceived.length - eventHashSent.length // Because in that case it is already done
-
-        return [product[0], num_event1, num_event2];
-
+        // !! allows to convert to boolean
+        let decoderReceived = !!eventDecoderReceived.length;
+        let encryptedEncodedReceived = !!(eventEncryptedReceived.length - eventHashSent.length); // Because in that case it is already done
+        let hashSent = !!eventHashSent.length;
+        return [product[0].returnValues, hashSent, encryptedEncodedReceived, decoderReceived];
     } catch (e) {
         throw e;
     }
@@ -287,10 +287,8 @@ async function getClients(account, id) {
 
 }
 
-async function sendEncryptedEncodedKey(id, privateKey){
+async function sendEncryptedEncodedKey(id, Account){
     try {
-        const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
-
         const all_clients = await transactions.GetClients(Account, id);
 
         let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
