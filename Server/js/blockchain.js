@@ -141,9 +141,9 @@ async function sellItemZiad(price, description, durationDays, durationHours, dur
 
     let K = crypto.RandomBytes(7); //Reference key with which data is encrypted. TODO use this on TLE
 
-    let priceInEther = web3.utils.toWei(price,'ether');
+    let priceInEther = web3.utils.toWei(price, 'ether');
 
-    let insuranceInEther = web3.utils.toWei(insurance,'ether');
+    let insuranceInEther = web3.utils.toWei(insurance, 'ether');
 
     /*Send transaction the get the ref_id for the database*/
     try {
@@ -266,7 +266,7 @@ async function manageIDBuyer(id, account) {
 
         let eventEncryptedReceived = await EventsModule.GetEncryptedKeySentSpecific(id, account.address)
         let eventDecoderReceived = await EventsModule.GetKeySentSpecific(id, account.address)
-        let eventHashSent = await EventsModule.GetHashFromClient(account.address,id)
+        let eventHashSent = await EventsModule.GetHashFromClient(account.address, id)
 
         // !! allows to convert to boolean
         let decoderReceived = !!eventDecoderReceived.length;
@@ -288,7 +288,7 @@ async function getClients(account, id) {
 
 }
 
-async function sendEncryptedEncodedKey(id, Account){
+async function sendEncryptedEncodedKey(id, Account) {
     try {
         const all_clients = await transactions.GetClients(Account, id);
 
@@ -320,8 +320,7 @@ async function sendEncryptedEncodedKey(id, Account){
             try {
                 let receipt = await transactions.sendEncryptedEncodedKey(Account, id, client_address, toSend);
                 done += 1;
-            }
-            catch(e){
+            } catch (e) {
                 throw e;
             }
         }
@@ -387,7 +386,7 @@ async function sendDecoderKey(id, Account) {
             let correctHash = myRef_obj.hash;
 
             let eventReceivedHash = await EventsModule.GetHashFromClient(client_address, id);
-            let receivedHash =eventReceivedHash[0].returnValues.encodedKeyHash
+            let receivedHash = eventReceivedHash[0].returnValues.encodedKeyHash
 
             if (correctHash == receivedHash) {
                 let receipt = await transactions.sendDecoderKey(Account, id, client_address, myRef_obj.K2);
@@ -517,7 +516,7 @@ async function DisputeInfoClient(id, Account) {
 
         let alreadyDisputed = !!(disputeEvent.length);
         let alreadyEncoded = !!(encoderEvent.length);
-        let possibleRefund = web3.utils.fromWei(buyEvent[0].returnValues.fund,'ether');
+        let possibleRefund = web3.utils.fromWei(buyEvent[0].returnValues.fund, 'ether');
 
         return [alreadyEncoded, possibleRefund, alreadyDisputed];
     } catch (e) {
@@ -529,16 +528,15 @@ async function DisputeInfoClient(id, Account) {
 /*Function to raise a dispute, or to retrieve your money*/
 async function Dispute(id, Account) {
     try {
-        let funds =0;
-        let receipt = await transactions.RaiseDispute(Account, id)
+        let funds = 0;
+        let receipt = await transactions.RaiseDispute(Account, id);
         if (receipt) {
-            let disputeEvent = await EventsModule.GetDispute(Account.address, id)
+            let disputeEvent = await EventsModule.GetDispute(Account.address, id);
 
-            if (disputeEvent.length >0){
-                funds = web3.utils.fromWei(disputeEvent[0].returnValues.funds,'ether');
+            if (disputeEvent.length > 0) {
+                funds = web3.utils.fromWei(disputeEvent[0].returnValues.funds, 'ether');
             }
         }
-
         return funds;
     } catch (e) {
         throw e;
@@ -548,9 +546,9 @@ async function Dispute(id, Account) {
 
 /*For a provider to release the reference Key*/
 async function sendReferenceKey(id, Account) {
-    let refKey = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
+    let refKey = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt');
 
-    let receipt = await transactions.sendRefKey(Account, id, refKey)
+    let receipt = await transactions.sendRefKey(Account, id, refKey);
 
     return [receipt, refKey];
 }
@@ -559,22 +557,22 @@ async function sendReferenceKey(id, Account) {
 async function sendReferenceKeyMalicious(id, Account) {
     let refKeyMalicious = crypto.RandomBytes(7);
 
-    let receipt = await transactions.sendRefKey(Account,id,refKeyMalicious)
+    let receipt = await transactions.sendRefKey(Account, id, refKeyMalicious)
 
-    return [receipt,refKeyMalicious];
+    return [receipt, refKeyMalicious];
 }
 
 /*Function to to raise a dispute, or to retrieve your money*/
 async function withdrawFundsProvider(id, Account) {
 
-    let receipt = await transactions.withdrawFundsProvider(Account,id)
+    let receipt = await transactions.withdrawFundsProvider(Account, id)
 
     let funds = 0
     let withdrawEvent = await EventsModule.WithdrawFundsEvent(id);
-    if (receipt){
+    if (receipt) {
         let withdrawEvent = await EventsModule.WithdrawFundsEvent(id);
-        if (withdrawEvent.length > 0){
-            funds =  web3.utils.fromWei(withdrawEvent[0].returnValues.funds,'ether');
+        if (withdrawEvent.length > 0) {
+            funds = web3.utils.fromWei(withdrawEvent[0].returnValues.funds, 'ether');
         }
     }
 
