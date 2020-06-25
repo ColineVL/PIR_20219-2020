@@ -55,7 +55,10 @@ module.exports = {
                 fromBlock: 0,
                 toBlock: 'latest'
             });
-            return res1;
+            const product = res1[0].returnValues;
+            const insurance = web3.utils.fromWei(product["insuranceDeposit"], "ether");
+            product.insuranceDeposit = insurance;
+            return product;
         } catch (e) {
             throw e;
         }

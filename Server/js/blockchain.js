@@ -29,7 +29,7 @@ const Reference_Client = database.newReference_ClientSchema();
 // let prime = crypto.GetPrime(1024);
 (async () => {
     // let ts = await readwrite.WritePrimeAndGen(__dirname + '/../Database/PrimeAndGenerator.txt',prime);
-   prime = await readwrite.ReadPrimeAndGen(__dirname + '/../Database/PrimeAndGenerator.txt');
+    prime = await readwrite.ReadPrimeAndGen(__dirname + '/../Database/PrimeAndGenerator.txt');
 })();
 
 /********************************
@@ -142,13 +142,13 @@ async function sellItemZiad(price, description, durationDays, durationHours, dur
 
     let K = crypto.RandomBytes(32); //Reference key with which data is encrypted. TODO use this on TLE
 
-    let priceInEther = web3.utils.toWei(price, 'ether');
+    let priceInWei = web3.utils.toWei(price, 'ether');
 
-    let insuranceInEther = web3.utils.toWei(insurance, 'ether');
+    let insuranceInWei = web3.utils.toWei(insurance, 'ether');
 
     /*Send transaction the get the ref_id for the database*/
     try {
-        const receipt = await transactions.SellReference(account, Diffie.PubDH.slice(0,32), Diffie.PubDH.slice(32,64), Diffie.PubDH.slice(64,96), Diffie.PubDH.slice(96,128), priceInEther, durationInSecs, description, minData, depreciationType, insuranceInEther);
+        const receipt = await transactions.SellReference(account, Diffie.PubDH.slice(0, 32), Diffie.PubDH.slice(32, 64), Diffie.PubDH.slice(64, 96), Diffie.PubDH.slice(96, 128), priceInWei, durationInSecs, description, minData, depreciationType, insuranceInWei);
         let blockNumber = receipt.blockNumber;
         let event = await EventsModule.GetYourRef(account.address, blockNumber)
         let id = event[0].returnValues.referenceId;
@@ -156,7 +156,7 @@ async function sellItemZiad(price, description, durationDays, durationHours, dur
         receipt.id = id;
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
         await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt', K)
-        return [receipt, id];
+        return receipt;
     } catch (err) {
         throw err;
     }
@@ -174,26 +174,27 @@ async function sellItemColine(jsonInfo, account) {
     const deposit = jsonInfo["deposit"];
 
     const durationInSecs = durationDays * 86400 + durationHours * 3600 + durationMinutes * 60;
-
-    /*DH keys, to be stored and public sent*/
     const keys = crypto.DiffieHellmanGenerate(prime);
     /* Updating object to write and save */
     Diffie.PrivDH = keys[0];
     Diffie.PubDH = keys[1];
 
-    const K = crypto.RandomBytes(32); //Reference key with which data is encrypted. TODO use this on TLE
+    let K = crypto.RandomBytes(32); //Reference key with which data is encrypted. TODO use this on TLE
 
+    let priceInWei = web3.utils.toWei(initialPrice, 'ether');
+
+    let insuranceInWei = web3.utils.toWei(deposit, 'ether');
 
     /*Send transaction the get the ref_id for the database*/
     try {
-        let receipt = await transactions.SellReference(account,  Diffie.PubDH.slice(0,32),Diffie.PubDH.slice(32,64),Diffie.PubDH.slice(64,96),Diffie.PubDH.slice(96,128), initialPrice, durationInSecs, description, minData, depreciationType, deposit);
-        const blockNumber = receipt.blockNumber;
-        const event = await EventsModule.GetYourRef(account.address, blockNumber)
-        const id = event[0].returnValues.referenceId;
+        const receipt = await transactions.SellReference(account, Diffie.PubDH.slice(0, 32), Diffie.PubDH.slice(32, 64), Diffie.PubDH.slice(64, 96), Diffie.PubDH.slice(96, 128), priceInWei, durationInSecs, description, minData, depreciationType, insuranceInWei);
+        let blockNumber = receipt.blockNumber;
+        let event = await EventsModule.GetYourRef(account.address, blockNumber)
+        let id = event[0].returnValues.referenceId;
         Diffie.refId = id;
+        receipt.id = id;
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
         await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt', K)
-        receipt.id = id;
         return receipt;
     } catch (err) {
         throw err;
@@ -212,7 +213,7 @@ async function buyProduct(id, account) {
     Diffie.refId = id + 1
     try {
         let currentPrice = await transactions.GetCurrentPrice(account, id);
-        const receipt = await transactions.BuyReference(account, id, Diffie.PubDH.slice(0,32),Diffie.PubDH.slice(32,64),Diffie.PubDH.slice(64,96),Diffie.PubDH.slice(96,128), currentPrice);
+        const receipt = await transactions.BuyReference(account, id, Diffie.PubDH.slice(0, 32), Diffie.PubDH.slice(32, 64), Diffie.PubDH.slice(64, 96), Diffie.PubDH.slice(96, 128), currentPrice);
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
         return (currentPrice);
     } catch (e) {
@@ -223,6 +224,8 @@ async function buyProduct(id, account) {
 async function getCurrentPrice(account, id) {
     try {
         let currentPrice = await transactions.GetCurrentPrice(account, id);
+        currentPrice = web3.utils.fromWei(currentPrice.toString(), "ether");
+        // the result is in ether
         return currentPrice;
     } catch (e) {
         throw e;
@@ -237,6 +240,9 @@ async function getCurrentPrice(account, id) {
 async function manageID(id, account) {
     try {
         let product = await EventsModule.GetRef(id);
+        product.initialPrice = web3.utils.fromWei((product.initialPrice).toString(), "ether");
+        let currentPrice = await getCurrentPrice(account, id);
+        product.currentPrice = currentPrice;
         const clients = await transactions.GetClients(account, id);
         let total_clients = clients.length;
         let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
@@ -250,8 +256,6 @@ async function manageID(id, account) {
         let Key = 0;
         if (KeyEvent.length > 0) {
             let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1]))
-
-
             Key = buffer.toString('hex');
         }
         return [product, total_clients, num_clients_step1, num_clients_step2, Key];
@@ -274,10 +278,7 @@ async function manageIDBuyer(id, account) {
         let decoderReceived = !!eventDecoderReceived.length;
         let encryptedEncodedReceived = !!eventEncryptedReceived.length;
         let hashSent = !!eventHashSent.length;
-        console.log("decoderReceived "+decoderReceived);
-        console.log("encryptedEncodedReceived "+encryptedEncodedReceived);
-        console.log("hashSent "+hashSent);
-        return [product[0].returnValues, hashSent, encryptedEncodedReceived, decoderReceived];
+        return [product, hashSent, encryptedEncodedReceived, decoderReceived];
     } catch (e) {
         throw e;
     }

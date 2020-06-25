@@ -96,10 +96,16 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/getrefinfo/:id', async (req, res) => {
         try {
             let product = await EventsModule.GetRef(req.params.id);
-            product = product[0].returnValues;
-            const actualPrice = await bc.getCurrentPrice(req.session.Account, req.params.id);
-            product["actualPrice"] = actualPrice;
             res.json(product);
+        } catch (e) {
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/getPrice/:id', async (req, res) => {
+        try {
+            const actualPrice = await bc.getCurrentPrice(req.session.Account, req.params.id);
+            res.json(actualPrice);
         } catch (e) {
             res.status(500).json(e.message);
         }
@@ -211,6 +217,7 @@ app.use('/public', express.static(__dirname + '/public'))
             let receipt = await bc.sellItemColine(req.params.json, req.session.Account);
             res.json(receipt);
         } catch (e) {
+            console.log(e);
             res.status(500).json(e.message);
         }
     })

@@ -71,8 +71,8 @@ const manageIdBuyerItem = {
 };
 
 const disputeItem = {
-    name: "Dispute",
-    title: "disputeItem"
+    name: "disputeItem",
+    title: "Dispute"
 }
 
 /********************************
