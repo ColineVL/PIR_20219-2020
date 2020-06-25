@@ -243,6 +243,9 @@ myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
         '<div class="container">' +
         '<h3>Product:</h3>' +
         '<div id="manageIdBuyer_produit"></div>' +
+
+        '<p id="manageIdSeller_K"></p>' +
+
         '<h3>To do:</h3>' +
 
         '<ul>' +

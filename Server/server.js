@@ -187,6 +187,26 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    .get('/sendBuyerHash', async (req, res) => {
+        try {
+            await bc.sendClientHash(req.params.id, req.session.Account)
+            res.json(req.params.id);
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/computeK', async (req, res) => {
+        try {
+            const K = await bc.ComputeK(req.params.id, req.session.Account)
+            res.json({id:req.params.id, K:K});
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
+
     /************ Sell a product ************/
 
     .get('/sellNewProduct/:json', async (req, res) => {

@@ -462,12 +462,22 @@ function manageIdBuyer(id) {
     loadXMLDoc("manageIdBuyer/" + id, callbackManageIdBuyer, callbackErrorManageIdBuyer);
 }
 
-function sendClientHash() {
-    console.log('salut');
+function callbackBuyerAction(id) {
+    manageIdBuyer(id);
+}
+function sendBuyerHash() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("sendBuyerHash/" + id, callbackBuyerAction, callbackErrorManageIdBuyer);
+}
+
+function callbackComputeK(result) {
+    manageIdBuyer(result["id"]);
+    $('#manageIdSeller_K').html("K: " + result["K"]);
 }
 
 function computeK() {
-    console.log("k");
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("computeK/" + id, callbackComputeK, callbackErrorManageIdBuyer);
 }
 
 /** Dispute **/
