@@ -168,7 +168,6 @@ async function sellItemColine(jsonInfo, account) {
     const durationDays = jsonInfo["durationDays"];
     const durationHours = jsonInfo["durationHours"];
     const durationMinutes = jsonInfo["durationMinutes"];
-    const durationMinutes = jsonInfo["durationMinutes"];
     const description = jsonInfo["description"];
     const minData = jsonInfo["minData"];
     const depreciationType = jsonInfo["depreciationType"];
