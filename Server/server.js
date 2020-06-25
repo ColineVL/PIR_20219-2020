@@ -1,6 +1,6 @@
 const express = require('express');
 const session = require('cookie-session'); // Charge le middleware de sessions
-const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
+// const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
 const bc = require('./js/blockchain');
 const EventsModule = require('./js/EventsModule');
 
@@ -137,7 +137,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/buy/:id', async (req, res) => {
         try {
             let product = await EventsModule.GetRef(req.params.id);
-            let currentPrice = await bc.buyProduct(req.params.id, req.session.Account);
+            await bc.buyProduct(req.params.id, req.session.Account);
             res.json(product[0]);
         } catch (e) {
             res.status(500).json(e.message);
@@ -157,7 +157,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/manageIdBuyer/:id', async (req, res) => {
         try {
-            let result = await bc.manageIDBuyer(req.params.id, req.session.Account)
+            let result = await bc.manageIDBuyer(req.params.id, req.session.Account);
             res.json(result);
         } catch (e) {
             console.log(e);
@@ -167,7 +167,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/sendBuyerHash/:id', async (req, res) => {
         try {
-            await bc.sendClientHash(req.params.id, req.session.Account)
+            await bc.sendClientHash(req.params.id, req.session.Account);
             res.json(req.params.id);
         } catch (e) {
             console.log(e);
@@ -177,7 +177,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/computeK/:id', async (req, res) => {
         try {
-            const K = await bc.ComputeK(req.params.id, req.session.Account)
+            const K = await bc.ComputeK(req.params.id, req.session.Account);
             res.json({id: req.params.id, K: K});
         } catch (e) {
             console.log(e);
@@ -299,5 +299,5 @@ app.use('/public', express.static(__dirname + '/public'))
     /** Redirection to home if the page is not found **/
     .use(function (req, res) {
         res.redirect('/');
-    })
+    });
 

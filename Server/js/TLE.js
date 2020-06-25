@@ -5,7 +5,7 @@ const example2 = "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.7212539
 
 const Web3 = require('web3');
 const provider = 'http://192.168.33.115:8545';
-const web3 = new Web3(new Web3.providers.HttpProvider(provider))
+const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 
 
 // Text or char
@@ -393,7 +393,7 @@ function testLine2() {
 
 
 function SeparateBytes(str) {
-    let res = []
+    let res = [];
     return res
 }
 

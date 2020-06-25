@@ -4,7 +4,7 @@
 const makeTransactionItem = {
     title: "make transaction",
     name: "makeTransactionItem"
-}
+};
 
 const myAccountItem = {
     title: "My account",
@@ -48,12 +48,12 @@ const forSaleItem = {
 const forSaleproductInfoItem = {
     title: "Product info",
     name: "forSaleproductInfoItem"
-}
+};
 
 const boughtProductInfoItem = {
     title: "Product info",
     name: "boughtProductInfoItem"
-}
+};
 
 const ongoingBuysItem = {
     title: "Ongoing buys",
@@ -73,7 +73,7 @@ const manageIdBuyerItem = {
 const disputeItem = {
     name: "disputeItem",
     title: "Dispute"
-}
+};
 
 /********************************
  * Sell Items

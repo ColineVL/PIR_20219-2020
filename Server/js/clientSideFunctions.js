@@ -18,7 +18,7 @@ function loadXMLDoc(page, successCallback, errorCallback) {
                 errorCallback(e.message);
             }
         }
-    }
+    };
     xhttp.open("GET", page, true);
     xhttp.send();
 }
@@ -658,7 +658,7 @@ function manageIdSeller(id) {
 
 function callbackEncodedEncryptedKey(param) {
     const [num, done] = param;
-    $("#manageIdSeller_message").show()
+    $("#manageIdSeller_message").show();
     $("#manageIdSeller_message").html("Successfully sent info to " + done + " clients out of " + num + " expected!");
 }
 
