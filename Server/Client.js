@@ -186,8 +186,8 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/DisputeConfirmation', async (req, res) => {
         if (req.session.Account) {
             let id = req.query.id;
-
             let info = await bc.DisputeInfoClient(id, req.session.Account.privateKey);
+            console.log(info[2])
             res.render('DisputeConfirmation.ejs', {id: id, info:info});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -199,8 +199,9 @@ app.use('/public', express.static(__dirname + '/public'))
         if (req.session.Account) {
             let id = req.query.id;
             // TODO ADD to received funds, the real funds received: maybe received insurance deposit as well...
-            let info = await bc.Dispute(id, req.session.Account.privateKey)
-            res.render('Dispute.ejs',{id:id,info:info});
+            let funds = await bc.Dispute(id, req.session.Account.privateKey)
+
+            res.render('Dispute.ejs',{id:id, funds:funds});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }

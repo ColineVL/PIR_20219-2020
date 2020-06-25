@@ -287,9 +287,12 @@ async function getClients(account, id) {
 
 }
 
-async function sendEncryptedEncodedKey(id, Account) {
+async function sendEncryptedEncodedKey(id, privateKey){
     try {
+        const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+
         const all_clients = await transactions.GetClients(Account, id);
+
         let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
         let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2) // So I compute a  need a list of addresses
         let ClientsToDo = await EventsModule.ComputeLeft(all_clients, Address_ListClientsWhoReceivedK2) // Then i find who is left...
@@ -301,6 +304,7 @@ async function sendEncryptedEncodedKey(id, Account) {
 
         let done = 0 // To check how many were succesful at the end...
         for (let i = 0; i < ClientsToDo.length; i++) {
+            console.log("in")
             let client_address = ClientsToDo[i];
 
             let Pub_Client = await EventsModule.GetPubDiffieClient(client_address, id);
@@ -515,12 +519,16 @@ async function ComputeK(id, privateKey) {
 async function DisputeInfoClient(id, privateKey) {
     try {
         const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+        let bool = false
 
         let encoderEvent = await EventsModule.GetKeySentSpecific(id, Account.address)
         let buyEvent = await EventsModule.GetBoughtRefSpecific(id, Account.address)
+        let disputeEvent = await EventsModule.GetDispute(Account.address, id) // Check if already disputed
+        if (disputeEvent.length >0){
+            bool = true
+        }
 
-
-        return [encoderEvent.length, buyEvent[0].returnValues.fund];
+        return [encoderEvent.length, web3.utils.fromWei(buyEvent[0].returnValues.fund,'ether'), bool];
     } catch (e) {
         throw e;
     }
@@ -532,14 +540,17 @@ async function Dispute(id, privateKey) {
     try {
         const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
-        let bool = false;
+        let funds =0;
         let receipt = await transactions.RaiseDispute(Account, id)
         if (receipt) {
-            bool = true
-        }
-        let disputeEvent = await EventsModule.GetDispute(Account.address, id)
+            let disputeEvent = await EventsModule.GetDispute(Account.address, id)
 
-        return [bool, disputeEvent];
+            if (disputeEvent.length >0){
+                funds = web3.utils.fromWei(disputeEvent[0].returnValues.funds,'ether');
+            }
+        }
+
+        return funds;
     } catch (e) {
         throw e;
     }

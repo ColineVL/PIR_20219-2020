@@ -7,9 +7,9 @@
 </head>
 
 <body>
-<%if (info[0] == true) {%>
+<%if (funds >0) {%>
     <h1>Transaction was succesful</h1>
-    <p> (You received : <%= info[1][0].returnValues.funds %> wei) </p>
+    <p> (You received : <%= funds %> Ether) </p>
 <%} else {%>
     <h1>Unsuccessful </h1>
 <%}%>
