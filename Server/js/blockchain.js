@@ -582,13 +582,17 @@ async function withdrawFundsProvider(id, privateKey) {
 
     let receipt = await transactions.withdrawFundsProvider(Account,id)
 
+    let funds = 0
     let withdrawEvent = await EventsModule.WithdrawFundsEvent(id);
     if (receipt){
-        console.log("okkkkk")
+        let withdrawEvent = await EventsModule.WithdrawFundsEvent(id);
+        if (withdrawEvent.length > 0){
+            funds =  web3.utils.fromWei(withdrawEvent[0].returnValues.funds,'ether');
+        }
     }
 
 
-    return withdrawEvent;
+    return funds;
 }
 
 

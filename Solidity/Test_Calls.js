@@ -96,10 +96,10 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
     //     console.log(receipt);
     // });
     // console.log("*************************************");
-    const map =  await contract.methods.getClients(21).call({from : account1});
-    // const clients = await contract.methods.dataRefer.call(transactionObject);
-    console.log("price:" + map)
-    console.log(typeof map)
+    // const map =  await contract.methods.getClients(21).call({from : account1});
+    // // const clients = await contract.methods.dataRefer.call(transactionObject);
+    // console.log("price:" + map)
+    // console.log(typeof map)
     // // const data = await contract.methods.getData().call(transactionObject);
     // console.log("data refs :" + map.clients);
     // console.log(map)
@@ -114,18 +114,18 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
 
     //
 
-    // const contractws = new web3ws.eth.Contract(abi,contract_address);
-    // //
-    // // console.log(events.callback())
-    // console.log("**********************************");
-    // let res1 =  contractws.getPastEvents("withdrawFundsEvent", {
-    //    filter: {referenceId: 6},
-    //     fromBlock: 0,
-    //     toBlock: 'latest'
-    // }, function(error, events){ console.log(events)})
-    //     .then(function(events){
-    //         console.log(events)// same results as the optional callback above
-    //     });
+    const contractws = new web3ws.eth.Contract(abi,contract_address);
+    //
+    // console.log(events.callback())
+    console.log("**********************************");
+    let res1 =  contractws.getPastEvents("withdrawFundsEvent", {
+       filter: {referenceId: 200 },
+        fromBlock: 0,
+        toBlock: 'latest'
+    }, function(error, events){ console.log(events)})
+        .then(function(events){
+            console.log(events)// same results as the optional callback above
+        });
 })();
 
 
