@@ -98,5 +98,11 @@ module.exports = {
         let prime = JSON.parse(res);
         return prime;
     },
+    WritePrimeAndGen : async function (path,primeh) {
+        await fs.writeFile(path, JSON.stringify(primeh), function(err) {
+            if (err) {console.log(err)} // TODO maybe do something here for error
+        })
+        return 0;
+    },
 
 }

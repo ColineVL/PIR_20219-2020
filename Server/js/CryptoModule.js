@@ -39,7 +39,7 @@ module.exports = {
     /* One Time Pad , key length must be greater or equal than message. */
     OTP: function(key, message) {
         var res = [];
-        for (let i = 0; i < message.length ; i++) {
+        for (let i = 0; i < Math.min(message.length, key.length) ; i++) {
             res.push(key[i] ^ message[i]);
         }
         return new Buffer.from(res,'hex');

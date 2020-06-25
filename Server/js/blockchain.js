@@ -26,9 +26,10 @@ const Reference_Seller = database.newReference_SellerSchema();
 const Reference_Client = database.newReference_ClientSchema();
 
 
-//let prime = crypto.GetPrime(32);
+// let prime = crypto.GetPrime(1024);
 (async () => {
-    prime = await readwrite.ReadPrimeAndGen(__dirname + '/../Database/PrimeAndGenerator.txt');
+    // let ts = await readwrite.WritePrimeAndGen(__dirname + '/../Database/PrimeAndGenerator.txt',prime);
+   prime = await readwrite.ReadPrimeAndGen(__dirname + '/../Database/PrimeAndGenerator.txt');
 })();
 
 /********************************
@@ -139,7 +140,7 @@ async function sellItemZiad(price, description, durationDays, durationHours, dur
     Diffie.PrivDH = keys[0];
     Diffie.PubDH = keys[1];
 
-    let K = crypto.RandomBytes(7); //Reference key with which data is encrypted. TODO use this on TLE
+    let K = crypto.RandomBytes(32); //Reference key with which data is encrypted. TODO use this on TLE
 
     let priceInEther = web3.utils.toWei(price,'ether');
 
@@ -147,7 +148,7 @@ async function sellItemZiad(price, description, durationDays, durationHours, dur
 
     /*Send transaction the get the ref_id for the database*/
     try {
-        const receipt = await transactions.SellReference(account, Diffie.PubDH, priceInEther, durationInSecs, description, minData, depreciationType, insuranceInEther);
+        const receipt = await transactions.SellReference(account, Diffie.PubDH.slice(0,32), Diffie.PubDH.slice(32,64), Diffie.PubDH.slice(64,96), Diffie.PubDH.slice(96,128), priceInEther, durationInSecs, description, minData, depreciationType, insuranceInEther);
         let blockNumber = receipt.blockNumber;
         let event = await EventsModule.GetYourRef(account.address, blockNumber)
         let id = event[0].returnValues.referenceId;
@@ -180,12 +181,12 @@ async function sellItemColine(jsonInfo, account) {
     Diffie.PrivDH = keys[0];
     Diffie.PubDH = keys[1];
 
-    let K = crypto.RandomBytes(7); //Reference key with which data is encrypted. TODO use this on TLE
+    let K = crypto.RandomBytes(32); //Reference key with which data is encrypted. TODO use this on TLE
 
 
     /*Send transaction the get the ref_id for the database*/
     try {
-        const receipt = await transactions.SellReference(account, Diffie.PubDH, initialPrice, durationInSecs, description, minData, depreciationType, deposit);
+        const receipt = await transactions.SellReference(account,  Diffie.PubDH.slice(0,32),Diffie.PubDH.slice(32,64),Diffie.PubDH.slice(64,96),Diffie.PubDH.slice(96,128), initialPrice, durationInSecs, description, minData, depreciationType, deposit);
         let blockNumber = receipt.blockNumber;
         let event = await EventsModule.GetYourRef(account.address, blockNumber)
         let id = event[0].returnValues.referenceId;
@@ -211,7 +212,7 @@ async function buyProduct(id, account) {
     Diffie.refId = id + 1
     try {
         let currentPrice = await transactions.GetCurrentPrice(account, id);
-        const receipt = await transactions.BuyReference(account, id, Diffie.PubDH, currentPrice);
+        const receipt = await transactions.BuyReference(account, id, Diffie.PubDH.slice(0,32),Diffie.PubDH.slice(32,64),Diffie.PubDH.slice(64,96),Diffie.PubDH.slice(96,128), currentPrice);
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
         return (currentPrice);
     } catch (e) {
@@ -248,7 +249,9 @@ async function manageID(id, account) {
 
         let Key = 0;
         if (KeyEvent.length > 0) {
-            let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1])).slice(0, 7)
+            let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1]))
+
+
             Key = buffer.toString('hex');
         }
         return [product, total_clients, num_clients_step1, num_clients_step2, Key];
@@ -304,17 +307,17 @@ async function sendEncryptedEncodedKey(id, privateKey){
 
         let done = 0 // To check how many were succesful at the end...
         for (let i = 0; i < ClientsToDo.length; i++) {
-            console.log("in")
             let client_address = ClientsToDo[i];
 
             let Pub_Client = await EventsModule.GetPubDiffieClient(client_address, id);
             let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
-            let K2 = crypto.RandomBytes(7);
+            let K2 = crypto.RandomBytes(32);
 
             let toEncrypt = crypto.OTP(K, K2)
 
-            let toSend = crypto.OTP(secret, toEncrypt)//.slice(0,4);
+            let toSend = crypto.OTP(secret, toEncrypt)
             let hashed = crypto.Hash(toEncrypt);
+
 
             await readwrite.WriteAsRefSeller(__dirname + '/../Database/RefSeller' + id.toString() + '_' + ClientsToDo[i] + '.txt', hashed, K2)
 
@@ -350,13 +353,13 @@ async function sendEncryptedEncodedKeyMalicious(id, privateKey) {
 
         let Pub_Client = await EventsModule.GetPubDiffieClient(client_address, id);
         let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
-        let K2 = crypto.RandomBytes(7);
+        let K2 = crypto.RandomBytes(32);
 
-        let K_Malicious = crypto.RandomBytes(7);
+        let K_Malicious = crypto.RandomBytes(32);
 
         let toEncrypt = crypto.OTP(K_Malicious, K2)
 
-        let toSend = crypto.OTP(secret, toEncrypt)//.slice(0,4);
+        let toSend = crypto.OTP(secret, toEncrypt)
         let hashed = crypto.Hash(toEncrypt);
 
         await readwrite.WriteAsRefSeller(__dirname + '/../Database/RefSeller' + id.toString() + '_' + ClientsToDo[i] + '.txt', hashed, K2)
@@ -390,6 +393,7 @@ async function sendDecoderKey(id, Account) {
 
             let eventReceivedHash = await EventsModule.GetHashFromClient(client_address, id);
             let receivedHash =eventReceivedHash[0].returnValues.encodedKeyHash
+
 
             if (correctHash == receivedHash) {
                 let receipt = await transactions.sendDecoderKey(Account, id, client_address, myRef_obj.K2);
@@ -428,7 +432,7 @@ async function sendDecoderKeyMalicious(id, privateKey) {
         let eventReceivedHash = await EventsModule.GetHashFromClient(client_address, id);
         let receivedHash = eventReceivedHash[0].returnValues.encodedKeyHash
 
-        let K_Malicious = crypto.RandomBytes(7);
+        let K_Malicious = crypto.RandomBytes(32);
 
         if (correctHash == receivedHash) {
             let receipt = await transactions.sendDecoderKey(Account, id, client_address, K_Malicious);
@@ -454,11 +458,10 @@ async function sendClientHash(id, privateKey) {
 
 
         let encrypted_event = await EventsModule.GetEncryptedKeySentSpecific(id, Account.address) // Get the K xor K2 xor K3 the provider sent me
-        let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey)).slice(0, 7) // The actual value
+        let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey))
 
-        let decryptedToBeHashed = crypto.OTP(secret, encrypted).slice(0, 7);
+        let decryptedToBeHashed = crypto.OTP(secret, encrypted);
         let HashTobeSent = crypto.Hash(decryptedToBeHashed)
-
 
         await readwrite.WriteAsRefBuyer(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt', decryptedToBeHashed)
         let done = 0 // value to verify later that everything went correctly
@@ -502,7 +505,7 @@ async function ComputeK(id, privateKey) {
         let RefBuyer = await readwrite.ReadAsObjectRefClient(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt')
         let K2_event = await EventsModule.GetClientDecoder(id, Account.address);
 
-        let K2 = Buffer.from(web3.utils.hexToBytes(K2_event[0].returnValues.keyDecoder)).slice(0, 7) // The actual value
+        let K2 = Buffer.from(web3.utils.hexToBytes(K2_event[0].returnValues.keyDecoder))// The actual value
 
         RefBuyer.K2 = K2;
         await readwrite.WriteAsRefBuyer(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt', RefBuyer.KxorK2, RefBuyer.K2)
