@@ -168,13 +168,12 @@ async function sellItemColine(jsonInfo, account) {
     const durationDays = jsonInfo["durationDays"];
     const durationHours = jsonInfo["durationHours"];
     const durationMinutes = jsonInfo["durationMinutes"];
-    const durationMinutes = jsonInfo["durationMinutes"];
     const description = jsonInfo["description"];
     const minData = jsonInfo["minData"];
     const depreciationType = jsonInfo["depreciationType"];
     const deposit = jsonInfo["deposit"];
-    // let durationInSecs = ((durationDays * 24 + durationHours) * 60 + durationMinutes) * 60;
-    let durationInSecs = durationDays * 86400 + durationHours * 3600 + durationMinutes * 60;
+
+    const durationInSecs = durationDays * 86400 + durationHours * 3600 + durationMinutes * 60;
 
     /*DH keys, to be stored and public sent*/
     const keys = crypto.DiffieHellmanGenerate(prime);
@@ -182,15 +181,15 @@ async function sellItemColine(jsonInfo, account) {
     Diffie.PrivDH = keys[0];
     Diffie.PubDH = keys[1];
 
-    let K = crypto.RandomBytes(32); //Reference key with which data is encrypted. TODO use this on TLE
+    const K = crypto.RandomBytes(32); //Reference key with which data is encrypted. TODO use this on TLE
 
 
     /*Send transaction the get the ref_id for the database*/
     try {
-        const receipt = await transactions.SellReference(account,  Diffie.PubDH.slice(0,32),Diffie.PubDH.slice(32,64),Diffie.PubDH.slice(64,96),Diffie.PubDH.slice(96,128), initialPrice, durationInSecs, description, minData, depreciationType, deposit);
-        let blockNumber = receipt.blockNumber;
-        let event = await EventsModule.GetYourRef(account.address, blockNumber)
-        let id = event[0].returnValues.referenceId;
+        let receipt = await transactions.SellReference(account,  Diffie.PubDH.slice(0,32),Diffie.PubDH.slice(32,64),Diffie.PubDH.slice(64,96),Diffie.PubDH.slice(96,128), initialPrice, durationInSecs, description, minData, depreciationType, deposit);
+        const blockNumber = receipt.blockNumber;
+        const event = await EventsModule.GetYourRef(account.address, blockNumber)
+        const id = event[0].returnValues.referenceId;
         Diffie.refId = id;
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
         await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt', K)
@@ -273,8 +272,11 @@ async function manageIDBuyer(id, account) {
 
         // !! allows to convert to boolean
         let decoderReceived = !!eventDecoderReceived.length;
-        let encryptedEncodedReceived = !!(eventEncryptedReceived.length - eventHashSent.length); // Because in that case it is already done
+        let encryptedEncodedReceived = !!eventEncryptedReceived.length;
         let hashSent = !!eventHashSent.length;
+        console.log("decoderReceived "+decoderReceived);
+        console.log("encryptedEncodedReceived "+encryptedEncodedReceived);
+        console.log("hashSent "+hashSent);
         return [product[0].returnValues, hashSent, encryptedEncodedReceived, decoderReceived];
     } catch (e) {
         throw e;

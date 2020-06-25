@@ -415,7 +415,6 @@ function callbackManageIdBuyer(param) {
     addItem(manageIdBuyerItem);
 
     const [product, hashSent, encryptedEncodedReceived, decoderReceived] = param;
-    console.log(product);
     const keys = ["provider", "description"];
     const keysNames = ["Provider", "Description"];
     const tableProduct = displayProductInfo(product, keys, keysNames);
