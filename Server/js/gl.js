@@ -65,15 +65,15 @@ const boughtDataItem = {
     name: "boughtDataItem"
 };
 
-const manageIdSellerItem = {
-    title: "Manage ID",
-    name: "manageIdSellerItem"
-};
-
 const manageIdBuyerItem = {
     title: "Manage ID",
     name: "manageIdBuyerItem"
 };
+
+const disputeItem = {
+    name: "Dispute",
+    title: "disputeItem"
+}
 
 /********************************
  * Sell Items
@@ -87,6 +87,11 @@ const sellNewItem = {
 const ongoingSalesItem = {
     title: "Ongoing sales",
     name: "ongoingSalesItem"
+};
+
+const manageIdSellerItem = {
+    title: "Manage ID",
+    name: "manageIdSellerItem"
 };
 
 /********************************
@@ -243,12 +248,19 @@ myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
         '<div class="container">' +
         '<h3>Product:</h3>' +
         '<div id="manageIdBuyer_produit"></div>' +
+
+        '<p id="manageIdSeller_K"></p>' +
+
         '<h3>To do:</h3>' +
+
         '<ul>' +
-        '<li>Encrypted encoded key received, send hash</li>' +
-        '<li>Decoder key received, compute</li>' +
-        '<li>Set a dispute or get a refund</li>' +
+        '<li id="manageidBuyer_encryptedEncodedWaiting">Waiting for the encrypted encoded key</li>' +
+        '<li onclick="sendClientHash()" id="manageidBuyer_sendHash">Encrypted encoded key received, send hash</li>' +
+        '<li id="manageidBuyer_decoderKeyWaiting">Encrypted encoded key received, you already sent the hash<br>Waiting for the decoder key</li>' +
+        '<li id="manageidBuyer_decoderKeyReceived" onclick="computeK()">Decoder key received, compute</li>' +
+        '<li onclick="dispute()">Set a dispute or get a refund</li>' +
         '</ul>' +
+
         '<p class="message" id="manageIdSeller_message"></p>' +
         '</div>'
     );
@@ -267,6 +279,11 @@ myLayout.registerComponent('boughtDataItem', function (container, state) {
         '</div>' +
         '</div>'
     );
+});
+
+myLayout.registerComponent('disputeItem', function (container, state) {
+    container.getElement().html('<div id="dispute">');
+    loadHTMLDoc("dispute.html", callbackLoadHTMLDispute);
 });
 
 /** Sell items **/

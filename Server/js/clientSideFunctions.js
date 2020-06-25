@@ -85,6 +85,10 @@ function loadMyAccount() {
         $('#myAccount_connected').show();
         $('#myAccount_address').html(myAccount.address);
         $("#myAccount_value").html(myAccount.balance);
+        loadOngoingSales();
+        getBoughtData();
+        loadOngoingBuys();
+        loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
     } else {
         $('#myAccount_connected').hide();
         $('#myAccount_notConnected').show();
@@ -94,8 +98,6 @@ function loadMyAccount() {
 /** Connection **/
 function callbackConnect(json) {
     connected = true;
-    loadOngoingSales();
-    getBoughtData();
     myAccount.address = json["address"];
     myAccount.balance = json["balance"];
     loadMyAccount();
@@ -381,6 +383,7 @@ function callbackOngoingBuys(Ids) {
     myAccount.buying = [];
     let html = "";
     for (const data of Ids) {
+        console.log(data);
         html += "<details>";
         html += "<summary>" + data.returnValues["description"] + "</summary>";
         html += "<p>Reference Id: " + data.returnValues["referenceId"] + "</p>";
@@ -407,15 +410,48 @@ function loadOngoingBuys() {
     }
 }
 
-/** Manage Id **/
+/** Manage Id Buyer **/
 function callbackManageIdBuyer(param) {
     addItem(manageIdBuyerItem);
-    const [product, total_clients, num_clients_step1, num_clients_step2, key] = param;
 
-    const keys = ["provider", "initialPrice", "description"];
-    const keysNames = ["Provider", "Initial price", "Description"];
-    const tableProduct = displayProductInfo(product.returnValues, keys, keysNames);
+    const [product, hashSent, encryptedEncodedReceived, decoderReceived] = param;
+    console.log(product);
+    const keys = ["provider", "description"];
+    const keysNames = ["Provider", "Description"];
+    const tableProduct = displayProductInfo(product, keys, keysNames);
     $("#manageIdBuyer_produit").html(tableProduct);
+
+    if (!encryptedEncodedReceived) {
+        // Waiting for the encrypted encoded key
+        $('#manageidBuyer_encryptedEncodedWaiting').show();
+        $('#manageidBuyer_sendHash').hide();
+        $('#manageidBuyer_decoderKeyWaiting').hide();
+        $('#manageidBuyer_decoderKeyReceived').hide();
+    } else {
+        // Encrypted encoded key received
+        if (!hashSent) {
+            // Client has to send the hash
+            $('#manageidBuyer_encryptedEncodedWaiting').hide();
+            $('#manageidBuyer_sendHash').show();
+            $('#manageidBuyer_decoderKeyWaiting').hide();
+            $('#manageidBuyer_decoderKeyReceived').hide();
+        } else {
+            // Client has sent the hash
+            if (!decoderReceived) {
+                // Waiting for the decoder key
+                $('#manageidBuyer_encryptedEncodedWaiting').hide();
+                $('#manageidBuyer_sendHash').hide();
+                $('#manageidBuyer_decoderKeyWaiting').show();
+                $('#manageidBuyer_decoderKeyReceived').hide();
+            } else {
+                // Decoder key received, client can compute
+                $('#manageidBuyer_encryptedEncodedWaiting').hide();
+                $('#manageidBuyer_sendHash').hide();
+                $('#manageidBuyer_decoderKeyWaiting').hide();
+                $('#manageidBuyer_decoderKeyReceived').show();
+            }
+        }
+    }
 }
 
 function callbackErrorManageIdBuyer(err) {
@@ -424,6 +460,70 @@ function callbackErrorManageIdBuyer(err) {
 
 function manageIdBuyer(id) {
     loadXMLDoc("manageIdBuyer/" + id, callbackManageIdBuyer, callbackErrorManageIdBuyer);
+}
+
+function callbackBuyerAction(id) {
+    manageIdBuyer(id);
+}
+function sendBuyerHash() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("sendBuyerHash/" + id, callbackBuyerAction, callbackErrorManageIdBuyer);
+}
+
+function callbackComputeK(result) {
+    manageIdBuyer(result["id"]);
+    $('#manageIdSeller_K').html("K: " + result["K"]);
+}
+
+function computeK() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("computeK/" + id, callbackComputeK, callbackErrorManageIdBuyer);
+}
+
+/** Dispute **/
+function callbackDisputeNotConfirmed(json) {
+    $('#dispute_notConfirmed').show();
+    $('#dispute_confirmed').hide();
+    $('#dispute_id').html(json["id"]);
+
+    if (json["alreadyDisputed"]) {
+        $('#dispute_alreadyDisputed').show();
+        $('#dispute_alreadyEncoded').hide();
+        $('#dispute_refund').hide();
+    } else if (json["alreadyEncoded"]) {
+        $('#dispute_alreadyDisputed').hide();
+        $('#dispute_alreadyEncoded').show();
+        $('#dispute_refund').hide();
+    } else {
+        $('#dispute_alreadyDisputed').hide();
+        $('#dispute_alreadyEncoded').hide();
+        $('#dispute_refund').show();
+        $('#dispute_possibleRefund').html(json["possibleRefund"]);
+    }
+}
+function dispute() {
+    const id = $('#productInfo_referenceID').text();
+    addItem(disputeItem);
+    loadXMLDoc("dispute/" + id, callbackDisputeNotConfirmed, callbackErrorManageIdBuyer);
+}
+
+function callbackConfirmDispute(json) {
+    $('#dispute_notConfirmed').hide();
+    $('#dispute_confirmed').show();
+    $('#dispute_id').html(json["id"]);
+    if (json["funds"]>0) {
+        $('#dispute_unsuccessful').hide();
+        $('#dispute_successful').show();
+        $('#dispute_funds').html(json["funds"]);
+    } else {
+        $('#dispute_unsuccessful').show();
+        $('#dispute_successful').hide();
+    }
+}
+
+function confirmDispute() {
+    const id = $('#dispute_id').text();
+    loadXMLDoc("confirmDispute/" + id, callbackConfirmDispute, callbackErrorManageIdBuyer);
 }
 
 /********************************
@@ -508,7 +608,7 @@ function loadOngoingSales() {
     }
 }
 
-/** Manage Id **/
+/** Manage Id Seller **/
 
 function callbackManageIdSeller(param) {
     addItem(manageIdSellerItem);
@@ -587,7 +687,7 @@ function callbackError(err) {
     console.error(err);
 }
 
-/** Make a transaction **/
+/** Make a transaction, to delete **/
 function callbackMakeTransaction(param) {
     addItem(resultTransactionItem);
     param = displayTable(param);

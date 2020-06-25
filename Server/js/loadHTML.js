@@ -26,3 +26,7 @@ function callbackLoadHTMLsellNew(html) {
         $('#sellNew_notConnected').show();
     }
 }
+
+function callbackLoadHTMLDispute(html) {
+    $("#dispute").html(html);
+}

@@ -187,6 +187,51 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    .get('/sendBuyerHash/:id', async (req, res) => {
+        try {
+            await bc.sendClientHash(req.params.id, req.session.Account)
+            res.json(req.params.id);
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/computeK/:id', async (req, res) => {
+        try {
+            const K = await bc.ComputeK(req.params.id, req.session.Account)
+            res.json({id: req.params.id, K: K});
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/dispute/:id', async (req, res) => {
+        try {
+            let [alreadyEncoded, possibleRefund, alreadyDisputed] = await bc.DisputeInfoClient(req.params.id, req.session.Account);
+            res.json({
+                id: req.params.id,
+                alreadyEncoded: alreadyEncoded,
+                possibleRefund: possibleRefund,
+                alreadyDisputed: alreadyDisputed,
+            });
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/confirmDispute/:id', async (req, res) => {
+        try {
+            let funds = await bc.Dispute(req.params.id, req.session.Account);
+            res.json({id: req.params.id, funds:funds);
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
+
     /************ Sell a product ************/
 
     .get('/sellNewProduct/:json', async (req, res) => {
@@ -227,6 +272,8 @@ app.use('/public', express.static(__dirname + '/public'))
             // result = [num, done]
             res.json(result);
         } catch (e) {
+            console.log(e);
+
             res.status(500).json(e.message);
         }
     })

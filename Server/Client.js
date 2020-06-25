@@ -139,9 +139,17 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/ManageIdBuyer', async (req, res) => {
         if (req.session.Account) {
             let Id = req.query.id;
-            let result = await bc.manageIDBuyer(Id,req.session.Account)
+            let [product, hashSent, encryptedEncodedReceived, decoderReceived] = await bc.manageIDBuyer(Id, req.session.Account)
+            console.log("hashSent " + hashSent);
+            console.log("encryptedEncodedReceived " + encryptedEncodedReceived);
+            console.log("decoderReceived " + decoderReceived);
 
-            res.render('ManageBuy.ejs', {Id: Id, product: result[0], num_event1: result[1], num_event2: result[2]});
+            res.render('ManageBuy.ejs', {
+                Id: Id,
+                product: product,
+                num_event1: encryptedEncodedReceived,
+                num_event2: decoderReceived
+            });
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
@@ -150,7 +158,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SendClientHash', async (req, res) => {
         if (req.session.Account) {
             let id = req.query.id;
-            let done = await bc.sendClientHash(id, req.session.Account.privateKey)
+            let done = await bc.sendClientHash(id, req.session.Account)
 
             res.render('SentHash.ejs', {done: done});
         } else {
@@ -162,7 +170,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SendClientHashMalicious', async (req, res) => {
         if (req.session.Account) {
             let id = req.query.id;
-            let done = await bc.sendClientHashMalicious(id, req.session.Account.privateKey)
+            let done = await bc.sendClientHashMalicious(id, req.session.Account)
 
             res.render('SentHash.ejs', {done: done});
         } else {
@@ -175,7 +183,7 @@ app.use('/public', express.static(__dirname + '/public'))
         if (req.session.Account) {
             let id = req.query.id;
 
-            let K = await bc.ComputeK(id, req.session.Account.privateKey)
+            let K = await bc.ComputeK(id, req.session.Account)
             res.render('KeyClient.ejs', {K: K, id: id});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -186,6 +194,13 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/DisputeConfirmation', async (req, res) => {
         if (req.session.Account) {
             let id = req.query.id;
+            let [alreadyEncoded, possibleRefund, alreadyDisputed] = await bc.DisputeInfoClient(id, req.session.Account);
+            res.render('DisputeConfirmation.ejs', {
+                id: id,
+                alreadyEncoded: alreadyEncoded,
+                possibleRefund: possibleRefund,
+                alreadyDisputed: alreadyDisputed,
+            });
             let info = await bc.DisputeInfoClient(id, req.session.Account.privateKey);
             res.render('DisputeConfirmation.ejs', {id: id, info:info});
         } else {
@@ -198,9 +213,9 @@ app.use('/public', express.static(__dirname + '/public'))
         if (req.session.Account) {
             let id = req.query.id;
             // TODO ADD to received funds, the real funds received: maybe received insurance deposit as well...
-            let funds = await bc.Dispute(id, req.session.Account.privateKey)
+            let funds = await bc.Dispute(id, req.session.Account)
 
-            res.render('Dispute.ejs',{id:id, funds:funds});
+            res.render('Dispute.ejs', {id: id, funds: funds});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
@@ -312,7 +327,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SendEncryptedEncodedKey/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
-            let [num, done] = await bc.sendEncryptedEncodedKey(id, req.session.Account.privateKey);
+            let [num, done] = await bc.sendEncryptedEncodedKey(id, req.session.Account);
             res.render('SentToClients.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -323,7 +338,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SendEncryptedEncodedKeyMalicious/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
-            let [num, done] = await bc.sendEncryptedEncodedKeyMalicious(id, req.session.Account.privateKey);
+            let [num, done] = await bc.sendEncryptedEncodedKeyMalicious(id, req.session.Account);
             res.render('SentToClients.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -345,7 +360,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/SendDecoderKeyMalicious/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
-            let [num, done] = await bc.sendDecoderKeyMalicious(id, req.session.Account.privateKey);
+            let [num, done] = await bc.sendDecoderKeyMalicious(id, req.session.Account);
             res.render('SentK2.ejs', {num: num, done: done});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
@@ -360,7 +375,7 @@ app.use('/public', express.static(__dirname + '/public'))
             console.log(result);
             console.log(result[1]);
             console.log(result[1].toString('hex'));
-            res.render('SentRefKey.ejs', {id: id, receipt: result[0], refKey:result[1]});
+            res.render('SentRefKey.ejs', {id: id, receipt: result[0], refKey: result[1]});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
@@ -370,8 +385,8 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/PostRefKeyMalicious/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
-            let result = await bc.sendReferenceKeyMalicious(id, req.session.Account.privateKey);
-            res.render('SentRefKey.ejs', {id: id, receipt: result[0], refKey:result[1]});
+            let result = await bc.sendReferenceKeyMalicious(id, req.session.Account);
+            res.render('SentRefKey.ejs', {id: id, receipt: result[0], refKey: result[1]});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
@@ -381,7 +396,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/WithdrawFundsProvider/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
-            let funds = await bc.withdrawFundsProvider(id, req.session.Account.privateKey);
+            let funds = await bc.withdrawFundsProvider(id, req.session.Account);
             res.render('Withdrawn.ejs', {id: id, funds: funds});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});

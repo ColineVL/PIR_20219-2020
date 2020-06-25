@@ -7,14 +7,14 @@
 </head>
 
 <body>
-<%if (info[2]) {%>
+<%if (alreadyDisputed) {%>
     <h1>You have already disputed!</h1>
 <%} else {%>
-    <%if (info[0] == 0) {%>
-        <h1>Please confirm you wish to withdraw your money from product <%= id %> </h1>
-        <p> (You will receive : <%=info[1] %> Ether) </p>
-    <%} else {%>
+    <%if (alreadyEncoded) {%>
         <h1>Please confirm you wish to dispute your Key for the product <%= id %> </h1>
+    <%} else {%>
+        <h1>Please confirm you wish to withdraw your money from product <%= id %> </h1>
+        <p> (You will receive : <%=possibleRefund%> Ether) </p>
     <%}%>
     <a href="/Dispute/?id=<%=id%>" style="color: red ">Confirm</a>
     <br>
