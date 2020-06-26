@@ -483,7 +483,7 @@ function sendBuyerHash() {
 
 function callbackComputeK(result) {
     manageIdBuyer(result["id"]);
-    $('#manageIdSeller_K').html("K: " + result["K"]);
+    $('#manageIdBuyer_K').html("K: " + result["K"]);
 }
 
 function computeK() {

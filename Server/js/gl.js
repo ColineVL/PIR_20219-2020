@@ -255,7 +255,7 @@ myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
         '<h3>Product:</h3>' +
         '<div id="manageIdBuyer_produit"></div>' +
 
-        '<p id="manageIdSeller_K"></p>' +
+        '<p id="manageIdBuyer_K"></p>' +
 
         '<h3>To do:</h3>' +
 
@@ -267,7 +267,7 @@ myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
         '<li onclick="dispute()">Set a dispute or get a refund</li>' +
         '</ul>' +
 
-        '<p class="message" id="manageIdSeller_message"></p>' +
+        '<p class="message" id="manageIdBuyer_message"></p>' +
         '</div>'
     );
 });
