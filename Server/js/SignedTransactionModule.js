@@ -288,8 +288,8 @@ module.exports = {
     /*For a provider to  add a TLE to a certain reference */
     addTLE: async function (account,id,spaceObject,BuffTLE) {
 
-        let bin25 = web3.utils.bytesToHex(Buff.slice(0,25));
-        let bin24 = web3.utils.bytesToHex(Buff2.slice(25,49));
+        let bin25 = web3.utils.bytesToHex(BuffTLE.slice(0,25));
+        let bin24 = web3.utils.bytesToHex(BuffTLE.slice(25,49));
 
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
