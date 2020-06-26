@@ -155,26 +155,18 @@ console.log(OTP(loi,loi2))
 console.log(OTP(aliceSecret,OTP(loi,loi2)))
 
 console.log("***************************************************")
-const ali = crypto.createDiffieHellman(1024);
-ali.generateKeys()
-
-// console.log(ali.getPrime().length)
-// console.log(ali.getPrime().slice(0,32).byteLength)
-console.log( ali.getPublicKey().length)
-let part1 = ali.getPublicKey().slice(0,32)
-let part2 = ali.getPublicKey().slice(32,64)
-let part3 = ali.getPublicKey().slice(64,96)
-let part4 = ali.getPublicKey().slice(96,128)
 
 
-const recons = Buffer.concat([part1,part2,part3,part4])
-console.log( recons)
-console.log(ali.getPublicKey())
+let bufffff = crypto.randomBytes(5)
+let array = [];
+// for (let i = 0; i < bufffff.length ; i++) {
+//     array.push()
+// }
+console.log(bufffff)
+console.log(bufffff[0])
+let number = web3.utils.hexToNumber("0xdc")
+let bin = bufffff[0].toString(2)
+console.log(typeof bin)
+console.log(bin)
 
-console.log(Buffer.compare(ali.getPublicKey(),recons))
-console.log(ali.getPrime().length)
-
-let pry = "802e273c482801295f36f8ab4940decf6ad5ddb86220a3979a14e4856fc2515508bbb31cdc8781fd0cd5c5ca44f0020b56b513c2fdf78add0f3712544fd9fb8873570207936004dcdc10aac0cccaf98378aa13ca6d624088d2c5907bbff91057a03dc7935f39259c5f73015f6e3db7d494883f7a23e3c1f4803b64769480d8e38c5ade49470b9f74fcb72fa1f181fc526bb7d9760a71dd434222a44f1f9db85556860d283a06079546fc70c3aa54be6e5a85382fc30025e5b4504c04e65ce756140207172056281d8e4ed2347439073310991751c1cec2582b74d4becdabff34c362645d847d13cb4e9a65dc084ed6f56a30fdba8c2051495dcc0903b3414453"
-console.log(pry.length)
-console.log(ali.getPrime())
 

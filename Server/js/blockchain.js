@@ -529,7 +529,8 @@ async function ComputeK(id, Account) {
         // The actual value
         RefBuyer.K2 = Buffer.from(web3.utils.hexToBytes(K2_event[0].returnValues.keyDecoder));
         await readwrite.WriteAsRefBuyer(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt', RefBuyer.KxorK2, RefBuyer.K2);
-        return crypto.OTP(RefBuyer.KxorK2, RefBuyer.K2);
+        let Key = crypto.OTP(RefBuyer.KxorK2, RefBuyer.K2);
+        return Key.buffer.toString('hex');
     } catch (e) {
         throw e;
     }
@@ -614,6 +615,30 @@ async function addTLE(id,account,spaceObject,line1,line2) {
 
         // TODO PSEUDORANDOM
         return await transactions.addTLE(account, id, spaceObject, BuffTLE)
+    } catch (e) {
+        throw e;
+    }
+}
+/*Function for a purchaser ro read all posted TLE's for a reference (he must have the reference Key K)*/
+async function ClientReadTLEs(id,account) {
+    try {
+        let rawTLES = await transactions.GetTLEs(account,id);
+        let stringTLES = []
+        for (let i = 0; i <rawTLES.length ; i++) {
+            let encryptedBuff1 = new Buffer.from(rawTLES[i].TLE1,'hex');
+            let encryptedBuff2 = new Buffer.from(rawTLES[i].TLE2,'hex');
+            let spaceObject = rawTLES[i].spaceObject;
+
+            let refKey = // TODO
+
+            let pseudoRandomRefKey //TODO
+            let decryptedBuff = crypto.OTP(pseudoRandomRefKey, Buffer.concat(encryptedBuff1,encryptedBuff2))
+            let stringResult = TLE.convertBinToStr(buff)
+            rawTLES.push([spaceObject,stringResult[0],stringResult[1]])
+        }
+
+        // TODO PSEUDORANDOM
+        return rawTLES
     } catch (e) {
         throw e;
     }
