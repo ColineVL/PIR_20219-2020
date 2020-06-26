@@ -23,9 +23,6 @@ const TLE = require('./TLE');
 
 
 const Diffie = database.newDiffieSchema();
-// const Reference_Seller = database.newReference_SellerSchema();
-// const Reference_Client = database.newReference_ClientSchema();
-
 
 let prime;
 (async () => {
@@ -129,37 +126,7 @@ async function getBlockInfo(blocknumber) {
  * Sell new item
  ********************************/
 
-async function sellItemZiad(price, description, durationDays, durationHours, durationMinutes, account, minData, depreciationType, insurance) {
-    let durationInSecs = durationDays * 86400 + durationHours * 3600 + durationMinutes * 60;
-    /*DH keys, to be stored and public sent*/
-    const keys = crypto.DiffieHellmanGenerate(prime);
-    /* Updating object to write and save */
-    Diffie.PrivDH = keys[0];
-    Diffie.PubDH = keys[1];
-
-    let K = crypto.RandomBytes(32); //Reference key with which data is encrypted. TODO use this on TLE
-
-    let priceInWei = web3.utils.toWei(price, 'ether');
-
-    let insuranceInWei = web3.utils.toWei(insurance, 'ether');
-
-    /*Send transaction the get the ref_id for the database*/
-    try {
-        const receipt = await transactions.SellReference(account, Diffie.PubDH.slice(0, 32), Diffie.PubDH.slice(32, 64), Diffie.PubDH.slice(64, 96), Diffie.PubDH.slice(96, 128), priceInWei, durationInSecs, description, minData, depreciationType, insuranceInWei);
-        let blockNumber = receipt.blockNumber;
-        let event = await EventsModule.GetYourRef(account.address, blockNumber);
-        let id = event[0].returnValues.referenceId;
-        Diffie.refId = id;
-        receipt.id = id;
-        await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
-        await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt', K);
-        return receipt;
-    } catch (err) {
-        throw err;
-    }
-}
-
-async function sellItemColine(jsonInfo, account) {
+async function sellReference(jsonInfo, account) {
     jsonInfo = JSON.parse(jsonInfo);
     const initialPrice = jsonInfo["initialPrice"];
     const durationDays = jsonInfo["durationDays"];
@@ -202,7 +169,7 @@ async function sellItemColine(jsonInfo, account) {
  * Buy an item
  ********************************/
 
-async function buyProduct(id, account) {
+async function buyReference(id, account) {
     const keys = crypto.DiffieHellmanGenerate(prime);
     /* Updating object to write and save */
     Diffie.PrivDH = keys[0];
@@ -231,7 +198,7 @@ async function getCurrentPrice(account, id) {
 }
 
 /*Computes information for Ongoing purchases view*/
-async function OngoingPurchases(account) {
+async function ongoingPurchases(account) {
     try {
         let Ids = await EventsModule.GetBoughtRefs(account); // Get the Refs which were bought
         let WithdrawnIds = await EventsModule.WithdrawFundsEventGeneral(); // References for which funds have been withdrawn
@@ -250,12 +217,12 @@ async function OngoingPurchases(account) {
  ********************************/
 
 /*Function to generate details for management of a certain Id on the provider side*/
-async function manageID(id, account) {
+async function manageIdSeller(id, account) {
     try {
-        let product = await EventsModule.GetRef(id); // We fetch the product
+        let reference = await EventsModule.GetRef(id); // We fetch the reference
 
-        product.initialPrice = web3.utils.fromWei((product.initialPrice).toString(), "ether");
-        product.currentPrice = await getCurrentPrice(account, id);
+        reference.initialPrice = web3.utils.fromWei((reference.initialPrice).toString(), "ether");
+        reference.currentPrice = await getCurrentPrice(account, id);
 
         const clients = await transactions.GetClients(account, id);
         let total_clients = clients.length;
@@ -275,7 +242,7 @@ async function manageID(id, account) {
             let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1]));
             Key = buffer.toString('hex'); // Eventually load the reference key we sent
         }
-        return [product, total_clients, num_clients_step1, num_clients_step2, Key];
+        return [reference, total_clients, num_clients_step1, num_clients_step2, Key];
 
     } catch (e) {
         throw e;
@@ -283,9 +250,9 @@ async function manageID(id, account) {
 }
 
 /*Computes information for managing an Id Buyer side*/
-async function manageIDBuyer(id, account) {
+async function manageIdBuyer(id, account) {
     try {
-        let product = await EventsModule.GetRef(id);
+        let reference = await EventsModule.GetRef(id);
 
         let eventEncryptedReceived = await EventsModule.GetEncryptedKeySentSpecific(id, account.address); //To check if we received the encrypted encoded key
         let eventDecoderReceived = await EventsModule.GetKeySentSpecific(id, account.address); //To check if we received the decoder KEy
@@ -295,7 +262,7 @@ async function manageIDBuyer(id, account) {
         let decoderReceived = !!eventDecoderReceived.length;
         let encryptedEncodedReceived = !!eventEncryptedReceived.length;
         let hashSent = !!eventHashSent.length;
-        return [product, hashSent, encryptedEncodedReceived, decoderReceived];
+        return [reference, hashSent, encryptedEncodedReceived, decoderReceived];
     } catch (e) {
         throw e;
     }
@@ -471,10 +438,10 @@ async function sendDecoderKeyMalicious(id, Account) {
 /*Function for the client to send the hash of K xor K2 to the provider*/
 async function sendClientHash(id, Account) {
     try {
-        let product = await EventsModule.GetRef(id);
+        let reference = await EventsModule.GetRef(id);
 
         let myDH_obj = await readwrite.ReadAsObjectDH(__dirname + '/../Database/DH' + id.toString() + '_' + Account.address.toString() + '.txt'); //Loading my DH keys from the database
-        let seller_address = await EventsModule.EventsToAddresses(product); //getting the seller's address neeeded to get his public key
+        let seller_address = await EventsModule.EventsToAddresses(reference); //getting the seller's address neeeded to get his public key
         let Pub_Seller = await EventsModule.GetPubDiffieSeller(seller_address[0], id); // now getting the sellers public DH key
         let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Seller); // we now have the diffie-Hellman secret key..
 
@@ -520,7 +487,7 @@ async function sendClientHashMalicious(id, Account) {
 }
 
 /*Function for the client to receive K2, compute K and save it*/
-async function ComputeK(id, Account) {
+async function computeK(id, Account) {
     try {
         let RefBuyer = await readwrite.ReadAsObjectRefClient(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt');
         let K2_event = await EventsModule.GetClientDecoder(id, Account.address);
@@ -538,7 +505,7 @@ async function ComputeK(id, Account) {
 }
 
 /*Function to Check if it is possible to raise a dispute, or to retrieve your money*/
-async function DisputeInfoClient(id, Account) {
+async function disputeInfoClient(id, Account) {
     try {
         let encoderEvent = await EventsModule.GetKeySentSpecific(id, Account.address);
         let buyEvent = await EventsModule.GetBoughtRefSpecific(id, Account.address);
@@ -556,7 +523,7 @@ async function DisputeInfoClient(id, Account) {
 }
 
 /*Function to raise a dispute, or to retrieve your money*/
-async function Dispute(id, Account) {
+async function dispute(id, Account) {
     try {
         let funds = 0;
         let receipt = await transactions.RaiseDispute(Account, id);
@@ -624,9 +591,7 @@ async function addTLE(jsonInfo, account) {
 
         let pseudoK = crypto.pseudoRandomGenerator(web3.utils.bytesToHex(K), 59).slice(10); // To get a size of 49, a,d ,o 00's at the beginning
 
-        const encryptedBuffTLE = crypto.OTP(pseudoK,rawBuffTLE);
-        console.log("client")
-        console.log(encryptedBuffTLE)
+        const encryptedBuffTLE = crypto.OTP(pseudoK, rawBuffTLE);
         return await transactions.addTLE(account, id, spaceObject, encryptedBuffTLE);
     } catch (e) {
         throw e;
@@ -685,34 +650,37 @@ function getBlockslistNUMBERS() {
 }
 
 module.exports = {
+    getAccount,
+    getBalance,
+    createNewAccount,
     getNodelistIDS,
     getBlockslistNUMBERS,
     getBlockInfo,
-    getBalance,
-    getAccount,
-    createNewAccount,
-    createTransaction,
-    sellItemZiad,
-    sellItemColine,
-    buyProduct,
-    manageID,
-    manageIDBuyer,
-    sendEncryptedEncodedKey,
-    sendClientHash,
-    sendDecoderKey,
-    ComputeK,
+
     getCurrentPrice,
-    getClients,
-    DisputeInfoClient,
-    Dispute,
+    buyReference,
+    ongoingPurchases,
+    manageIdBuyer,
+    sendClientHash,
+    computeK,
+    disputeInfoClient,
+    dispute,
+    clientReadTLEs,
+
+    sellReference,
+    manageIdSeller,
+    addTLE,
+
+    sendEncryptedEncodedKey,
+    sendDecoderKey,
     sendReferenceKey,
+    withdrawFundsProvider,
+
     sendClientHashMalicious,
+
     sendEncryptedEncodedKeyMalicious,
     sendDecoderKeyMalicious,
     sendReferenceKeyMalicious,
-    withdrawFundsProvider,
-    OngoingPurchases,
-    clientReadTLEs,
-    addTLE,
 
+    createTransaction,
 };

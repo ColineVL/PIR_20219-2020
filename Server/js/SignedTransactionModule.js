@@ -236,7 +236,7 @@ module.exports = {
         }
     },
 
-    /*For a provider to send the Reference Key K of a certain product*/
+    /*For a provider to send the Reference Key K of a certain reference*/
     sendRefKey: async function (account, id, refKey) {
         try {
             let bin = web3.utils.bytesToHex(refKey);
@@ -286,29 +286,31 @@ module.exports = {
     /************************** TLE SPECIFIC FUNCTIONS **************************/
 
     /*For a provider to  add a TLE to a certain reference */
-    addTLE: async function (account,id,spaceObject,BuffTLE) {
+    addTLE: async function (account, id, spaceObject, BuffTLE) {
+        try {
+            let bin25 = web3.utils.bytesToHex(BuffTLE.slice(0, 25));
+            let bin24 = web3.utils.bytesToHex(BuffTLE.slice(25, 49));
 
-        let bin25 = web3.utils.bytesToHex(BuffTLE.slice(0,25));
-        let bin24 = web3.utils.bytesToHex(BuffTLE.slice(25,49));
-        console.log("bin:")
-        console.log(bin25)
-        const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
-        const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
-        const dataref = contract.methods.setTLE(id,spaceObject,bin25,bin24).encodeABI();
-        const rawTx = {
-            nonce: web3.utils.numberToHex(txnCount),
-            gasPrice: web3.utils.numberToHex(1500),
-            gasLimit: web3.utils.numberToHex(4700000),
-            to: ContractAddress,
-            data: dataref
-        };
-        const tx = new Tx(rawTx);
-        tx.sign(privateKey);
-        const serializedTx = tx.serialize();
-        const rawTxHex = '0x' + serializedTx.toString('hex');
-        let funds = web3.eth.sendSignedTransaction(rawTxHex)
-            .catch(function(error){console.log(error)});
-        return funds;
+            const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
+            const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
+            const dataref = contract.methods.setTLE(id, spaceObject, bin25, bin24).encodeABI();
+            const rawTx = {
+                nonce: web3.utils.numberToHex(txnCount),
+                gasPrice: web3.utils.numberToHex(1500),
+                gasLimit: web3.utils.numberToHex(4700000),
+                to: ContractAddress,
+                data: dataref
+            };
+            const tx = new Tx(rawTx);
+            tx.sign(privateKey);
+            const serializedTx = tx.serialize();
+            const rawTxHex = '0x' + serializedTx.toString('hex');
+            let funds = web3.eth.sendSignedTransaction(rawTxHex);
+            return funds;
+        } catch (e) {
+            throw e;
+        }
+
     },
 
     /*Function to view the TLEs set for a certain reference*/

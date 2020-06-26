@@ -50,9 +50,9 @@ module.exports = {
                 fromBlock: 0,
                 toBlock: 'latest'
             });
-            const product = res1[0].returnValues;
-            product.insuranceDeposit = web3.utils.fromWei(product["insuranceDeposit"], "ether");
-            return product;
+            const reference = res1[0].returnValues;
+            reference.insuranceDeposit = web3.utils.fromWei(reference["insuranceDeposit"], "ether");
+            return reference;
         } catch (e) {
             throw e;
         }
@@ -67,9 +67,9 @@ module.exports = {
             });
             let result =[]
             for (let i = 0; i < res1.length ; i++) {
-                const product = res1[i].returnValues;
-                product.insuranceDeposit = web3.utils.fromWei(product["insuranceDeposit"], "ether");
-                result.push(product)
+                const reference = res1[i].returnValues;
+                reference.insuranceDeposit = web3.utils.fromWei(reference["insuranceDeposit"], "ether");
+                result.push(reference)
             }
 
             return result;
@@ -128,7 +128,7 @@ module.exports = {
             throw e;
         }
     },
-    /*Get emit for a refund of a certain client for a certain product of reference id : id*/
+    /*Get emit for a refund of a certain client for a certain reference of id : id*/
     GetDispute: async function (clientAddress, id) {
         try {
             return await contractws.getPastEvents("withdrawRefund", {
@@ -140,7 +140,7 @@ module.exports = {
             throw e;
         }
     },
-    /*Get all emits testifying that a the provider sent the encrypted key K2 for a certain product of reference id : id*/
+    /*Get all emits testifying that a the provider sent the encrypted key K2 for a certain reference of id : id*/
     GetEncryptedKeysSent: async function (id) {
         try {
             return await contractws.getPastEvents("encryptedEncodedKeyEvent", {
@@ -153,7 +153,7 @@ module.exports = {
         }
     },
 
-    /*Get emit testifying that a the provider sent the encrypted key K2 for a certain product of reference id : id*/
+    /*Get emit testifying that a the provider sent the encrypted key K2 for a certain reference of id : id*/
     GetEncryptedKeySentSpecific: async function (id, myaddress) {
         try {
             return await contractws.getPastEvents("encryptedEncodedKeyEvent", {
@@ -166,7 +166,7 @@ module.exports = {
         }
     },
 
-    /*Get emit testifying that a the provider sent me the K2 for a certain product of reference id : id*/
+    /*Get emit testifying that a the provider sent me the K2 for a certain reference of id : id*/
     GetKeySentSpecific: async function (id, myaddress) {
         try {
             return await contractws.getPastEvents("keyDecoder", {
@@ -179,7 +179,7 @@ module.exports = {
         }
     },
 
-    /*Get emits testifying that clients sent me hashes for a certain product of reference id : id*/
+    /*Get emits testifying that clients sent me hashes for a certain reference of id : id*/
     GetClientsWhoSentHashes: async function (id) {
         try {
             return await contractws.getPastEvents("encodedKeyHash", {
@@ -192,7 +192,7 @@ module.exports = {
         }
     },
 
-    /*Get all emits testifying that K2 was sent for a certain product of reference id : id*/
+    /*Get all emits testifying that K2 was sent for a certain reference of id : id*/
     GetKeysSent: async function (id) {
         try {
             return await contractws.getPastEvents("keyDecoder", {
