@@ -576,4 +576,16 @@ module.exports = {
             throw e;
         }
     },
+    /* Events testifying a provider added a TLE for  particular Id */
+    NewTLEEvent: async function (id) {
+        try {
+            return await contractws.getPastEvents("newTLE", {
+                filter: {referenceId: id},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+        } catch (e) {
+            throw e;
+        }
+    },
 };
