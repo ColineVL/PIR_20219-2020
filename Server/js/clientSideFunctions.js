@@ -704,8 +704,12 @@ function callbackManageIdSeller(param) {
     if (key === 0) {
         $('#manageIdSeller_keyReleased').hide();
         $('#manageIdSeller_keyNotReleased').show();
+        $('#manageIdSeller_keyNotReleasedMalicious').show();
+
     } else {
         $('#manageIdSeller_keyNotReleased').hide();
+        $('#manageIdSeller_keyNotReleasedMalicious').hide();
+
         $('#manageIdSeller_keyReleased').show();
         $('#manageIdSeller_releasedKey').html(key);
     }
@@ -864,4 +868,19 @@ function makeTransaction() {
 function sendBuyerHashMalicious() {
     const id = $('#productInfo_referenceID').text();
     loadXMLDoc("sendBuyerHashMalicious/" + id, callbackSendBuyerHash, callbackErrorManageIdBuyer);
+}
+
+function sendEncodedEncryptedKeyMalicious() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("sendEncodedEncryptedKeyMalicious/" + id, callbackEncodedEncryptedKey, callbackError);
+}
+
+function sendDecoderKeyMalicious() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("sendDecoderKeyMalicious/" + id, callbackSendDecoderKey, callbackError);
+}
+
+function postRefKeyMalicious() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("postRefKeyMalicious/" + id, callbackpostRefKey, callbackError);
 }

@@ -339,9 +339,16 @@ myLayout.registerComponent('manageIdSellerItem', function (container, state) {
         '<h3>To do:</h3>' +
         '<ul>' +
         '<li onclick="loadNewTLEForm()">Upload a new TLE</li>' +
+
         '<li onclick="sendEncodedEncryptedKey()">Send Encrypted Encoded Key (K2xorKxorK3): <var id="manageIdSeller_NumClientsStep1"></var> clients</li>' +
+        '<li onclick="sendEncodedEncryptedKeyMalicious()">Send Encrypted Encoded Key (K2xorKxorK3) (malicious way)</li>' +
+
         '<li onclick="sendDecoderKey()">Verify hashes and send Decoder Key (K2): <var id="manageIdSeller_NumClientsStep2"></var> clients</li>' +
+        '<li onclick="sendDecoderKeyMalicious()">Verify hashes and send Decoder Key (K2) (malicious way)</li>' +
+
         '<li id="manageIdSeller_keyNotReleased" onclick="postRefKey()">Release reference key (key not released yet)</li>' +
+        '<li id="manageIdSeller_keyNotReleasedMalicious" onclick="postRefKeyMalicious()">Release reference key (key not released yet) (malicious way)</li>' +
+
         '<li id="manageIdSeller_keyReleased">Key is released: <var id="manageIdSeller_releasedKey"></var></li>' +
         '<li onclick="withdrawFunds()">Withdraw funds</li>' +
         '</ul>' +

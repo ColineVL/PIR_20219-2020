@@ -342,6 +342,39 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    .get('/sendEncodedEncryptedKeyMalicious/:id', async (req, res) => {
+        try {
+            let result = await bc.sendEncryptedEncodedKeyMalicious(req.params.id, req.session.Account);
+            // result = [num, done]
+            res.json(result);
+        } catch (e) {
+            console.log(e);
+
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/sendDecoderKeyMalicious/:id', async (req, res) => {
+        try {
+            let result = await bc.sendDecoderKeyMalicious(req.params.id, req.session.Account);
+            // result = [num, done]
+            res.json(result);
+        } catch (e) {
+            console.error(e);
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/postRefKeyMalicious/:id', async (req, res) => {
+        try {
+            let result = await bc.sendReferenceKeyMalicious(req.params.id, req.session.Account);            // result = [num, done]
+            res.json(result);
+        } catch (e) {
+            console.error(e);
+            res.status(500).json(e.message);
+        }
+    })
+
     /************ Close the server ************/
 
     .get('/closeserver', function (req, res) {
