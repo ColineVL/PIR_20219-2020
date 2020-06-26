@@ -18,7 +18,7 @@ function loadXMLDoc(page, successCallback, errorCallback) {
                 errorCallback(e.message);
             }
         }
-    }
+    };
     xhttp.open("GET", page, true);
     xhttp.send();
 }
@@ -115,6 +115,7 @@ function connect() {
 
 function disconnect() {
     connected = false;
+    myAccount = {};
     loadMyAccount();
     const xhttp = new XMLHttpRequest();
     xhttp.open("GET", 'signout', true);
@@ -128,7 +129,7 @@ function callbackNewAccount(param) {
 }
 
 function createNewAccount() {
-    loadXMLDoc("newaccount", callbackNewAccount);
+    loadXMLDoc("newaccount", callbackNewAccount, callbackError);
 }
 
 function callbackConnectNewAccount(json) {
@@ -140,7 +141,7 @@ function callbackConnectNewAccount(json) {
 
 function logInWithNewAccount() {
     let privateKey = $("#newAccount_privatekey").text();
-    loadXMLDoc("connect/" + privateKey, callbackConnectNewAccount);
+    loadXMLDoc("connect/" + privateKey, callbackConnectNewAccount, callbackError);
 }
 
 /********************************
@@ -148,8 +149,6 @@ function logInWithNewAccount() {
  ********************************/
 
 /** Update of the nodelist **/
-setInterval(updateNodesList, 2000);
-
 function callbackNodelist(param) {
     param = displayListNodes(param);
     $("#nodes_list").html(param);
@@ -158,17 +157,18 @@ function callbackNodelist(param) {
 function updateNodesList() {
     // We only update the list if the item is displayed on the screen
     if ($("#listNodesItem").text()) {
-        loadXMLDoc("updatenodelist", callbackNodelist);
+        loadXMLDoc("updatenodelist", callbackNodelist, callbackError);
     }
 }
+
+setInterval(updateNodesList, 2000);
+
 
 /********************************
  * Blocks
  ********************************/
 
 /** Update of the blocks list **/
-setInterval(updateBlocksList, 2000);
-
 function callbackBlockslist(param) {
     param = displayListBlocks(param);
     $("#blocks_list").html(param);
@@ -177,9 +177,11 @@ function callbackBlockslist(param) {
 function updateBlocksList() {
     // We only update the list if the item is displayed on the screen
     if ($("#listBlocksItem").text()) {
-        loadXMLDoc("updatelistBlocks", callbackBlockslist);
+        loadXMLDoc("updatelistBlocks", callbackBlockslist, callbackError);
     }
 }
+
+setInterval(updateBlocksList, 2000);
 
 /** Info about one block **/
 function callbackBlockInfo(param) {
@@ -195,7 +197,7 @@ function displayBlockInfo(blocknumber) {
     }
     if (blocknumber > 0) {
         addItem(blockInfoItem);
-        loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo);
+        loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo,callbackError);
     }
 }
 
@@ -230,16 +232,19 @@ function getReferences() {
 }
 
 /** For sale Product info **/
-function getRefForSaleInfo(id) {
-    if (connected) {
-        $('#forSale_message').hide();
-        loadXMLDoc("getrefinfo/" + id, callbackgetRefForSaleInfo);
-    } else {
-        callbackErrorGetReferences("You should connect");
-    }
-
+function callbackGetPrice(price) {
+    $("#productInfo_currentPrice").html(price);
 }
 
+function updatePrice() {
+    // We only update the price if the item is displayed on the screen
+    if ($("#productInfo_referenceID").text()) {
+        const id = $('#productInfo_referenceID').text();
+        loadXMLDoc("getPrice/" + id, callbackGetPrice, callbackError);
+    }
+}
+
+let myTimerPrice;
 function callbackgetRefForSaleInfo(product) {
     let html = "<table><tbody>";
     html += "<tr>";
@@ -254,7 +259,7 @@ function callbackgetRefForSaleInfo(product) {
 
     html += "<tr>";
     html += "<td>Current price</td>";
-    html += "<td id='productInfo_currentPrice'>" + product["actualPrice"] + "</td>";
+    html += "<td id='productInfo_currentPrice'></td>";
     html += "</tr>";
 
     const keysToDisplay = ["provider", "insuranceDeposit", "minimumData", "depreciationType"];
@@ -271,7 +276,7 @@ function callbackgetRefForSaleInfo(product) {
     html += "<tr>";
     html += "<td>Time of Deployment</td>";
     let deployTime = Number(product["deployTime"]);
-    deployTime = new Date(deployTime*1000);
+    deployTime = new Date(deployTime * 1000);
     deployTime = deployTime.toLocaleString();
     html += "<td>" + deployTime + "</td>";
     html += "</tr>";
@@ -279,7 +284,7 @@ function callbackgetRefForSaleInfo(product) {
     html += "<tr>";
     html += "<td>End Time</td>";
     let endTime = Number(product["endTime"]);
-    endTime = new Date(endTime*1000);
+    endTime = new Date(endTime * 1000);
     endTime = endTime.toLocaleString();
     html += "<td>" + endTime + "</td>";
     html += "</tr>";
@@ -288,14 +293,21 @@ function callbackgetRefForSaleInfo(product) {
 
     addItem(forSaleproductInfoItem);
     $('#forSaleProductInfo_info').html(html);
-    if (myAccount === "notConnected") {
+
+    if (!connected) {
         $('#forSaleProductInfo_message').show();
-        $('#forSaleProductInfo_message').text("You are not connected...");
+        $('#forSaleProductInfo_message').text("To see the price and buy the product you need to be connected...");
         $('#forSaleProductInfo_buyButton').hide();
+        clearInterval(myTimerPrice);
     } else {
         $('#forSaleProductInfo_buyButton').show();
         $('#forSaleProductInfo_message').hide();
+        myTimerPrice = setInterval(updatePrice, 3000);
     }
+}
+
+function getRefForSaleInfo(id) {
+    loadXMLDoc("getrefinfo/" + id, callbackgetRefForSaleInfo,callbackError);
 }
 
 /** Get bought data **/
@@ -315,7 +327,7 @@ function callbackGetBoughtItemInfo(product) {
 }
 
 function getBoughtItemInfo(id) {
-    loadXMLDoc("getboughtiteminfo/" + id, callbackGetBoughtItemInfo);
+    loadXMLDoc("getboughtiteminfo/" + id, callbackGetBoughtItemInfo, callbackError);
 }
 
 function callbackGetBoughtData(Ids) {
@@ -351,7 +363,7 @@ function getBoughtData() {
 
 /** Buy product **/
 function callbackBuy(param) {
-    myAccount.boughtData[param.returnValues["referenceId"]] = param.returnValues;
+    myAccount.boughtData[param["referenceId"]] = param;
     $('#forSaleProductInfo_message').show();
     $('#forSaleProductInfo_message').text("Bought!");
 }
@@ -383,7 +395,6 @@ function callbackOngoingBuys(Ids) {
     myAccount.buying = [];
     let html = "";
     for (const data of Ids) {
-        console.log(data);
         html += "<details>";
         html += "<summary>" + data.returnValues["description"] + "</summary>";
         html += "<p>Reference Id: " + data.returnValues["referenceId"] + "</p>";
@@ -415,7 +426,6 @@ function callbackManageIdBuyer(param) {
     addItem(manageIdBuyerItem);
 
     const [product, hashSent, encryptedEncodedReceived, decoderReceived] = param;
-    console.log(product);
     const keys = ["provider", "description"];
     const keysNames = ["Provider", "Description"];
     const tableProduct = displayProductInfo(product, keys, keysNames);
@@ -465,6 +475,7 @@ function manageIdBuyer(id) {
 function callbackBuyerAction(id) {
     manageIdBuyer(id);
 }
+
 function sendBuyerHash() {
     const id = $('#productInfo_referenceID').text();
     loadXMLDoc("sendBuyerHash/" + id, callbackBuyerAction, callbackErrorManageIdBuyer);
@@ -501,6 +512,7 @@ function callbackDisputeNotConfirmed(json) {
         $('#dispute_possibleRefund').html(json["possibleRefund"]);
     }
 }
+
 function dispute() {
     const id = $('#productInfo_referenceID').text();
     addItem(disputeItem);
@@ -511,7 +523,7 @@ function callbackConfirmDispute(json) {
     $('#dispute_notConfirmed').hide();
     $('#dispute_confirmed').show();
     $('#dispute_id').html(json["id"]);
-    if (json["funds"]>0) {
+    if (json["funds"] > 0) {
         $('#dispute_unsuccessful').hide();
         $('#dispute_successful').show();
         $('#dispute_funds').html(json["funds"]);
@@ -613,10 +625,9 @@ function loadOngoingSales() {
 function callbackManageIdSeller(param) {
     addItem(manageIdSellerItem);
     const [product, total_clients, num_clients_step1, num_clients_step2, key] = param;
-
-    const keys = ["provider", "initialPrice", "description"];
-    const keysNames = ["Provider", "Initial price", "Description"];
-    const tableProduct = displayProductInfo(product[0].returnValues, keys, keysNames);
+    const keys = ["provider", "initialPrice", "currentPrice", "description"];
+    const keysNames = ["Provider", "Initial price", "Current price", "Description"];
+    const tableProduct = displayProductInfo(product, keys, keysNames);
     $("#manageIdSeller_produit").html(tableProduct);
 
     $("#manageIdSeller_totalNumberClients").text(total_clients);
@@ -647,7 +658,7 @@ function manageIdSeller(id) {
 
 function callbackEncodedEncryptedKey(param) {
     const [num, done] = param;
-    $("#manageIdSeller_message").show()
+    $("#manageIdSeller_message").show();
     $("#manageIdSeller_message").html("Successfully sent info to " + done + " clients out of " + num + " expected!");
 }
 
@@ -671,7 +682,6 @@ function sendDecoderKey() {
 /** Seller post key **/
 function callbackpostRefKey(result) {
     $("#manageIdSeller_message").show();
-    console.log(result);
     let [receipt, refKey] = result;
     $("#manageIdSeller_message").html("Successfully sent the Reference Key to the contract.");
 }
@@ -712,6 +722,6 @@ function makeTransaction() {
             privateKey: privateKey,
             amount: amount,
         };
-        loadXMLDoc("maketransaction/" + JSON.stringify(json), callbackMakeTransaction);
+        loadXMLDoc("maketransaction/" + JSON.stringify(json), callbackMakeTransaction, callbackError);
     }
 }

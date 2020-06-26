@@ -8,6 +8,30 @@ html, body {
     box-sizing: border-box;
 }
 
+/** Basic styling **/
+p {
+    font-size: 15px;
+    margin: 7px;
+}
+
+details {
+    padding: 5px 5px 0;
+}
+
+var {
+    font-style: normal;
+}
+
+/* Overflow if the text is too long */
+body .lm_content {
+    overflow: scroll;
+}
+
+[onClick] {
+    cursor: pointer;
+}
+
+/** Wrapper **/
 #wrapper {
     height: 100%;
     position: relative;
@@ -15,6 +39,7 @@ html, body {
     overflow: hidden;
 }
 
+/** Menu **/
 #menuContainer {
     width: 20%;
     height: 100%;
@@ -36,7 +61,6 @@ html, body {
 }
 
 #menuContainer h2 {
-    cursor: pointer;
     border-bottom: 1px solid #000;
     border-top: 1px solid #333;
     padding: 10px 5px;
@@ -57,11 +81,6 @@ html, body {
     font-style: italic;
 }
 
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
 #menuContainer li {
     border-bottom: 1px solid #000;
     border-top: 1px solid #333;
@@ -69,6 +88,8 @@ a {
     color: #BBB;
     background: #1a1a1a;
     font: 12px Arial, sans-serif;
+    cursor: pointer;
+
 }
 
 #menuContainer li:hover {
@@ -76,7 +97,7 @@ a {
     color: #CCC;
 }
 
-
+/** Layout **/
 #layoutContainer {
     color: #fff;
     width: 80%;
@@ -88,7 +109,6 @@ a {
     font-family: Arial, sans-serif;
     background-color: #222222;
 }
-
 
 #layoutContainer .container {
     margin: 15px 10px 10px 10px;
@@ -106,39 +126,19 @@ a {
     font-size: 16px;
 }
 
-#layoutContainer .message {
-    text-align: center;
-    font-style: italic;
-    font-size: 15px;
-    margin-bottom: 5px;
-}
-
-#sellNew_receipt {
-    text-align: center;
-    font-style: italic;
-    font-size: 15px;
-    margin-bottom: 5px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#layoutContainer p {
-    font-size: 15px;
-    margin: 7px;
-}
-
-#layoutContainer var {
-    font-style: normal;
-}
-
-#layoutContainer .link {
-    font-size: 13px;
-    margin: 7px;
-    font-style: italic;
-}
-
 #layoutContainer td {
     padding: 3px;
+}
+
+#layoutContainer button {
+    padding: 0.2rem;
+    display: inline-block;
+    margin: 10px;
+}
+
+#layoutContainer table {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 #layoutContainer ul {
@@ -164,14 +164,6 @@ a {
     counter-increment: node;
     content: "Node " counter(node) ": ";
 }
-
-details {
-    padding: 5px 5px 0;
-}
-
-
-
-
 
 /* Style inputs, select elements and textareas */
 #layoutContainer input[type=text], select, textarea {
@@ -200,15 +192,27 @@ details {
     display: inline-block;
 }
 
-#layoutContainer button {
-    padding: 0.2rem;
-    display: inline-block;
-    margin: 10px;
+#sellNew_receipt {
+    text-align: center;
+    font-style: italic;
+    font-size: 15px;
+    margin-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-#layoutContainer table {
-    margin-top: 10px;
-    margin-bottom: 10px;
+/** Messages to the user **/
+.message {
+    text-align: center;
+    font-style: italic;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.link {
+    font-size: 13px;
+    margin: 7px;
+    font-style: italic;
 }
 
 /* Floating column for labels: 25% width */
@@ -232,19 +236,9 @@ details {
     clear: both;
 }
 
-/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-    .col-25, .col-75 {
-        width: 100%;
-        margin-top: 0;
-    }
-}
-
-/* Overflow if the text is too long */
-body .lm_content {
-    overflow: scroll;
-}
-
-[onClick] {
-    cursor: pointer;
+/** To delete? **/
+/* Only serves to close the server */
+a {
+    text-decoration: none;
+    color: red;
 }

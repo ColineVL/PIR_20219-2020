@@ -1,37 +1,9 @@
 const express = require('express');
 const session = require('cookie-session'); // Charge le middleware de sessions
-const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
+// const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
 const bc = require('./js/blockchain');
 const EventsModule = require('./js/EventsModule');
-// const crypto = require('./js/CryptoModule');
-// const readwrite = require('./js/ReadWriteModule');
 
-
-// /********************************
-//  * Defining Database N.B : will destruct if server is closed...
-//  ********************************/
-// var DiffieSchema = { // Schema for storing Diffie-H keys
-//     refId: "", // Id of the reference for which this applies
-//     PubDH: "", // Public key of Diffie-h
-//     PrivDH: "", // Private key of Diffie-h
-//     Pub_Other: "", // Public key of other individual
-// };
-// var Reference_ClientSchema = { // Schema for storing reference information for a Client (keys and messages.)
-//     public_key: "", // User ethereum public key
-//     refId: "", // Id of the reference for which this applies
-//     KxorK2: "", // KxorK2 provided by the seller
-//     K2: "", // K2 provided later by the seller
-// };
-// var Reference_SellerSchema = { // Schema for storing reference information for a Seller (keys and messages.)
-//     public_key: "", // User ethereum public key
-//     refId: "", // Id of the reference for which this applies
-//     K: "", // Primary key used to encrypt the info
-//     K2: [],     // a mapping between client addresses and the hashes to send them
-// };
-//
-// const Diffie = Object.create(DiffieSchema);
-// const Reference_Seller = Object.create(Reference_SellerSchema);
-// const Reference_Client = Object.create(Reference_ClientSchema);
 
 /********************************
  * Create the app
@@ -124,10 +96,16 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/getrefinfo/:id', async (req, res) => {
         try {
             let product = await EventsModule.GetRef(req.params.id);
-            product = product[0].returnValues;
-            const actualPrice = await bc.getCurrentPrice(req.session.Account, req.params.id);
-            product["actualPrice"] = actualPrice;
             res.json(product);
+        } catch (e) {
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/getPrice/:id', async (req, res) => {
+        try {
+            const actualPrice = await bc.getCurrentPrice(req.session.Account, req.params.id);
+            res.json(actualPrice);
         } catch (e) {
             res.status(500).json(e.message);
         }
@@ -159,7 +137,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/buy/:id', async (req, res) => {
         try {
             let product = await EventsModule.GetRef(req.params.id);
-            let currentPrice = await bc.buyProduct(req.params.id, req.session.Account);
+            await bc.buyProduct(req.params.id, req.session.Account);
             res.json(product[0]);
         } catch (e) {
             res.status(500).json(e.message);
@@ -179,7 +157,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/manageIdBuyer/:id', async (req, res) => {
         try {
-            let result = await bc.manageIDBuyer(req.params.id, req.session.Account)
+            let result = await bc.manageIDBuyer(req.params.id, req.session.Account);
             res.json(result);
         } catch (e) {
             console.log(e);
@@ -189,7 +167,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/sendBuyerHash/:id', async (req, res) => {
         try {
-            await bc.sendClientHash(req.params.id, req.session.Account)
+            await bc.sendClientHash(req.params.id, req.session.Account);
             res.json(req.params.id);
         } catch (e) {
             console.log(e);
@@ -199,7 +177,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/computeK/:id', async (req, res) => {
         try {
-            const K = await bc.ComputeK(req.params.id, req.session.Account)
+            const K = await bc.ComputeK(req.params.id, req.session.Account);
             res.json({id: req.params.id, K: K});
         } catch (e) {
             console.log(e);
@@ -225,7 +203,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/confirmDispute/:id', async (req, res) => {
         try {
             let funds = await bc.Dispute(req.params.id, req.session.Account);
-            res.json({id: req.params.id, funds:funds);
+            res.json({id: req.params.id, funds:funds});
         } catch (e) {
             console.log(e);
             res.status(500).json(e.message);
@@ -239,6 +217,7 @@ app.use('/public', express.static(__dirname + '/public'))
             let receipt = await bc.sellItemColine(req.params.json, req.session.Account);
             res.json(receipt);
         } catch (e) {
+            console.log(e);
             res.status(500).json(e.message);
         }
     })
@@ -320,5 +299,5 @@ app.use('/public', express.static(__dirname + '/public'))
     /** Redirection to home if the page is not found **/
     .use(function (req, res) {
         res.redirect('/');
-    })
+    });
 
