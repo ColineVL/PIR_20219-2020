@@ -56,8 +56,8 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/balance', async (req, res) => {
         try {
-            const balance = await bc.getBalance(req.session.Account.address);
-            console.log(balance);
+            let balance = await bc.getBalance(req.session.Account.address);
+            balance = Number(balance);
             res.json(balance);
         } catch (e) {
             res.status(500).json(e.message);

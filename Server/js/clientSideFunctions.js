@@ -80,15 +80,17 @@ function displayProductInfo(product, keysToDisplay, keysNames) {
 
 /** Load my account **/
 function loadMyAccount() {
+    console.log("je load l'account");
     if (connected) {
         $('#myAccount_notConnected').hide();
         $('#myAccount_connected').show();
         $('#myAccount_address').html(myAccount.address);
-        // updateBalance();
         loadOngoingSales();
         getBoughtData();
         loadOngoingBuys();
         loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
+        console.log("avant updateBalance");
+        updateBalance();
     } else {
         $('#myAccount_connected').hide();
         $('#myAccount_notConnected').show();
@@ -98,11 +100,11 @@ function loadMyAccount() {
 /** Update balance **/
 function callbackUpdateBalance(balance) {
     myAccount.balance = balance;
-    $("#myAccount_value").html(myAccount.balance);
+    $("#myAccount_value").text(myAccount.balance);
 }
 
 function updateBalance() {
-    loadHTMLDoc("balance.html", callbackUpdateBalance, callbackError);
+    loadHTMLDoc("balance", callbackUpdateBalance, callbackError);
 }
 
 /** Connection **/
@@ -761,6 +763,7 @@ function withdrawFunds() {
 /** Error **/
 
 function callbackError(err) {
+    console.log("ERROR");
     console.error(err);
 }
 

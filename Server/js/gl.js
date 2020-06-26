@@ -391,8 +391,11 @@ function addMenuItem(newItem) {
         element.click( () => {
             loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
         });
-
-
+    }
+    if (newItem.name === "myAccountItem") {
+        element.click( () => {
+            loadHTMLDoc("myAccount.html", callbackLoadHTMLMyAccount);
+        });
     }
 }
 
