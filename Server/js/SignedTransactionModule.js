@@ -408,6 +408,15 @@ module.exports = {
         }
     },
 
+    /*Function to view the clients who opted out of a certain reference*/
+    GetClientsDisputes: async function (account, id) {
+        try {
+            return await contract.methods.getClientDisputes(id).call({from: account.address});
+        } catch (e) {
+            throw e;
+        }
+    },
+
     /*Function to get the current price of a certain reference*/
     GetCurrentPrice: async function (account, id) {
         try {
