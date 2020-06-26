@@ -154,26 +154,27 @@ console.log(aliceSecret)
 console.log(OTP(loi,loi2))
 console.log(OTP(aliceSecret,OTP(loi,loi2)))
 
-lopo = "0xec972af11ad71fb777760f7e99f1c3d7455a71589edb80eb19c2ea1facd92a30"
-var Kop = new Buffer.from(lopo.slice(2),'hex')
+console.log("***************************************************")
+const ali = crypto.createDiffieHellman(1024);
+ali.generateKeys()
 
-console.log(Kop)
-// console.log(loi[0])
-let hash = web3.utils.keccak256(loi)
-console.log(hash)
+// console.log(ali.getPrime().length)
+// console.log(ali.getPrime().slice(0,32).byteLength)
+console.log( ali.getPublicKey().length)
+let part1 = ali.getPublicKey().slice(0,32)
+let part2 = ali.getPublicKey().slice(32,64)
+let part3 = ali.getPublicKey().slice(64,96)
+let part4 = ali.getPublicKey().slice(96,128)
 
-console.log(web3.utils.bytesToHex(Kop))
 
+const recons = Buffer.concat([part1,part2,part3,part4])
+console.log( recons)
+console.log(ali.getPublicKey())
 
+console.log(Buffer.compare(ali.getPublicKey(),recons))
+console.log(ali.getPrime().length)
 
-const start = Date.now();
-console.log(start)
-console.log("...")
-console.log((new Buffer.from("fake")))
-console.log(web3.utils.keccak256(new Buffer.from("fake")))
-console.log(web3.utils.keccak256(new Buffer.from("fakeluytfgiuvjvkjv;")))
-console.log(web3.utils.keccak256(new Buffer.from("fake1")))
-console.log("...")
+let pry = "802e273c482801295f36f8ab4940decf6ad5ddb86220a3979a14e4856fc2515508bbb31cdc8781fd0cd5c5ca44f0020b56b513c2fdf78add0f3712544fd9fb8873570207936004dcdc10aac0cccaf98378aa13ca6d624088d2c5907bbff91057a03dc7935f39259c5f73015f6e3db7d494883f7a23e3c1f4803b64769480d8e38c5ade49470b9f74fcb72fa1f181fc526bb7d9760a71dd434222a44f1f9db85556860d283a06079546fc70c3aa54be6e5a85382fc30025e5b4504c04e65ce756140207172056281d8e4ed2347439073310991751c1cec2582b74d4becdabff34c362645d847d13cb4e9a65dc084ed6f56a30fdba8c2051495dcc0903b3414453"
+console.log(pry.length)
+console.log(ali.getPrime())
 
-console.log(crypto.randomBytes(32))
-console.log(new Buffer.from([12,152,175,13,56,98,20,2,12,152,175,13,56,98,20,2,12,152,175,13,56,98,20,2,12,152,175,13,56,98,20,2]))

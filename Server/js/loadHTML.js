@@ -26,3 +26,14 @@ function callbackLoadHTMLsellNew(html) {
         $('#sellNew_notConnected').show();
     }
 }
+
+function callbackLoadHTMLDispute(html) {
+    $("#dispute").html(html);
+}
+
+function callbackLoadHTMLnewTLE(html) {
+    $("#newTLE").html(html);
+    const id = $('#productInfo_referenceID').text();
+    $("#newTLE_id").html(id);
+    $("#newTLE_message").hide();
+}

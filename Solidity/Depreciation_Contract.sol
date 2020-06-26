@@ -58,6 +58,7 @@ contract Depreciation_Contract{
 
     DataReference[] dataReferences;
 
+
     /*
     ---------------------------------------------
                       Getters

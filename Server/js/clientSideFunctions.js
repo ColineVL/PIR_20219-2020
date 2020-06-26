@@ -18,7 +18,7 @@ function loadXMLDoc(page, successCallback, errorCallback) {
                 errorCallback(e.message);
             }
         }
-    }
+    };
     xhttp.open("GET", page, true);
     xhttp.send();
 }
@@ -80,24 +80,37 @@ function displayProductInfo(product, keysToDisplay, keysNames) {
 
 /** Load my account **/
 function loadMyAccount() {
+    console.log("je load l'account");
     if (connected) {
         $('#myAccount_notConnected').hide();
         $('#myAccount_connected').show();
         $('#myAccount_address').html(myAccount.address);
-        $("#myAccount_value").html(myAccount.balance);
+        loadOngoingSales();
+        getBoughtData();
+        loadOngoingBuys();
+        loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
+        console.log("avant updateBalance");
+        updateBalance();
     } else {
         $('#myAccount_connected').hide();
         $('#myAccount_notConnected').show();
     }
 }
 
+/** Update balance **/
+function callbackUpdateBalance(balance) {
+    myAccount.balance = balance;
+    $("#myAccount_value").text(myAccount.balance);
+}
+
+function updateBalance() {
+    loadHTMLDoc("balance", callbackUpdateBalance, callbackError);
+}
+
 /** Connection **/
-function callbackConnect(json) {
+function callbackConnect(address) {
     connected = true;
-    loadOngoingSales();
-    getBoughtData();
-    myAccount.address = json["address"];
-    myAccount.balance = json["balance"];
+    myAccount.address = address;
     loadMyAccount();
 }
 
@@ -113,6 +126,7 @@ function connect() {
 
 function disconnect() {
     connected = false;
+    myAccount = {};
     loadMyAccount();
     const xhttp = new XMLHttpRequest();
     xhttp.open("GET", 'signout', true);
@@ -126,7 +140,7 @@ function callbackNewAccount(param) {
 }
 
 function createNewAccount() {
-    loadXMLDoc("newaccount", callbackNewAccount);
+    loadXMLDoc("newaccount", callbackNewAccount, callbackError);
 }
 
 function callbackConnectNewAccount(json) {
@@ -138,7 +152,7 @@ function callbackConnectNewAccount(json) {
 
 function logInWithNewAccount() {
     let privateKey = $("#newAccount_privatekey").text();
-    loadXMLDoc("connect/" + privateKey, callbackConnectNewAccount);
+    loadXMLDoc("connect/" + privateKey, callbackConnectNewAccount, callbackError);
 }
 
 /********************************
@@ -146,8 +160,6 @@ function logInWithNewAccount() {
  ********************************/
 
 /** Update of the nodelist **/
-setInterval(updateNodesList, 2000);
-
 function callbackNodelist(param) {
     param = displayListNodes(param);
     $("#nodes_list").html(param);
@@ -156,17 +168,18 @@ function callbackNodelist(param) {
 function updateNodesList() {
     // We only update the list if the item is displayed on the screen
     if ($("#listNodesItem").text()) {
-        loadXMLDoc("updatenodelist", callbackNodelist);
+        loadXMLDoc("updatenodelist", callbackNodelist, callbackError);
     }
 }
+
+setInterval(updateNodesList, 2000);
+
 
 /********************************
  * Blocks
  ********************************/
 
 /** Update of the blocks list **/
-setInterval(updateBlocksList, 2000);
-
 function callbackBlockslist(param) {
     param = displayListBlocks(param);
     $("#blocks_list").html(param);
@@ -175,9 +188,11 @@ function callbackBlockslist(param) {
 function updateBlocksList() {
     // We only update the list if the item is displayed on the screen
     if ($("#listBlocksItem").text()) {
-        loadXMLDoc("updatelistBlocks", callbackBlockslist);
+        loadXMLDoc("updatelistBlocks", callbackBlockslist, callbackError);
     }
 }
+
+setInterval(updateBlocksList, 2000);
 
 /** Info about one block **/
 function callbackBlockInfo(param) {
@@ -193,7 +208,7 @@ function displayBlockInfo(blocknumber) {
     }
     if (blocknumber > 0) {
         addItem(blockInfoItem);
-        loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo);
+        loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo,callbackError);
     }
 }
 
@@ -228,16 +243,19 @@ function getReferences() {
 }
 
 /** For sale Product info **/
-function getRefForSaleInfo(id) {
-    if (connected) {
-        $('#forSale_message').hide();
-        loadXMLDoc("getrefinfo/" + id, callbackgetRefForSaleInfo);
-    } else {
-        callbackErrorGetReferences("You should connect");
-    }
-
+function callbackGetPrice(price) {
+    $("#productInfo_currentPrice").html(price);
 }
 
+function updatePrice() {
+    // We only update the price if the item is displayed on the screen
+    if ($("#productInfo_referenceID").text()) {
+        const id = $('#productInfo_referenceID').text();
+        loadXMLDoc("getPrice/" + id, callbackGetPrice, callbackError);
+    }
+}
+
+let myTimerPrice;
 function callbackgetRefForSaleInfo(product) {
     let html = "<table><tbody>";
     html += "<tr>";
@@ -252,7 +270,7 @@ function callbackgetRefForSaleInfo(product) {
 
     html += "<tr>";
     html += "<td>Current price</td>";
-    html += "<td id='productInfo_currentPrice'>" + product["actualPrice"] + "</td>";
+    html += "<td id='productInfo_currentPrice'></td>";
     html += "</tr>";
 
     const keysToDisplay = ["provider", "insuranceDeposit", "minimumData", "depreciationType"];
@@ -269,7 +287,7 @@ function callbackgetRefForSaleInfo(product) {
     html += "<tr>";
     html += "<td>Time of Deployment</td>";
     let deployTime = Number(product["deployTime"]);
-    deployTime = new Date(deployTime*1000);
+    deployTime = new Date(deployTime * 1000);
     deployTime = deployTime.toLocaleString();
     html += "<td>" + deployTime + "</td>";
     html += "</tr>";
@@ -277,7 +295,7 @@ function callbackgetRefForSaleInfo(product) {
     html += "<tr>";
     html += "<td>End Time</td>";
     let endTime = Number(product["endTime"]);
-    endTime = new Date(endTime*1000);
+    endTime = new Date(endTime * 1000);
     endTime = endTime.toLocaleString();
     html += "<td>" + endTime + "</td>";
     html += "</tr>";
@@ -286,14 +304,21 @@ function callbackgetRefForSaleInfo(product) {
 
     addItem(forSaleproductInfoItem);
     $('#forSaleProductInfo_info').html(html);
-    if (myAccount === "notConnected") {
+
+    if (!connected) {
         $('#forSaleProductInfo_message').show();
-        $('#forSaleProductInfo_message').text("You are not connected...");
+        $('#forSaleProductInfo_message').text("To see the price and buy the product you need to be connected...");
         $('#forSaleProductInfo_buyButton').hide();
+        clearInterval(myTimerPrice);
     } else {
         $('#forSaleProductInfo_buyButton').show();
         $('#forSaleProductInfo_message').hide();
+        myTimerPrice = setInterval(updatePrice, 3000);
     }
+}
+
+function getRefForSaleInfo(id) {
+    loadXMLDoc("getrefinfo/" + id, callbackgetRefForSaleInfo,callbackError);
 }
 
 /** Get bought data **/
@@ -313,7 +338,7 @@ function callbackGetBoughtItemInfo(product) {
 }
 
 function getBoughtItemInfo(id) {
-    loadXMLDoc("getboughtiteminfo/" + id, callbackGetBoughtItemInfo);
+    loadXMLDoc("getboughtiteminfo/" + id, callbackGetBoughtItemInfo, callbackError);
 }
 
 function callbackGetBoughtData(Ids) {
@@ -349,7 +374,7 @@ function getBoughtData() {
 
 /** Buy product **/
 function callbackBuy(param) {
-    myAccount.boughtData[param.returnValues["referenceId"]] = param.returnValues;
+    myAccount.boughtData[param["referenceId"]] = param;
     $('#forSaleProductInfo_message').show();
     $('#forSaleProductInfo_message').text("Bought!");
 }
@@ -382,11 +407,11 @@ function callbackOngoingBuys(Ids) {
     let html = "";
     for (const data of Ids) {
         html += "<details>";
-        html += "<summary>" + data.returnValues["description"] + "</summary>";
-        html += "<p>Reference Id: " + data.returnValues["referenceId"] + "</p>";
-        html += "<p class='link' onclick=manageIdBuyer(" + data.returnValues["referenceId"] + ")>Manage this Id</p>";
+        html += "<summary>" + data["description"] + "</summary>";
+        html += "<p>Reference Id: " + data["referenceId"] + "</p>";
+        html += "<p class='link' onclick=manageIdBuyer(" + data["referenceId"] + ")>Manage this Id</p>";
         html += "</details>";
-        myAccount.buying.push(data.returnValues["referenceId"]);
+        myAccount.buying.push(data["referenceId"]);
     }
     $("#ongoingBuys_beingBought").html(html);
 }
@@ -407,15 +432,47 @@ function loadOngoingBuys() {
     }
 }
 
-/** Manage Id **/
+/** Manage Id Buyer **/
 function callbackManageIdBuyer(param) {
     addItem(manageIdBuyerItem);
-    const [product, total_clients, num_clients_step1, num_clients_step2, key] = param;
 
-    const keys = ["provider", "initialPrice", "description"];
-    const keysNames = ["Provider", "Initial price", "Description"];
-    const tableProduct = displayProductInfo(product.returnValues, keys, keysNames);
+    const [product, hashSent, encryptedEncodedReceived, decoderReceived] = param;
+    const keys = ["provider", "description"];
+    const keysNames = ["Provider", "Description"];
+    const tableProduct = displayProductInfo(product, keys, keysNames);
     $("#manageIdBuyer_produit").html(tableProduct);
+
+    if (!encryptedEncodedReceived) {
+        // Waiting for the encrypted encoded key
+        $('#manageidBuyer_encryptedEncodedWaiting').show();
+        $('#manageidBuyer_sendHash').hide();
+        $('#manageidBuyer_decoderKeyWaiting').hide();
+        $('#manageidBuyer_decoderKeyReceived').hide();
+    } else {
+        // Encrypted encoded key received
+        if (!hashSent) {
+            // Client has to send the hash
+            $('#manageidBuyer_encryptedEncodedWaiting').hide();
+            $('#manageidBuyer_sendHash').show();
+            $('#manageidBuyer_decoderKeyWaiting').hide();
+            $('#manageidBuyer_decoderKeyReceived').hide();
+        } else {
+            // Client has sent the hash
+            if (!decoderReceived) {
+                // Waiting for the decoder key
+                $('#manageidBuyer_encryptedEncodedWaiting').hide();
+                $('#manageidBuyer_sendHash').hide();
+                $('#manageidBuyer_decoderKeyWaiting').show();
+                $('#manageidBuyer_decoderKeyReceived').hide();
+            } else {
+                // Decoder key received, client can compute
+                $('#manageidBuyer_encryptedEncodedWaiting').hide();
+                $('#manageidBuyer_sendHash').hide();
+                $('#manageidBuyer_decoderKeyWaiting').hide();
+                $('#manageidBuyer_decoderKeyReceived').show();
+            }
+        }
+    }
 }
 
 function callbackErrorManageIdBuyer(err) {
@@ -424,6 +481,72 @@ function callbackErrorManageIdBuyer(err) {
 
 function manageIdBuyer(id) {
     loadXMLDoc("manageIdBuyer/" + id, callbackManageIdBuyer, callbackErrorManageIdBuyer);
+}
+
+function callbackBuyerAction(id) {
+    manageIdBuyer(id);
+}
+
+function sendBuyerHash() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("sendBuyerHash/" + id, callbackBuyerAction, callbackErrorManageIdBuyer);
+}
+
+function callbackComputeK(result) {
+    manageIdBuyer(result["id"]);
+    $('#manageIdBuyer_K').html("K: " + result["K"]);
+}
+
+function computeK() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("computeK/" + id, callbackComputeK, callbackErrorManageIdBuyer);
+}
+
+/** Dispute **/
+function callbackDisputeNotConfirmed(json) {
+    $('#dispute_notConfirmed').show();
+    $('#dispute_confirmed').hide();
+    $('#dispute_id').html(json["id"]);
+
+    if (json["alreadyDisputed"]) {
+        $('#dispute_alreadyDisputed').show();
+        $('#dispute_alreadyEncoded').hide();
+        $('#dispute_refund').hide();
+    } else if (json["alreadyEncoded"]) {
+        $('#dispute_alreadyDisputed').hide();
+        $('#dispute_alreadyEncoded').show();
+        $('#dispute_refund').hide();
+    } else {
+        $('#dispute_alreadyDisputed').hide();
+        $('#dispute_alreadyEncoded').hide();
+        $('#dispute_refund').show();
+        $('#dispute_possibleRefund').html(json["possibleRefund"]);
+    }
+}
+
+function dispute() {
+    const id = $('#productInfo_referenceID').text();
+    addItem(disputeItem);
+    loadXMLDoc("dispute/" + id, callbackDisputeNotConfirmed, callbackErrorManageIdBuyer);
+}
+
+function callbackConfirmDispute(json) {
+    $('#dispute_notConfirmed').hide();
+    $('#dispute_confirmed').show();
+    $('#dispute_id').html(json["id"]);
+    if (json["funds"] > 0) {
+        $('#dispute_unsuccessful').hide();
+        $('#dispute_successful').show();
+        $('#dispute_funds').html(json["funds"]);
+    } else {
+        $('#dispute_unsuccessful').show();
+        $('#dispute_successful').hide();
+    }
+}
+
+function confirmDispute() {
+    const id = $('#dispute_id').text();
+    loadXMLDoc("confirmDispute/" + id, callbackConfirmDispute, callbackErrorManageIdBuyer);
 }
 
 /********************************
@@ -508,15 +631,14 @@ function loadOngoingSales() {
     }
 }
 
-/** Manage Id **/
+/** Manage Id Seller **/
 
 function callbackManageIdSeller(param) {
     addItem(manageIdSellerItem);
     const [product, total_clients, num_clients_step1, num_clients_step2, key] = param;
-
-    const keys = ["provider", "initialPrice", "description"];
-    const keysNames = ["Provider", "Initial price", "Description"];
-    const tableProduct = displayProductInfo(product[0].returnValues, keys, keysNames);
+    const keys = ["provider", "initialPrice", "currentPrice", "description"];
+    const keysNames = ["Provider", "Initial price", "Current price", "Description"];
+    const tableProduct = displayProductInfo(product, keys, keysNames);
     $("#manageIdSeller_produit").html(tableProduct);
 
     $("#manageIdSeller_totalNumberClients").text(total_clients);
@@ -542,12 +664,56 @@ function manageIdSeller(id) {
     $("#manageIdSeller_message").hide();
     loadXMLDoc("manageIdSeller/" + id, callbackManageIdSeller, callbackErrorManageIdSeller);
 }
+function manageIdSeller(id) {
+    $("#manageIdSeller_message").hide();
+    loadXMLDoc("manageIdSeller/" + id, callbackManageIdSeller, callbackErrorManageIdSeller);
+}
+
+/** New TLE **/
+function callbackUploadNewTLE(param) {
+    console.log("je suis dans la callback, pas d'erreur, afficher quelque chose au user");
+    $("#newTLE_message").show();
+    $("#newTLE_message").html(param);
+}
+
+function callbackErrorUploadNewTLE(err) {
+    $("#newTLE_message").show();
+    $("#newTLE_message").html(err);}
+
+function uploadNewTLE() {
+    let json = {
+        id: $("#newTLE_id").text(),
+        line0: $("#newTLE_line0").val(),
+        line1: $("#newTLE_line1").val(),
+        line2: $("#newTLE_line2").val(),
+    };
+
+    let complete = false;
+    for (const property in json) {
+        if (json.property === "") {
+            $("#newTLE_message").show();
+            $("#newTLE_message").html("Please complete the whole form.");
+            break;
+        } else {
+            complete = true;
+        }
+    }
+    if (complete) {
+        $("#newTLE_message").hide();
+        loadXMLDoc("uploadNewTLE/" + JSON.stringify(json), callbackUploadNewTLE, callbackErrorUploadNewTLE);
+    }
+}
+
+function loadNewTLEForm() {
+    addItem(newTLEItem);
+    loadHTMLDoc("newTLE.html", callbackLoadHTMLnewTLE);
+}
 
 /** Seller step 1 **/
 
 function callbackEncodedEncryptedKey(param) {
     const [num, done] = param;
-    $("#manageIdSeller_message").show()
+    $("#manageIdSeller_message").show();
     $("#manageIdSeller_message").html("Successfully sent info to " + done + " clients out of " + num + " expected!");
 }
 
@@ -571,7 +737,6 @@ function sendDecoderKey() {
 /** Seller post key **/
 function callbackpostRefKey(result) {
     $("#manageIdSeller_message").show();
-    console.log(result);
     let [receipt, refKey] = result;
     $("#manageIdSeller_message").html("Successfully sent the Reference Key to the contract.");
 }
@@ -581,13 +746,28 @@ function postRefKey() {
     loadXMLDoc("postRefKey/" + id, callbackpostRefKey, callbackError);
 }
 
+/** Withdraw Funds **/
+function callbackWithdrawFunds(param) {
+    $("#manageIdSeller_message").show();
+    $("#manageIdSeller_message").html("Successfully withdrew funds. You received " + param["funds"] + " Ether.");
+}
+function callbackErrorWithdrawFunds(err) {
+    $("#manageIdSeller_message").show();
+    $("#manageIdSeller_message").html(err);
+}
+function withdrawFunds() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("withdrawFunds/" + id, callbackWithdrawFunds, callbackErrorWithdrawFunds);
+}
+
 /** Error **/
 
 function callbackError(err) {
+    console.log("ERROR");
     console.error(err);
 }
 
-/** Make a transaction **/
+/** Make a transaction, to delete **/
 function callbackMakeTransaction(param) {
     addItem(resultTransactionItem);
     param = displayTable(param);
@@ -612,6 +792,6 @@ function makeTransaction() {
             privateKey: privateKey,
             amount: amount,
         };
-        loadXMLDoc("maketransaction/" + JSON.stringify(json), callbackMakeTransaction);
+        loadXMLDoc("maketransaction/" + JSON.stringify(json), callbackMakeTransaction, callbackError);
     }
 }

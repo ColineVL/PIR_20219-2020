@@ -4,7 +4,7 @@
 const makeTransactionItem = {
     title: "make transaction",
     name: "makeTransactionItem"
-}
+};
 
 const myAccountItem = {
     title: "My account",
@@ -48,12 +48,12 @@ const forSaleItem = {
 const forSaleproductInfoItem = {
     title: "Product info",
     name: "forSaleproductInfoItem"
-}
+};
 
 const boughtProductInfoItem = {
     title: "Product info",
     name: "boughtProductInfoItem"
-}
+};
 
 const ongoingBuysItem = {
     title: "Ongoing buys",
@@ -65,15 +65,16 @@ const boughtDataItem = {
     name: "boughtDataItem"
 };
 
-const manageIdSellerItem = {
-    title: "Manage ID",
-    name: "manageIdSellerItem"
-};
-
 const manageIdBuyerItem = {
     title: "Manage ID",
     name: "manageIdBuyerItem"
 };
+
+const disputeItem = {
+    name: "disputeItem",
+    title: "Dispute"
+};
+
 
 /********************************
  * Sell Items
@@ -87,6 +88,16 @@ const sellNewItem = {
 const ongoingSalesItem = {
     title: "Ongoing sales",
     name: "ongoingSalesItem"
+};
+
+const manageIdSellerItem = {
+    title: "Manage ID",
+    name: "manageIdSellerItem"
+};
+
+const newTLEItem = {
+    title: "New TLE",
+    name: "newTLEItem"
 };
 
 /********************************
@@ -243,13 +254,20 @@ myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
         '<div class="container">' +
         '<h3>Product:</h3>' +
         '<div id="manageIdBuyer_produit"></div>' +
+
+        '<p id="manageIdBuyer_K"></p>' +
+
         '<h3>To do:</h3>' +
+
         '<ul>' +
-        '<li>Encrypted encoded key received, send hash</li>' +
-        '<li>Decoder key received, compute</li>' +
-        '<li>Set a dispute or get a refund</li>' +
+        '<li id="manageidBuyer_encryptedEncodedWaiting">Waiting for the encrypted encoded key</li>' +
+        '<li onclick="sendBuyerHash()" id="manageidBuyer_sendHash">Encrypted encoded key received, send hash</li>' +
+        '<li id="manageidBuyer_decoderKeyWaiting">Encrypted encoded key received, you already sent the hash. Waiting for the decoder key</li>' +
+        '<li id="manageidBuyer_decoderKeyReceived" onclick="computeK()">Decoder key received, compute</li>' +
+        '<li onclick="dispute()">Set a dispute or get a refund</li>' +
         '</ul>' +
-        '<p class="message" id="manageIdSeller_message"></p>' +
+
+        '<p class="message" id="manageIdBuyer_message"></p>' +
         '</div>'
     );
 });
@@ -267,6 +285,11 @@ myLayout.registerComponent('boughtDataItem', function (container, state) {
         '</div>' +
         '</div>'
     );
+});
+
+myLayout.registerComponent('disputeItem', function (container, state) {
+    container.getElement().html('<div id="dispute">');
+    loadHTMLDoc("dispute.html", callbackLoadHTMLDispute);
 });
 
 /** Sell items **/
@@ -298,15 +321,22 @@ myLayout.registerComponent('manageIdSellerItem', function (container, state) {
         '<div id="manageIdSeller_produit"></div>' +
         '<h3>To do:</h3>' +
         '<ul>' +
+        '<li onclick="loadNewTLEForm()">Upload a new TLE</li>' +
         '<li onclick="sendEncodedEncryptedKey()">Send Encrypted Encoded Key (K2xorKxorK3): <var id="manageIdSeller_NumClientsStep1"></var> clients</li>' +
         '<li onclick="sendDecoderKey()">Verify hashes and send Decoder Key (K2): <var id="manageIdSeller_NumClientsStep2"></var> clients</li>' +
         '<li id="manageIdSeller_keyNotReleased" onclick="postRefKey()">Release reference key (key not released yet)</li>' +
         '<li id="manageIdSeller_keyReleased">Key is released: <var id="manageIdSeller_releasedKey"></var></li>' +
+        '<li onclick="withdrawFunds()">Withdraw funds</li>' +
         '</ul>' +
         '<p class="message" id="manageIdSeller_message"></p>' +
         '</div>'
     );
 });
+
+myLayout.registerComponent('newTLEItem', function (container, state) {
+    container.getElement().html('<div id="newTLE">');
+});
+
 
 /********************************
  * Initialize Layout
@@ -361,8 +391,11 @@ function addMenuItem(newItem) {
         element.click( () => {
             loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
         });
-
-
+    }
+    if (newItem.name === "myAccountItem") {
+        element.click( () => {
+            loadHTMLDoc("myAccount.html", callbackLoadHTMLMyAccount);
+        });
     }
 }
 

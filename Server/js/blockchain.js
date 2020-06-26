@@ -1,6 +1,6 @@
 const Web3 = require('web3');
 const provider = 'http://192.168.33.115:8545';
-const web3 = new Web3(new Web3.providers.HttpProvider(provider))
+const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 
 const Admin = require('web3-eth-admin').Admin;
 const options = {
@@ -19,14 +19,16 @@ const crypto = require('./CryptoModule');
 const readwrite = require('./ReadWriteModule');
 const database = require('./database.js');
 const EventsModule = require('./EventsModule');
+const TLE = require('./TLE');
+
 
 
 const Diffie = database.newDiffieSchema();
-const Reference_Seller = database.newReference_SellerSchema();
-const Reference_Client = database.newReference_ClientSchema();
+// const Reference_Seller = database.newReference_SellerSchema();
+// const Reference_Client = database.newReference_ClientSchema();
 
 
-//let prime = crypto.GetPrime(32);
+let prime;
 (async () => {
     prime = await readwrite.ReadPrimeAndGen(__dirname + '/../Database/PrimeAndGenerator.txt');
 })();
@@ -60,8 +62,7 @@ async function createNewAccount() {
 
 async function getAccount(privateKey) {
     try {
-        let account = web3.eth.accounts.privateKeyToAccount(privateKey);
-        return account;
+        return web3.eth.accounts.privateKeyToAccount(privateKey);
     } catch (err) {
         throw err;
     }
@@ -91,9 +92,8 @@ async function refreshNodesList() {
 
 async function createTransaction(jsonInfo) {
     jsonInfo = JSON.parse(jsonInfo);
-    const receipt = await transactions.createAndSendSignedTransaction(provider, jsonInfo["amount"], jsonInfo["privateKey"], jsonInfo["sender"], jsonInfo["receiver"]);
     //,0.001,'8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63','0xfe3b557e8fb62b89f4916b721be55ceb828dbd73','0xf17f52151EbEF6C7334FAD080c5704D77216b732');
-    return receipt;
+    return await transactions.createAndSendSignedTransaction(provider, jsonInfo["amount"], jsonInfo["privateKey"], jsonInfo["sender"], jsonInfo["receiver"]);
 }
 
 /********************************
@@ -123,8 +123,7 @@ function refreshBlocksNUMBERSList() {
 }
 
 async function getBlockInfo(blocknumber) {
-    const block = await web3.eth.getBlock(blocknumber);
-    return block;
+    return await web3.eth.getBlock(blocknumber);
 }
 
 /********************************
@@ -139,23 +138,23 @@ async function sellItemZiad(price, description, durationDays, durationHours, dur
     Diffie.PrivDH = keys[0];
     Diffie.PubDH = keys[1];
 
-    let K = crypto.RandomBytes(7); //Reference key with which data is encrypted. TODO use this on TLE
+    let K = crypto.RandomBytes(32); //Reference key with which data is encrypted. TODO use this on TLE
 
-    let priceInEther = web3.utils.toWei(price,'ether');
+    let priceInWei = web3.utils.toWei(price, 'ether');
 
-    let insuranceInEther = web3.utils.toWei(insurance,'ether');
+    let insuranceInWei = web3.utils.toWei(insurance, 'ether');
 
     /*Send transaction the get the ref_id for the database*/
     try {
-        const receipt = await transactions.SellReference(account, Diffie.PubDH, priceInEther, durationInSecs, description, minData, depreciationType, insuranceInEther);
+        const receipt = await transactions.SellReference(account, Diffie.PubDH.slice(0, 32), Diffie.PubDH.slice(32, 64), Diffie.PubDH.slice(64, 96), Diffie.PubDH.slice(96, 128), priceInWei, durationInSecs, description, minData, depreciationType, insuranceInWei);
         let blockNumber = receipt.blockNumber;
-        let event = await EventsModule.GetYourRef(account.address, blockNumber)
+        let event = await EventsModule.GetYourRef(account.address, blockNumber);
         let id = event[0].returnValues.referenceId;
         Diffie.refId = id;
         receipt.id = id;
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
-        await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt', K)
-        return [receipt, id];
+        await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt', K);
+        return receipt;
     } catch (err) {
         throw err;
     }
@@ -171,28 +170,29 @@ async function sellItemColine(jsonInfo, account) {
     const minData = jsonInfo["minData"];
     const depreciationType = jsonInfo["depreciationType"];
     const deposit = jsonInfo["deposit"];
-    // let durationInSecs = ((durationDays * 24 + durationHours) * 60 + durationMinutes) * 60;
-    let durationInSecs = durationDays * 86400 + durationHours * 3600 + durationMinutes * 60;
 
-    /*DH keys, to be stored and public sent*/
+    const durationInSecs = durationDays * 86400 + durationHours * 3600 + durationMinutes * 60;
     const keys = crypto.DiffieHellmanGenerate(prime);
     /* Updating object to write and save */
     Diffie.PrivDH = keys[0];
     Diffie.PubDH = keys[1];
 
-    let K = crypto.RandomBytes(7); //Reference key with which data is encrypted. TODO use this on TLE
+    let K = crypto.RandomBytes(32); //Reference key with which data is encrypted. TODO use this on TLE
 
+    let priceInWei = web3.utils.toWei(initialPrice, 'ether');
+
+    let insuranceInWei = web3.utils.toWei(deposit, 'ether');
 
     /*Send transaction the get the ref_id for the database*/
     try {
-        const receipt = await transactions.SellReference(account, Diffie.PubDH, initialPrice, durationInSecs, description, minData, depreciationType, deposit);
+        const receipt = await transactions.SellReference(account, Diffie.PubDH.slice(0, 32), Diffie.PubDH.slice(32, 64), Diffie.PubDH.slice(64, 96), Diffie.PubDH.slice(96, 128), priceInWei, durationInSecs, description, minData, depreciationType, insuranceInWei);
         let blockNumber = receipt.blockNumber;
-        let event = await EventsModule.GetYourRef(account.address, blockNumber)
+        let event = await EventsModule.GetYourRef(account.address, blockNumber);
         let id = event[0].returnValues.referenceId;
         Diffie.refId = id;
-        await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
-        await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt', K)
         receipt.id = id;
+        await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
+        await readwrite.WriteAsSellerInfo(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt', K);
         return receipt;
     } catch (err) {
         throw err;
@@ -208,10 +208,10 @@ async function buyProduct(id, account) {
     /* Updating object to write and save */
     Diffie.PrivDH = keys[0];
     Diffie.PubDH = keys[1];
-    Diffie.refId = id + 1
+    Diffie.refId = id + 1;
     try {
         let currentPrice = await transactions.GetCurrentPrice(account, id);
-        const receipt = await transactions.BuyReference(account, id, Diffie.PubDH, currentPrice);
+        await transactions.BuyReference(account, id, Diffie.PubDH.slice(0, 32), Diffie.PubDH.slice(32, 64), Diffie.PubDH.slice(64, 96), Diffie.PubDH.slice(96, 128), currentPrice);
         await readwrite.Write(__dirname + '/../Database/DH' + id.toString() + '_' + account.address.toString() + '.txt', JSON.stringify(Diffie));
         return (currentPrice);
     } catch (e) {
@@ -219,37 +219,62 @@ async function buyProduct(id, account) {
     }
 }
 
+/*Get the current price of a certain reference*/
 async function getCurrentPrice(account, id) {
     try {
         let currentPrice = await transactions.GetCurrentPrice(account, id);
+        currentPrice = web3.utils.fromWei(currentPrice.toString(), "ether");
+        // the result is in ether
         return currentPrice;
     } catch (e) {
         throw e;
     }
+}
 
+/*Computes information for Ongoing purchases view*/
+async function OngoingPurchases(account) {
+    try {
+        let Ids = await EventsModule.GetBoughtRefs(account); // Get the Refs which were bought
+        let WithdrawnIds = await EventsModule.WithdrawFundsEventGeneral(); // References for which funds have been withdrawn
+
+        let ongoingIds = await EventsModule.ComputeLeft(EventsModule.EventsToIds(Ids),EventsModule.EventsToIds(WithdrawnIds)); // Only the ongoing one's
+
+        let ongoingIdsEvents = await EventsModule.GetRefs(ongoingIds); // Transform back to events
+        return ongoingIdsEvents;
+    } catch (e) {
+        throw e;
+    }
 }
 
 /********************************
  * Manage an Id
  ********************************/
 
+/*Function to generate details for management of a certain Id on the provider side*/
 async function manageID(id, account) {
     try {
-        let product = await EventsModule.GetRef(id);
+        let product = await EventsModule.GetRef(id); // We fetch the product
+
+        product.initialPrice = web3.utils.fromWei((product.initialPrice).toString(), "ether");
+        product.currentPrice = await getCurrentPrice(account, id);
+
         const clients = await transactions.GetClients(account, id);
         let total_clients = clients.length;
-        let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
-        let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length;
-        let KeysSent = await EventsModule.GetKeysSent(id);
-        let ReceivedHashes = await EventsModule.GetClientsWhoSentHashes(id)
-        let num_clients_step2 = ReceivedHashes.length - KeysSent.length
 
-        let KeyEvent = await EventsModule.ReferenceKeySent(id);
+        let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
+        let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length; // Number of clients we need to send K^K2^K3 to
+
+        let KeysSent = await EventsModule.GetKeysSent(id);
+        let ReceivedHashes = await EventsModule.GetClientsWhoSentHashes(id);
+
+        let num_clients_step2 = ReceivedHashes.length - KeysSent.length; // Number of clients we need to verify the hashes of and eventually send K2
+
+        let KeyEvent = await EventsModule.ReferenceKeySent(id); // To check if we already set the final reference key
 
         let Key = 0;
         if (KeyEvent.length > 0) {
-            let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1])).slice(0, 7)
-            Key = buffer.toString('hex');
+            let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1]));
+            Key = buffer.toString('hex'); // Eventually load the reference key we sent
         }
         return [product, total_clients, num_clients_step1, num_clients_step2, Key];
 
@@ -263,66 +288,68 @@ async function manageIDBuyer(id, account) {
     try {
         let product = await EventsModule.GetRef(id);
 
-        let eventEncryptedReceived = await EventsModule.GetEncryptedKeySentSpecific(id, account.address)
-        let eventDecoderReceived = await EventsModule.GetKeySentSpecific(id, account.address)
-        let eventHashSent = await EventsModule.GetHashFromClient(account.address,id)
+        let eventEncryptedReceived = await EventsModule.GetEncryptedKeySentSpecific(id, account.address); //To check if we received the encrypted encoded key
+        let eventDecoderReceived = await EventsModule.GetKeySentSpecific(id, account.address); //To check if we received the decoder KEy
+        let eventHashSent = await EventsModule.GetHashFromClient(account.address, id); //To check if we sent our hash
 
-        let num_event2 = eventDecoderReceived.length
-        let num_event1 = eventEncryptedReceived.length - eventHashSent.length // Because in that case it is already done
-
-        return [product[0], num_event1, num_event2];
-
+        // !! allows to convert to boolean
+        let decoderReceived = !!eventDecoderReceived.length;
+        let encryptedEncodedReceived = !!eventEncryptedReceived.length;
+        let hashSent = !!eventHashSent.length;
+        return [product, hashSent, encryptedEncodedReceived, decoderReceived];
     } catch (e) {
         throw e;
     }
 }
 
+/*Function to get all our clients*/
 async function getClients(account, id) {
     try {
-        let num = await transactions.GetClients(account, id)
-        return num;
+        return await transactions.GetClients(account, id);
     } catch (e) {
         throw e;
     }
 
 }
 
-async function sendEncryptedEncodedKey(id, privateKey){
+/*Function to send the encrypted encoded keys to our clients*/
+async function sendEncryptedEncodedKey(id, Account) {
     try {
-        const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
-
         const all_clients = await transactions.GetClients(Account, id);
 
         let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
-        let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2) // So I compute a  need a list of addresses
-        let ClientsToDo = await EventsModule.ComputeLeft(all_clients, Address_ListClientsWhoReceivedK2) // Then i find who is left...
+        let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2); // So I compute a  need a list of addresses
+
+        let ClientsDisputes = await transactions.GetClientsDisputes(Account, id) // Get the clients who retrieved their money so we don't send them anything useless
+
+        let ClientsToDo_bis = await EventsModule.ComputeLeft(all_clients, Address_ListClientsWhoReceivedK2); // Then i find who is left...
+        let ClientsToDo = await EventsModule.ComputeLeft(ClientsToDo_bis, ClientsDisputes); // by getting the complementary of these 3 lists of addresses
 
         let myDH_obj = await readwrite.ReadAsObjectDH(__dirname + '/../Database/DH' + id.toString() + '_' + Account.address.toString() + '.txt');
 
-        let K = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
-        // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
+        let K = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt');
+        // Now we have to: Generate a K2 and store it for each client and send the hash of K xor K2
 
-        let done = 0 // To check how many were succesful at the end...
+        let done = 0; // To check how many were successful at the end...
         for (let i = 0; i < ClientsToDo.length; i++) {
-            console.log("in")
             let client_address = ClientsToDo[i];
 
             let Pub_Client = await EventsModule.GetPubDiffieClient(client_address, id);
-            let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
-            let K2 = crypto.RandomBytes(7);
+            let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client);
+            let K2 = crypto.RandomBytes(32);
 
-            let toEncrypt = crypto.OTP(K, K2)
+            let toEncrypt = crypto.OTP(K, K2);
 
-            let toSend = crypto.OTP(secret, toEncrypt)//.slice(0,4);
+            let toSend = crypto.OTP(secret, toEncrypt);
             let hashed = crypto.Hash(toEncrypt);
 
-            await readwrite.WriteAsRefSeller(__dirname + '/../Database/RefSeller' + id.toString() + '_' + ClientsToDo[i] + '.txt', hashed, K2)
+
+            await readwrite.WriteAsRefSeller(__dirname + '/../Database/RefSeller' + id.toString() + '_' + ClientsToDo[i] + '.txt', hashed, K2);
 
             try {
-                let receipt = await transactions.sendEncryptedEncodedKey(Account, id, client_address, toSend);
+                await transactions.sendEncryptedEncodedKey(Account, id, client_address, toSend);
                 done += 1;
-            }
-            catch(e){
+            } catch (e) {
                 throw e;
             }
         }
@@ -333,33 +360,35 @@ async function sendEncryptedEncodedKey(id, privateKey){
 
 }
 
-async function sendEncryptedEncodedKeyMalicious(id, privateKey) {
-    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+async function sendEncryptedEncodedKeyMalicious(id, Account) {
     const all_clients = await transactions.GetClients(Account, id);
     let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
-    let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2) // So I compute a  need a list of addresses
-    let ClientsToDo = await EventsModule.ComputeLeft(all_clients, Address_ListClientsWhoReceivedK2) // Then i find who is left...
+    let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2); // So I compute a  need a list of addresses
+    let ClientsDisputes = await transactions.GetClientsDisputes(Account, id) // Get the clients who retrieved their money so we don't send them anything useless
+
+    let ClientsToDobis = await EventsModule.ComputeLeft(all_clients, Address_ListClientsWhoReceivedK2); // Then i find who is left...
+    let ClientsToDo = await EventsModule.ComputeLeft(ClientsToDobis, ClientsDisputes); // by taking the complementary of these 3 lists
 
     let myDH_obj = await readwrite.ReadAsObjectDH(__dirname + '/../Database/DH' + id.toString() + '_' + Account.address.toString() + '.txt');
 
     // Now We have to: Generate a K2 and store it for eache client and send the hash of K xor K2
 
-    let done = 0 // To check how many were succesful at the end...
+    let done = 0; // To check how many were successful at the end...
     for (let i = 0; i < ClientsToDo.length; i++) {
         let client_address = ClientsToDo[i];
 
         let Pub_Client = await EventsModule.GetPubDiffieClient(client_address, id);
-        let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client)
-        let K2 = crypto.RandomBytes(7);
+        let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Client);
+        let K2 = crypto.RandomBytes(32);
 
-        let K_Malicious = crypto.RandomBytes(7);
+        let K_Malicious = crypto.RandomBytes(32);
 
-        let toEncrypt = crypto.OTP(K_Malicious, K2)
+        let toEncrypt = crypto.OTP(K_Malicious, K2);
 
-        let toSend = crypto.OTP(secret, toEncrypt)//.slice(0,4);
+        let toSend = crypto.OTP(secret, toEncrypt);
         let hashed = crypto.Hash(toEncrypt);
 
-        await readwrite.WriteAsRefSeller(__dirname + '/../Database/RefSeller' + id.toString() + '_' + ClientsToDo[i] + '.txt', hashed, K2)
+        await readwrite.WriteAsRefSeller(__dirname + '/../Database/RefSeller' + id.toString() + '_' + ClientsToDo[i] + '.txt', hashed, K2);
 
         let receipt = await transactions.sendEncryptedEncodedKey(Account, id, client_address, toSend);
         if (receipt) {
@@ -374,13 +403,13 @@ async function sendDecoderKey(id, Account) {
     try {
         let ClientsWhoSentHashes = await EventsModule.GetClientsWhoSentHashes(id); // This is a list of events corresponding to clients who sent me a hash
         let ClientsReceivedK2 = await EventsModule.GetKeysSent(id); // This is a list of events corresponding to the clients I already answered concerning their hashes
-        let Address_ListClientsWhoSentHashes = await EventsModule.EventsToAddresses(ClientsWhoSentHashes)  // Transformed into a list of addresses
-        let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsReceivedK2)  // Transformed into a list of addresses
-        let ClientsToDo = await EventsModule.ComputeLeft(Address_ListClientsWhoSentHashes, Address_ListClientsWhoReceivedK2) // Then i find who is left...
+        let Address_ListClientsWhoSentHashes = await EventsModule.EventsToAddresses(ClientsWhoSentHashes);  // Transformed into a list of addresses
+        let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsReceivedK2);  // Transformed into a list of addresses
+        let ClientsToDo = await EventsModule.ComputeLeft(Address_ListClientsWhoSentHashes, Address_ListClientsWhoReceivedK2); // Then i find who is left...
 
         // Now We have to: Verify each hash received with the ones we had saved
 
-        let done = 0 // To check how many were succesful at the end...
+        let done = 0; // To check how many were successful at the end...
         for (let i = 0; i < ClientsToDo.length; i++) {
             let myRef_obj = await readwrite.ReadAsObjectRefSeller(__dirname + '/../Database/RefSeller' + id.toString() + '_' + ClientsToDo[i] + '.txt');
 
@@ -389,9 +418,10 @@ async function sendDecoderKey(id, Account) {
             let correctHash = myRef_obj.hash;
 
             let eventReceivedHash = await EventsModule.GetHashFromClient(client_address, id);
-            let receivedHash =eventReceivedHash[0].returnValues.encodedKeyHash
+            let receivedHash = eventReceivedHash[0].returnValues.encodedKeyHash;
 
-            if (correctHash == receivedHash) {
+
+            if (correctHash === receivedHash) {
                 let receipt = await transactions.sendDecoderKey(Account, id, client_address, myRef_obj.K2);
                 if (receipt) {
                     done += 1;
@@ -406,18 +436,17 @@ async function sendDecoderKey(id, Account) {
 }
 
 /*Malicious Version*/
-async function sendDecoderKeyMalicious(id, privateKey) {
-    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+async function sendDecoderKeyMalicious(id, Account) {
 
     let ClientsWhoSentHashes = await EventsModule.GetClientsWhoSentHashes(id); // This is a list of events corresponding to clients who sent me a hash
     let ClientsReceivedK2 = await EventsModule.GetKeysSent(id); // This is a list of events corresponding to the clients I already answered concerning their hashes
-    let Address_ListClientsWhoSentHashes = await EventsModule.EventsToAddresses(ClientsWhoSentHashes)  // Transformed into a list of addresses
-    let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsReceivedK2)  // Transformed into a list of addresses
-    let ClientsToDo = await EventsModule.ComputeLeft(Address_ListClientsWhoSentHashes, Address_ListClientsWhoReceivedK2) // Then i find who is left...
+    let Address_ListClientsWhoSentHashes = await EventsModule.EventsToAddresses(ClientsWhoSentHashes);  // Transformed into a list of addresses
+    let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsReceivedK2);  // Transformed into a list of addresses
+    let ClientsToDo = await EventsModule.ComputeLeft(Address_ListClientsWhoSentHashes, Address_ListClientsWhoReceivedK2); // Then i find who is left...
 
-    // Now We have to: Verify each hash received with the ones we had saved
+    // Now we have to: Verify each hash received with the ones we had saved
 
-    let done = 0 // To check how many were succesful at the end...
+    let done = 0; // To check how many were successful at the end...
     for (let i = 0; i < ClientsToDo.length; i++) {
         let myRef_obj = await readwrite.ReadAsObjectRefSeller(__dirname + '/../Database/RefSeller' + id.toString() + '_' + ClientsToDo[i] + '.txt');
 
@@ -426,11 +455,11 @@ async function sendDecoderKeyMalicious(id, privateKey) {
         let correctHash = myRef_obj.hash;
 
         let eventReceivedHash = await EventsModule.GetHashFromClient(client_address, id);
-        let receivedHash = eventReceivedHash[0].returnValues.encodedKeyHash
+        let receivedHash = eventReceivedHash[0].returnValues.encodedKeyHash;
 
-        let K_Malicious = crypto.RandomBytes(7);
+        let K_Malicious = crypto.RandomBytes(32);
 
-        if (correctHash == receivedHash) {
+        if (correctHash === receivedHash) {
             let receipt = await transactions.sendDecoderKey(Account, id, client_address, K_Malicious);
             if (receipt) {
                 done += 1;
@@ -441,30 +470,28 @@ async function sendDecoderKeyMalicious(id, privateKey) {
 }
 
 /*Function for the client to send the hash of K xor K2 to the provider*/
-async function sendClientHash(id, privateKey) {
+async function sendClientHash(id, Account) {
     try {
-        const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
-
-        let product = await EventsModule.GetRef(id)
+        let product = await EventsModule.GetRef(id);
 
         let myDH_obj = await readwrite.ReadAsObjectDH(__dirname + '/../Database/DH' + id.toString() + '_' + Account.address.toString() + '.txt'); //Loading my DH keys from the database
-        let seller_address = await EventsModule.EventsToAddresses(product) //getting the seller's address neeeded to get his public key
+        let seller_address = await EventsModule.EventsToAddresses(product); //getting the seller's address neeeded to get his public key
         let Pub_Seller = await EventsModule.GetPubDiffieSeller(seller_address[0], id); // now getting the sellers public DH key
-        let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Seller) // we now have the diffie-Hellman secret key..
+        let secret = crypto.DiffieHellmanComputeSecret(prime, myDH_obj.PubDH, myDH_obj.PrivDH, Pub_Seller); // we now have the diffie-Hellman secret key..
 
 
-        let encrypted_event = await EventsModule.GetEncryptedKeySentSpecific(id, Account.address) // Get the K xor K2 xor K3 the provider sent me
-        let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey)).slice(0, 7) // The actual value
+        let encrypted_event = await EventsModule.GetEncryptedKeySentSpecific(id, Account.address); // Get the K xor K2 xor K3 the provider sent me
+        let encrypted = Buffer.from(web3.utils.hexToBytes(encrypted_event[0].returnValues.encryptedEncodedKey));
 
-        let decryptedToBeHashed = crypto.OTP(secret, encrypted).slice(0, 7);
-        let HashTobeSent = crypto.Hash(decryptedToBeHashed)
+        let decryptedToBeHashed = crypto.OTP(secret, encrypted);
+        let HashTobeSent = crypto.Hash(decryptedToBeHashed);
 
-
-        await readwrite.WriteAsRefBuyer(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt', decryptedToBeHashed)
-        let done = 0 // value to verify later that everything went correctly
-        let receipt = transactions.SendHashToProvider(Account, id, HashTobeSent)
+        await readwrite.WriteAsRefBuyer(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt', decryptedToBeHashed);
+        let receipt = transactions.SendHashToProvider(Account, id, HashTobeSent);
         // Now we can do the OTP
 
+        // These lines are for the old server only
+        let done = 0; // value to verify later that everything went correctly
         if (receipt) {
             done = 1;
         }
@@ -475,13 +502,12 @@ async function sendClientHash(id, privateKey) {
 }
 
 /*Function for the client to send a fake hash of K xor K2 to the provider*/
-async function sendClientHashMalicious(id, privateKey) {
+async function sendClientHashMalicious(id, Account) {
     try {
-        const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
-        let HashTobeSent = crypto.Hash((new Buffer.from("fakeClientHash")))
+        let HashTobeSent = crypto.Hash((new Buffer.from("fakeClientHash")));
 
-        let done = 0 // value to verify later that everything went correctly
-        let receipt = transactions.SendHashToProvider(Account, id, HashTobeSent)
+        let done = 0; // value to verify later that everything went correctly
+        let receipt = transactions.SendHashToProvider(Account, id, HashTobeSent);
         // Now we can do the OTP
 
         if (receipt) {
@@ -495,20 +521,15 @@ async function sendClientHashMalicious(id, privateKey) {
 }
 
 /*Function for the client to receive K2, compute K and save it*/
-async function ComputeK(id, privateKey) {
+async function ComputeK(id, Account) {
     try {
-        const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
-
-        let RefBuyer = await readwrite.ReadAsObjectRefClient(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt')
+        let RefBuyer = await readwrite.ReadAsObjectRefClient(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt');
         let K2_event = await EventsModule.GetClientDecoder(id, Account.address);
 
-        let K2 = Buffer.from(web3.utils.hexToBytes(K2_event[0].returnValues.keyDecoder)).slice(0, 7) // The actual value
-
-        RefBuyer.K2 = K2;
-        await readwrite.WriteAsRefBuyer(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt', RefBuyer.KxorK2, RefBuyer.K2)
-        let K = crypto.OTP(RefBuyer.KxorK2, RefBuyer.K2)
-
-        return K;
+        // The actual value
+        RefBuyer.K2 = Buffer.from(web3.utils.hexToBytes(K2_event[0].returnValues.keyDecoder));
+        await readwrite.WriteAsRefBuyer(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt', RefBuyer.KxorK2, RefBuyer.K2);
+        return crypto.OTP(RefBuyer.KxorK2, RefBuyer.K2);
     } catch (e) {
         throw e;
     }
@@ -516,40 +537,35 @@ async function ComputeK(id, privateKey) {
 }
 
 /*Function to Check if it is possible to raise a dispute, or to retrieve your money*/
-async function DisputeInfoClient(id, privateKey) {
+async function DisputeInfoClient(id, Account) {
     try {
-        const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
-        let bool = false
+        let encoderEvent = await EventsModule.GetKeySentSpecific(id, Account.address);
+        let buyEvent = await EventsModule.GetBoughtRefSpecific(id, Account.address);
+        let disputeEvent = await EventsModule.GetDispute(Account.address, id); // Check if already disputed
 
-        let encoderEvent = await EventsModule.GetKeySentSpecific(id, Account.address)
-        let buyEvent = await EventsModule.GetBoughtRefSpecific(id, Account.address)
-        let disputeEvent = await EventsModule.GetDispute(Account.address, id) // Check if already disputed
-        if (disputeEvent.length >0){
-            bool = true
-        }
+        let alreadyDisputed = !!(disputeEvent.length);
+        let alreadyEncoded = !!(encoderEvent.length);
+        let possibleRefund = web3.utils.fromWei(buyEvent[0].returnValues.fund, 'ether');
 
-        return [encoderEvent.length, web3.utils.fromWei(buyEvent[0].returnValues.fund,'ether'), bool];
+        return [alreadyEncoded, possibleRefund, alreadyDisputed];
     } catch (e) {
         throw e;
     }
 
 }
 
-/*Function to to raise a dispute, or to retrieve your money*/
-async function Dispute(id, privateKey) {
+/*Function to raise a dispute, or to retrieve your money*/
+async function Dispute(id, Account) {
     try {
-        const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
-
-        let funds =0;
-        let receipt = await transactions.RaiseDispute(Account, id)
+        let funds = 0;
+        let receipt = await transactions.RaiseDispute(Account, id);
         if (receipt) {
-            let disputeEvent = await EventsModule.GetDispute(Account.address, id)
+            let disputeEvent = await EventsModule.GetDispute(Account.address, id);
 
-            if (disputeEvent.length >0){
-                funds = web3.utils.fromWei(disputeEvent[0].returnValues.funds,'ether');
+            if (disputeEvent.length > 0) {
+                funds = web3.utils.fromWei(disputeEvent[0].returnValues.funds, 'ether');
             }
         }
-
         return funds;
     } catch (e) {
         throw e;
@@ -559,40 +575,48 @@ async function Dispute(id, privateKey) {
 
 /*For a provider to release the reference Key*/
 async function sendReferenceKey(id, Account) {
-    let refKey = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt')
+    let refKey = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt');
 
-    let receipt = await transactions.sendRefKey(Account, id, refKey)
+    let receipt = await transactions.sendRefKey(Account, id, refKey);
 
     return [receipt, refKey];
 }
 
 /*For a provider to release the reference Key*/
-async function sendReferenceKeyMalicious(id, privateKey) {
-    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
+async function sendReferenceKeyMalicious(id, Account) {
     let refKeyMalicious = crypto.RandomBytes(7);
 
-    let receipt = await transactions.sendRefKey(Account,id,refKeyMalicious)
+    let receipt = await transactions.sendRefKey(Account, id, refKeyMalicious);
 
-    return [receipt,refKeyMalicious];
+    return [receipt, refKeyMalicious];
 }
 
 /*Function to to raise a dispute, or to retrieve your money*/
-async function withdrawFundsProvider(id, privateKey) {
-    const Account = web3.eth.accounts.privateKeyToAccount(privateKey);
-
-    let receipt = await transactions.withdrawFundsProvider(Account,id)
-
-    let funds = 0
-    let withdrawEvent = await EventsModule.WithdrawFundsEvent(id);
-    if (receipt){
+async function withdrawFundsProvider(id, Account) {
+    try {
+        let receipt = await transactions.withdrawFundsProvider(id, Account);
+        let funds = 0;
         let withdrawEvent = await EventsModule.WithdrawFundsEvent(id);
-        if (withdrawEvent.length > 0){
-            funds =  web3.utils.fromWei(withdrawEvent[0].returnValues.funds,'ether');
+        if (withdrawEvent.length > 0) {
+            funds = web3.utils.fromWei(withdrawEvent[0].returnValues.funds, 'ether');
         }
+        return funds;
+    } catch (e) {
+        throw e;
     }
+}
+/*Function for a provider to add a TLE*/
+async function addTLE(id,account,spaceObject,line1,line2) {
+    try {
+        let arrayTLE = TLE.convertStrToBin(line1, line2)
+        const BuffTLE = new Buffer.from(arrayTLE,'hex');
 
 
-    return funds;
+        // TODO PSEUDORANDOM
+        return await transactions.addTLE(account, id, spaceObject, BuffTLE)
+    } catch (e) {
+        throw e;
+    }
 }
 
 
@@ -634,6 +658,7 @@ module.exports = {
     sendEncryptedEncodedKeyMalicious,
     sendDecoderKeyMalicious,
     sendReferenceKeyMalicious,
-    withdrawFundsProvider
+    withdrawFundsProvider,
+    OngoingPurchases
 
 };

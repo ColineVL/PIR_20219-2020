@@ -16,8 +16,11 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         uint indexed referenceId,
         address indexed client,
         uint fund,
-        bytes32 publicKeyDH,
-        uint time);
+        uint time,
+        bytes32 publicKeyDH1,
+        bytes32 publicKeyDH2,
+        bytes32 publicKeyDH3,
+        bytes32 publicKeyDH4);
 
     event encodedKeyHash(
         uint indexed referenceId,
@@ -64,7 +67,12 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     */
 
 
-    function buyReference(uint _referenceId, bytes32 _publicKeyDH) isPayed(_referenceId) payable external {
+    function buyReference(
+        uint _referenceId,
+        bytes32 _publicKeyDH1,
+        bytes32 _publicKeyDH2,
+        bytes32 _publicKeyDH3,
+        bytes32 _publicKeyDH4) isPayed(_referenceId) payable external {
 
         // Checks that client did not already buy the reference
         require(dataReferences[_referenceId].isClient[msg.sender] == false);
@@ -76,7 +84,14 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         dataReferences[_referenceId].clientFunds[msg.sender] = msg.value;
         dataReferences[_referenceId].withdrawableFunds += msg.value;
 
-        emit newClient(_referenceId, msg.sender, msg.value, _publicKeyDH, now);
+        emit newClient(_referenceId,
+            msg.sender,
+            msg.value,
+            now,
+            _publicKeyDH1,
+            _publicKeyDH2,
+            _publicKeyDH3,
+            _publicKeyDH4);
     }
 
 
@@ -88,7 +103,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         */
 
         if (dataReferences[_referenceId].encodedKeyHash[msg.sender] == 0) {
-            dataReferences[_referenceId].encodedKeyHash[msg.sender] == _encodedKeyHash;
+            dataReferences[_referenceId].encodedKeyHash[msg.sender] = _encodedKeyHash;
         }
 
         emit encodedKeyHash(_referenceId, msg.sender, _encodedKeyHash);
@@ -131,7 +146,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
     This is needed so he does not withdraw insuranceDeposit multiple times
     */
 
-    function raiseDispute(uint _referenceId) isClient(_referenceId) external returns(bool) {
+    function raiseDispute(uint _referenceId) isClient(_referenceId) external returns (bool) {
 
         uint funds = dataReferences[_referenceId].clientFunds[msg.sender];
 
@@ -177,5 +192,6 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         // Client did not withdrew funds
         return false;
     }
+
 
 }

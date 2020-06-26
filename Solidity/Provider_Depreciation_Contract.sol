@@ -20,9 +20,14 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
         uint64 minimumData,
         uint64 deployTime,
         uint64 endTime,
-        bytes32 publicKeyDH,
         uint8 depreciationType,
-        string description);
+        string description,
+        bytes32 publicKeyDH1,
+        bytes32 publicKeyDH2,
+        bytes32 publicKeyDH3,
+        bytes32 publicKeyDH4
+        );
+
 
     event encryptedEncodedKeyEvent(
         uint indexed referenceId,
@@ -52,9 +57,13 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     function createDataReference(uint _initialPrice,
         uint64 _minimumData,
         uint64 _referenceDuration,
-        bytes32 _publicKeyDH,
         uint8 _depreciationType,
-        string memory _description) payable public {
+        string memory _description,
+        bytes32 _publicKeyDH1,
+        bytes32 _publicKeyDH2,
+        bytes32 _publicKeyDH3,
+        bytes32 _publicKeyDH4
+    ) payable public {
 
         /*
             Creating data reference object and inserting data
@@ -86,13 +95,17 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
             _minimumData,
             uint64(now),
             newReference.endTime,
-            _publicKeyDH,
             _depreciationType,
-            _description);
+            _description,
+            _publicKeyDH1,
+            _publicKeyDH2,
+            _publicKeyDH3,
+            _publicKeyDH4);
+
     }
 
     // 5 days after the end of the contract/reference the provider can withdraw the available funds
-    function withdrawFunds(uint _referenceId) onlyProvider(_referenceId) external{
+    function withdrawFunds(uint _referenceId) onlyProvider(_referenceId) external {
 
         // Checks if the provider has waited for the time limit for clients to set a dispute
         // !!!!!!!!!!!!!!! TODO CHANGE LATER TO 5 DAYS
