@@ -691,7 +691,6 @@ function uploadNewTLE() {
         $("#newTLE_message").hide();
         loadXMLDoc("uploadNewTLE/" + JSON.stringify(json), callbackUploadNewTLE, callbackErrorUploadNewTLE);
     }
-
 }
 
 function loadNewTLEForm() {
@@ -734,6 +733,20 @@ function callbackpostRefKey(result) {
 function postRefKey() {
     const id = $('#productInfo_referenceID').text();
     loadXMLDoc("postRefKey/" + id, callbackpostRefKey, callbackError);
+}
+
+/** Withdraw Funds **/
+function callbackWithdrawFunds(param) {
+    $("#manageIdSeller_message").show();
+    $("#manageIdSeller_message").html("Successfully withdrew funds. You received " + param["funds"] + " Ether.");
+}
+function callbackErrorWithdrawFunds(err) {
+    $("#manageIdSeller_message").show();
+    $("#manageIdSeller_message").html(err);
+}
+function withdrawFunds() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("withdrawFunds/" + id, callbackWithdrawFunds, callbackErrorWithdrawFunds);
 }
 
 /** Error **/

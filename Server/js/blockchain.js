@@ -303,7 +303,7 @@ async function sendEncryptedEncodedKey(id, Account) {
         let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
         let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2); // So I compute a  need a list of addresses
 
-        let ClientsDisputes = await transactions.GetClientsDisputes(Account,id) // Get the clients who retrieved their money so we don't send them anything useless
+        let ClientsDisputes = await transactions.GetClientsDisputes(Account, id) // Get the clients who retrieved their money so we don't send them anything useless
 
         let ClientsToDo_bis = await EventsModule.ComputeLeft(all_clients, Address_ListClientsWhoReceivedK2); // Then i find who is left...
         let ClientsToDo = await EventsModule.ComputeLeft(ClientsToDo_bis, ClientsDisputes); // by getting the complementary of these 3 lists of addresses
@@ -347,10 +347,10 @@ async function sendEncryptedEncodedKeyMalicious(id, Account) {
     const all_clients = await transactions.GetClients(Account, id);
     let ClientsWhoReceivedK2 = await EventsModule.GetEncryptedKeysSent(id); // This is a list of events
     let Address_ListClientsWhoReceivedK2 = await EventsModule.EventsToAddresses(ClientsWhoReceivedK2); // So I compute a  need a list of addresses
-    let ClientsDisputes = await transactions.GetClientsDisputes(Account,id) // Get the clients who retrieved their money so we don't send them anything useless
+    let ClientsDisputes = await transactions.GetClientsDisputes(Account, id) // Get the clients who retrieved their money so we don't send them anything useless
 
     let ClientsToDobis = await EventsModule.ComputeLeft(all_clients, Address_ListClientsWhoReceivedK2); // Then i find who is left...
-    let ClientsToDo = await EventsModule.ComputeLeft(ClientsToDobis,ClientsDisputes); // by taking the complementary of these 3 lists
+    let ClientsToDo = await EventsModule.ComputeLeft(ClientsToDobis, ClientsDisputes); // by taking the complementary of these 3 lists
 
     let myDH_obj = await readwrite.ReadAsObjectDH(__dirname + '/../Database/DH' + id.toString() + '_' + Account.address.toString() + '.txt');
 
@@ -576,19 +576,17 @@ async function sendReferenceKeyMalicious(id, Account) {
 
 /*Function to to raise a dispute, or to retrieve your money*/
 async function withdrawFundsProvider(id, Account) {
-
-    let receipt = await transactions.withdrawFundsProvider(Account, id);
-
-    let funds = 0;
-    if (receipt) {
+    try {
+        let receipt = await transactions.withdrawFundsProvider(id, Account);
+        let funds = 0;
         let withdrawEvent = await EventsModule.WithdrawFundsEvent(id);
         if (withdrawEvent.length > 0) {
             funds = web3.utils.fromWei(withdrawEvent[0].returnValues.funds, 'ether');
         }
+        return funds;
+    } catch (e) {
+        throw e;
     }
-
-
-    return funds;
 }
 
 

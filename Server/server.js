@@ -203,7 +203,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/confirmDispute/:id', async (req, res) => {
         try {
             let funds = await bc.Dispute(req.params.id, req.session.Account);
-            res.json({id: req.params.id, funds:funds});
+            res.json({id: req.params.id, funds: funds});
         } catch (e) {
             console.log(e);
             res.status(500).json(e.message);
@@ -289,6 +289,16 @@ app.use('/public', express.static(__dirname + '/public'))
         } catch (e) {
             console.error(e);
             res.status(500).json(e.message);
+        }
+    })
+
+    /** Seller withdraw funds **/
+    .get('/withdrawFunds/:id', async (req, res) => {
+        try {
+            let funds = await bc.withdrawFundsProvider(req.params.id, req.session.Account);
+            res.json({id: req.params.id, funds: funds});
+        } catch (e) {
+            throw e;
         }
     })
 

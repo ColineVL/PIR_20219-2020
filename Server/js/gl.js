@@ -326,6 +326,7 @@ myLayout.registerComponent('manageIdSellerItem', function (container, state) {
         '<li onclick="sendDecoderKey()">Verify hashes and send Decoder Key (K2): <var id="manageIdSeller_NumClientsStep2"></var> clients</li>' +
         '<li id="manageIdSeller_keyNotReleased" onclick="postRefKey()">Release reference key (key not released yet)</li>' +
         '<li id="manageIdSeller_keyReleased">Key is released: <var id="manageIdSeller_releasedKey"></var></li>' +
+        '<li onclick="withdrawFunds()">Withdraw funds</li>' +
         '</ul>' +
         '<p class="message" id="manageIdSeller_message"></p>' +
         '</div>'

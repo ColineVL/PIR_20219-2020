@@ -545,7 +545,7 @@ module.exports = {
         }
     },
     /*For a provider to  withdraw funds*/
-    withdrawFundsProvider: async function (account, id) {
+    withdrawFundsProvider: async function (id, account) {
         try {
             const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
             const txnCount = await web3.eth.getTransactionCount(account.address, "pending");
@@ -561,7 +561,7 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            return web3.eth.sendSignedTransaction(rawTxHex);
+            return await web3.eth.sendSignedTransaction(rawTxHex);
         } catch (e) {
             throw e;
         }
@@ -572,27 +572,30 @@ module.exports = {
 
     /*For a provider to  add a TLE to a certain reference */
     addTLE: async function (account,id,spaceObject,line1,line2) {
-        let line1Bin = web3.utils.bytesToHex(line1);
-        let line2Bin = web3.utils.bytesToHex(line2);
+        try {
+            let line1Bin = web3.utils.bytesToHex(line1);
+            let line2Bin = web3.utils.bytesToHex(line2);
 
 
-        const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
-        const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
-        const dataref = contract.methods.setTLE(id,spaceObject,line1Bin,line2Bin).encodeABI();
-        const rawTx = {
-            nonce: web3.utils.numberToHex(txnCount),
-            gasPrice: web3.utils.numberToHex(1500),
-            gasLimit: web3.utils.numberToHex(4700000),
-            to: ContractAddress,
-            data: dataref
-        };
-        const tx = new Tx(rawTx);
-        tx.sign(privateKey);
-        const serializedTx = tx.serialize();
-        const rawTxHex = '0x' + serializedTx.toString('hex');
-        let funds = web3.eth.sendSignedTransaction(rawTxHex)
-            .catch(function(error){console.log(error)});
-        return funds;
+            const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
+            const txnCount = await web3.eth.getTransactionCount(account.address, "pending");
+            const dataref = await contract.methods.setTLE(id,spaceObject,line1Bin,line2Bin).encodeABI();
+            const rawTx = {
+                nonce: web3.utils.numberToHex(txnCount),
+                gasPrice: web3.utils.numberToHex(1500),
+                gasLimit: web3.utils.numberToHex(4700000),
+                to: ContractAddress,
+                data: dataref
+            };
+            const tx = new Tx(rawTx);
+            tx.sign(privateKey);
+            const serializedTx = tx.serialize();
+            const rawTxHex = '0x' + serializedTx.toString('hex');
+            let funds = await web3.eth.sendSignedTransaction(rawTxHex);
+            return funds;
+        } catch (e) {
+            throw e;
+        }
     },
 
     /*Function to view the TLEs set for a certain reference*/

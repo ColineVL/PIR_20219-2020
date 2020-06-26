@@ -392,7 +392,6 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    /* Malicious Version K*/
     .get('/WithdrawFundsProvider/', async (req, res) => {
         if (req.session.Account) {
             const id = req.query.id;
