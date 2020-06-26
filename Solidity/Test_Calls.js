@@ -96,29 +96,12 @@ var bytes = web3.utils.bytesToHex(Kop);
     //     console.log(receipt);
     // });
     // console.log("*************************************");
-    const map =  await contract.methods.getK2(0).call({from : account1});
-    // const clients = await contract.methods.dataRefer.call(transactionObject);
-    console.log("K received:")
-    console.log(map[0])
-
-    console.log("K2 received:")
-    console.log(map[1])
-
-    console.log("hash received:")
-    console.log(map[2])
-
-    console.log("computed xor:")
-    console.log(map[3])
-
-    console.log("Computed Hash:")
-    console.log(map[4])
+    // const map =  await contract.methods.getK2(0).call({from : account1});
+    // // const clients = await contract.methods.dataRefer.call(transactionObject);
+    // console.log("K received:")
+    // console.log(map[0])
 
 
-    console.log("bool hash:")
-    console.log(map[5])
-
-    console.log("bool min length:")
-    console.log(map[6])
     // // const data = await contract.methods.getData().call(transactionObject);
     // console.log("data refs :" + map.clients);
     // console.log(map)
@@ -137,7 +120,7 @@ var bytes = web3.utils.bytesToHex(Kop);
     //
     // console.log(events.callback())
     console.log("**********************************");
-    let res1 =  contractws.getPastEvents("encodedKeyHash", {
+    let res1 =  contractws.getPastEvents("newTLE", {
        filter: {referenceId: 0 },
         fromBlock: 0,
         toBlock: 'latest'

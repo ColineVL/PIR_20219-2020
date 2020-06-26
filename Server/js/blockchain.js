@@ -610,7 +610,7 @@ async function withdrawFundsProvider(id, Account) {
 async function addTLE(jsonInfo,account){//id,account,spaceObject,line1,line2) {
     jsonInfo = JSON.parse(jsonInfo);
     const id = jsonInfo["id"];
-    const spaceObject = jsonInfo["spaceObject"];
+    const spaceObject = jsonInfo["line0"];
     const line1 = jsonInfo["line1"];
     const line2 = jsonInfo["line2"];
 
@@ -618,11 +618,11 @@ async function addTLE(jsonInfo,account){//id,account,spaceObject,line1,line2) {
         let arrayTLE = TLE.convertStrToBin(line1, line2)
         const rawBuffTLE = new Buffer.from(arrayTLE,'hex');
 
-        let K = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt');
+        let K = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt');
 
         let pseudoK = crypto.pseudoRandomGenerator(K,59).slice(10) // To get a size of 49, a,d ,o 00's at the beginning
 
-        const encryptedBuffTLE = OTP(pseudoK,rawBuffTLE)
+        const encryptedBuffTLE = crypto.OTP(pseudoK,rawBuffTLE)
         return await transactions.addTLE(account, id, spaceObject, encryptedBuffTLE)
     } catch (e) {
         throw e;
