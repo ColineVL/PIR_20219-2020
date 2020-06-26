@@ -80,7 +80,9 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            return await web3.eth.sendSignedTransaction(rawTxHex);
+            let res = await web3.eth.sendSignedTransaction(rawTxHex)
+            console.log(res)
+            return res;
         } catch (e) {
             throw e;
         }
@@ -108,7 +110,9 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            return await web3.eth.sendSignedTransaction(rawTxHex);
+            let res =  await web3.eth.sendSignedTransaction(rawTxHex)
+            console.log(res)
+            return res;
         } catch (e) {
             throw e;
         }
@@ -160,7 +164,9 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            return web3.eth.sendSignedTransaction(rawTxHex);
+            let res =  await web3.eth.sendSignedTransaction(rawTxHex)
+            console.log(res)
+            return res;
         } catch (e) {
             throw e;
         }
@@ -185,7 +191,9 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            return await web3.eth.sendSignedTransaction(rawTxHex);
+            let res =  await web3.eth.sendSignedTransaction(rawTxHex)
+            console.log(res)
+            return res;
         } catch (e) {
             throw e;
         }
@@ -208,7 +216,9 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            return await web3.eth.sendSignedTransaction(rawTxHex);
+            let res =  await web3.eth.sendSignedTransaction(rawTxHex)
+            console.log(res)
+            return res;
         } catch (e) {
             throw e;
         }
@@ -230,7 +240,9 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            return await web3.eth.sendSignedTransaction(rawTxHex);
+            let res =  await web3.eth.sendSignedTransaction(rawTxHex)
+            console.log(res)
+            return res;
         } catch (e) {
             throw e;
         }
@@ -254,7 +266,9 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            return web3.eth.sendSignedTransaction(rawTxHex);
+            let res =  await web3.eth.sendSignedTransaction(rawTxHex)
+            console.log(res)
+            return res;
         } catch (e) {
             throw e;
         }
@@ -276,7 +290,9 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            return await web3.eth.sendSignedTransaction(rawTxHex);
+            let res =  await web3.eth.sendSignedTransaction(rawTxHex)
+            console.log(res)
+            return res;
         } catch (e) {
             throw e;
         }
@@ -305,7 +321,8 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            let funds = web3.eth.sendSignedTransaction(rawTxHex);
+            let funds = await web3.eth.sendSignedTransaction(rawTxHex);
+            console.log(funds)
             return funds;
         } catch (e) {
             throw e;

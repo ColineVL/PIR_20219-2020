@@ -374,7 +374,7 @@ async function sendDecoderKey(id, Account) {
         let ClientsToDo = await EventsModule.ComputeLeft(Address_ListClientsWhoSentHashes, Address_ListClientsWhoReceivedK2); // Then i find who is left...
 
         // Now We have to: Verify each hash received with the ones we had saved
-
+        console.log(ClientsToDo.length)
         let done = 0; // To check how many were successful at the end...
         for (let i = 0; i < ClientsToDo.length; i++) {
             let myRef_obj = await readwrite.ReadAsObjectRefSeller(__dirname + '/../Database/RefSeller' + id.toString() + '_' + ClientsToDo[i] + '.txt');
@@ -501,7 +501,23 @@ async function computeK(id, Account) {
     } catch (e) {
         throw e;
     }
+}
 
+/*Computes information for managing an Id Buyer side*/
+async function ManageSales(account) {
+    try {
+        let Ids = await EventsModule.GetSoldRefs(account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+
+        let IdsFinished = await EventsModule.WithdrawFundsEventGeneral() // Ids for which funds have been withdrawn
+
+        let IdsToShow_id = await EventsModule.ComputeLeft(EventsModule.EventsToIds(Ids),EventsModule.EventsToIds(IdsFinished))
+
+        let IdsToShowEventForm = await EventsModule.GetRefs(IdsToShow_id);
+
+        return IdsToShowEventForm;
+    } catch (e) {
+        throw e;
+    }
 }
 
 /*Function to Check if it is possible to raise a dispute, or to retrieve your money*/
@@ -670,6 +686,7 @@ module.exports = {
     sellReference,
     manageIdSeller,
     addTLE,
+    ManageSales,
 
     sendEncryptedEncodedKey,
     sendDecoderKey,

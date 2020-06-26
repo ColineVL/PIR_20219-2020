@@ -246,4 +246,18 @@ console.log(typeof TLE)
 console.log(new Buffer.from(TLE,'hex'))
 
 
+let myTLE = "ISS (ZARYA)             \n" +
+    "1 25544U 98067A   15072.49481260  .00015160  00000-0  22746-3 0  9996\n" +
+    "2 25544  51.6455 202.0211 0009011  96.7253 350.6362 15.55088493933142";
+
+// var satOpts = {
+//     map: map,
+//     tle: TLE,
+//     pathLength: 2,
+// };
+// var myMap = new google.maps.Map(...);
+// var myTLE = new orbits.TLE(tle_text);
+var mySat = new orbits.Satellite({ map: myMap, tle: myTLE});
+
+
 

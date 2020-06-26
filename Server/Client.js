@@ -36,9 +36,17 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /* Home view */
     .get('', async (req, res) => {
+
+        let myTLE = "ISS (ZARYA)             \n" +
+            "1 25544U 98067A   15072.49481260  .00015160  00000-0  22746-3 0  9996\n" +
+            "2 25544  51.6455 202.0211 0009011  96.7253 350.6362 15.55088493933142";
+        // src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4pFfuluZ6F8HdeJoBHoHAaWbIVs68zRQ&callback=initMap&libraries=&v=weekly"
+
+
+
         if (req.session.Account) {
             let funds = await bc.getBalance(req.session.Account.address);
-            res.render('homeClient.ejs', {account: req.session.Account, funds: funds});
+            res.render('homeClient.ejs', {account: req.session.Account, funds: funds,TLE:myTLE});
         } else {
             res.render('homeClient.ejs', {account: req.session.Account});
         }
