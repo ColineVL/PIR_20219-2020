@@ -641,7 +641,6 @@ async function clientReadTLEs(id, account) {
         let rawTLES = await transactions.GetTLEs(account, id);
         let stringTLES = [];
         for (let i = 0; i < rawTLES["1"].length; i++) {
-            console.log("dans la boucle");
             let encryptedBuff1 = new Buffer.from(rawTLES["1"][i].TLE1, 'hex');
             let encryptedBuff2 = new Buffer.from(rawTLES["1"][i].TLE2, 'hex');
             let spaceObject = rawTLES["1"][i].spaceObject;
@@ -704,5 +703,4 @@ module.exports = {
     OngoingPurchases,
     clientReadTLEs,
     addTLE,
-
 };

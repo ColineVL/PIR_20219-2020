@@ -321,12 +321,26 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /************ Delete these gets ************/
+
+
     .get('/maketransaction/:jsonInfo', async (req, res) => {
         let receipt = await bc.createTransaction(req.params.jsonInfo);
         res.json(receipt);
     })
 
+    /************ Malicious gets ************/
 
+    /* Send a fake hash I compute to the provider */
+    .get('/sendBuyerHashMalicious/:id', async (req, res) => {
+        try {
+            await bc.sendClientHashMalicious(req.params.id, req.session.Account);
+            res.json(req.params.id);
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
 
     /************ Close the server ************/
 

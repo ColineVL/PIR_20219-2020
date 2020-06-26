@@ -455,31 +455,54 @@ function callbackManageIdBuyer(param) {
     if (!encryptedEncodedReceived) {
         // Waiting for the encrypted encoded key
         $('#manageidBuyer_encryptedEncodedWaiting').show();
+
         $('#manageidBuyer_sendHash').hide();
+        $('#manageidBuyer_sendHashMalicious').hide();
+
         $('#manageidBuyer_decoderKeyWaiting').hide();
+
         $('#manageidBuyer_decoderKeyReceived').hide();
+        $('#manageIdBuyer_seeTLES').hide();
+
     } else {
         // Encrypted encoded key received
         if (!hashSent) {
             // Client has to send the hash
             $('#manageidBuyer_encryptedEncodedWaiting').hide();
+
             $('#manageidBuyer_sendHash').show();
+            $('#manageidBuyer_sendHashMalicious').show();
+
             $('#manageidBuyer_decoderKeyWaiting').hide();
+
             $('#manageidBuyer_decoderKeyReceived').hide();
+            $('#manageIdBuyer_seeTLES').hide();
+
         } else {
             // Client has sent the hash
             if (!decoderReceived) {
                 // Waiting for the decoder key
                 $('#manageidBuyer_encryptedEncodedWaiting').hide();
+
                 $('#manageidBuyer_sendHash').hide();
+                $('#manageidBuyer_sendHashMalicious').hide();
+
                 $('#manageidBuyer_decoderKeyWaiting').show();
+
                 $('#manageidBuyer_decoderKeyReceived').hide();
+                $('#manageIdBuyer_seeTLES').hide();
+
             } else {
                 // Decoder key received, client can compute
                 $('#manageidBuyer_encryptedEncodedWaiting').hide();
+
                 $('#manageidBuyer_sendHash').hide();
+                $('#manageidBuyer_sendHashMalicious').hide();
+
                 $('#manageidBuyer_decoderKeyWaiting').hide();
+
                 $('#manageidBuyer_decoderKeyReceived').show();
+                $('#manageIdBuyer_seeTLES').show();
             }
         }
     }
@@ -562,10 +585,8 @@ function confirmDispute() {
 
 /** See TLEs **/
 function callbackSeeTLEs(result) {
-    console.log(result["TLEs"]);
-    console.log(typeof result["TLEs"]);
-
     addItem(seeTLEsItem);
+    $('#seeTLEs_id').html(result["id"]);
     let html = "";
     for (const TLE of result['TLEs']) {
         html += "<details>";
@@ -834,4 +855,13 @@ function makeTransaction() {
         $("#newTLE_message").hide();
         loadXMLDoc("maketransaction/" + JSON.stringify(json), callbackMakeTransaction, callbackError);
     }
+}
+
+/********************************
+ * Malicious functions
+ ********************************/
+
+function sendBuyerHashMalicious() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("sendBuyerHashMalicious/" + id, callbackSendBuyerHash, callbackErrorManageIdBuyer);
 }
