@@ -19,6 +19,8 @@ const crypto = require('./CryptoModule');
 const readwrite = require('./ReadWriteModule');
 const database = require('./database.js');
 const EventsModule = require('./EventsModule');
+const TLE = require('./TLE');
+
 
 
 const Diffie = database.newDiffieSchema();
@@ -217,6 +219,7 @@ async function buyProduct(id, account) {
     }
 }
 
+/*Get the current price of a certain reference*/
 async function getCurrentPrice(account, id) {
     try {
         let currentPrice = await transactions.GetCurrentPrice(account, id);
@@ -226,7 +229,21 @@ async function getCurrentPrice(account, id) {
     } catch (e) {
         throw e;
     }
+}
 
+/*Computes information for Ongoing purchases view*/
+async function OngoingPurchases(account) {
+    try {
+        let Ids = await EventsModule.GetBoughtRefs(account); // Get the Refs which were bought
+        let WithdrawnIds = await EventsModule.WithdrawFundsEventGeneral(); // References for which funds have been withdrawn
+
+        let ongoingIds = await EventsModule.ComputeLeft(EventsModule.EventsToIds(Ids),EventsModule.EventsToIds(WithdrawnIds)); // Only the ongoing one's
+
+        let ongoingIdsEvents = await EventsModule.GetRefs(ongoingIds); // Transform back to events
+        return ongoingIdsEvents;
+    } catch (e) {
+        throw e;
+    }
 }
 
 /********************************
@@ -586,9 +603,18 @@ async function withdrawFundsProvider(id, Account) {
             funds = web3.utils.fromWei(withdrawEvent[0].returnValues.funds, 'ether');
         }
     }
-
-
     return funds;
+}
+/*Function for a provider to add a TLE*/
+async function addTLE(id,account,spaceObject,line1,line2) {
+
+    let arrayTLE = TLE.convertStrToBin(line1,line2)
+    let receipt = transactions.addTLE(account, id, spaceObject, arrayTLE)
+    let success = 0;
+    if (receipt) {
+        success = 1;
+    }
+    return success;
 }
 
 
@@ -630,6 +656,7 @@ module.exports = {
     sendEncryptedEncodedKeyMalicious,
     sendDecoderKeyMalicious,
     sendReferenceKeyMalicious,
-    withdrawFundsProvider
+    withdrawFundsProvider,
+    OngoingPurchases
 
 };

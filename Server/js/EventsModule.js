@@ -342,6 +342,26 @@ module.exports = {
             throw e;
         }
     },
+    /*Get a events references by a list of Id's*/
+    GetRefs: async function (listId) {
+        try {
+            let res1 = await contractws.getPastEvents("newDataReference", {
+                filter: {referenceId: listId},
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+            let result =[]
+            for (let i = 0; i < res1.length ; i++) {
+                const product = res1[i].returnValues;
+                product.insuranceDeposit = web3.utils.fromWei(product["insuranceDeposit"], "ether");
+                result.push(product)
+            }
+
+            return result;
+        } catch (e) {
+            throw e;
+        }
+    },
 
     /*Get the reference you just put up for sale (useful for sellers database)*/
     GetYourRef: async function (address, blockNumber) {
@@ -470,7 +490,7 @@ module.exports = {
         }
     },
 
-    /*Useful function that transforms a list of events into a list of addresses concerned by the event*/
+    /************************ Useful function for transforming lists of events ***************************/
     /*note that the event has to be coded such that the attribute of the addresses is "client" !*/
     EventsToAddresses: function (events) {
         let res = [];
@@ -479,6 +499,14 @@ module.exports = {
         }
         return res;
     },
+    EventsToIds: function (events) {
+        let res = [];
+        for (let i = 0; i < events.length; i++) {
+            res.push(events[i].returnValues.referenceId)
+        }
+        return res;
+    },
+
     /*Computes the list of elements in list1 and not list2*/
     ComputeLeft: function (list1, list2) {
         let res = [];
@@ -489,6 +517,7 @@ module.exports = {
         }
         return res;
     },
+
 
     /*Get the DH Public Key of a provider for a certain id*/
     GetPubDiffieClient: async function (address_client, id) {
@@ -576,6 +605,19 @@ module.exports = {
             throw e;
         }
     },
+
+    /* Check for events of withdrawn funds in general */
+    WithdrawFundsEventGeneral: async function () {
+        try {
+            return await contractws.getPastEvents("withdrawFundsEvent", {
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+        } catch (e) {
+            throw e;
+        }
+    },
+
     /* Events testifying a provider added a TLE for  particular Id */
     NewTLEEvent: async function (id) {
         try {

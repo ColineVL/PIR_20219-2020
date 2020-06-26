@@ -46,7 +46,7 @@ var bytes = web3.utils.bytesToHex(Kop);
 
 // let byt = web3.utils.bytesToHex(["101101101110100011"]) // "0x3f420cfe1d63e9d7a8e3b9743eb84971bfd7a6242be8aefd8afd4a87" //web3.utils.bytesToHex(["101101011011011"])
 
-const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
+// const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
 // const getDataRef = contract.methods.getDataReferences(0)5encodeABI();
 
 
@@ -60,7 +60,7 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
         to : contract_address,
         gasPrice: gasPriceHex,
         gasLimit: gasLimitHex,
-        data:setuint1ref ,
+        // data:setuint1ref ,
         from: account1,
        value: 455475//web3.utils.toWei('1', 'ether'),
     };
@@ -118,8 +118,8 @@ const setuint1ref = contract.methods.buyReference(8,bytes).encodeABI();
     //
     // console.log(events.callback())
     console.log("**********************************");
-    let res1 =  contractws.getPastEvents("withdrawFundsEvent", {
-       filter: {referenceId: 1 },
+    let res1 =  contractws.getPastEvents("newDataReference", {
+       filter: {referenceId: [1,2,3] },
         fromBlock: 0,
         toBlock: 'latest'
     }, function(error, events){ console.log(events)})

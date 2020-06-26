@@ -148,7 +148,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/ongoingBuys/', async (req, res) => {
         try {
-            let Ids = await EventsModule.GetBoughtRefs(req.session.Account.address);
+            let Ids = await bc.OngoingPurchases(req.session.Account.address);
             res.json(Ids);
         } catch (e) {
             res.status(500).json(e.message);

@@ -398,9 +398,9 @@ function SeparateBytes(str) {
 }
 
 
-function convertStrToBin(){
+function convertStrToBin(line1, line2){
     // 32 bits --> 4 bytes
-    let str = string2BinaryLine1(example1) + string2BinaryLine2(example2);
+    let str = string2BinaryLine1(line1) + string2BinaryLine2(line2);
 
     let array = new Uint8Array((str.length/8));
 
@@ -437,8 +437,6 @@ function convertStrToBin(){
     return array;
 
 }
-
-let chi = convertStrToBin();
 
 module.exports = {
     convertStrToBin,

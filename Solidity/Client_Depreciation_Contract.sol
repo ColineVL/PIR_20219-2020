@@ -173,7 +173,7 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
             }
 
             // Condition for number of data
-            else if (dataReferences[_referenceId].numberOfData < dataReferences[_referenceId].minimumData) {
+            else if (dataReferences[_referenceId].numberOfData <= dataReferences[_referenceId].minimumData) {
                 funds += (dataReferences[_referenceId].insuranceDeposit / dataReferences[_referenceId].completedClients);
                 withdrawDisputeFunds(_referenceId, funds);
                 // Client withdrew funds

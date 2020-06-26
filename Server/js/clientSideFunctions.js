@@ -396,11 +396,11 @@ function callbackOngoingBuys(Ids) {
     let html = "";
     for (const data of Ids) {
         html += "<details>";
-        html += "<summary>" + data.returnValues["description"] + "</summary>";
-        html += "<p>Reference Id: " + data.returnValues["referenceId"] + "</p>";
-        html += "<p class='link' onclick=manageIdBuyer(" + data.returnValues["referenceId"] + ")>Manage this Id</p>";
+        html += "<summary>" + data["description"] + "</summary>";
+        html += "<p>Reference Id: " + data["referenceId"] + "</p>";
+        html += "<p class='link' onclick=manageIdBuyer(" + data["referenceId"] + ")>Manage this Id</p>";
         html += "</details>";
-        myAccount.buying.push(data.returnValues["referenceId"]);
+        myAccount.buying.push(data["referenceId"]);
     }
     $("#ongoingBuys_beingBought").html(html);
 }
