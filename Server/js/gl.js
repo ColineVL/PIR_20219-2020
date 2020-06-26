@@ -75,6 +75,7 @@ const disputeItem = {
     title: "Dispute"
 };
 
+
 /********************************
  * Sell Items
  ********************************/
@@ -92,6 +93,11 @@ const ongoingSalesItem = {
 const manageIdSellerItem = {
     title: "Manage ID",
     name: "manageIdSellerItem"
+};
+
+const newTLEItem = {
+    title: "New TLE",
+    name: "newTLEItem"
 };
 
 /********************************
@@ -315,6 +321,7 @@ myLayout.registerComponent('manageIdSellerItem', function (container, state) {
         '<div id="manageIdSeller_produit"></div>' +
         '<h3>To do:</h3>' +
         '<ul>' +
+        '<li onclick="loadNewTLEForm()">Upload a new TLE</li>' +
         '<li onclick="sendEncodedEncryptedKey()">Send Encrypted Encoded Key (K2xorKxorK3): <var id="manageIdSeller_NumClientsStep1"></var> clients</li>' +
         '<li onclick="sendDecoderKey()">Verify hashes and send Decoder Key (K2): <var id="manageIdSeller_NumClientsStep2"></var> clients</li>' +
         '<li id="manageIdSeller_keyNotReleased" onclick="postRefKey()">Release reference key (key not released yet)</li>' +
@@ -324,6 +331,11 @@ myLayout.registerComponent('manageIdSellerItem', function (container, state) {
         '</div>'
     );
 });
+
+myLayout.registerComponent('newTLEItem', function (container, state) {
+    container.getElement().html('<div id="newTLE">');
+});
+
 
 /********************************
  * Initialize Layout

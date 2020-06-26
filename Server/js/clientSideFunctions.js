@@ -653,6 +653,51 @@ function manageIdSeller(id) {
     $("#manageIdSeller_message").hide();
     loadXMLDoc("manageIdSeller/" + id, callbackManageIdSeller, callbackErrorManageIdSeller);
 }
+function manageIdSeller(id) {
+    $("#manageIdSeller_message").hide();
+    loadXMLDoc("manageIdSeller/" + id, callbackManageIdSeller, callbackErrorManageIdSeller);
+}
+
+/** New TLE **/
+function callbackUploadNewTLE(param) {
+    console.log("je suis dans la callback, pas d'erreur, afficher quelque chose au user");
+    $("#newTLE_message").show();
+    $("#newTLE_message").html(param);
+}
+
+function callbackErrorUploadNewTLE(err) {
+    $("#newTLE_message").show();
+    $("#newTLE_message").html(err);}
+
+function uploadNewTLE() {
+    let json = {
+        id: $("#newTLE_id").text(),
+        line0: $("#newTLE_line0").val(),
+        line1: $("#newTLE_line1").val(),
+        line2: $("#newTLE_line2").val(),
+    };
+
+    let complete = false;
+    for (const property in json) {
+        if (json.property === "") {
+            $("#newTLE_message").show();
+            $("#newTLE_message").html("Please complete the whole form.");
+            break;
+        } else {
+            complete = true;
+        }
+    }
+    if (complete) {
+        $("#newTLE_message").hide();
+        loadXMLDoc("uploadNewTLE/" + JSON.stringify(json), callbackUploadNewTLE, callbackErrorUploadNewTLE);
+    }
+
+}
+
+function loadNewTLEForm() {
+    addItem(newTLEItem);
+    loadHTMLDoc("newTLE.html", callbackLoadHTMLnewTLE);
+}
 
 /** Seller step 1 **/
 

@@ -244,6 +244,18 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /** Upload a new TLE to the reference **/
+    .get('/uploadNewTLE/:json', async (req, res) => {
+        try {
+            // A toi Ziad
+            const result = req.params.json;
+            res.json(result);
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
+
     /** Seller step 1 **/
     .get('/sendEncodedEncryptedKey/:id', async (req, res) => {
         try {
