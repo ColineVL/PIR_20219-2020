@@ -48,9 +48,17 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/connect/:privateKey', async (req, res) => {
         try {
             req.session.Account = await bc.getAccount(req.params.privateKey);
-            const address = req.session.Account.address;
-            const balance = await bc.getBalance(address);
-            res.json({address: address, balance: balance});
+            res.json(req.session.Account.address);
+        } catch (e) {
+            res.status(500).json(e.message);
+        }
+    })
+
+    .get('/balance', async (req, res) => {
+        try {
+            const balance = await bc.getBalance(req.session.Account.address);
+            console.log(balance);
+            res.json(balance);
         } catch (e) {
             res.status(500).json(e.message);
         }

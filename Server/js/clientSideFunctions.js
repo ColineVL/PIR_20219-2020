@@ -84,7 +84,7 @@ function loadMyAccount() {
         $('#myAccount_notConnected').hide();
         $('#myAccount_connected').show();
         $('#myAccount_address').html(myAccount.address);
-        $("#myAccount_value").html(myAccount.balance);
+        // updateBalance();
         loadOngoingSales();
         getBoughtData();
         loadOngoingBuys();
@@ -95,11 +95,20 @@ function loadMyAccount() {
     }
 }
 
+/** Update balance **/
+function callbackUpdateBalance(balance) {
+    myAccount.balance = balance;
+    $("#myAccount_value").html(myAccount.balance);
+}
+
+function updateBalance() {
+    loadHTMLDoc("balance.html", callbackUpdateBalance, callbackError);
+}
+
 /** Connection **/
-function callbackConnect(json) {
+function callbackConnect(address) {
     connected = true;
-    myAccount.address = json["address"];
-    myAccount.balance = json["balance"];
+    myAccount.address = address;
     loadMyAccount();
 }
 
