@@ -529,8 +529,14 @@ async function ComputeK(id, Account) {
         // The actual value
         RefBuyer.K2 = Buffer.from(web3.utils.hexToBytes(K2_event[0].returnValues.keyDecoder));
         await readwrite.WriteAsRefBuyer(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt', RefBuyer.KxorK2, RefBuyer.K2);
-        let Key = crypto.OTP(RefBuyer.KxorK2, RefBuyer.K2);
-        return Key.buffer.toString('hex');
+        let K = crypto.OTP(RefBuyer.KxorK2, RefBuyer.K2);
+        console.log(K);
+        K = K.toString('hex');
+        console.log(K);
+
+        // let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1]));
+        // Key = buffer.toString('hex');
+        return K;
     } catch (e) {
         throw e;
     }
@@ -629,7 +635,7 @@ async function ClientReadTLEs(id,account) {
             let encryptedBuff2 = new Buffer.from(rawTLES[i].TLE2,'hex');
             let spaceObject = rawTLES[i].spaceObject;
 
-            let refKey = // TODO
+            let refKey; // TODO
 
             let pseudoRandomRefKey //TODO
             let decryptedBuff = crypto.OTP(pseudoRandomRefKey, Buffer.concat(encryptedBuff1,encryptedBuff2))

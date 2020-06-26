@@ -97,8 +97,7 @@ function loadMyAccount() {
 
 /** Update balance **/
 function callbackUpdateBalance(balance) {
-    myAccount.balance = balance;
-    $("#myAccount_value").text(myAccount.balance);
+    $("#myAccount_value").text(balance);
 }
 
 function updateBalance() {
@@ -144,7 +143,6 @@ function createNewAccount() {
 function callbackConnectNewAccount(json) {
     connected = true;
     myAccount.address = json["address"];
-    myAccount.balance = json["balance"];
     loadMyAccount();
 }
 
@@ -206,7 +204,7 @@ function displayBlockInfo(blocknumber) {
     }
     if (blocknumber > 0) {
         addItem(blockInfoItem);
-        loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo,callbackError);
+        loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo, callbackError);
     }
 }
 
@@ -254,6 +252,7 @@ function updatePrice() {
 }
 
 let myTimerPrice;
+
 function callbackgetRefForSaleInfo(product) {
     let html = "<table><tbody>";
     const keysToDisplay = ["provider", "insuranceDeposit", "minimumData"];
@@ -327,7 +326,7 @@ function callbackgetRefForSaleInfo(product) {
 }
 
 function getRefForSaleInfo(id) {
-    loadXMLDoc("getrefinfo/" + id, callbackgetRefForSaleInfo,callbackError);
+    loadXMLDoc("getrefinfo/" + id, callbackgetRefForSaleInfo, callbackError);
 }
 
 /** Get bought data **/
@@ -353,14 +352,14 @@ function getBoughtItemInfo(id) {
 function callbackGetBoughtData(Ids) {
     $("#boughtData_message").hide();
     Ids.sort(comparisonBoughtData);
-    myAccount.boughtData = {};
+    // myAccount.boughtData = {};
     let html = "";
     for (const data of Ids) {
         html += "<details>";
         html += "<summary>" + data.returnValues["description"] + "</summary>";
         html += "<p>Reference Id: " + data.returnValues["referenceId"] + "</p>";
         html += "</details>";
-        myAccount.boughtData[data.returnValues["referenceId"]] = data.returnValues;
+        // myAccount.boughtData[data.returnValues["referenceId"]] = data.returnValues;
     }
     $("#boughtData_list").html(html);
 }
@@ -383,7 +382,7 @@ function getBoughtData() {
 
 /** Buy product **/
 function callbackBuy(param) {
-    myAccount.boughtData[param["referenceId"]] = param;
+    // myAccount.boughtData[param["referenceId"]] = param;
     $('#forSaleProductInfo_message').show();
     $('#forSaleProductInfo_message').text("Bought!");
 }
@@ -395,24 +394,26 @@ function callbackErrorBuy(err) {
 
 async function buyProduct() {
     const id = $('#productInfo_referenceID').text();
-    if (myAccount.boughtData.hasOwnProperty(id)) {
-        // Check if the product is already bought: we shouldn't buy it twice
-        $("#forSaleProductInfo_message").show();
-        $("#forSaleProductInfo_message").html("You already bought this product.");
-    } else if (myAccount.forSale.includes(id)) {
-        // Check if I am the seller
-        $("#forSaleProductInfo_message").show();
-        $("#forSaleProductInfo_message").html("You can't buy this product as you are the seller.");
-    } else {
-        loadXMLDoc("buy/" + id, callbackBuy, callbackErrorBuy);
-    }
+    // if (myAccount.boughtData.hasOwnProperty(id)) {
+    //     // Check if the product is already bought: we shouldn't buy it twice
+    //     $("#forSaleProductInfo_message").show();
+    //     $("#forSaleProductInfo_message").html("You already bought this product.");
+    // }
+    // else if (myAccount.forSale.includes(id)) {
+    //     // Check if I am the seller
+    //     $("#forSaleProductInfo_message").show();
+    //     $("#forSaleProductInfo_message").html("You can't buy this product as you are the seller.");
+    // }
+    // else {
+    loadXMLDoc("buy/" + id, callbackBuy, callbackErrorBuy);
+    // }
 }
 
 /** Ongoing buys **/
 
 function callbackOngoingBuys(Ids) {
     $("#ongoingBuys_message").hide();
-    myAccount.buying = [];
+    // myAccount.buying = [];
     let html = "";
     for (const data of Ids) {
         html += "<details>";
@@ -420,7 +421,7 @@ function callbackOngoingBuys(Ids) {
         html += "<p>Reference Id: " + data["referenceId"] + "</p>";
         html += "<p class='link' onclick=manageIdBuyer(" + data["referenceId"] + ")>Manage this Id</p>";
         html += "</details>";
-        myAccount.buying.push(data["referenceId"]);
+        // myAccount.buying.push(data["referenceId"]);
     }
     $("#ongoingBuys_beingBought").html(html);
 }
@@ -485,25 +486,26 @@ function callbackManageIdBuyer(param) {
 }
 
 function callbackErrorManageIdBuyer(err) {
-    console.log(err);
+    $('#manageIdBuyer_message').html(err);
 }
 
 function manageIdBuyer(id) {
     loadXMLDoc("manageIdBuyer/" + id, callbackManageIdBuyer, callbackErrorManageIdBuyer);
 }
 
-function callbackBuyerAction(id) {
-    manageIdBuyer(id);
+function callbackSendBuyerHash(id) {
+    $('#manageIdBuyer_message').html("Successfully sent the hash")
 }
 
 function sendBuyerHash() {
     const id = $('#productInfo_referenceID').text();
-    loadXMLDoc("sendBuyerHash/" + id, callbackBuyerAction, callbackErrorManageIdBuyer);
+    loadXMLDoc("sendBuyerHash/" + id, callbackSendBuyerHash, callbackErrorManageIdBuyer);
 }
 
 function callbackComputeK(result) {
     manageIdBuyer(result["id"]);
     $('#manageIdBuyer_K').html("K: " + result["K"]);
+    $('#manageIdBuyer_message').html("Successfully computed K")
 }
 
 function computeK() {
@@ -570,7 +572,7 @@ function callbackSellNewProduct(param) {
     $("#sellNew_blockNumber").text(param["blockNumber"]);
     $("#sellNew_gasUsed").text(param["cumulativeGasUsed"]);
     $("#sellNew_referenceId").text(param["id"]);
-    myAccount.forSale.push(param["id"]);
+    // myAccount.forSale.push(param["id"]);
 }
 
 function callbackErrorSellNewProduct(err) {
@@ -674,6 +676,7 @@ function manageIdSeller(id) {
     $("#manageIdSeller_message").hide();
     loadXMLDoc("manageIdSeller/" + id, callbackManageIdSeller, callbackErrorManageIdSeller);
 }
+
 function manageIdSeller(id) {
     $("#manageIdSeller_message").hide();
     loadXMLDoc("manageIdSeller/" + id, callbackManageIdSeller, callbackErrorManageIdSeller);
@@ -688,7 +691,8 @@ function callbackUploadNewTLE(param) {
 
 function callbackErrorUploadNewTLE(err) {
     $("#newTLE_message").show();
-    $("#newTLE_message").html(err);}
+    $("#newTLE_message").html(err);
+}
 
 function uploadNewTLE() {
     let json = {
@@ -761,10 +765,12 @@ function callbackWithdrawFunds(param) {
     $("#manageIdSeller_message").show();
     $("#manageIdSeller_message").html("Successfully withdrew funds. You received " + param["funds"] + " Ether.");
 }
+
 function callbackErrorWithdrawFunds(err) {
     $("#manageIdSeller_message").show();
     $("#manageIdSeller_message").html(err);
 }
+
 function withdrawFunds() {
     const id = $('#productInfo_referenceID').text();
     loadXMLDoc("withdrawFunds/" + id, callbackWithdrawFunds, callbackErrorWithdrawFunds);

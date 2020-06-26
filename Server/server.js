@@ -186,6 +186,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/computeK/:id', async (req, res) => {
         try {
             const K = await bc.ComputeK(req.params.id, req.session.Account);
+            console.log(K);
             res.json({id: req.params.id, K: K});
         } catch (e) {
             console.log(e);
