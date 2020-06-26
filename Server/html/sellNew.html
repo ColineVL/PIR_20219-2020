@@ -6,29 +6,13 @@
 
     <div id="sellNew_connected">
         <h1> Fill in the form to sell a new product</h1>
-        <p class="message" id="sellNew_message"></p>
-
-        <table id="sellNew_receipt">
-            <tr>
-                <td>Id of your new reference</td>
-                <td id="sellNew_referenceId">/</td>
-            </tr>
-            <tr>
-                <td>Block number</td>
-                <td id="sellNew_blockNumber">/</td>
-            </tr>
-            <tr>
-                <td>Gas used</td>
-                <td id="sellNew_gasUsed">/</td>
-            </tr>
-        </table>
 
         <div class="row">
             <div class="col-25">
                 <label for="sellNew_price">Price</label>
             </div>
             <div class="col-75">
-                <input id="sellNew_price" type="number" min="0">
+                <input id="sellNew_price" type="number" min="0" step="any">
             </div>
         </div>
 
@@ -82,7 +66,7 @@
                 <label for="sellNew_insuranceDeposit">Insurance Deposit (in Ether)</label>
             </div>
             <div class="col-75">
-                <input id="sellNew_insuranceDeposit" type="number" min="0">
+                <input id="sellNew_insuranceDeposit" type="number" min="0" step="any">
             </div>
         </div>
 
@@ -103,6 +87,23 @@
         </div>
 
         <button onclick="sellNewProduct()">Sell</button>
+
+        <p class="message" id="sellNew_message"></p>
+
+        <table id="sellNew_receipt">
+            <tr>
+                <td>Id of your new reference</td>
+                <td id="sellNew_referenceId">/</td>
+            </tr>
+            <tr>
+                <td>Block number</td>
+                <td id="sellNew_blockNumber">/</td>
+            </tr>
+            <tr>
+                <td>Gas used</td>
+                <td id="sellNew_gasUsed">/</td>
+            </tr>
+        </table>
     </div>
 
 </div>
