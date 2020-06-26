@@ -12,7 +12,7 @@ contract TLE_Contract is Provider_Depreciation_Contract {
     struct structTLE {
         string spaceObject;
         bytes25 TLE1;
-        bytes25 TLE2;
+        bytes24 TLE2;
     }
 
     // mapping between referenceId and the data

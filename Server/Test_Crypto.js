@@ -174,3 +174,6 @@ console.log(web3.utils.keccak256(new Buffer.from("fake")))
 console.log(web3.utils.keccak256(new Buffer.from("fakeluytfgiuvjvkjv;")))
 console.log(web3.utils.keccak256(new Buffer.from("fake1")))
 console.log("...")
+
+console.log(crypto.randomBytes(32))
+console.log(new Buffer.from([12,152,175,13,56,98,20,2,12,152,175,13,56,98,20,2,12,152,175,13,56,98,20,2,12,152,175,13,56,98,20,2]))
