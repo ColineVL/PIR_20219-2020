@@ -68,31 +68,31 @@ app.use('/public', express.static(__dirname + '/public'))
         req.session.Account = undefined;
     })
 
-    .get('/newaccount/', async (req, res) => {
+    .get('/newAccount/', async (req, res) => {
         const info = await bc.createNewAccount();
         res.json([info["address"], info["privateKey"]]);
     })
 
     /************ Nodes and blocks ************/
 
-    .get('/updatenodelist/', async (req, res) => {
+    .get('/updateNodelist/', async (req, res) => {
         const list = await bc.getNodelistIDS();
         res.json(list);
     })
 
-    .get('/updatelistBlocks/', async (req, res) => {
+    .get('/updateListBlocks/', async (req, res) => {
         const info = bc.getBlockslistNUMBERS();
         res.json(info);
     })
 
-    .get('/getblockinfo/:blocknumber', async (req, res) => {
+    .get('/getBlockInfo/:blocknumber', async (req, res) => {
         const info = await bc.getBlockInfo(req.params.blocknumber);
         res.json(info);
     })
 
-    /************ For sale products ************/
+    /************ For sale references ************/
 
-    .get('/getreferences/', async (req, res) => {
+    .get('/getReferences/', async (req, res) => {
         try {
             const Ids = await EventsModule.GetAvailableRefs();
             res.json(Ids);
@@ -101,10 +101,10 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    .get('/getrefinfo/:id', async (req, res) => {
+    .get('/getRefInfo/:id', async (req, res) => {
         try {
-            let product = await EventsModule.GetRef(req.params.id);
-            res.json(product);
+            let reference = await EventsModule.GetRef(req.params.id);
+            res.json(reference);
         } catch (e) {
             res.status(500).json(e.message);
         }
@@ -119,9 +119,9 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    /************ Bought products ************/
+    /************ Completed purchases ************/
 
-    .get('/getboughtdata/', async (req, res) => {
+    .get('/getCompletedPurchases/', async (req, res) => {
         try {
             const Ids = await EventsModule.GetBoughtRefs(req.session.Account);
             res.json(Ids);
@@ -130,33 +130,34 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    .get('/getboughtiteminfo/:id', async (req, res) => {
+    .get('/getCompletedPurchaseRefInfo/:id', async (req, res) => {
         try {
-            let product = await EventsModule.GetRef(req.params.id);
-            product = product[0].returnValues;
-            res.json(product);
+            let reference = await EventsModule.GetRef(req.params.id);
+            reference = reference[0].returnValues;
+            res.json(reference);
         } catch (e) {
             res.status(500).json(e.message);
         }
     })
 
-    /************ Buy a product ************/
+    /************ Buy a reference ************/
 
     .get('/buy/:id', async (req, res) => {
         try {
-            let product = await EventsModule.GetRef(req.params.id);
-            await bc.buyProduct(req.params.id, req.session.Account);
-            res.json(product[0]);
+            let reference = await EventsModule.GetRef(req.params.id);
+            await bc.buyReference(req.params.id, req.session.Account);
+            res.json(reference[0]);
         } catch (e) {
+            console.error(e);
             res.status(500).json(e.message);
         }
     })
 
-    /************ Ongoing buys ************/
+    /************ Ongoing purchases ************/
 
     .get('/ongoingPurchases/', async (req, res) => {
         try {
-            let Ids = await bc.OngoingPurchases(req.session.Account.address);
+            let Ids = await bc.ongoingPurchases(req.session.Account.address);
             res.json(Ids);
         } catch (e) {
             res.status(500).json(e.message);
@@ -165,7 +166,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/manageIdBuyer/:id', async (req, res) => {
         try {
-            let result = await bc.manageIDBuyer(req.params.id, req.session.Account);
+            let result = await bc.manageIdBuyer(req.params.id, req.session.Account);
             res.json(result);
         } catch (e) {
             console.log(e);
@@ -185,7 +186,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/computeK/:id', async (req, res) => {
         try {
-            const K = await bc.ComputeK(req.params.id, req.session.Account);
+            const K = await bc.computeK(req.params.id, req.session.Account);
             console.log(K);
             res.json({id: req.params.id, K: K});
         } catch (e) {
@@ -196,7 +197,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/dispute/:id', async (req, res) => {
         try {
-            let [alreadyEncoded, possibleRefund, alreadyDisputed] = await bc.DisputeInfoClient(req.params.id, req.session.Account);
+            let [alreadyEncoded, possibleRefund, alreadyDisputed] = await bc.disputeInfoClient(req.params.id, req.session.Account);
             res.json({
                 id: req.params.id,
                 alreadyEncoded: alreadyEncoded,
@@ -211,7 +212,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/confirmDispute/:id', async (req, res) => {
         try {
-            let funds = await bc.Dispute(req.params.id, req.session.Account);
+            let funds = await bc.dispute(req.params.id, req.session.Account);
             res.json({id: req.params.id, funds: funds});
         } catch (e) {
             console.log(e);
@@ -230,11 +231,11 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
 
-    /************ Sell a product ************/
+    /************ Sell a reference ************/
 
-    .get('/sellNewProduct/:json', async (req, res) => {
+    .get('/sellNewReference/:json', async (req, res) => {
         try {
-            let receipt = await bc.sellItemColine(req.params.json, req.session.Account);
+            let receipt = await bc.sellReference(req.params.json, req.session.Account);
             res.json(receipt);
         } catch (e) {
             console.log(e);
@@ -242,9 +243,9 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
-    /************ Ongoing sales ************/
+    /************ Manage sales ************/
 
-    .get('/ongoingSales/', async (req, res) => {
+    .get('/manageSales/', async (req, res) => {
         try {
             let Ids = await EventsModule.GetSoldRefs(req.session.Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
             res.json(Ids);
@@ -255,8 +256,8 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/manageIdSeller/:id', async (req, res) => {
         try {
-            const result = await bc.manageID(req.params.id, req.session.Account);
-            // result = [product, total_clients, num_clients_step1, num_clients_step2, Key]
+            const result = await bc.manageIdSeller(req.params.id, req.session.Account);
+            // result = [reference, total_clients, num_clients_step1, num_clients_step2, Key]
             res.json(result);
         } catch (e) {
             console.log(e);
@@ -265,6 +266,7 @@ app.use('/public', express.static(__dirname + '/public'))
     })
 
     /** Upload a new TLE to the reference **/
+
     .get('/uploadNewTLE/:json', async (req, res) => {
         try {
             const result =  await bc.addTLE(req.params.json, req.session.Account);

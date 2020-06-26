@@ -33,7 +33,7 @@ function callbackLoadHTMLDispute(html) {
 
 function callbackLoadHTMLnewTLE(html) {
     $("#newTLE").html(html);
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     $("#newTLE_id").html(id);
     $("#newTLE_message").hide();
 }

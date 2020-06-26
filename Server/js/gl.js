@@ -41,18 +41,18 @@ const newAccountItem = {
  ********************************/
 
 const forSaleItem = {
-    title: "See products for sale",
+    title: "See references for sale",
     name: "forSaleItem",
 };
 
-const forSaleproductInfoItem = {
-    title: "Product info",
-    name: "forSaleproductInfoItem"
+const forSaleReferenceInfoItem = {
+    title: "Reference info",
+    name: "forSaleReferenceInfoItem"
 };
 
-const boughtProductInfoItem = {
-    title: "Product info",
-    name: "boughtProductInfoItem"
+const completedPurchaseRefInfoItem = {
+    title: "Reference info",
+    name: "completedPurchaseRefInfoItem"
 };
 
 const ongoingPurchasesItem = {
@@ -60,9 +60,9 @@ const ongoingPurchasesItem = {
     name: "ongoingPurchasesItem"
 };
 
-const boughtDataItem = {
-    title: "Bought data",
-    name: "boughtDataItem"
+const completedPurchasesItem = {
+    title: "Completed purchases",
+    name: "completedPurchasesItem"
 };
 
 const manageIdBuyerItem = {
@@ -85,13 +85,13 @@ const seeTLEsItem = {
  ********************************/
 
 const sellNewItem = {
-    title: "Sell a new product",
+    title: "Sell a new reference",
     name: "sellNewItem"
 };
 
-const ongoingSalesItem = {
-    title: "Ongoing sales",
-    name: "ongoingSalesItem"
+const manageSalesItem = {
+    title: "Manage sales",
+    name: "manageSalesItem"
 };
 
 const manageIdSellerItem = {
@@ -211,29 +211,29 @@ myLayout.registerComponent('resultTransactionItem', function (container, state) 
 myLayout.registerComponent('forSaleItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<h1>For sale items:</h1>' +
+        '<h1>For sale references:</h1>' +
         '<p id="forSale_message" class="message"></p>' +
         '<ul id="forSale_list"></ul>' +
         '</div>'
     );
 });
 
-myLayout.registerComponent('forSaleproductInfoItem', function (container, state) {
+myLayout.registerComponent('forSaleReferenceInfoItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<h1>For sale product info:</h1>' +
-        '<div id="forSaleProductInfo_info"></div>' +
-        '<button id="forSaleProductInfo_buyButton" onclick="buyProduct()">Buy</button>' +
-        '<p class="message" id="forSaleProductInfo_message"></p>' +
+        '<h1>For sale reference info:</h1>' +
+        '<div id="forSaleReferenceInfo_info"></div>' +
+        '<button id="forSaleReferenceInfo_buyButton" onclick="buyReference()">Buy</button>' +
+        '<p class="message" id="forSaleReferenceInfo_message"></p>' +
         '</div>'
     );
 });
 
-myLayout.registerComponent('boughtProductInfoItem', function (container, state) {
+myLayout.registerComponent('completedPurchaseRefInfoItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<h1>Bought product info:</h1>' +
-        '<ul id="boughtProductInfo_info"></ul>' +
+        '<h1>Completed purchase info:</h1>' +
+        '<ul id="completePurchaseRefInfo_info"></ul>' +
         '</div>'
     );
 });
@@ -245,7 +245,7 @@ myLayout.registerComponent('ongoingPurchasesItem', function (container, state) {
         '<p class="message">You are not connected...</p>' +
         '</div>' +
         '<div id="ongoingPurchases_connected">' +
-        '<h1>Products being bought :</h1>' +
+        '<h1>References being bought :</h1>' +
         '<p id="ongoingPurchases_message" class="message"></p>' +
         '<ul id="ongoingPurchases_beingBought"></ul>' +
         '</div>' +
@@ -256,8 +256,8 @@ myLayout.registerComponent('ongoingPurchasesItem', function (container, state) {
 myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<h3>Product:</h3>' +
-        '<div id="manageIdBuyer_produit"></div>' +
+        '<h3>Reference:</h3>' +
+        '<div id="manageIdBuyer_reference"></div>' +
 
         '<p id="manageIdBuyer_K"></p>' +
 
@@ -279,16 +279,16 @@ myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
     );
 });
 
-myLayout.registerComponent('boughtDataItem', function (container, state) {
+myLayout.registerComponent('completedPurchasesItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<div id="boughtData_notConnected">' +
+        '<div id="completedPurchases_notConnected">' +
         '<p class="message">You are not connected...</p>' +
         '</div>' +
-        '<div id="boughtData_connected">' +
-        '<h1>Bought data:</h1>' +
-        '<p id="boughtData_message" class="message"></p>' +
-        '<ul id="boughtData_list"></ul>' +
+        '<div id="completedPurchases_connected">' +
+        '<h1>Completed purchases:</h1>' +
+        '<p id="completedPurchases_message" class="message"></p>' +
+        '<ul id="completedPurchases_list"></ul>' +
         '</div>' +
         '</div>'
     );
@@ -315,16 +315,16 @@ myLayout.registerComponent('sellNewItem', function (container, state) {
     container.getElement().html('<div id="forSale">');
 });
 
-myLayout.registerComponent('ongoingSalesItem', function (container, state) {
+myLayout.registerComponent('manageSalesItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<div id="ongoingSales_notConnected">' +
+        '<div id="manageSales_notConnected">' +
         '<p class="message">You are not connected...</p>' +
         '</div>' +
-        '<div id="ongoingSales_connected">' +
-        '<h1>Products being sold :</h1>' +
-        '<p id="ongoingSales_message" class="message"></p>' +
-        '<ul id="ongoingSales_beingSold"></ul>' +
+        '<div id="manageSales_connected">' +
+        '<h1>References on the market:</h1>' +
+        '<p id="manageSales_message" class="message"></p>' +
+        '<ul id="manageSales_beingSold"></ul>' +
         '</div>' +
         '</div>'
     );
@@ -334,8 +334,8 @@ myLayout.registerComponent('manageIdSellerItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
         '<p>Total number of clients: <var id="manageIdSeller_totalNumberClients"></var></p>' +
-        '<h3>Product:</h3>' +
-        '<div id="manageIdSeller_produit"></div>' +
+        '<h3>Reference:</h3>' +
+        '<div id="manageIdSeller_reference"></div>' +
         '<h3>To do:</h3>' +
         '<ul>' +
         '<li onclick="loadNewTLEForm()">Upload a new TLE</li>' +
@@ -402,11 +402,11 @@ function addMenuItem(newItem) {
     if (newItem.name === "forSaleItem") {
         element.click(getReferences);
     }
-    if (newItem.name === "boughtDataItem") {
-        element.click(getBoughtData);
+    if (newItem.name === "completedPurchasesItem") {
+        element.click(getCompletedPurchases);
     }
-    if (newItem.name === "ongoingSalesItem") {
-        element.click(loadOngoingSales);
+    if (newItem.name === "manageSalesItem") {
+        element.click(loadManageSales);
     }
     if (newItem.name === "ongoingPurchasesItem") {
         element.click(loadOngoingPurchases);
@@ -431,10 +431,10 @@ addMenuItem(newAccountItem);
 $('#menuContainer').append("<h2>Buy</h2>");
 addMenuItem(forSaleItem);
 addMenuItem(ongoingPurchasesItem);
-addMenuItem(boughtDataItem);
+addMenuItem(completedPurchasesItem);
 $('#menuContainer').append("<h2>Sell</h2>");
 addMenuItem(sellNewItem);
-addMenuItem(ongoingSalesItem);
+addMenuItem(manageSalesItem);
 $('#menuContainer').append("<h3><a href='closeserver'>Close server</a></h3>");
 addMenuItem(makeTransactionItem);
 

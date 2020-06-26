@@ -56,18 +56,18 @@ function displayTable(dict) {
     return html;
 }
 
-function displayProductInfo(product, keysToDisplay, keysNames) {
+function displayReferenceInfo(reference, keysToDisplay, keysNames) {
     let html = "<table><tbody>";
     html += "<tr>";
     html += "<td>ReferenceId</td>";
-    html += "<td id='productInfo_referenceID'>" + product["referenceId"] + "</td>";
+    html += "<td id='referenceInfo_referenceID'>" + reference["referenceId"] + "</td>";
     html += "</tr>";
     for (let i = 0; i < keysToDisplay.length; i++) {
         let key = keysToDisplay[i];
         let keyName = keysNames[i];
         html += "<tr>";
         html += "<td>" + keyName + "</td>";
-        html += "<td>" + product[key] + "</td>";
+        html += "<td>" + reference[key] + "</td>";
         html += "</tr>";
     }
     html += "</tbody></table>";
@@ -84,8 +84,8 @@ function loadMyAccount() {
         $('#myAccount_notConnected').hide();
         $('#myAccount_connected').show();
         $('#myAccount_address').html(myAccount.address);
-        loadOngoingSales();
-        getBoughtData();
+        loadManageSales();
+        getCompletedPurchases();
         loadOngoingPurchases();
         loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
         updateBalance();
@@ -137,7 +137,7 @@ function callbackNewAccount(param) {
 }
 
 function createNewAccount() {
-    loadXMLDoc("newaccount", callbackNewAccount, callbackError);
+    loadXMLDoc("newAccount", callbackNewAccount, callbackError);
 }
 
 function callbackConnectNewAccount(json) {
@@ -164,12 +164,11 @@ function callbackNodelist(param) {
 function updateNodesList() {
     // We only update the list if the item is displayed on the screen
     if ($("#listNodesItem").text()) {
-        loadXMLDoc("updatenodelist", callbackNodelist, callbackError);
+        loadXMLDoc("updateNodelist", callbackNodelist, callbackError);
     }
 }
 
 setInterval(updateNodesList, 2000);
-
 
 /********************************
  * Blocks
@@ -184,7 +183,7 @@ function callbackBlockslist(param) {
 function updateBlocksList() {
     // We only update the list if the item is displayed on the screen
     if ($("#listBlocksItem").text()) {
-        loadXMLDoc("updatelistBlocks", callbackBlockslist, callbackError);
+        loadXMLDoc("updateListBlocks", callbackBlockslist, callbackError);
     }
 }
 
@@ -204,7 +203,7 @@ function displayBlockInfo(blocknumber) {
     }
     if (blocknumber > 0) {
         addItem(blockInfoItem);
-        loadXMLDoc("getblockinfo/" + blocknumber, callbackBlockInfo, callbackError);
+        loadXMLDoc("getBlockInfo/" + blocknumber, callbackBlockInfo, callbackError);
     }
 }
 
@@ -212,7 +211,7 @@ function displayBlockInfo(blocknumber) {
  * Buy menu
  ********************************/
 
-/** Get references for sale **/
+/** Get for sale references **/
 function callbackGetReferences(param) {
     $('#forSale_message').hide();
     references = {};
@@ -235,25 +234,25 @@ function callbackErrorGetReferences(err) {
 }
 
 function getReferences() {
-    loadXMLDoc("getreferences", callbackGetReferences, callbackErrorGetReferences);
+    loadXMLDoc("getReferences", callbackGetReferences, callbackErrorGetReferences);
 }
 
-/** For sale Product info **/
+/** For sale Reference info **/
 function callbackGetPrice(price) {
-    $("#productInfo_currentPrice").html(price);
+    $("#referenceInfo_currentPrice").html(price);
 }
 
 function updatePrice() {
     // We only update the price if the item is displayed on the screen
-    if ($("#productInfo_referenceID").text()) {
-        const id = $('#productInfo_referenceID').text();
+    if ($("#referenceInfo_referenceID").text()) {
+        const id = $('#referenceInfo_referenceID').text();
         loadXMLDoc("getPrice/" + id, callbackGetPrice, callbackError);
     }
 }
 
 let myTimerPrice;
 
-function callbackgetRefForSaleInfo(product) {
+function callbackgetRefForSaleInfo(reference) {
     let html = "<table><tbody>";
     const keysToDisplay = ["provider", "insuranceDeposit", "minimumData"];
     const keysNames = ["Provider", "Insurance funds by the provider", "Minimum Data"];
@@ -265,17 +264,17 @@ function callbackgetRefForSaleInfo(product) {
 
     html += "<tr>";
     html += "<td>Reference Id</td>";
-    html += "<td id='productInfo_referenceID'>" + product["referenceId"] + "</td>";
+    html += "<td id='referenceInfo_referenceID'>" + reference["referenceId"] + "</td>";
     html += "</tr>";
 
     html += "<tr>";
     html += "<td>Description</td>";
-    html += "<td>" + product["description"] + "</td>";
+    html += "<td>" + reference["description"] + "</td>";
     html += "</tr>";
 
     html += "<tr>";
     html += "<td>Current price</td>";
-    html += "<td id='productInfo_currentPrice'></td>";
+    html += "<td id='referenceInfo_currentPrice'></td>";
     html += "</tr>";
 
     for (let i = 0; i < keysToDisplay.length; i++) {
@@ -283,18 +282,18 @@ function callbackgetRefForSaleInfo(product) {
         let keyName = keysNames[i];
         html += "<tr>";
         html += "<td>" + keyName + "</td>";
-        html += "<td>" + product[key] + "</td>";
+        html += "<td>" + reference[key] + "</td>";
         html += "</tr>";
     }
 
     html += "<tr>";
     html += "<td>Type of depreciation</td>";
-    html += "<td>" + depreciationTypes[product["depreciationType"]] + "</td>";
+    html += "<td>" + depreciationTypes[reference["depreciationType"]] + "</td>";
     html += "</tr>";
 
     html += "<tr>";
     html += "<td>Time of Deployment</td>";
-    let deployTime = Number(product["deployTime"]);
+    let deployTime = Number(reference["deployTime"]);
     deployTime = new Date(deployTime * 1000);
     deployTime = deployTime.toLocaleString();
     html += "<td>" + deployTime + "</td>";
@@ -302,7 +301,7 @@ function callbackgetRefForSaleInfo(product) {
 
     html += "<tr>";
     html += "<td>End Time</td>";
-    let endTime = Number(product["endTime"]);
+    let endTime = Number(reference["endTime"]);
     endTime = new Date(endTime * 1000);
     endTime = endTime.toLocaleString();
     html += "<td>" + endTime + "</td>";
@@ -310,118 +309,101 @@ function callbackgetRefForSaleInfo(product) {
 
     html += "</tbody></table>";
 
-    addItem(forSaleproductInfoItem);
-    $('#forSaleProductInfo_info').html(html);
+    addItem(forSaleReferenceInfoItem);
+    $('#forSaleReferenceInfo_info').html(html);
 
     if (!connected) {
-        $('#forSaleProductInfo_message').show();
-        $('#forSaleProductInfo_message').text("To see the price and buy the product you need to be connected...");
-        $('#forSaleProductInfo_buyButton').hide();
+        $('#forSaleReferenceInfo_message').show();
+        $('#forSaleReferenceInfo_message').text("To see the price and buy the reference you need to be connected...");
+        $('#forSaleReferenceInfo_buyButton').hide();
         clearInterval(myTimerPrice);
     } else {
-        $('#forSaleProductInfo_buyButton').show();
-        $('#forSaleProductInfo_message').hide();
+        $('#forSaleReferenceInfo_buyButton').show();
+        $('#forSaleReferenceInfo_message').hide();
         myTimerPrice = setInterval(updatePrice, 3000);
     }
 }
 
 function getRefForSaleInfo(id) {
-    loadXMLDoc("getrefinfo/" + id, callbackgetRefForSaleInfo, callbackError);
+    loadXMLDoc("getRefInfo/" + id, callbackgetRefForSaleInfo, callbackError);
 }
 
-/** Get bought data **/
-function comparisonBoughtData(data1, data2) {
-    if (parseInt(data1.returnValues["referenceId"], 10) < parseInt(data2.returnValues["referenceId"], 10)) {
+/** Get completed purchases **/
+function comparisonReferences(ref1, ref2) {
+    if (parseInt(ref1.returnValues["referenceId"], 10) < parseInt(ref2.returnValues["referenceId"], 10)) {
         return -1;
     } else {
         return 1;
     }
 }
 
-function callbackGetBoughtItemInfo(product) {
+function callbackGetCompletedPurchaseRefInfo(reference) {
     const keysToDisplay = ["referenceId"];
-    addItem(boughtProductInfoItem);
-    const html = displayProductInfo(product, keysToDisplay, keysToDisplay);
-    $('#boughtProductInfo_info').html(html);
+    addItem(completedPurchaseRefInfoItem);
+    const html = displayReferenceInfo(reference, keysToDisplay, keysToDisplay);
+    $('#completePurchaseRefInfo_info').html(html);
 }
 
-function getBoughtItemInfo(id) {
-    loadXMLDoc("getboughtiteminfo/" + id, callbackGetBoughtItemInfo, callbackError);
+function getCompletedPurchaseRefInfo(id) {
+    loadXMLDoc("getCompletedPurchaseRefInfo/" + id, callbackGetCompletedPurchaseRefInfo, callbackError);
 }
 
-function callbackGetBoughtData(Ids) {
-    $("#boughtData_message").hide();
-    Ids.sort(comparisonBoughtData);
-    // myAccount.boughtData = {};
+function callbackGetCompletedPurchases(Ids) {
+    $("#completedPurchases_message").hide();
+    Ids.sort(comparisonReferences);
     let html = "";
-    for (const data of Ids) {
+    for (const reference of Ids) {
         html += "<details>";
-        html += "<summary>" + data.returnValues["description"] + "</summary>";
-        html += "<p>Reference Id: " + data.returnValues["referenceId"] + "</p>";
+        html += "<summary>" + reference.returnValues["description"] + "</summary>";
+        html += "<p>Reference Id: " + reference.returnValues["referenceId"] + "</p>";
         html += "</details>";
-        // myAccount.boughtData[data.returnValues["referenceId"]] = data.returnValues;
     }
-    $("#boughtData_list").html(html);
+    $("#completedPurchases_list").html(html);
 }
 
-function callbackErrorGetBoughtData(err) {
-    $("#boughtData_message").show();
-    $("#boughtData_message").html(err);
+function callbackErrorGetCompletedPurchases(err) {
+    $("#completedPurchases_message").show();
+    $("#completedPurchases_message").html(err);
 }
 
-function getBoughtData() {
+function getCompletedPurchases() {
     if (connected) {
-        $('#boughtData_notConnected').hide();
-        $('#boughtData_connected').show();
-        loadXMLDoc("getboughtdata", callbackGetBoughtData, callbackErrorGetBoughtData);
+        $('#completedPurchases_notConnected').hide();
+        $('#completedPurchases_connected').show();
+        loadXMLDoc("getCompletedPurchases", callbackGetCompletedPurchases, callbackErrorGetCompletedPurchases);
     } else {
-        $('#boughtData_connected').hide();
-        $('#boughtData_notConnected').show();
+        $('#completedPurchases_connected').hide();
+        $('#completedPurchases_notConnected').show();
     }
 }
 
-/** Buy product **/
+/** Buy reference **/
 function callbackBuy(param) {
-    // myAccount.boughtData[param["referenceId"]] = param;
-    $('#forSaleProductInfo_message').show();
-    $('#forSaleProductInfo_message').text("Bought!");
+    $('#forSaleReferenceInfo_message').show();
+    $('#forSaleReferenceInfo_message').text("Bought!");
 }
 
 function callbackErrorBuy(err) {
-    $('#forSaleProductInfo_message').show();
-    $('#forSaleProductInfo_message').text(err);
+    $('#forSaleReferenceInfo_message').show();
+    $('#forSaleReferenceInfo_message').text(err);
 }
 
-async function buyProduct() {
-    const id = $('#productInfo_referenceID').text();
-    // if (myAccount.boughtData.hasOwnProperty(id)) {
-    //     // Check if the product is already bought: we shouldn't buy it twice
-    //     $("#forSaleProductInfo_message").show();
-    //     $("#forSaleProductInfo_message").html("You already bought this product.");
-    // }
-    // else if (myAccount.forSale.includes(id)) {
-    //     // Check if I am the seller
-    //     $("#forSaleProductInfo_message").show();
-    //     $("#forSaleProductInfo_message").html("You can't buy this product as you are the seller.");
-    // }
-    // else {
+async function buyReference() {
+    const id = $('#referenceInfo_referenceID').text();
     loadXMLDoc("buy/" + id, callbackBuy, callbackErrorBuy);
-    // }
 }
 
 /** Ongoing Purchases **/
 
 function callbackOngoingPurchases(Ids) {
     $("#ongoingPurchases_message").hide();
-    // myAccount.buying = [];
     let html = "";
-    for (const data of Ids) {
+    for (const reference of Ids) {
         html += "<details>";
-        html += "<summary>" + data["description"] + "</summary>";
-        html += "<p>Reference Id: " + data["referenceId"] + "</p>";
-        html += "<p class='link' onclick=manageIdBuyer(" + data["referenceId"] + ")>Manage this Id</p>";
+        html += "<summary>" + reference["description"] + "</summary>";
+        html += "<p>Reference Id: " + reference["referenceId"] + "</p>";
+        html += "<p class='link' onclick=manageIdBuyer(" + reference["referenceId"] + ")>Manage this Id</p>";
         html += "</details>";
-        // myAccount.buying.push(data["referenceId"]);
     }
     $("#ongoingPurchases_beingBought").html(html);
 }
@@ -446,11 +428,11 @@ function loadOngoingPurchases() {
 function callbackManageIdBuyer(param) {
     addItem(manageIdBuyerItem);
 
-    const [product, hashSent, encryptedEncodedReceived, decoderReceived] = param;
+    const [reference, hashSent, encryptedEncodedReceived, decoderReceived] = param;
     const keys = ["provider", "description"];
     const keysNames = ["Provider", "Description"];
-    const tableProduct = displayProductInfo(product, keys, keysNames);
-    $("#manageIdBuyer_produit").html(tableProduct);
+    const tableReference = displayReferenceInfo(reference, keys, keysNames);
+    $("#manageIdBuyer_reference").html(tableReference);
 
     if (!encryptedEncodedReceived) {
         // Waiting for the encrypted encoded key
@@ -521,7 +503,7 @@ function callbackSendBuyerHash(id) {
 }
 
 function sendBuyerHash() {
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     loadXMLDoc("sendBuyerHash/" + id, callbackSendBuyerHash, callbackErrorManageIdBuyer);
 }
 
@@ -532,7 +514,7 @@ function callbackComputeK(result) {
 }
 
 function computeK() {
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     loadXMLDoc("computeK/" + id, callbackComputeK, callbackErrorManageIdBuyer);
 }
 
@@ -559,7 +541,7 @@ function callbackDisputeNotConfirmed(json) {
 }
 
 function dispute() {
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     addItem(disputeItem);
     loadXMLDoc("dispute/" + id, callbackDisputeNotConfirmed, callbackErrorManageIdBuyer);
 }
@@ -599,7 +581,7 @@ function callbackSeeTLEs(result) {
 }
 
 function seeTLEs() {
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     loadXMLDoc("seeTLEs/" + id, callbackSeeTLEs, callbackErrorManageIdBuyer);
 }
 
@@ -607,23 +589,22 @@ function seeTLEs() {
  * Sell menu
  ********************************/
 
-/** Sell product **/
+/** Sell reference **/
 
-function callbackSellNewProduct(param) {
+function callbackSellNewReference(param) {
     $("#sellNew_message").text("The offer is on the blockchain!");
     $("#sellNew_receipt").show();
     $("#sellNew_blockNumber").text(param["blockNumber"]);
     $("#sellNew_gasUsed").text(param["cumulativeGasUsed"]);
     $("#sellNew_referenceId").text(param["id"]);
-    // myAccount.forSale.push(param["id"]);
 }
 
-function callbackErrorSellNewProduct(err) {
+function callbackErrorSellNewReference(err) {
     $("#sellNew_message").show();
     $("#sellNew_message").html(err);
 }
 
-function sellNewProduct() {
+function sellNewReference() {
     /* Info to be sent */
     let json = {
         initialPrice: $("#sellNew_price").val(),
@@ -635,11 +616,9 @@ function sellNewProduct() {
         depreciationType: document.querySelector('input[name="depreciationType"]:checked').value,
         deposit: $("#sellNew_insuranceDeposit").val(),
     };
-    console.log(json);
     let complete = false;
     for (let property in json) {
         if (json[property] === "") {
-            console.log("dans le if");
             $("#sellNew_message").show();
             $("#sellNew_message").html("Please complete the whole form.");
             break;
@@ -649,40 +628,38 @@ function sellNewProduct() {
     }
     if (complete) {
         $("#sellNew_message").hide();
-        loadXMLDoc("sellNewProduct/" + JSON.stringify(json), callbackSellNewProduct, callbackErrorSellNewProduct);
+        loadXMLDoc("sellNewReference/" + JSON.stringify(json), callbackSellNewReference, callbackErrorSellNewReference);
     }
 }
 
-/** Ongoing sales **/
+/** Manage sales **/
 
-function callbackOngoingSales(Ids) {
-    $("#ongoingSales_message").hide();
-    myAccount.forSale = [];
+function callbackManageSales(Ids) {
+    $("#manageSales_message").hide();
     let html = "";
-    for (const data of Ids) {
+    for (const reference of Ids) {
         html += "<details>";
-        html += "<summary>" + data.returnValues["description"] + "</summary>";
-        html += "<p>Reference Id: " + data.returnValues["referenceId"] + "</p>";
-        html += "<p class='link' onclick=manageIdSeller(" + data.returnValues["referenceId"] + ")>Manage this Id</p>";
+        html += "<summary>" + reference.returnValues["description"] + "</summary>";
+        html += "<p>Reference Id: " + reference.returnValues["referenceId"] + "</p>";
+        html += "<p class='link' onclick=manageIdSeller(" + reference.returnValues["referenceId"] + ")>Manage this Id</p>";
         html += "</details>";
-        myAccount.forSale.push(data.returnValues["referenceId"]);
     }
-    $("#ongoingSales_beingSold").html(html);
+    $("#manageSales_beingSold").html(html);
 }
 
-function callbackErrorOngoingSales(err) {
-    $("#ongoingSales_message").show();
-    $("#ongoingSales_message").html(err);
+function callbackErrorManageSales(err) {
+    $("#manageSales_message").show();
+    $("#manageSales_message").html(err);
 }
 
-function loadOngoingSales() {
+function loadManageSales() {
     if (connected) {
-        $('#ongoingSales_notConnected').hide();
-        $('#ongoingSales_connected').show();
-        loadXMLDoc("ongoingSales", callbackOngoingSales, callbackErrorOngoingSales);
+        $('#manageSales_notConnected').hide();
+        $('#manageSales_connected').show();
+        loadXMLDoc("manageSales", callbackManageSales, callbackErrorManageSales);
     } else {
-        $('#ongoingSales_connected').hide();
-        $('#ongoingSales_notConnected').show();
+        $('#manageSales_connected').hide();
+        $('#manageSales_notConnected').show();
     }
 }
 
@@ -690,11 +667,11 @@ function loadOngoingSales() {
 
 function callbackManageIdSeller(param) {
     addItem(manageIdSellerItem);
-    const [product, total_clients, num_clients_step1, num_clients_step2, key] = param;
+    const [reference, total_clients, num_clients_step1, num_clients_step2, key] = param;
     const keys = ["provider", "initialPrice", "currentPrice", "description"];
     const keysNames = ["Provider", "Initial price", "Current price", "Description"];
-    const tableProduct = displayProductInfo(product, keys, keysNames);
-    $("#manageIdSeller_produit").html(tableProduct);
+    const tableReference = displayReferenceInfo(reference, keys, keysNames);
+    $("#manageIdSeller_reference").html(tableReference);
 
     $("#manageIdSeller_totalNumberClients").text(total_clients);
     $("#manageIdSeller_NumClientsStep1").text(num_clients_step1);
@@ -716,12 +693,8 @@ function callbackManageIdSeller(param) {
 }
 
 function callbackErrorManageIdSeller(err) {
-    console.log(err);
-}
-
-function manageIdSeller(id) {
-    $("#manageIdSeller_message").hide();
-    loadXMLDoc("manageIdSeller/" + id, callbackManageIdSeller, callbackErrorManageIdSeller);
+    $("#manageIdSeller_message").show();
+    $("#manageIdSeller_message").html(err);
 }
 
 function manageIdSeller(id) {
@@ -733,7 +706,7 @@ function manageIdSeller(id) {
 function callbackUploadNewTLE(param) {
     console.log("je suis dans la callback, pas d'erreur, afficher quelque chose au user");
     $("#newTLE_message").show();
-    $("#newTLE_message").html(param);
+    $("#newTLE_message").html("TLE uploaded");
 }
 
 function callbackErrorUploadNewTLE(err) {
@@ -742,13 +715,15 @@ function callbackErrorUploadNewTLE(err) {
 }
 
 function uploadNewTLE() {
+    console.log("yo");
     let json = {
         id: $("#newTLE_id").text(),
         line0: $("#newTLE_line0").val(),
         line1: $("#newTLE_line1").val(),
         line2: $("#newTLE_line2").val(),
-    };
 
+    };
+    console.log(json)
     let complete = false;
     for (const property in json) {
         if (json[property] === "") {
@@ -779,7 +754,7 @@ function callbackEncodedEncryptedKey(param) {
 }
 
 function sendEncodedEncryptedKey() {
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     loadXMLDoc("sendEncodedEncryptedKey/" + id, callbackEncodedEncryptedKey, callbackError);
 }
 
@@ -791,7 +766,7 @@ function callbackSendDecoderKey(result) {
 }
 
 function sendDecoderKey() {
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     loadXMLDoc("sendDecoderKey/" + id, callbackSendDecoderKey, callbackError);
 }
 
@@ -803,7 +778,7 @@ function callbackpostRefKey(result) {
 }
 
 function postRefKey() {
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     loadXMLDoc("postRefKey/" + id, callbackpostRefKey, callbackError);
 }
 
@@ -819,7 +794,7 @@ function callbackErrorWithdrawFunds(err) {
 }
 
 function withdrawFunds() {
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     loadXMLDoc("withdrawFunds/" + id, callbackWithdrawFunds, callbackErrorWithdrawFunds);
 }
 
@@ -856,7 +831,6 @@ function makeTransaction() {
         }
     }
     if (complete) {
-        $("#newTLE_message").hide();
         loadXMLDoc("maketransaction/" + JSON.stringify(json), callbackMakeTransaction, callbackError);
     }
 }
@@ -866,21 +840,21 @@ function makeTransaction() {
  ********************************/
 
 function sendBuyerHashMalicious() {
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     loadXMLDoc("sendBuyerHashMalicious/" + id, callbackSendBuyerHash, callbackErrorManageIdBuyer);
 }
 
 function sendEncodedEncryptedKeyMalicious() {
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     loadXMLDoc("sendEncodedEncryptedKeyMalicious/" + id, callbackEncodedEncryptedKey, callbackError);
 }
 
 function sendDecoderKeyMalicious() {
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     loadXMLDoc("sendDecoderKeyMalicious/" + id, callbackSendDecoderKey, callbackError);
 }
 
 function postRefKeyMalicious() {
-    const id = $('#productInfo_referenceID').text();
+    const id = $('#referenceInfo_referenceID').text();
     loadXMLDoc("postRefKeyMalicious/" + id, callbackpostRefKey, callbackError);
 }
