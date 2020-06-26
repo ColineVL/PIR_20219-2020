@@ -157,16 +157,90 @@ console.log(OTP(aliceSecret,OTP(loi,loi2)))
 console.log("***************************************************")
 
 
-let bufffff = crypto.randomBytes(5)
-let array = [];
-// for (let i = 0; i < bufffff.length ; i++) {
-//     array.push()
-// }
+let bufffff = new Buffer.from([52, 8, 5, 158, 16, 78, 56, 78, 106, 81, 77, 5, 6, 53, 96, 128, 192, 58, 6, 98, 1,75, 36, 82, 26, 18, 6, 54, 96, 148, 175, 158])//crypto.randomBytes(32)
+let bufffff1 = new Buffer.from([51, 8, 5, 158, 16, 78, 56, 78, 106, 81, 77, 5, 6, 53, 96, 128, 192, 58, 6, 98, 1,75, 36, 82, 26, 18, 6, 54, 96, 148, 175, 158])//crypto.randomBytes(32)
+let bufffff2 = new Buffer.from([51, 8, 6, 158, 16, 78, 56, 78, 106, 81, 77, 5, 6, 53, 96, 128, 192, 58, 6, 98, 1,75, 36, 82, 26, 18, 6, 54, 96, 148, 175, 158])//crypto.randomBytes(32)
+
+
+
+function pseudoRandomGenerator(seedK, keyLength){
+
+    let seedKey = seedK;
+
+    function RNG(seed) {
+        // LCG using GCC's constants
+        this.m = seedKey;//0x800000; // keySeed // 2**31;
+        this.a = 1103315245;
+        this.c = 12446;
+
+        this.state = seed ? seed : Math.floor(Math.random() * (this.m - 1));
+    }
+    RNG.prototype.nextInt = function() {
+        this.state = (this.a * this.state + this.c) % this.m;
+        return this.state;
+    }
+    RNG.prototype.nextFloat = function() {
+        // returns in range [0,1]
+        return this.nextInt() / (this.m - 1);
+    }
+    RNG.prototype.nextRange = function(start, end) {
+        // returns in range [start, end): including start, excluding end
+        // can't modulu nextInt because of weak randomness in lower bits
+        let rangeSize = end - start;
+        let randomUnder1 = this.nextInt() / this.m;
+        return start + Math.floor(randomUnder1 * rangeSize);
+    }
+    RNG.prototype.choice = function(array) {
+        return array[this.nextRange(0, array.length)];
+    }
+
+    let rng = new RNG(30);
+    // for (let i = 0; i < 10; i++)
+    //     console.log(rng.nextRange(10, 50));
+
+    let digits = new Array(256);
+    for(let i = 0; i < digits.length; i++){
+        digits[i]=i;
+    }
+
+    let array = new Uint8Array(keyLength);
+
+    for (let i = 0; i < keyLength; i++)
+        array[i]=rng.choice(digits);
+
+    return new Buffer.from(array);
+}
+
+function pseudoRandomSlicer(buffer){
+    let buff1 = buffer.slice(0,8);
+    let buff2 = buffer.slice(8,16);
+    let buff3 = buffer.slice(16,24);
+    let buff4 = buffer.slice(24,32);
+
+    let Key1 = new Buffer.from(pseudoRandomGenerator(web3.utils.bytesToHex(buff1),13));
+    let Key2 = new Buffer.from(pseudoRandomGenerator(web3.utils.bytesToHex(buff2),13));
+    let Key3 = new Buffer.from(pseudoRandomGenerator(web3.utils.bytesToHex(buff3),13));
+    let Key4 = new Buffer.from(pseudoRandomGenerator(web3.utils.bytesToHex(buff4),13));
+
+    return Buffer.concat([Key1,Key2,Key3,Key4]).slice(3,52)
+}
+
+console.log("seed :")
 console.log(bufffff)
-console.log(bufffff[0])
-let number = web3.utils.hexToNumber("0xdc")
-let bin = bufffff[0].toString(2)
-console.log(typeof bin)
-console.log(bin)
+console.log(bufffff.length)
+let keedpseudo = pseudoRandomGenerator(web3.utils.bytesToHex(bufffff),59).slice(10)
+console.log("Key :")
+console.log(keedpseudo)
+let keedpseudo1 = pseudoRandomGenerator(web3.utils.bytesToHex(bufffff1),59).slice(10)
+console.log("Key :")
+console.log(keedpseudo1)
+let keedpseudo2 = pseudoRandomGenerator(web3.utils.bytesToHex(bufffff2),59).slice(10)
+console.log("Key :")
+console.log(keedpseudo2)
+console.log(keedpseudo.length)
+
+console.log("Helloooo")
+
+console.log("Helloooo".slice(2,3))
 
 

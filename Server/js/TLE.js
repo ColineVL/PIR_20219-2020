@@ -390,17 +390,14 @@ function convertStrToBin(line1, line2){
     return array;
 }
 
-function convertBinToStr(Buffer1,Buffer2){
-    let str1 = "";
-    let str2 = "";
-    for (let i = 0; i <Buffer1.length ; i++) {
-        str1 += Buffer1[i].toString(2)
-        str2 += Buffer2[i].toString(2)
+function convertBinToStr(Buffer){
+    let str = "";
+    for (let i = 0; i <Buffer.length ; i++) {
+        str += Buffer[i].toString(2)
     }
-    str1 += Buffer1[Buffer1.length].toString(2) // Because the first line is one element longer than the 2nd
 
-    let TLE1 =  binary2StringLine1(str1)
-    let TLE2 =  binary2StringLine2(str2)
+    let TLE1 =  binary2StringLine1(str.slice(0,202))
+    let TLE2 =  binary2StringLine2(str.slice(202))
     return [TLE1,TLE2];
 }
 
