@@ -609,7 +609,11 @@ async function withdrawFundsProvider(id, Account) {
 async function addTLE(id,account,spaceObject,line1,line2) {
     try {
         let arrayTLE = TLE.convertStrToBin(line1, line2)
-        return await transactions.addTLE(account, id, spaceObject, arrayTLE)
+        const BuffTLE = new Buffer.from(arrayTLE,'hex');
+
+
+        // TODO PSEUDORANDOM
+        return await transactions.addTLE(account, id, spaceObject, BuffTLE)
     } catch (e) {
         throw e;
     }

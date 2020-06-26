@@ -571,15 +571,10 @@ module.exports = {
     /************************** TLE SPECIFIC FUNCTIONS **************************/
 
     /*For a provider to  add a TLE to a certain reference */
-    addTLE: async function (account,id,spaceObject,arrayTLE) {
-        let arr1 = arrayTLE.slice(0,25)
-        let arr2 = arrayTLE.slice(25);
+    addTLE: async function (account,id,spaceObject,BuffTLE) {
 
-        const Buff1 = new Buffer.from(arr1,'hex');
-        const Buff2 = new Buffer.from(arr2,'hex');
-
-        let bin25 = web3.utils.bytesToHex(Buff1);
-        let bin24 = web3.utils.bytesToHex(Buff2);
+        let bin25 = web3.utils.bytesToHex(Buff.slice(0,25));
+        let bin24 = web3.utils.bytesToHex(Buff2.slice(25,49));
 
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
