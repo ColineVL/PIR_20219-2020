@@ -233,25 +233,31 @@ async function getCurrentPrice(account, id) {
  * Manage an Id
  ********************************/
 
+/*Function to generate details for management of a certain Id on the provider side*/
 async function manageID(id, account) {
     try {
-        let product = await EventsModule.GetRef(id);
+        let product = await EventsModule.GetRef(id); // We fetch the product
+
         product.initialPrice = web3.utils.fromWei((product.initialPrice).toString(), "ether");
         product.currentPrice = await getCurrentPrice(account, id);
+
         const clients = await transactions.GetClients(account, id);
         let total_clients = clients.length;
+
         let ClientsWhoReceivedHashes = await EventsModule.GetEncryptedKeysSent(id);
-        let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length;
+        let num_clients_step1 = total_clients - ClientsWhoReceivedHashes.length; // Number of clients we need to send K^K2^K3 to
+
         let KeysSent = await EventsModule.GetKeysSent(id);
         let ReceivedHashes = await EventsModule.GetClientsWhoSentHashes(id);
-        let num_clients_step2 = ReceivedHashes.length - KeysSent.length;
 
-        let KeyEvent = await EventsModule.ReferenceKeySent(id);
+        let num_clients_step2 = ReceivedHashes.length - KeysSent.length; // Number of clients we need to verify the hashes of and eventually send K2
+
+        let KeyEvent = await EventsModule.ReferenceKeySent(id); // To check if we already set the final reference key
 
         let Key = 0;
         if (KeyEvent.length > 0) {
             let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1]));
-            Key = buffer.toString('hex');
+            Key = buffer.toString('hex'); // Eventually load the reference key we sent
         }
         return [product, total_clients, num_clients_step1, num_clients_step2, Key];
 
@@ -265,9 +271,9 @@ async function manageIDBuyer(id, account) {
     try {
         let product = await EventsModule.GetRef(id);
 
-        let eventEncryptedReceived = await EventsModule.GetEncryptedKeySentSpecific(id, account.address);
-        let eventDecoderReceived = await EventsModule.GetKeySentSpecific(id, account.address);
-        let eventHashSent = await EventsModule.GetHashFromClient(account.address, id);
+        let eventEncryptedReceived = await EventsModule.GetEncryptedKeySentSpecific(id, account.address); //To check if we received the encrypted encoded key
+        let eventDecoderReceived = await EventsModule.GetKeySentSpecific(id, account.address); //To check if we received the decoder KEy
+        let eventHashSent = await EventsModule.GetHashFromClient(account.address, id); //To check if we sent our hash
 
         // !! allows to convert to boolean
         let decoderReceived = !!eventDecoderReceived.length;
