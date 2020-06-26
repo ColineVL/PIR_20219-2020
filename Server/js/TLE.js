@@ -7,20 +7,21 @@ const example2 = "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.7212539
 function text2Binary(string, nbBits) {
     let result = "";
     for (let i = 0; i < string.length; i++) {
-        if (string[i] !== " ") {
-            result += string[i].charCodeAt(0).toString(2);
+        let charInBin = string[i].charCodeAt(0).toString(2);
+        while (charInBin.length < 8) {
+            // We decided to code the char on 8 bits (even if ASCII is 7 bits)
+            charInBin = '0' + charInBin;
         }
-    }
-    while (result.length < nbBits) {
-        result = '0' + result;
+        result += charInBin;
     }
     return result;
 }
 
 function binary2Text(binary, nbLetters) {
-    let result = String.fromCharCode(parseInt(binary, 2));
-    while (result.length < nbLetters) {
-        result += " ";
+    let result = "";
+    for (let i=0; i<nbLetters; i++) {
+        const bin = binary.substring(i*8, i*8+8);
+        result += String.fromCharCode(parseInt(bin, 2));
     }
     return result;
 }
@@ -225,7 +226,7 @@ function binary2StringLine1(byte1) {
     result += binary2Int(byte1.substring(0, 17), 5);
 
     // (3) Classification (U, C, S), 8 bits
-    result += binary2Text(byte1.substring(17, 25)) + " ";
+    result += binary2Text(byte1.substring(17, 25), 1) + " ";
     // Don't forget the space
 
     // (4) International Designator (last two digits of launch year)
@@ -368,6 +369,7 @@ function binary2StringLine2(byte2) {
 }
 
 
+
 function convertStrToBin(line1, line2){
     // 32 bits --> 4 bytes
     let str = string2BinaryLine1(line1) + string2BinaryLine2(line2);
@@ -393,7 +395,8 @@ function convertStrToBin(line1, line2){
 function convertBinToStr(Buffer){
     let str = "";
     for (let i = 0; i <Buffer.length ; i++) {
-        str += Buffer[i].toString(2)
+        let n = Buffer[i].toString(2)
+        str += "00000000".substr(n.length) + n;
     }
 
     let TLE1 =  binary2StringLine1(str.slice(0,202))

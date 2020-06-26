@@ -12,21 +12,26 @@ const web3 = new Web3(new Web3.providers.HttpProvider(provider))
 function text2Binary(string, nbBits) {
     let result = "";
     for (let i = 0; i < string.length; i++) {
-        if (string[i] !== " ") {
-            result += string[i].charCodeAt(0).toString(2);
+        let charInBin = string[i].charCodeAt(0).toString(2);
+        while (charInBin.length < 8) {
+            // We decided to code the char on 8 bits (even if ASCII is 7 bits)
+            charInBin = '0' + charInBin;
         }
-    }
-    while (result.length < nbBits) {
-        result = '0' + result;
+        result += charInBin;
     }
     return result;
 }
 
 function binary2Text(binary, nbLetters) {
-    let result = String.fromCharCode(parseInt(binary, 2));
-    while (result.length < nbLetters) {
-        result += " ";
+    let result = "";
+    for (let i=0; i<nbLetters; i++) {
+        const bin = binary.substring(i*8, i*8+8);
+        console.log("bin:"+bin);
+        result += String.fromCharCode(parseInt(bin, 2));
     }
+    // while (result.length < nbLetters) {
+    //     result += " ";
+    // }
     return result;
 }
 
@@ -79,6 +84,8 @@ function string2BinaryLine1(line1) {
 
     // (3) Classification
     // (U, C, S), 8 bits
+    console.log("bin:"+text2Binary(line1.substring(7, 8), 8));
+    console.log("string:"+line1.substring(7, 8));
     result += text2Binary(line1.substring(7, 8), 8);
     // Don't forget the space
 
@@ -230,7 +237,9 @@ function binary2StringLine1(byte1) {
     result += binary2Int(byte1.substring(0, 17), 5);
 
     // (3) Classification (U, C, S), 8 bits
-    result += binary2Text(byte1.substring(17, 25)) + " ";
+    console.log("bin:"+byte1.substring(17, 25));
+    console.log("string:"+binary2Text(byte1.substring(17, 25), 1));
+    result += binary2Text(byte1.substring(17, 25), 1) + " ";
     // Don't forget the space
 
     // (4) International Designator (last two digits of launch year)
@@ -377,7 +386,7 @@ function testLine1() {
     const line1 = example1;
     document.getElementById("line1").innerHTML = line1;
     let byte1 = string2BinaryLine1(line1);
-    console.log("Length line1: " + byte1.length);
+    // console.log("Length line1: " + byte1.length);
     document.getElementById("binaryLine1").innerHTML = byte1;
     document.getElementById("stringLine1").innerHTML = binary2StringLine1(byte1);
 }
@@ -386,7 +395,7 @@ function testLine2() {
     const line2 = example2;
     document.getElementById("line2").innerHTML = line2;
     let byte2 = string2BinaryLine2(line2);
-    console.log("Length line2: " + byte2.length);
+    // console.log("Length line2: " + byte2.length);
     document.getElementById("binaryLine2").innerHTML = byte2;
     document.getElementById("stringLine2").innerHTML = binary2StringLine2(byte2);
 }
@@ -398,45 +407,59 @@ function SeparateBytes(str) {
 }
 
 
-function convertStrToBin(line1, line2){
+function convertStrToBin(line1, line2) {
     // 32 bits --> 4 bytes
     let str = string2BinaryLine1(line1) + string2BinaryLine2(line2);
 
-    let array = new Uint8Array((str.length/8));
+    // console.log(str.slice(0, 50))
+    let array = new Uint8Array((str.length / 8));
 
     let num = 0;
     let concatStr;
 
-    for(let i = 1; i <= (str.length/8); i++){
-        concatStr = str.slice((i-1)*8,i*8);
+    for (let i = 1; i <= (str.length / 8); i++) {
+        concatStr = str.slice((i - 1) * 8, i * 8);
         num = 0;
 
-        for (let j = 0; j < 8; j++){
-            num += (Math.pow(2,j))*parseInt(concatStr[7-j]);
+        for (let j = 0; j < 8; j++) {
+            num += (Math.pow(2, j)) * parseInt(concatStr[7 - j]);
         }
-        array[i-1] = num;
+        array[i - 1] = num;
     }
-
-
-
-    let arr1 = array.slice(0,25)
-    let arr2 = array.slice(25);
-
-// alert(typeof array);
-    const fer1 = new Buffer.from(arr1,'hex');
-    const fer2 = new Buffer.from(arr2,'hex');
-
-    let TLE25 = web3.utils.bytesToHex(fer1);
-    let TLE24 = web3.utils.bytesToHex(fer2);
-
-    console.log("TLE1 ***********************");
-    console.log(TLE25);
-    console.log("TLE2 ***********************");
-    console.log(TLE24);
-
+    // console.log(array)
     return array;
-
 }
+
+function convertBinToStr(Buffer) {
+    let str = "";
+    // console.log(Buffer[0])
+    // console.log(Buffer[0].toString(2))
+    for (let i = 0; i < Buffer.length; i++) {
+        let n = Buffer[i].toString(2)
+        str += "00000000".substr(n.length) + n;
+    }
+    // console.log(".")
+    // console.log(str.slice(0, 50))
+
+    let TLE1 = binary2StringLine1(str.slice(0, 202))
+    let TLE2 = binary2StringLine2(str.slice(202))
+    return [TLE1, TLE2];
+}
+
+let binreal = convertStrToBin(example1, example2)
+let buffer = new Buffer.from(binreal)
+let backbin = convertBinToStr(buffer)
+
+console.log(example1)
+console.log(example2)
+console.log("...")
+console.log(backbin[0])
+console.log(backbin[1])
+
+
+let test = text2Binary("AB ", 24)
+console.log(test);
+console.log(test.length);
 
 module.exports = {
     convertStrToBin,

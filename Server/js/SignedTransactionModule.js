@@ -290,7 +290,8 @@ module.exports = {
 
         let bin25 = web3.utils.bytesToHex(BuffTLE.slice(0,25));
         let bin24 = web3.utils.bytesToHex(BuffTLE.slice(25,49));
-
+        console.log("bin:")
+        console.log(bin25)
         const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
         const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
         const dataref = contract.methods.setTLE(id,spaceObject,bin25,bin24).encodeABI();

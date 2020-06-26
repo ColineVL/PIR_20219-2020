@@ -619,11 +619,14 @@ async function addTLE(jsonInfo, account) {
         let arrayTLE = TLE.convertStrToBin(line1, line2);
         const rawBuffTLE = new Buffer.from(arrayTLE, 'hex');
 
+
         let K = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + account.address.toString() + '.txt');
 
-        let pseudoK = crypto.pseudoRandomGenerator(K, 59).slice(10); // To get a size of 49, a,d ,o 00's at the beginning
+        let pseudoK = crypto.pseudoRandomGenerator(web3.utils.bytesToHex(K), 59).slice(10); // To get a size of 49, a,d ,o 00's at the beginning
 
         const encryptedBuffTLE = crypto.OTP(pseudoK,rawBuffTLE);
+        console.log("client")
+        console.log(encryptedBuffTLE)
         return await transactions.addTLE(account, id, spaceObject, encryptedBuffTLE);
     } catch (e) {
         throw e;
@@ -636,16 +639,23 @@ async function clientReadTLEs(id, account) {
         let SellerObject = await readwrite.ReadAsObjectRefClient(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + account.address + '.txt');
 
         let K = crypto.OTP(SellerObject.K2, SellerObject.KxorK2);
-        let pseudoRandomRefKey = crypto.pseudoRandomGenerator(K, 59).slice(10); // To get a size of 49, a,d ,o 00's at the beginning
+        let pseudoRandomRefKey = crypto.pseudoRandomGenerator(web3.utils.bytesToHex(K), 59).slice(10); // To get a size of 49, a,d ,o 00's at the beginning
+
+
 
         let rawTLES = await transactions.GetTLEs(account, id);
         let stringTLES = [];
         for (let i = 0; i < rawTLES["1"].length; i++) {
-            let encryptedBuff1 = new Buffer.from(rawTLES["1"][i].TLE1);
-            let encryptedBuff2 = new Buffer.from(rawTLES["1"][i].TLE2);
+
+            console.log(rawTLES["1"][i].TLE1)
+
+            let encryptedBuff1 = new Buffer.from(web3.utils.hexToBytes(rawTLES["1"][i].TLE1));
+            let encryptedBuff2 = new Buffer.from(web3.utils.hexToBytes(rawTLES["1"][i].TLE2));
             let spaceObject = rawTLES["1"][i].spaceObject;
 
             let decryptedBuff = crypto.OTP(pseudoRandomRefKey, Buffer.concat([encryptedBuff1, encryptedBuff2]));
+
+
 
             let stringResult = TLE.convertBinToStr(decryptedBuff);
 

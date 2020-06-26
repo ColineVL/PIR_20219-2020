@@ -31,6 +31,7 @@ contract TLE_Contract is Provider_Depreciation_Contract {
         TLEs[_referenceId].push(_newObs);
 
         // Needed to see at the end if the provider uploaded the number of data promised
+        if(dataReferences[_referenceId].referenceKey ==0)
         dataReferences[_referenceId].numberOfData ++;
 
         emit newTLE(_referenceId, _spaceObject);
