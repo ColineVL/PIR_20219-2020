@@ -19,3 +19,20 @@ https://askubuntu.com/questions/46627/how-can-i-make-a-script-that-opens-termina
 What was recommended for new ubuntu:
 
 https://unix.stackexchange.com/questions/177572/how-to-rename-terminal-tab-title-in-gnome-terminal/566383#566383
+
+
+
+
+
+
+
+
+    // TODO Added function, remove later
+
+    function getK2 (uint _referenceId) view public returns(bytes32, bytes32, bytes32, bytes32, bytes32, bool, bool){
+        bytes32 _xor = dataReferences[_referenceId].referenceKey ^ dataReferences[_referenceId].keyDecoder[msg.sender];
+        bytes32 computedHash = keccak256(abi.encode(_xor));
+        bool bl = keccak256(abi.encode(_xor)) != dataReferences[_referenceId].encodedKeyHash[msg.sender];
+        bool bl1 = dataReferences[_referenceId].numberOfData < dataReferences[_referenceId].minimumData;
+        return (dataReferences[_referenceId].referenceKey, dataReferences[_referenceId].keyDecoder[msg.sender], dataReferences[_referenceId].encodedKeyHash[msg.sender], _xor, computedHash, bl, bl1);
+    }
