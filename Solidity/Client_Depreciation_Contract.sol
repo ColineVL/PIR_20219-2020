@@ -193,4 +193,15 @@ contract Client_Depreciation_Contract is Depreciation_Contract {
         return false;
     }
 
+
+    // TODO Added function, remove later
+
+    function getK2 (uint _referenceId) view public returns(bytes32, bytes32, bytes32, bytes32, bytes32, bool, bool){
+        bytes32 _xor = dataReferences[_referenceId].referenceKey ^ dataReferences[_referenceId].keyDecoder[msg.sender];
+        bytes32 computedHash = keccak256(abi.encode(_xor));
+        bool bl = keccak256(abi.encode(_xor)) != dataReferences[_referenceId].encodedKeyHash[msg.sender];
+        bool bl1 = dataReferences[_referenceId].numberOfData < dataReferences[_referenceId].minimumData;
+        return (dataReferences[_referenceId].referenceKey, dataReferences[_referenceId].keyDecoder[msg.sender], dataReferences[_referenceId].encodedKeyHash[msg.sender], _xor, computedHash, bl, bl1);
+    }
+
 }

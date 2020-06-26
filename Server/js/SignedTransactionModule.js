@@ -29,292 +29,7 @@ const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 
 
 let ContractAddress = '0x42699A7612A82f1d9C36148af9C77354759b210b';
-let abi = [{
-    "anonymous": false,
-    "inputs": [{"indexed": true, "internalType": "uint256", "name": "referenceId", "type": "uint256"}, {
-        "indexed": true,
-        "internalType": "address",
-        "name": "client",
-        "type": "address"
-    }, {"indexed": false, "internalType": "bytes32", "name": "encodedKeyHash", "type": "bytes32"}],
-    "name": "encodedKeyHash",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{"indexed": true, "internalType": "uint256", "name": "referenceId", "type": "uint256"}, {
-        "indexed": true,
-        "internalType": "address",
-        "name": "client",
-        "type": "address"
-    }, {"indexed": false, "internalType": "bytes32", "name": "encryptedEncodedKey", "type": "bytes32"}],
-    "name": "encryptedEncodedKeyEvent",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{"indexed": true, "internalType": "uint256", "name": "referenceId", "type": "uint256"}, {
-        "indexed": true,
-        "internalType": "address",
-        "name": "client",
-        "type": "address"
-    }, {"indexed": false, "internalType": "bytes32", "name": "keyDecoder", "type": "bytes32"}],
-    "name": "keyDecoder",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{"indexed": true, "internalType": "uint256", "name": "referenceId", "type": "uint256"}, {
-        "indexed": true,
-        "internalType": "address",
-        "name": "client",
-        "type": "address"
-    }, {"indexed": false, "internalType": "uint256", "name": "fund", "type": "uint256"}, {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "time",
-        "type": "uint256"
-    }, {"indexed": false, "internalType": "bytes32", "name": "publicKeyDH1", "type": "bytes32"}, {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "publicKeyDH2",
-        "type": "bytes32"
-    }, {"indexed": false, "internalType": "bytes32", "name": "publicKeyDH3", "type": "bytes32"}, {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "publicKeyDH4",
-        "type": "bytes32"
-    }],
-    "name": "newClient",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{"indexed": true, "internalType": "uint256", "name": "referenceId", "type": "uint256"}, {
-        "indexed": true,
-        "internalType": "address",
-        "name": "provider",
-        "type": "address"
-    }, {"indexed": false, "internalType": "uint256", "name": "initialPrice", "type": "uint256"}, {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "insuranceDeposit",
-        "type": "uint256"
-    }, {"indexed": false, "internalType": "uint64", "name": "minimumData", "type": "uint64"}, {
-        "indexed": false,
-        "internalType": "uint64",
-        "name": "deployTime",
-        "type": "uint64"
-    }, {"indexed": false, "internalType": "uint64", "name": "endTime", "type": "uint64"}, {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "depreciationType",
-        "type": "uint8"
-    }, {"indexed": false, "internalType": "string", "name": "description", "type": "string"}, {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "publicKeyDH1",
-        "type": "bytes32"
-    }, {"indexed": false, "internalType": "bytes32", "name": "publicKeyDH2", "type": "bytes32"}, {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "publicKeyDH3",
-        "type": "bytes32"
-    }, {"indexed": false, "internalType": "bytes32", "name": "publicKeyDH4", "type": "bytes32"}],
-    "name": "newDataReference",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "referenceId",
-        "type": "uint256"
-    }, {"indexed": false, "internalType": "string", "name": "spaceObject", "type": "string"}],
-    "name": "newTLE",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "referenceId",
-        "type": "uint256"
-    }, {"indexed": false, "internalType": "bytes32", "name": "referenceKey", "type": "bytes32"}],
-    "name": "referenceKey",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "_referenceId",
-        "type": "uint256"
-    }, {"indexed": false, "internalType": "uint256", "name": "funds", "type": "uint256"}],
-    "name": "withdrawFundsEvent",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{"indexed": true, "internalType": "uint256", "name": "referenceId", "type": "uint256"}, {
-        "indexed": true,
-        "internalType": "address",
-        "name": "client",
-        "type": "address"
-    }, {"indexed": false, "internalType": "uint256", "name": "funds", "type": "uint256"}, {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "time",
-        "type": "uint256"
-    }],
-    "name": "withdrawRefund",
-    "type": "event"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "", "type": "uint256"}, {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-    }],
-    "name": "TLEs",
-    "outputs": [{"internalType": "string", "name": "spaceObject", "type": "string"}, {
-        "internalType": "bytes25",
-        "name": "TLE1",
-        "type": "bytes25"
-    }, {"internalType": "bytes25", "name": "TLE2", "type": "bytes25"}],
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}, {
-        "internalType": "bytes32",
-        "name": "_publicKeyDH1",
-        "type": "bytes32"
-    }, {"internalType": "bytes32", "name": "_publicKeyDH2", "type": "bytes32"}, {
-        "internalType": "bytes32",
-        "name": "_publicKeyDH3",
-        "type": "bytes32"
-    }, {"internalType": "bytes32", "name": "_publicKeyDH4", "type": "bytes32"}],
-    "name": "buyReference",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_initialPrice", "type": "uint256"}, {
-        "internalType": "uint64",
-        "name": "_minimumData",
-        "type": "uint64"
-    }, {"internalType": "uint64", "name": "_referenceDuration", "type": "uint64"}, {
-        "internalType": "uint8",
-        "name": "_depreciationType",
-        "type": "uint8"
-    }, {"internalType": "string", "name": "_description", "type": "string"}, {
-        "internalType": "bytes32",
-        "name": "_publicKeyDH1",
-        "type": "bytes32"
-    }, {"internalType": "bytes32", "name": "_publicKeyDH2", "type": "bytes32"}, {
-        "internalType": "bytes32",
-        "name": "_publicKeyDH3",
-        "type": "bytes32"
-    }, {"internalType": "bytes32", "name": "_publicKeyDH4", "type": "bytes32"}],
-    "name": "createDataReference",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}],
-    "name": "getClientDisputes",
-    "outputs": [{"internalType": "address[]", "name": "", "type": "address[]"}],
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}],
-    "name": "getClients",
-    "outputs": [{"internalType": "address[]", "name": "", "type": "address[]"}],
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceKey", "type": "uint256"}],
-    "name": "getKeyDecoder",
-    "outputs": [{"internalType": "bytes32", "name": "", "type": "bytes32"}],
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}],
-    "name": "getNumberOfData",
-    "outputs": [{"internalType": "uint128", "name": "numberOfData", "type": "uint128"}],
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}],
-    "name": "getReferenceCurrentPrice",
-    "outputs": [{"internalType": "uint256", "name": "price", "type": "uint256"}],
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}],
-    "name": "getTLEs",
-    "outputs": [{"internalType": "bytes32", "name": "", "type": "bytes32"}, {
-        "components": [{
-            "internalType": "string",
-            "name": "spaceObject",
-            "type": "string"
-        }, {"internalType": "bytes25", "name": "TLE1", "type": "bytes25"}, {
-            "internalType": "bytes25",
-            "name": "TLE2",
-            "type": "bytes25"
-        }], "internalType": "struct TLE_Contract.structTLE[]", "name": "", "type": "tuple[]"
-    }],
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}],
-    "name": "raiseDispute",
-    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}, {
-        "internalType": "bytes32",
-        "name": "_encodedKeyHash",
-        "type": "bytes32"
-    }], "name": "setEncodedHashedKey", "outputs": [], "stateMutability": "nonpayable", "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}, {
-        "internalType": "address",
-        "name": "_client",
-        "type": "address"
-    }, {"internalType": "bytes32", "name": "_encryptedEncodedKey", "type": "bytes32"}],
-    "name": "setEncryptedEncodedKey",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}, {
-        "internalType": "address",
-        "name": "_client",
-        "type": "address"
-    }, {"internalType": "bytes32", "name": "_keyDecoder", "type": "bytes32"}],
-    "name": "setKeyDecoder",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}, {
-        "internalType": "bytes32",
-        "name": "_referenceKey",
-        "type": "bytes32"
-    }], "name": "setReferenceKey", "outputs": [], "stateMutability": "nonpayable", "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}, {
-        "internalType": "string",
-        "name": "_spaceObject",
-        "type": "string"
-    }, {"internalType": "bytes25", "name": "_TLE1", "type": "bytes25"}, {
-        "internalType": "bytes24",
-        "name": "_TLE2",
-        "type": "bytes24"
-    }], "name": "setTLE", "outputs": [], "stateMutability": "nonpayable", "type": "function"
-}, {
-    "inputs": [{"internalType": "uint256", "name": "_referenceId", "type": "uint256"}],
-    "name": "withdrawFunds",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-}];
+let abi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"bytes32","name":"encodedKeyHash","type":"bytes32"}],"name":"encodedKeyHash","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"bytes32","name":"encryptedEncodedKey","type":"bytes32"}],"name":"encryptedEncodedKeyEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"bytes32","name":"keyDecoder","type":"bytes32"}],"name":"keyDecoder","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"uint256","name":"fund","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"time","type":"uint256"},{"indexed":false,"internalType":"bytes32","name":"publicKeyDH1","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"publicKeyDH2","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"publicKeyDH3","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"publicKeyDH4","type":"bytes32"}],"name":"newClient","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"provider","type":"address"},{"indexed":false,"internalType":"uint256","name":"initialPrice","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"insuranceDeposit","type":"uint256"},{"indexed":false,"internalType":"uint64","name":"minimumData","type":"uint64"},{"indexed":false,"internalType":"uint64","name":"deployTime","type":"uint64"},{"indexed":false,"internalType":"uint64","name":"endTime","type":"uint64"},{"indexed":false,"internalType":"uint8","name":"depreciationType","type":"uint8"},{"indexed":false,"internalType":"string","name":"description","type":"string"},{"indexed":false,"internalType":"bytes32","name":"publicKeyDH1","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"publicKeyDH2","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"publicKeyDH3","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"publicKeyDH4","type":"bytes32"}],"name":"newDataReference","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":false,"internalType":"string","name":"spaceObject","type":"string"}],"name":"newTLE","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":false,"internalType":"bytes32","name":"referenceKey","type":"bytes32"}],"name":"referenceKey","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"_referenceId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"funds","type":"uint256"}],"name":"withdrawFundsEvent","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"referenceId","type":"uint256"},{"indexed":true,"internalType":"address","name":"client","type":"address"},{"indexed":false,"internalType":"uint256","name":"funds","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"time","type":"uint256"}],"name":"withdrawRefund","type":"event"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"TLEs","outputs":[{"internalType":"string","name":"spaceObject","type":"string"},{"internalType":"bytes25","name":"TLE1","type":"bytes25"},{"internalType":"bytes25","name":"TLE2","type":"bytes25"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"bytes32","name":"_publicKeyDH1","type":"bytes32"},{"internalType":"bytes32","name":"_publicKeyDH2","type":"bytes32"},{"internalType":"bytes32","name":"_publicKeyDH3","type":"bytes32"},{"internalType":"bytes32","name":"_publicKeyDH4","type":"bytes32"}],"name":"buyReference","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_initialPrice","type":"uint256"},{"internalType":"uint64","name":"_minimumData","type":"uint64"},{"internalType":"uint64","name":"_referenceDuration","type":"uint64"},{"internalType":"uint8","name":"_depreciationType","type":"uint8"},{"internalType":"string","name":"_description","type":"string"},{"internalType":"bytes32","name":"_publicKeyDH1","type":"bytes32"},{"internalType":"bytes32","name":"_publicKeyDH2","type":"bytes32"},{"internalType":"bytes32","name":"_publicKeyDH3","type":"bytes32"},{"internalType":"bytes32","name":"_publicKeyDH4","type":"bytes32"}],"name":"createDataReference","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"getClientDisputes","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"getClients","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"getK2","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"},{"internalType":"bytes32","name":"","type":"bytes32"},{"internalType":"bytes32","name":"","type":"bytes32"},{"internalType":"bytes32","name":"","type":"bytes32"},{"internalType":"bytes32","name":"","type":"bytes32"},{"internalType":"bool","name":"","type":"bool"},{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceKey","type":"uint256"}],"name":"getKeyDecoder","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"getNumberOfData","outputs":[{"internalType":"uint128","name":"numberOfData","type":"uint128"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"getReferenceCurrentPrice","outputs":[{"internalType":"uint256","name":"price","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"getTLEs","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"},{"components":[{"internalType":"string","name":"spaceObject","type":"string"},{"internalType":"bytes25","name":"TLE1","type":"bytes25"},{"internalType":"bytes25","name":"TLE2","type":"bytes25"}],"internalType":"struct TLE_Contract.structTLE[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"raiseDispute","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"bytes32","name":"_encodedKeyHash","type":"bytes32"}],"name":"setEncodedHashedKey","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"address","name":"_client","type":"address"},{"internalType":"bytes32","name":"_encryptedEncodedKey","type":"bytes32"}],"name":"setEncryptedEncodedKey","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"address","name":"_client","type":"address"},{"internalType":"bytes32","name":"_keyDecoder","type":"bytes32"}],"name":"setKeyDecoder","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"bytes32","name":"_referenceKey","type":"bytes32"}],"name":"setReferenceKey","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"},{"internalType":"string","name":"_spaceObject","type":"string"},{"internalType":"bytes25","name":"_TLE1","type":"bytes25"},{"internalType":"bytes24","name":"_TLE2","type":"bytes24"}],"name":"setTLE","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_referenceId","type":"uint256"}],"name":"withdrawFunds","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 //TODO: current abi :Provider
 const contract = new web3.eth.Contract(abi, ContractAddress); //TODO give correct address when available
 
@@ -571,31 +286,28 @@ module.exports = {
     /************************** TLE SPECIFIC FUNCTIONS **************************/
 
     /*For a provider to  add a TLE to a certain reference */
-    addTLE: async function (account,id,spaceObject,line1,line2) {
-        try {
-            let line1Bin = web3.utils.bytesToHex(line1);
-            let line2Bin = web3.utils.bytesToHex(line2);
+    addTLE: async function (account,id,spaceObject,BuffTLE) {
 
+        let bin25 = web3.utils.bytesToHex(Buff.slice(0,25));
+        let bin24 = web3.utils.bytesToHex(Buff2.slice(25,49));
 
-            const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
-            const txnCount = await web3.eth.getTransactionCount(account.address, "pending");
-            const dataref = await contract.methods.setTLE(id,spaceObject,line1Bin,line2Bin).encodeABI();
-            const rawTx = {
-                nonce: web3.utils.numberToHex(txnCount),
-                gasPrice: web3.utils.numberToHex(1500),
-                gasLimit: web3.utils.numberToHex(4700000),
-                to: ContractAddress,
-                data: dataref
-            };
-            const tx = new Tx(rawTx);
-            tx.sign(privateKey);
-            const serializedTx = tx.serialize();
-            const rawTxHex = '0x' + serializedTx.toString('hex');
-            let funds = await web3.eth.sendSignedTransaction(rawTxHex);
-            return funds;
-        } catch (e) {
-            throw e;
-        }
+        const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
+        const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
+        const dataref = contract.methods.setTLE(id,spaceObject,bin25,bin24).encodeABI();
+        const rawTx = {
+            nonce: web3.utils.numberToHex(txnCount),
+            gasPrice: web3.utils.numberToHex(1500),
+            gasLimit: web3.utils.numberToHex(4700000),
+            to: ContractAddress,
+            data: dataref
+        };
+        const tx = new Tx(rawTx);
+        tx.sign(privateKey);
+        const serializedTx = tx.serialize();
+        const rawTxHex = '0x' + serializedTx.toString('hex');
+        let funds = web3.eth.sendSignedTransaction(rawTxHex)
+            .catch(function(error){console.log(error)});
+        return funds;
     },
 
     /*Function to view the TLEs set for a certain reference*/
