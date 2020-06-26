@@ -75,6 +75,10 @@ const disputeItem = {
     title: "Dispute"
 };
 
+const seeTLEsItem = {
+    name: "seeTLEsItem",
+    title: "See TLEs"
+};
 
 /********************************
  * Sell Items
@@ -263,11 +267,13 @@ myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
         '<li id="manageidBuyer_encryptedEncodedWaiting">Waiting for the encrypted encoded key</li>' +
         '<li onclick="sendBuyerHash()" id="manageidBuyer_sendHash">Encrypted encoded key received, send hash</li>' +
         '<li id="manageidBuyer_decoderKeyWaiting">Encrypted encoded key received, you already sent the hash. Waiting for the decoder key</li>' +
-        '<li id="manageidBuyer_decoderKeyReceived" onclick="computeK()">Decoder key received, compute</li>' +
+        '<li id="manageidBuyer_decoderKeyReceived" onclick="computeK()">Decoder key received, compute K</li>' +
         '<li onclick="dispute()">Set a dispute or get a refund</li>' +
         '</ul>' +
 
         '<p class="message" id="manageIdBuyer_message"></p>' +
+        '<button id="manageIdBuyer_seeTLES" onclick="seeTLEs()">See the TLEs</button>' +
+
         '</div>'
     );
 });
@@ -290,6 +296,16 @@ myLayout.registerComponent('boughtDataItem', function (container, state) {
 myLayout.registerComponent('disputeItem', function (container, state) {
     container.getElement().html('<div id="dispute">');
     loadHTMLDoc("dispute.html", callbackLoadHTMLDispute);
+});
+
+myLayout.registerComponent('seeTLEsItem', function (container, state) {
+    container.getElement().html(
+        '<div class="container">' +
+        '<h1>TLEs in reference <var id="seeTLEs_id"></var></h1>' +
+        '<p id="seeTLEs_message" class="message"></p>' +
+        '<div id="seeTLEs_list"></div>' +
+        '</div>'
+    );
 });
 
 /** Sell items **/

@@ -560,6 +560,28 @@ function confirmDispute() {
     loadXMLDoc("confirmDispute/" + id, callbackConfirmDispute, callbackErrorManageIdBuyer);
 }
 
+/** See TLEs **/
+function callbackSeeTLEs(result) {
+    console.log(result["TLEs"]);
+    console.log(typeof result["TLEs"]);
+
+    addItem(seeTLEsItem);
+    let html = "";
+    for (const TLE of result['TLEs']) {
+        html += "<details>";
+        html += "<summary>" + TLE["line0"] + "</summary>";
+        html += "<p>" + TLE["line1"] + "</p>";
+        html += "<p>" + TLE["line2"] + "</p>";
+        html += "</details>";
+    }
+    $('#seeTLEs_list').html(html);
+}
+
+function seeTLEs() {
+    const id = $('#productInfo_referenceID').text();
+    loadXMLDoc("seeTLEs/" + id, callbackSeeTLEs, callbackErrorManageIdBuyer);
+}
+
 /********************************
  * Sell menu
  ********************************/

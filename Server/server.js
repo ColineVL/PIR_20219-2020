@@ -219,6 +219,17 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    .get('/seeTLEs/:id', async (req, res) => {
+        try {
+            let TLEs = await bc.clientReadTLEs(req.params.id, req.session.Account);
+            res.json({id: req.params.id, TLEs: TLEs});
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
+
+
     /************ Sell a product ************/
 
     .get('/sellNewProduct/:json', async (req, res) => {
@@ -256,8 +267,7 @@ app.use('/public', express.static(__dirname + '/public'))
     /** Upload a new TLE to the reference **/
     .get('/uploadNewTLE/:json', async (req, res) => {
         try {
-            // A toi Ziad
-            const result =  await bc.addTLE(req.params.json, req.session.Account);// req.params.json;
+            const result =  await bc.addTLE(req.params.json, req.session.Account);
             res.json(result);
         } catch (e) {
             console.log(e);
