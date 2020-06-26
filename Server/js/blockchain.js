@@ -607,14 +607,12 @@ async function withdrawFundsProvider(id, Account) {
 }
 /*Function for a provider to add a TLE*/
 async function addTLE(id,account,spaceObject,line1,line2) {
-
-    let arrayTLE = TLE.convertStrToBin(line1,line2)
-    let receipt = transactions.addTLE(account, id, spaceObject, arrayTLE)
-    let success = 0;
-    if (receipt) {
-        success = 1;
+    try {
+        let arrayTLE = TLE.convertStrToBin(line1, line2)
+        return await transactions.addTLE(account, id, spaceObject, arrayTLE)
+    } catch (e) {
+        throw e;
     }
-    return success;
 }
 
 

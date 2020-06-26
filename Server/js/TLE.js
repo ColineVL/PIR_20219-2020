@@ -3,11 +3,6 @@ const exampleTitre = "ISS (ZARYA)";
 const example1 = "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927";
 const example2 = "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537";
 
-const Web3 = require('web3');
-const provider = 'http://192.168.33.115:8545';
-const web3 = new Web3(new Web3.providers.HttpProvider(provider))
-
-
 // Text or char
 function text2Binary(string, nbBits) {
     let result = "";
@@ -370,31 +365,6 @@ function binary2StringLine2(byte2) {
     result += binary2Int(byte2.substring(186, 190), 1);
 
     return result;
-}
-
-// Test
-function testLine1() {
-    const line1 = example1;
-    document.getElementById("line1").innerHTML = line1;
-    let byte1 = string2BinaryLine1(line1);
-    console.log("Length line1: " + byte1.length);
-    document.getElementById("binaryLine1").innerHTML = byte1;
-    document.getElementById("stringLine1").innerHTML = binary2StringLine1(byte1);
-}
-
-function testLine2() {
-    const line2 = example2;
-    document.getElementById("line2").innerHTML = line2;
-    let byte2 = string2BinaryLine2(line2);
-    console.log("Length line2: " + byte2.length);
-    document.getElementById("binaryLine2").innerHTML = byte2;
-    document.getElementById("stringLine2").innerHTML = binary2StringLine2(byte2);
-}
-
-
-function SeparateBytes(str) {
-    let res = []
-    return res
 }
 
 
