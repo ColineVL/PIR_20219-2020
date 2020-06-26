@@ -80,7 +80,6 @@ function displayProductInfo(product, keysToDisplay, keysNames) {
 
 /** Load my account **/
 function loadMyAccount() {
-    console.log("je load l'account");
     if (connected) {
         $('#myAccount_notConnected').hide();
         $('#myAccount_connected').show();
@@ -89,7 +88,6 @@ function loadMyAccount() {
         getBoughtData();
         loadOngoingBuys();
         loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
-        console.log("avant updateBalance");
         updateBalance();
     } else {
         $('#myAccount_connected').hide();
@@ -258,6 +256,14 @@ function updatePrice() {
 let myTimerPrice;
 function callbackgetRefForSaleInfo(product) {
     let html = "<table><tbody>";
+    const keysToDisplay = ["provider", "insuranceDeposit", "minimumData"];
+    const keysNames = ["Provider", "Insurance funds by the provider", "Minimum Data"];
+    const depreciationTypes = {
+        1: "Linear",
+        2: "Quadratic",
+        0: "No depreciation"
+    };
+
     html += "<tr>";
     html += "<td>Reference Id</td>";
     html += "<td id='productInfo_referenceID'>" + product["referenceId"] + "</td>";
@@ -273,8 +279,6 @@ function callbackgetRefForSaleInfo(product) {
     html += "<td id='productInfo_currentPrice'></td>";
     html += "</tr>";
 
-    const keysToDisplay = ["provider", "insuranceDeposit", "minimumData", "depreciationType"];
-    const keysNames = ["Provider", "Insurance funds by the provider", "Minimum Data", "Type of Depreciation"];
     for (let i = 0; i < keysToDisplay.length; i++) {
         let key = keysToDisplay[i];
         let keyName = keysNames[i];
@@ -283,6 +287,11 @@ function callbackgetRefForSaleInfo(product) {
         html += "<td>" + product[key] + "</td>";
         html += "</tr>";
     }
+
+    html += "<tr>";
+    html += "<td>Type of depreciation</td>";
+    html += "<td>" + depreciationTypes[product["depreciationType"]] + "</td>";
+    html += "</tr>";
 
     html += "<tr>";
     html += "<td>Time of Deployment</td>";
@@ -581,10 +590,11 @@ function sellNewProduct() {
         depreciationType: document.querySelector('input[name="depreciationType"]:checked').value,
         deposit: $("#sellNew_insuranceDeposit").val(),
     };
-
+    console.log(json);
     let complete = false;
-    for (const property in json) {
-        if (json.property === "") {
+    for (let property in json) {
+        if (json[property] === "") {
+            console.log("dans le if");
             $("#sellNew_message").show();
             $("#sellNew_message").html("Please complete the whole form.");
             break;
@@ -690,7 +700,7 @@ function uploadNewTLE() {
 
     let complete = false;
     for (const property in json) {
-        if (json.property === "") {
+        if (json[property] === "") {
             $("#newTLE_message").show();
             $("#newTLE_message").html("Please complete the whole form.");
             break;
@@ -771,27 +781,29 @@ function callbackError(err) {
 function callbackMakeTransaction(param) {
     addItem(resultTransactionItem);
     param = displayTable(param);
+    $("#transaction_message").html("Transaction completed!");
     $("#resultTransaction_receipt").html(param);
 }
 
 function makeTransaction() {
-    let sender = document.getElementById("transaction_sender").value;
-    let receiver = document.getElementById("transaction_receiver").value;
-    let privateKey = document.getElementById("transaction_privateKey").value;
-    let amount = document.getElementById("transaction_amount").value;
-
-    if (sender === "" || receiver === "" || privateKey === "" || amount === "") {
-        document.getElementById("message").innerHTML = "Please complete the whole form.";
-        $("#transaction_message").html("Please complete the whole form.");
-    } else {
-        // TODO si la transaction échoue ?
-        $("#transaction_message").html("Transaction completed!");
-        let json = {
-            sender: sender,
-            receiver: receiver,
-            privateKey: privateKey,
-            amount: amount,
-        };
+    let json = {
+        sender: $("#transaction_sender").val(),
+        receiver: $("#transaction_receiver").val(),
+        privateKey: $("#transaction_privateKey").val(),
+        amount: $("#transaction_amount").val(),
+    };
+    let complete = false;
+    for (const property in json) {
+        if (json[property] === "") {
+            $("#message").html("Please complete the whole form.");
+            $("#transaction_message").html("Please complete the whole form.");
+            break;
+        } else {
+            complete = true;
+        }
+    }
+    if (complete) {
+        $("#newTLE_message").hide();
         loadXMLDoc("maketransaction/" + JSON.stringify(json), callbackMakeTransaction, callbackError);
     }
 }
