@@ -257,7 +257,7 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/uploadNewTLE/:json', async (req, res) => {
         try {
             // A toi Ziad
-            const result = req.params.json;
+            const result =  await bc.addTLE(req.params.json, req.session.Account);// req.params.json;
             res.json(result);
         } catch (e) {
             console.log(e);

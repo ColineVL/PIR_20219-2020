@@ -613,14 +613,23 @@ async function withdrawFundsProvider(id, Account) {
     }
 }
 /*Function for a provider to add a TLE*/
-async function addTLE(id,account,spaceObject,line1,line2) {
+async function addTLE(jsonInfo,account){//id,account,spaceObject,line1,line2) {
+    jsonInfo = JSON.parse(jsonInfo);
+    const id = jsonInfo["id"];
+    const spaceObject = jsonInfo["spaceObject"];
+    const line1 = jsonInfo["line1"];
+    const line2 = jsonInfo["line2"];
+
     try {
         let arrayTLE = TLE.convertStrToBin(line1, line2)
-        const BuffTLE = new Buffer.from(arrayTLE,'hex');
+        const rawBuffTLE = new Buffer.from(arrayTLE,'hex');
 
+        let K = await readwrite.Read_K(__dirname + '/../Database/SellerInfo' + id.toString() + '_' + Account.address.toString() + '.txt');
 
-        // TODO PSEUDORANDOM
-        return await transactions.addTLE(account, id, spaceObject, BuffTLE)
+        let pseudoK = crypto.pseudoRandomGenerator(K,59).slice(10) // To get a size of 49, a,d ,o 00's at the beginning
+
+        const encryptedBuffTLE = OTP(pseudoK,rawBuffTLE)
+        return await transactions.addTLE(account, id, spaceObject, encryptedBuffTLE)
     } catch (e) {
         throw e;
     }
@@ -628,6 +637,11 @@ async function addTLE(id,account,spaceObject,line1,line2) {
 /*Function for a purchaser ro read all posted TLE's for a reference (he must have the reference Key K)*/
 async function ClientReadTLEs(id,account) {
     try {
+        let SellerObject= await readwrite.ReadAsObjectRefClient(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + Account.address + '.txt')
+
+        let K= OTP(SellerObject.K2,SellerObject.KxorK2)
+        let pseudoRandomRefKey = crypto.pseudoRandomGenerator(K,59).slice(10) // To get a size of 49, a,d ,o 00's at the beginning
+
         let rawTLES = await transactions.GetTLEs(account,id);
         let stringTLES = []
         for (let i = 0; i <rawTLES.length ; i++) {
@@ -635,15 +649,13 @@ async function ClientReadTLEs(id,account) {
             let encryptedBuff2 = new Buffer.from(rawTLES[i].TLE2,'hex');
             let spaceObject = rawTLES[i].spaceObject;
 
-            let refKey; // TODO
 
-            let pseudoRandomRefKey //TODO
-            let decryptedBuff = crypto.OTP(pseudoRandomRefKey, Buffer.concat(encryptedBuff1,encryptedBuff2))
-            let stringResult = TLE.convertBinToStr(buff)
-            rawTLES.push([spaceObject,stringResult[0],stringResult[1]])
+            let decryptedBuff = crypto.OTP(pseudoRandomRefKey, Buffer.concat([encryptedBuff1,encryptedBuff2]))
+
+            let stringResult = TLE.convertBinToStr(decryptedBuff)
+
+            stringTLES.push([spaceObject,stringResult[0],stringResult[1]])
         }
-
-        // TODO PSEUDORANDOM
         return rawTLES
     } catch (e) {
         throw e;
@@ -690,6 +702,8 @@ module.exports = {
     sendDecoderKeyMalicious,
     sendReferenceKeyMalicious,
     withdrawFundsProvider,
-    OngoingPurchases
+    OngoingPurchases,
+    ClientReadTLEs,
+    addTLE,
 
 };
