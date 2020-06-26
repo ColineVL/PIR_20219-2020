@@ -238,9 +238,12 @@ let keedpseudo2 = pseudoRandomGenerator(web3.utils.bytesToHex(bufffff2),59).slic
 console.log("Key :")
 console.log(keedpseudo2)
 console.log(keedpseudo.length)
+console.log("........................................................")
+let TLE = "0x31e42ae210c0001047222c046868000bf34000080a8ff302cc"
+console.log(TLE)
+console.log(typeof TLE)
 
-console.log("Helloooo")
+console.log(new Buffer.from(TLE,'hex'))
 
-console.log("Helloooo".slice(2,3))
 
 

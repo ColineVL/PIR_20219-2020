@@ -642,13 +642,24 @@ async function clientReadTLEs(id, account) {
         let stringTLES = [];
         for (let i = 0; i < rawTLES["1"].length; i++) {
             console.log("dans la boucle");
-            let encryptedBuff1 = new Buffer.from(rawTLES["1"][i].TLE1, 'hex');
+            let encryptedBuff1 = new Buffer.from(rawTLES["1"][i].TLE1);
+
+            console.log(rawTLES["1"][i].TLE1)
+
+
+            console.log(encryptedBuff1)
+
             let encryptedBuff2 = new Buffer.from(rawTLES["1"][i].TLE2, 'hex');
             let spaceObject = rawTLES["1"][i].spaceObject;
             let decryptedBuff = crypto.OTP(pseudoRandomRefKey, Buffer.concat([encryptedBuff1, encryptedBuff2]));
 
             let stringResult = TLE.convertBinToStr(decryptedBuff);
-
+            // console.log(".............................................")
+            // console.log("decryptedBuff :")
+            // console.log(decryptedBuff)
+            // console.log("stringresult :")
+            // console.log(stringResult[0])
+            // console.log(stringResult[1])
             stringTLES.push({
                 line0: spaceObject,
                 line1: stringResult[0],
