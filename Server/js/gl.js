@@ -55,9 +55,9 @@ const boughtProductInfoItem = {
     name: "boughtProductInfoItem"
 };
 
-const ongoingBuysItem = {
-    title: "Ongoing buys",
-    name: "ongoingBuysItem"
+const ongoingPurchasesItem = {
+    title: "Ongoing purchases",
+    name: "ongoingPurchasesItem"
 };
 
 const boughtDataItem = {
@@ -238,16 +238,16 @@ myLayout.registerComponent('boughtProductInfoItem', function (container, state) 
     );
 });
 
-myLayout.registerComponent('ongoingBuysItem', function (container, state) {
+myLayout.registerComponent('ongoingPurchasesItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<div id="ongoingBuys_notConnected">' +
+        '<div id="ongoingPurchases_notConnected">' +
         '<p class="message">You are not connected...</p>' +
         '</div>' +
-        '<div id="ongoingBuys_connected">' +
+        '<div id="ongoingPurchases_connected">' +
         '<h1>Products being bought :</h1>' +
-        '<p id="ongoingBuys_message" class="message"></p>' +
-        '<ul id="ongoingBuys_beingBought"></ul>' +
+        '<p id="ongoingPurchases_message" class="message"></p>' +
+        '<ul id="ongoingPurchases_beingBought"></ul>' +
         '</div>' +
         '</div>'
     );
@@ -408,8 +408,8 @@ function addMenuItem(newItem) {
     if (newItem.name === "ongoingSalesItem") {
         element.click(loadOngoingSales);
     }
-    if (newItem.name === "ongoingBuysItem") {
-        element.click(loadOngoingBuys);
+    if (newItem.name === "ongoingPurchasesItem") {
+        element.click(loadOngoingPurchases);
     }
     if (newItem.name === "sellNewItem") {
         element.click( () => {
@@ -430,7 +430,7 @@ addMenuItem(listNodesItem);
 addMenuItem(newAccountItem);
 $('#menuContainer').append("<h2>Buy</h2>");
 addMenuItem(forSaleItem);
-addMenuItem(ongoingBuysItem);
+addMenuItem(ongoingPurchasesItem);
 addMenuItem(boughtDataItem);
 $('#menuContainer').append("<h2>Sell</h2>");
 addMenuItem(sellNewItem);

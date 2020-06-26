@@ -154,7 +154,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     /************ Ongoing buys ************/
 
-    .get('/ongoingBuys/', async (req, res) => {
+    .get('/ongoingPurchases/', async (req, res) => {
         try {
             let Ids = await bc.OngoingPurchases(req.session.Account.address);
             res.json(Ids);

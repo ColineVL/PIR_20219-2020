@@ -86,7 +86,7 @@ function loadMyAccount() {
         $('#myAccount_address').html(myAccount.address);
         loadOngoingSales();
         getBoughtData();
-        loadOngoingBuys();
+        loadOngoingPurchases();
         loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
         updateBalance();
     } else {
@@ -409,10 +409,10 @@ async function buyProduct() {
     // }
 }
 
-/** Ongoing buys **/
+/** Ongoing Purchases **/
 
-function callbackOngoingBuys(Ids) {
-    $("#ongoingBuys_message").hide();
+function callbackOngoingPurchases(Ids) {
+    $("#ongoingPurchases_message").hide();
     // myAccount.buying = [];
     let html = "";
     for (const data of Ids) {
@@ -423,22 +423,22 @@ function callbackOngoingBuys(Ids) {
         html += "</details>";
         // myAccount.buying.push(data["referenceId"]);
     }
-    $("#ongoingBuys_beingBought").html(html);
+    $("#ongoingPurchases_beingBought").html(html);
 }
 
-function callbackErrorOngoingBuys(err) {
-    $("#ongoingBuys_message").show();
-    $("#ongoingBuys_message").html(err);
+function callbackErrorOngoingPurchases(err) {
+    $("#ongoingPurchases_message").show();
+    $("#ongoingPurchases_message").html(err);
 }
 
-function loadOngoingBuys() {
+function loadOngoingPurchases() {
     if (connected) {
-        $('#ongoingBuys_notConnected').hide();
-        $('#ongoingBuys_connected').show();
-        loadXMLDoc("ongoingBuys", callbackOngoingBuys, callbackErrorOngoingBuys);
+        $('#ongoingPurchases_notConnected').hide();
+        $('#ongoingPurchases_connected').show();
+        loadXMLDoc("ongoingPurchases", callbackOngoingPurchases, callbackErrorOngoingPurchases);
     } else {
-        $('#ongoingBuys_connected').hide();
-        $('#ongoingBuys_notConnected').show();
+        $('#ongoingPurchases_connected').hide();
+        $('#ongoingPurchases_notConnected').show();
     }
 }
 
