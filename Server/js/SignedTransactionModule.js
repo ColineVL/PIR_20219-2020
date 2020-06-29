@@ -327,7 +327,6 @@ module.exports = {
         } catch (e) {
             throw e;
         }
-
     },
 
     /*Function to view the TLEs set for a certain reference*/

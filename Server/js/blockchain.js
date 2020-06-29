@@ -660,8 +660,8 @@ async function clientReadTLEs(id, account) {
 async function readFreeTLEs(id, account) {
     try {
 
-        let KEvent = await EventsModule.GetReferenceKeySpecific(id); //TODO this can be added to client side so he knows when to dispute
-        let K= web3.utils.bytesToHex(KEvent[]);
+        let KEvent = await EventsModule.ReferenceKeySent(id); //TODO this can be added to client side so he knows when to dispute
+        let K= web3.utils.bytesToHex(KEvent[0].returnValues.referenceKey);
         let pseudoRandomRefKey = crypto.pseudoRandomGenerator(K, 59).slice(10); // To get a size of 49, a,d ,o 00's at the beginning
 
         let rawTLES = await transactions.GetTLEs(account, id);
@@ -738,4 +738,5 @@ module.exports = {
     createTransaction,
 
     getDeprecated,
+    readFreeTLEs,
 };
