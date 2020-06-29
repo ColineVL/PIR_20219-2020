@@ -1,13 +1,13 @@
 const express = require('express');
 const session = require('cookie-session'); // Charge le middleware de sessions
 const bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
-const bc = require('./js/blockchain');
+const bc = require('../js/blockchain');
 // const transactions = require('./js/SignedTransactionModule');
 // const crypto = require('./js/CryptoModule');
-const EventsModule = require('./js/EventsModule');
-const readwrite = require('./js/ReadWriteModule');
+const EventsModule = require('../js/EventsModule');
+const readwrite = require('../js/ReadWriteModule');
 
-const orbits = require('./js/orbits')
+const orbits = require('../js/orbits')
 
 // let prime = crypto.GetPrime(32);
 // const Web3 = require('web3');

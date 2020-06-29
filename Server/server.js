@@ -239,7 +239,6 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/depreciatedData', async (req, res) => {
         try {
             let Ids = await bc.getDeprecated();
-            // console.log(Ids);
             res.json(Ids);
         } catch (e) {
             console.log(e);
