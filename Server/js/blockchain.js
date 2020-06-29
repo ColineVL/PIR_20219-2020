@@ -279,14 +279,13 @@ async function getClients(account, id) {
 }
 
 /*Function to have access to "Free data" once it is availabe*/
-async function getDeprecated(account, id) {
+async function getDeprecated() {
     try {
         let IdsEvents = await EventsModule.ReferenceKeysSent(); // Get the events for this data (that anyone can read)
         return await IdsEvents;
     } catch (e) {
         throw e;
     }
-
 }
 
 /*Function to send the encrypted encoded keys to our clients*/
@@ -638,16 +637,41 @@ async function clientReadTLEs(id, account) {
         let rawTLES = await transactions.GetTLEs(account, id);
         let stringTLES = [];
         for (let i = 0; i < rawTLES["1"].length; i++) {
-
-            console.log(rawTLES["1"][i].TLE1)
-
             let encryptedBuff1 = new Buffer.from(web3.utils.hexToBytes(rawTLES["1"][i].TLE1));
             let encryptedBuff2 = new Buffer.from(web3.utils.hexToBytes(rawTLES["1"][i].TLE2));
             let spaceObject = rawTLES["1"][i].spaceObject;
 
             let decryptedBuff = crypto.OTP(pseudoRandomRefKey, Buffer.concat([encryptedBuff1, encryptedBuff2]));
 
+            let stringResult = TLE.convertBinToStr(decryptedBuff);
+            stringTLES.push({
+                line0: spaceObject,
+                line1: stringResult[0],
+                line2: stringResult[1]
+            });
+        }
+        return stringTLES;
+    } catch (e) {
+        throw e;
+    }
+}
 
+/*Function for a purchaser ro read all posted TLE's for a reference (case where the reference key is public)*/
+async function readFreeTLEs(id, account) {
+    try {
+
+        let KEvent = await EventsModule.GetReferenceKeySpecific(id); //TODO this can be added to client side so he knows when to dispute
+        let K= web3.utils.bytesToHex(KEvent[]);
+        let pseudoRandomRefKey = crypto.pseudoRandomGenerator(K, 59).slice(10); // To get a size of 49, a,d ,o 00's at the beginning
+
+        let rawTLES = await transactions.GetTLEs(account, id);
+        let stringTLES = [];
+        for (let i = 0; i < rawTLES["1"].length; i++) {
+            let encryptedBuff1 = new Buffer.from(web3.utils.hexToBytes(rawTLES["1"][i].TLE1));
+            let encryptedBuff2 = new Buffer.from(web3.utils.hexToBytes(rawTLES["1"][i].TLE2));
+            let spaceObject = rawTLES["1"][i].spaceObject;
+
+            let decryptedBuff = crypto.OTP(pseudoRandomRefKey, Buffer.concat([encryptedBuff1, encryptedBuff2]));
 
             let stringResult = TLE.convertBinToStr(decryptedBuff);
 
@@ -662,6 +686,7 @@ async function clientReadTLEs(id, account) {
         throw e;
     }
 }
+
 
 
 /********************************
