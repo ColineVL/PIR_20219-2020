@@ -32,7 +32,8 @@ body .lm_content {
 }
 
 [onClick]:hover {
-    color: #E55B0A;
+    /*color: #E55B0A;*/
+    color: #d96629;
 }
 
 /** Wrapper **/
