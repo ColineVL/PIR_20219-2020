@@ -234,7 +234,28 @@ app.use('/public', express.static(__dirname + '/public'))
         }
     })
 
+    /************ Access depreciated Data ************/
 
+    .get('/depreciatedData', async (req, res) => {
+        try {
+            let Ids = await bc.getDeprecated();
+            //TODO COLINE
+            res.json(receipt);
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
+    .get('/accessDepreciatedData/', async (req, res) => {
+        try {
+            let TLEs = await bc.readFreeTLEs(req.params.id, req.session.Account);
+            //TODO COLINE
+            res.json({id: req.params.id, TLEs: TLEs});
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e.message);
+        }
+    })
     /************ Sell a reference ************/
 
     .get('/sellNewReference/:json', async (req, res) => {

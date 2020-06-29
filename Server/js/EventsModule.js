@@ -307,6 +307,17 @@ module.exports = {
             throw e;
         }
     },
+    /* Get events detailing all deprecated data in the sense that anyone can read them because the reference key was released */
+    ReferenceKeysSent: async function () {
+        try {
+            return await contractws.getPastEvents("referenceKey", {
+                fromBlock: 0,
+                toBlock: 'latest'
+            });
+        } catch (e) {
+            throw e;
+        }
+    },
 
     /* Check for event detailing the funds withdrawn by the Provider for a particular Id */
     WithdrawFundsEvent: async function (id) {
