@@ -281,11 +281,8 @@ async function getClients(account, id) {
 /*Function to have access to "Free data" once it is availabe*/
 async function getDeprecated(account, id) {
     try {
-        let IdsEvents = await EventsModule.ReferenceKeysSent();
-        let Ids = await EventsModule.EventsToIds(IdsEvents);
-
-        let IdsObjects = await EventsModule.GetRefs(Ids); //TODO Colline je sais pas si ce format te convient: liste de references
-        return await IdsObjects;
+        let IdsEvents = await EventsModule.ReferenceKeysSent(); // Get the events for this data (that anyone can read)
+        return await IdsEvents;
     } catch (e) {
         throw e;
     }
