@@ -353,7 +353,6 @@ function callbackGetCompletedPurchases(Ids) {
     Ids.sort(comparisonReferences);
     let html = "";
     for (let reference of Ids) {
-        console.log(reference);
         html += "<details>";
         html += "<summary>" + reference["description"] + "</summary>";
         html += "<p>Reference Id: " + reference["referenceId"] + "</p>";
@@ -400,7 +399,7 @@ async function buyReference() {
 function callbackOngoingPurchases(Ids) {
     $("#ongoingPurchases_message").hide();
     let html = "";
-    for (const reference of Ids) {
+    for (let reference of Ids) {
         html += "<details>";
         html += "<summary>" + reference["description"] + "</summary>";
         html += "<p>Reference Id: " + reference["referenceId"] + "</p>";
@@ -425,6 +424,56 @@ function loadOngoingPurchases() {
         $('#ongoingPurchases_notConnected').show();
     }
 }
+
+/** Free public data **/
+function callbackFreeReferences(Ids) {
+    console.log(Ids);
+    $("#freeReferences_message").hide();
+    let html = "";
+    for (let reference of Ids) {
+        html += "<details>";
+        html += "<summary>" + reference["description"] + "</summary>";
+        html += "<p>Reference Id: " + reference["referenceId"] + "</p>";
+        html += "<p class='link' onclick=getFreeReferenceInfo(" + reference["referenceId"] + ")>See the TLEs</p>";
+        html += "</details>";
+    }
+    $("#freeReferences_references").html(html);
+}
+
+function callbackErrorFreeReferences(err) {
+    $("#freeReferences_message").show();
+    $("#freeReferences_message").html(err);
+}
+
+function loadFreeReferences() {
+    if (connected) {
+        $('#freeReferences_notConnected').hide();
+        $('#freeReferences_connected').show();
+        loadXMLDoc("depreciatedData", callbackFreeReferences, callbackErrorFreeReferences);
+    } else {
+        $('#freeReferences_connected').hide();
+        $('#freeReferences_notConnected').show();
+    }
+}
+
+function callbackGetFreeReferenceInfo(result) {
+    addItem(freeRefInfoItem);
+    $('#freeRefInfo_id').html(result["id"]);
+    let html = "";
+    for (let TLE of result['TLEs']) {
+        html += "<details>";
+        html += "<summary>" + TLE["line0"] + "</summary>";
+        html += "<p>" + TLE["line1"] + "</p>";
+        html += "<p>" + TLE["line2"] + "</p>";
+        html += "</details>";
+    }
+    $('#freeRefInfo_info').html(html);
+}
+
+function getFreeReferenceInfo(id) {
+    loadXMLDoc("accessDepreciatedData/" + id, callbackGetFreeReferenceInfo, callbackError);
+}
+
 
 /** Manage Id Buyer **/
 function callbackManageIdBuyer(param) {
@@ -639,7 +688,7 @@ function sellNewReference() {
 function callbackManageSales(Ids) {
     $("#manageSales_message").hide();
     let html = "";
-    for (const reference of Ids) {
+    for (let reference of Ids) {
         html += "<details>";
         html += "<summary>" + reference["description"] + "</summary>";
         html += "<p>Reference Id: " + reference["referenceId"] + "</p>";

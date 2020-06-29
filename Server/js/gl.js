@@ -50,9 +50,24 @@ const forSaleReferenceInfoItem = {
     name: "forSaleReferenceInfoItem"
 };
 
+const completedPurchasesItem = {
+    title: "Completed purchases",
+    name: "completedPurchasesItem"
+};
+
 const completedPurchaseRefInfoItem = {
     title: "Reference info",
     name: "completedPurchaseRefInfoItem"
+};
+
+const freeReferencesItem = {
+    title: "Free public references",
+    name: "freeReferencesItem"
+};
+
+const freeRefInfoItem = {
+    title: "Free Reference info",
+    name: "freeRefInfoItem"
 };
 
 const ongoingPurchasesItem = {
@@ -60,10 +75,6 @@ const ongoingPurchasesItem = {
     name: "ongoingPurchasesItem"
 };
 
-const completedPurchasesItem = {
-    title: "Completed purchases",
-    name: "completedPurchasesItem"
-};
 
 const manageIdBuyerItem = {
     title: "Manage ID",
@@ -217,7 +228,6 @@ myLayout.registerComponent('forSaleItem', function (container, state) {
         '</div>'
     );
 });
-
 myLayout.registerComponent('forSaleReferenceInfoItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
@@ -229,14 +239,52 @@ myLayout.registerComponent('forSaleReferenceInfoItem', function (container, stat
     );
 });
 
+myLayout.registerComponent('freeReferencesItem', function (container, state) {
+    container.getElement().html(
+        '<div class="container">' +
+        '<div id="freeReferences_notConnected">' +
+        '<p class="message">You are not connected...</p>' +
+        '</div>' +
+        '<div id="freeReferences_connected">' +
+        '<h1>Free public references:</h1>' +
+        '<p id="freeReferences_message" class="message"></p>' +
+        '<div id="freeReferences_references"></div>' +
+        '</div>' +
+        '</div>'
+    );
+});
+myLayout.registerComponent('freeRefInfoItem', function (container, state) {
+    container.getElement().html(
+        '<div class="container">' +
+        '<h1>TLEs in free reference <var id="freeRefInfo_id"></var>:</h1>' +
+        '<div id="freeRefInfo_info"></div>' +
+        '</div>'
+    );
+});
+
+myLayout.registerComponent('completedPurchasesItem', function (container, state) {
+    container.getElement().html(
+        '<div class="container">' +
+        '<div id="completedPurchases_notConnected">' +
+        '<p class="message">You are not connected...</p>' +
+        '</div>' +
+        '<div id="completedPurchases_connected">' +
+        '<h1>Completed purchases:</h1>' +
+        '<p id="completedPurchases_message" class="message"></p>' +
+        '<div id="completedPurchases_list"></div>' +
+        '</div>' +
+        '</div>'
+    );
+});
 myLayout.registerComponent('completedPurchaseRefInfoItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
         '<h1>Completed purchase info:</h1>' +
-        '<ul id="completePurchaseRefInfo_info"></ul>' +
+        '<div id="completePurchaseRefInfo_info"></div>' +
         '</div>'
     );
 });
+
 
 myLayout.registerComponent('ongoingPurchasesItem', function (container, state) {
     container.getElement().html(
@@ -247,7 +295,7 @@ myLayout.registerComponent('ongoingPurchasesItem', function (container, state) {
         '<div id="ongoingPurchases_connected">' +
         '<h1>References being bought:</h1>' +
         '<p id="ongoingPurchases_message" class="message"></p>' +
-        '<ul id="ongoingPurchases_beingBought"></ul>' +
+        '<div id="ongoingPurchases_beingBought"></div>' +
         '</div>' +
         '</div>'
     );
@@ -275,21 +323,6 @@ myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
         '<p class="message" id="manageIdBuyer_message"></p>' +
         '<button id="manageIdBuyer_seeTLES" onclick="seeTLEs()">See the TLEs</button>' +
 
-        '</div>'
-    );
-});
-
-myLayout.registerComponent('completedPurchasesItem', function (container, state) {
-    container.getElement().html(
-        '<div class="container">' +
-        '<div id="completedPurchases_notConnected">' +
-        '<p class="message">You are not connected...</p>' +
-        '</div>' +
-        '<div id="completedPurchases_connected">' +
-        '<h1>Completed purchases:</h1>' +
-        '<p id="completedPurchases_message" class="message"></p>' +
-        '<ul id="completedPurchases_list"></ul>' +
-        '</div>' +
         '</div>'
     );
 });
@@ -324,7 +357,7 @@ myLayout.registerComponent('manageSalesItem', function (container, state) {
         '<div id="manageSales_connected">' +
         '<h1>References on the market:</h1>' +
         '<p id="manageSales_message" class="message"></p>' +
-        '<ul id="manageSales_beingSold"></ul>' +
+        '<div id="manageSales_beingSold"></div>' +
         '</div>' +
         '</div>'
     );
@@ -405,6 +438,9 @@ function addMenuItem(newItem) {
     if (newItem.name === "completedPurchasesItem") {
         element.click(getCompletedPurchases);
     }
+    if (newItem.name === "freeReferencesItem") {
+        element.click(loadFreeReferences);
+    }
     if (newItem.name === "manageSalesItem") {
         element.click(loadManageSales);
     }
@@ -412,12 +448,12 @@ function addMenuItem(newItem) {
         element.click(loadOngoingPurchases);
     }
     if (newItem.name === "sellNewItem") {
-        element.click( () => {
+        element.click(() => {
             loadHTMLDoc("sellNew.html", callbackLoadHTMLsellNew);
         });
     }
     if (newItem.name === "myAccountItem") {
-        element.click( () => {
+        element.click(() => {
             loadHTMLDoc("myAccount.html", callbackLoadHTMLMyAccount);
         });
     }
@@ -432,10 +468,12 @@ $('#menuContainer').append("<h2>Buy</h2>");
 addMenuItem(forSaleItem);
 addMenuItem(ongoingPurchasesItem);
 addMenuItem(completedPurchasesItem);
+addMenuItem(freeReferencesItem);
 $('#menuContainer').append("<h2>Sell</h2>");
 addMenuItem(sellNewItem);
 addMenuItem(manageSalesItem);
 $('#menuContainer').append("<h3><a href='closeserver'>Close server</a></h3>");
+
 //addMenuItem(makeTransactionItem);
 
 /********************************

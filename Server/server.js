@@ -239,14 +239,14 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/depreciatedData', async (req, res) => {
         try {
             let Ids = await bc.getDeprecated();
-            //TODO COLINE
-            res.json(receipt);
+            // console.log(Ids);
+            res.json(Ids);
         } catch (e) {
             console.log(e);
             res.status(500).json(e.message);
         }
     })
-    .get('/accessDepreciatedData/', async (req, res) => {
+    .get('/accessDepreciatedData/:id', async (req, res) => {
         try {
             let TLEs = await bc.readFreeTLEs(req.params.id, req.session.Account);
             //TODO COLINE
@@ -295,7 +295,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/uploadNewTLE/:json', async (req, res) => {
         try {
-            const result =  await bc.addTLE(req.params.json, req.session.Account);
+            const result = await bc.addTLE(req.params.json, req.session.Account);
             res.json(result);
         } catch (e) {
             console.log(e);
