@@ -31,6 +31,10 @@ body .lm_content {
     cursor: pointer;
 }
 
+[onClick]:hover {
+    color: #E55B0A;
+}
+
 /** Wrapper **/
 #wrapper {
     height: 100%;
