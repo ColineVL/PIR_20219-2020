@@ -282,7 +282,10 @@ async function getClients(account, id) {
 async function getDeprecated() {
     try {
         let IdsEvents = await EventsModule.ReferenceKeysSent(); // Get the events for this data (that anyone can read)
-        return await IdsEvents;
+        let IdsList = await EventsModule.EventsToIds(IdsEvents); // Transforming into list of Ids, to later have more info
+
+        let Ids = await EventsModule.GetRefs(IdsList); //Now getting the real reference objects
+        return await Ids;
     } catch (e) {
         throw e;
     }
