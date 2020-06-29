@@ -161,7 +161,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/ongoingPurchases/', async (req, res) => {
         try {
-            let Ids = await bc.ongoingPurchases(req.session.Account.address);
+            let Ids = await bc.ongoingPurchases(req.session.Account);
             res.json(Ids);
         } catch (e) {
             res.status(500).json(e.message);

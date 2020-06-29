@@ -94,6 +94,7 @@ module.exports = {
     /*Get references bought by a specific account*/
     GetBoughtRefs: async function (account) {
         try {
+            console.log(account.privateKey)
             return await contractws.getPastEvents("newClient", {
                 filter: {client: account.address},
                 fromBlock: 0,
