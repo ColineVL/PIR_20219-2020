@@ -330,7 +330,7 @@ function getRefForSaleInfo(id) {
 
 /** Get completed purchases **/
 function comparisonReferences(ref1, ref2) {
-    if (parseInt(ref1.returnValues["referenceId"], 10) < parseInt(ref2.returnValues["referenceId"], 10)) {
+    if (parseInt(ref1["referenceId"], 10) < parseInt(ref2["referenceId"], 10)) {
         return -1;
     } else {
         return 1;
@@ -355,14 +355,15 @@ function callbackGetCompletedPurchases(Ids) {
     for (let reference of Ids) {
         console.log(reference);
         html += "<details>";
-        html += "<summary>" + reference.returnValues["description"] + "</summary>";
-        html += "<p>Reference Id: " + reference.returnValues["referenceId"] + "</p>";
+        html += "<summary>" + reference["description"] + "</summary>";
+        html += "<p>Reference Id: " + reference["referenceId"] + "</p>";
         html += "</details>";
     }
     $("#completedPurchases_list").html(html);
 }
 
 function callbackErrorGetCompletedPurchases(err) {
+    console.log(err);
     $("#completedPurchases_message").show();
     $("#completedPurchases_message").html(err);
 }
@@ -640,9 +641,9 @@ function callbackManageSales(Ids) {
     let html = "";
     for (const reference of Ids) {
         html += "<details>";
-        html += "<summary>" + reference.returnValues["description"] + "</summary>";
-        html += "<p>Reference Id: " + reference.returnValues["referenceId"] + "</p>";
-        html += "<p class='link' onclick=manageIdSeller(" + reference.returnValues["referenceId"] + ")>Manage this Id</p>";
+        html += "<summary>" + reference["description"] + "</summary>";
+        html += "<p>Reference Id: " + reference["referenceId"] + "</p>";
+        html += "<p class='link' onclick=manageIdSeller(" + reference["referenceId"] + ")>Manage this Id</p>";
         html += "</details>";
     }
     $("#manageSales_beingSold").html(html);

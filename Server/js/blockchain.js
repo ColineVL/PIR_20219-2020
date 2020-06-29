@@ -504,7 +504,7 @@ async function computeK(id, Account) {
 }
 
 /*Computes information for managing an Id Buyer side*/
-async function ManageSales(account) {
+async function manageSales(account) {
     try {
         let Ids = await EventsModule.GetSoldRefs(account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
 
@@ -686,7 +686,7 @@ module.exports = {
     sellReference,
     manageIdSeller,
     addTLE,
-    ManageSales,
+    manageSales,
 
     sendEncryptedEncodedKey,
     sendDecoderKey,

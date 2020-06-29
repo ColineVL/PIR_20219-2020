@@ -129,6 +129,7 @@ app.use('/public', express.static(__dirname + '/public'))
             let Ids = await EventsModule.GetRefs(IdsList);
             res.json(Ids);
         } catch (e) {
+            console.error(e);
             res.status(500).json(e.message);
         }
     })
@@ -250,7 +251,8 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/manageSales/', async (req, res) => {
         try {
-            let Ids = await EventsModule.GetSoldRefs(req.session.Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+            // let Ids = await EventsModule.GetSoldRefs(req.session.Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+            let Ids = await bc.manageSales(req.session.Account);
             res.json(Ids);
         } catch (e) {
             res.status(500).json(e.message);
