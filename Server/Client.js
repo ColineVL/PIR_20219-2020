@@ -7,6 +7,8 @@ const bc = require('./js/blockchain');
 const EventsModule = require('./js/EventsModule');
 const readwrite = require('./js/ReadWriteModule');
 
+const orbits = require('./js/orbits')
+
 // let prime = crypto.GetPrime(32);
 // const Web3 = require('web3');
 // const provider = 'http://192.168.33.115:8545';
@@ -44,11 +46,13 @@ app.use('/public', express.static(__dirname + '/public'))
 
 
 
+
+
         if (req.session.Account) {
             let funds = await bc.getBalance(req.session.Account.address);
-            res.render('homeClient.ejs', {account: req.session.Account, funds: funds,TLE:myTLE});
+            res.render('homeClient.ejs', {account: req.session.Account, funds: funds,TLE:myTLE,orbits:orbits});
         } else {
-            res.render('homeClient.ejs', {account: req.session.Account});
+            res.render('homeClient.ejs', {account: req.session.Account,TLE:myTLE,orbits:orbits});
         }
     })
 

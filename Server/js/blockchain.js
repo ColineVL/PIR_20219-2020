@@ -374,7 +374,7 @@ async function sendDecoderKey(id, Account) {
         let ClientsToDo = await EventsModule.ComputeLeft(Address_ListClientsWhoSentHashes, Address_ListClientsWhoReceivedK2); // Then i find who is left...
 
         // Now We have to: Verify each hash received with the ones we had saved
-        console.log(ClientsToDo.length)
+
         let done = 0; // To check how many were successful at the end...
         for (let i = 0; i < ClientsToDo.length; i++) {
             let myRef_obj = await readwrite.ReadAsObjectRefSeller(__dirname + '/../Database/RefSeller' + id.toString() + '_' + ClientsToDo[i] + '.txt');

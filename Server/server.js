@@ -124,7 +124,9 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/getCompletedPurchases/', async (req, res) => {
         try {
-            const Ids = await EventsModule.GetBoughtRefs(req.session.Account);
+            const IdsEvents = await EventsModule.GetBoughtRefs(req.session.Account);
+            let IdsList = await EventsModule.EventsToIds(IdsEvents);
+            let Ids = await EventsModule.GetRefs(IdsList);
             res.json(Ids);
         } catch (e) {
             res.status(500).json(e.message);
