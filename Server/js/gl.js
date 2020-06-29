@@ -245,7 +245,7 @@ myLayout.registerComponent('ongoingPurchasesItem', function (container, state) {
         '<p class="message">You are not connected...</p>' +
         '</div>' +
         '<div id="ongoingPurchases_connected">' +
-        '<h1>References being bought :</h1>' +
+        '<h1>References being bought:</h1>' +
         '<p id="ongoingPurchases_message" class="message"></p>' +
         '<ul id="ongoingPurchases_beingBought"></ul>' +
         '</div>' +
@@ -436,7 +436,7 @@ $('#menuContainer').append("<h2>Sell</h2>");
 addMenuItem(sellNewItem);
 addMenuItem(manageSalesItem);
 $('#menuContainer').append("<h3><a href='closeserver'>Close server</a></h3>");
-addMenuItem(makeTransactionItem);
+//addMenuItem(makeTransactionItem);
 
 /********************************
  * Create items out of the menu

@@ -330,7 +330,7 @@ function getRefForSaleInfo(id) {
 
 /** Get completed purchases **/
 function comparisonReferences(ref1, ref2) {
-    if (parseInt(ref1.returnValues["referenceId"], 10) < parseInt(ref2.returnValues["referenceId"], 10)) {
+    if (parseInt(ref1["referenceId"], 10) < parseInt(ref2["referenceId"], 10)) {
         return -1;
     } else {
         return 1;
@@ -352,16 +352,18 @@ function callbackGetCompletedPurchases(Ids) {
     $("#completedPurchases_message").hide();
     Ids.sort(comparisonReferences);
     let html = "";
-    for (const reference of Ids) {
+    for (let reference of Ids) {
+        console.log(reference);
         html += "<details>";
-        html += "<summary>" + reference.returnValues["description"] + "</summary>";
-        html += "<p>Reference Id: " + reference.returnValues["referenceId"] + "</p>";
+        html += "<summary>" + reference["description"] + "</summary>";
+        html += "<p>Reference Id: " + reference["referenceId"] + "</p>";
         html += "</details>";
     }
     $("#completedPurchases_list").html(html);
 }
 
 function callbackErrorGetCompletedPurchases(err) {
+    console.log(err);
     $("#completedPurchases_message").show();
     $("#completedPurchases_message").html(err);
 }
@@ -639,9 +641,9 @@ function callbackManageSales(Ids) {
     let html = "";
     for (const reference of Ids) {
         html += "<details>";
-        html += "<summary>" + reference.returnValues["description"] + "</summary>";
-        html += "<p>Reference Id: " + reference.returnValues["referenceId"] + "</p>";
-        html += "<p class='link' onclick=manageIdSeller(" + reference.returnValues["referenceId"] + ")>Manage this Id</p>";
+        html += "<summary>" + reference["description"] + "</summary>";
+        html += "<p>Reference Id: " + reference["referenceId"] + "</p>";
+        html += "<p class='link' onclick=manageIdSeller(" + reference["referenceId"] + ")>Manage this Id</p>";
         html += "</details>";
     }
     $("#manageSales_beingSold").html(html);
@@ -704,7 +706,6 @@ function manageIdSeller(id) {
 
 /** New TLE **/
 function callbackUploadNewTLE(param) {
-    console.log("je suis dans la callback, pas d'erreur, afficher quelque chose au user");
     $("#newTLE_message").show();
     $("#newTLE_message").html("TLE uploaded");
 }
@@ -715,7 +716,6 @@ function callbackErrorUploadNewTLE(err) {
 }
 
 function uploadNewTLE() {
-    console.log("yo");
     let json = {
         id: $("#newTLE_id").text(),
         line0: $("#newTLE_line0").val(),
@@ -723,7 +723,6 @@ function uploadNewTLE() {
         line2: $("#newTLE_line2").val(),
 
     };
-    console.log(json)
     let complete = false;
     for (const property in json) {
         if (json[property] === "") {
