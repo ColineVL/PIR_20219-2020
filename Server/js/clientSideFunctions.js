@@ -352,7 +352,8 @@ function callbackGetCompletedPurchases(Ids) {
     $("#completedPurchases_message").hide();
     Ids.sort(comparisonReferences);
     let html = "";
-    for (const reference of Ids) {
+    for (let reference of Ids) {
+        console.log(reference);
         html += "<details>";
         html += "<summary>" + reference.returnValues["description"] + "</summary>";
         html += "<p>Reference Id: " + reference.returnValues["referenceId"] + "</p>";
@@ -704,7 +705,6 @@ function manageIdSeller(id) {
 
 /** New TLE **/
 function callbackUploadNewTLE(param) {
-    console.log("je suis dans la callback, pas d'erreur, afficher quelque chose au user");
     $("#newTLE_message").show();
     $("#newTLE_message").html("TLE uploaded");
 }
@@ -715,7 +715,6 @@ function callbackErrorUploadNewTLE(err) {
 }
 
 function uploadNewTLE() {
-    console.log("yo");
     let json = {
         id: $("#newTLE_id").text(),
         line0: $("#newTLE_line0").val(),
@@ -723,7 +722,6 @@ function uploadNewTLE() {
         line2: $("#newTLE_line2").val(),
 
     };
-    console.log(json)
     let complete = false;
     for (const property in json) {
         if (json[property] === "") {

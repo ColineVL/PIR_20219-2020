@@ -240,5 +240,5 @@ body .lm_content {
 /* Only serves to close the server */
 a {
     text-decoration: none;
-    color: red;
+    color: #BBB;
 }

@@ -8,6 +8,7 @@ const EventsModule = require('./js/EventsModule');
 /********************************
  * Create the app
  ********************************/
+const port = 8089;
 const app = express();
 // Load the css folder
 app.use(express.static(__dirname + '/css'));
@@ -29,8 +30,8 @@ app.use(session({
  * Listen on port 8081
  ********************************/
 
-let server = app.listen(8089, function () {
-    console.log("Server listening on port 8081.");
+let server = app.listen(port, function () {
+    console.log("Server listening on port " + port + ".");
 });
 
 /********************************
