@@ -247,7 +247,7 @@ module.exports = {
         let currentTime = d.getTime() / 1000;
 
         for (let i = 0; i < refs.length; i++) {
-            if (refs[i].returnValues.endTime < currentTime) {
+            if (refs[i].returnValues.endTime > currentTime) {
                 res.push(refs[i])
             }
         }

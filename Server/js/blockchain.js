@@ -202,7 +202,9 @@ async function buyReference(id, account) {
         throw e;
     }
 }
-async function getForSaleRefs(account) {
+
+/*Function to get refs for sale currently valid*/
+async function getForSaleRefs() {
     try {
         let availableRefs = await EventsModule.GetAvailableRefs();
 
@@ -222,7 +224,6 @@ async function getForSaleRefs(account) {
         throw e;
     }
 }
-await EventsModule.GetAvailableRefs();
 
 /*Get the current price of a certain reference*/
 async function getCurrentPrice(account, id) {

@@ -95,7 +95,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/getReferences/', async (req, res) => {
         try {
-            const Ids = bc.getForSaleRefs(req.session.Account);
+            const Ids = await bc.getForSaleRefs();
             res.json(Ids);
         } catch (e) {
             res.status(500).json(e.message);
