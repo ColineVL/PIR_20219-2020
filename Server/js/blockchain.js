@@ -289,7 +289,12 @@ async function manageIdBuyer(id, account) {
         let encryptedEncodedReceived = !!eventEncryptedReceived.length;
         let hashSent = !!eventHashSent.length;
 
-        //TODO ZiaD add ref key when it is sent
+        //TODO Coline : si key not 0, alors elle a ete envoyé, et peut etre l'affichee au client pour qu'il sache si il doit disputer ou non
+        let key = 0
+        let keyRefEvent = await EventsModule.ReferenceKeySent(id)
+        if (keyRefEvent.length>0){
+            key = Buffer.from(web3.utils.hexToBytes(keyRefEvent[0].returnValues.referenceKey));
+        }
         return [reference, hashSent, encryptedEncodedReceived, decoderReceived];
     } catch (e) {
         throw e;
