@@ -95,7 +95,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/getReferences/', async (req, res) => {
         try {
-            const Ids = await EventsModule.GetAvailableRefs(); //TODO ZIad
+            const Ids = await EventsModule.GetAvailableRefs();
             res.json(Ids);
         } catch (e) {
             res.status(500).json(e.message);
@@ -124,7 +124,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/getCompletedPurchases/', async (req, res) => {
         try {
-            let Ids= await bc.getCompletedPurchases(req.session.Account)
+            let Ids = await bc.getCompletedPurchases(req.session.Account)
             res.json(Ids);
         } catch (e) {
             console.error(e);
@@ -245,9 +245,8 @@ app.use('/public', express.static(__dirname + '/public'))
     })
     .get('/accessDepreciatedData/:id', async (req, res) => {
         try {
-            let TLEs = await bc.readFreeTLEs(req.params.id, req.session.Account);
-            //TODO COLINE
-            res.json({id: req.params.id, TLEs: TLEs});
+            let [K, TLEs] = await bc.readFreeTLEs(req.params.id, req.session.Account);
+            res.json({id: req.params.id, TLEs: TLEs, K: K});
         } catch (e) {
             console.log(e);
             res.status(500).json(e.message);
@@ -269,7 +268,6 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/manageSales/', async (req, res) => {
         try {
-            // let Ids = await EventsModule.GetSoldRefs(req.session.Account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
             let Ids = await bc.manageSales(req.session.Account);
             res.json(Ids);
         } catch (e) {

@@ -457,10 +457,14 @@ function loadFreeReferences() {
 }
 
 function callbackGetFreeReferenceInfo(result) {
+    const id = result.id;
+    const TLEs = result.TLEs;
+    const K = result.K;
     addItem(freeRefInfoItem);
-    $('#freeRefInfo_id').html(result["id"]);
+    $('#freeRefInfo_id').html(id);
     let html = "";
-    for (let TLE of result['TLEs']) {
+    html += "<p>Key: " + K + "</p>";
+    for (let TLE of TLEs) {
         html += "<details>";
         html += "<summary>" + TLE["line0"] + "</summary>";
         html += "<p>" + TLE["line1"] + "</p>";
@@ -621,7 +625,7 @@ function callbackSeeTLEs(result) {
     addItem(seeTLEsItem);
     $('#seeTLEs_id').html(result["id"]);
     let html = "";
-    for (const TLE of result['TLEs']) {
+    for (let TLE of result['TLEs']) {
         html += "<details>";
         html += "<summary>" + TLE["line0"] + "</summary>";
         html += "<p>" + TLE["line1"] + "</p>";
@@ -718,7 +722,7 @@ function loadManageSales() {
 
 function callbackManageIdSeller(param) {
     addItem(manageIdSellerItem);
-    const [reference, total_clients, num_clients_step1, num_clients_step2, key] = param;
+    const [reference, total_clients, num_clients_step1, num_clients_step2, key, timeLeft, numberTLES, minNumberTLE] = param;
     const keys = ["provider", "initialPrice", "currentPrice", "description"];
     const keysNames = ["Provider", "Initial price", "Current price", "Description"];
     const tableReference = displayReferenceInfo(reference, keys, keysNames);
@@ -728,6 +732,13 @@ function callbackManageIdSeller(param) {
     $("#manageIdSeller_NumClientsStep1").text(num_clients_step1);
     $("#manageIdSeller_NumClientsStep2").text(num_clients_step2);
     $("#manageIdSeller_totalNumberClients").text(total_clients);
+
+    const daysLeft = Math.trunc(timeLeft / 86400);
+    const secondsLeft = new Date(1000 * (timeLeft % 86400));
+    $("#manageIdSeller_timeLeftDays").text(daysLeft);
+    $("#manageIdSeller_timeLeftSeconds").text(secondsLeft.toISOString().substr(11,8));
+    $("#manageIdSeller_minNumberTLEs").text(minNumberTLE);
+    $("#manageIdSeller_numberTLEs").text(numberTLES);
 
     if (key === 0) {
         $('#manageIdSeller_keyReleased').hide();

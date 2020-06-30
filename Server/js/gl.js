@@ -369,6 +369,12 @@ myLayout.registerComponent('manageIdSellerItem', function (container, state) {
         '<p>Total number of clients: <var id="manageIdSeller_totalNumberClients"></var></p>' +
         '<h3>Reference:</h3>' +
         '<div id="manageIdSeller_reference"></div>' +
+
+        '<p>Time left: <var id="manageIdSeller_timeLeftDays"></var> days <var id="manageIdSeller_timeLeftSeconds"></var></p>' +
+        '<p>Number of TLEs to upload: <var id="manageIdSeller_minNumberTLEs"></var></p>' +
+        '<p>You already uploaded <var id="manageIdSeller_numberTLEs"></var></p>' +
+
+
         '<h3>To do:</h3>' +
         '<ul>' +
         '<li onclick="loadNewTLEForm()">Upload a new TLE</li>' +

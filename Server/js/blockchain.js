@@ -164,6 +164,7 @@ async function sellReference(jsonInfo, account) {
         throw err;
     }
 }
+
 /*Function to get Completed purchases*/
 async function getCompletedPurchases(account) {
     try {
@@ -173,7 +174,7 @@ async function getCompletedPurchases(account) {
         let IdsNoMoreActionsEvents = await EventsModule.WithdrawFundsEventGeneral();
         let IdsNoMoreActionsList = await EventsModule.EventsToIds(IdsNoMoreActionsEvents)
 
-        let IdsList = await EventsModule.ComputeInter(IdsNoMoreActionsList,IdsBoughtList)
+        let IdsList = await EventsModule.ComputeInter(IdsNoMoreActionsList, IdsBoughtList)
         let Ids = await EventsModule.GetRefs(IdsList);
         return Ids;
     } catch (err) {
@@ -262,13 +263,15 @@ async function manageIdSeller(id, account) {
 
         // To compute the time left
         let d = new Date();
-        let n = d.getTime()/1000;
-        let timeLeft = reference.endTime -n ; //TODO Colline: c'est le temps restants avant la fin de la ref: donc entre autre pour devoiler sa clé et mettre le nombre min de ref
-
+        let n = d.getTime() / 1000;
+        let timeLeft = reference.endTime - n;
+        if (timeLeft < 0) {
+            timeLeft = 0;
+        }
         let TLESAddedEvents = await EventsModule.NewTLEEvent(id)
-        let numberTLES = TLESAddedEvents.length // TODO COline: c'est le nombre de TLE qu'il a deja ajouté.
-        let minNumberTLE = reference.minimumData // TODO Coline: c'est le nombre min qu'il avait promis
-        return [reference, total_clients, num_clients_step1, num_clients_step2, Key];
+        let numberTLES = TLESAddedEvents.length;
+        let minNumberTLE = reference.minimumData;
+        return [reference, total_clients, num_clients_step1, num_clients_step2, Key, timeLeft, numberTLES, minNumberTLE];
 
     } catch (e) {
         throw e;
@@ -292,7 +295,7 @@ async function manageIdBuyer(id, account) {
         //TODO Coline : si key not 0, alors elle a ete envoyé, et peut etre l'affichee au client pour qu'il sache si il doit disputer ou non
         let key = 0
         let keyRefEvent = await EventsModule.ReferenceKeySent(id)
-        if (keyRefEvent.length>0){
+        if (keyRefEvent.length > 0) {
             key = Buffer.from(web3.utils.hexToBytes(keyRefEvent[0].returnValues.referenceKey));
         }
         return [reference, hashSent, encryptedEncodedReceived, decoderReceived];
@@ -552,11 +555,11 @@ async function computeK(id, Account) {
 /*Computes information for managing an Id Buyer side*/
 async function manageSales(account) {
     try {
-        let Ids = await EventsModule.GetSoldRefs(account); // TODO: Verify FUNCTION HERE TO GET REFERENCES
+        let Ids = await EventsModule.GetSoldRefs(account);
 
         let IdsFinished = await EventsModule.WithdrawFundsEventGeneral() // Ids for which funds have been withdrawn
 
-        let IdsToShow_id = await EventsModule.ComputeLeft(EventsModule.EventsToIds(Ids),EventsModule.EventsToIds(IdsFinished))
+        let IdsToShow_id = await EventsModule.ComputeLeft(EventsModule.EventsToIds(Ids), EventsModule.EventsToIds(IdsFinished))
 
         let IdsToShowEventForm = await EventsModule.GetRefs(IdsToShow_id);
 
@@ -669,7 +672,6 @@ async function clientReadTLEs(id, account) {
         let pseudoRandomRefKey = crypto.pseudoRandomGenerator(web3.utils.bytesToHex(K), 59).slice(10); // To get a size of 49, a,d ,o 00's at the beginning
 
 
-
         let rawTLES = await transactions.GetTLEs(account, id);
         let stringTLES = [];
         for (let i = 0; i < rawTLES["1"].length; i++) {
@@ -697,7 +699,7 @@ async function readFreeTLEs(id, account) {
     try {
 
         let KEvent = await EventsModule.ReferenceKeySent(id); //TODO this can be added to client side so he knows when to dispute
-        let K= web3.utils.bytesToHex(KEvent[0].returnValues.referenceKey);
+        let K = web3.utils.bytesToHex(KEvent[0].returnValues.referenceKey);
         let pseudoRandomRefKey = crypto.pseudoRandomGenerator(K, 59).slice(10); // To get a size of 49, a,d ,o 00's at the beginning
 
         let rawTLES = await transactions.GetTLEs(account, id);
@@ -717,12 +719,11 @@ async function readFreeTLEs(id, account) {
                 line2: stringResult[1]
             });
         }
-        return stringTLES;
+        return [K, stringTLES];
     } catch (e) {
         throw e;
     }
 }
-
 
 
 /********************************
