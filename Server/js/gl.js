@@ -486,7 +486,7 @@ addMenuItem(sellNewItem);
 addMenuItem(manageSalesItem);
 $('#menuContainer').append("<h3><a href='closeserver'>Close server</a></h3>");
 
-//addMenuItem(makeTransactionItem);
+// addMenuItem(makeTransactionItem);
 
 /********************************
  * Create items out of the menu

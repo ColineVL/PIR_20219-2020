@@ -1,6 +1,6 @@
 /** Variables **/
 let connected = false;
-let references;
+// let references;
 let myAccount = {};
 
 /** To get a response from the server **/
@@ -214,16 +214,16 @@ function displayBlockInfo(blocknumber) {
 /** Get for sale references **/
 function callbackGetReferences(param) {
     $('#forSale_message').hide();
-    references = {};
+    // references = {};
     let html = "";
     param.forEach(function (reference) {
         html += "<details>";
-        html += "<summary>" + reference.returnValues["description"] + "</summary>";
-        html += "<p>Reference Id: " + reference.returnValues["referenceId"] + "</p>";
-        html += "<p>Minimum data: " + reference.returnValues["minimumData"] + "</p>";
-        html += "<p class='link' onclick=getRefForSaleInfo(" + reference.returnValues["referenceId"] + ")>Get more info</p>";
+        html += "<summary>" + reference["description"] + "</summary>";
+        html += "<p>Reference Id: " + reference["referenceId"] + "</p>";
+        html += "<p>Minimum data: " + reference["minimumData"] + "</p>";
+        html += "<p class='link' onclick=getRefForSaleInfo(" + reference["referenceId"] + ")>Get more info</p>";
         html += "</details>";
-        references[reference.returnValues["referenceId"]] = reference.returnValues;
+        // references[reference["referenceId"]] = reference;
     });
     $("#forSale_list").html(html);
 }
@@ -668,7 +668,6 @@ function callbackErrorSellNewReference(err) {
 }
 
 function sellNewReference() {
-    /* Info to be sent */
     let json = {
         initialPrice: $("#sellNew_price").val(),
         durationDays: $("#sellNew_durationDays").val(),
@@ -691,7 +690,8 @@ function sellNewReference() {
     }
     if (complete) {
         $("#sellNew_message").hide();
-        loadXMLDoc("sellNewReference/" + JSON.stringify(json), callbackSellNewReference, callbackErrorSellNewReference);
+        loadXMLDoc("sellNewReference/" + JSON.stringify(json),
+            callbackSellNewReference, callbackErrorSellNewReference);
     }
 }
 
