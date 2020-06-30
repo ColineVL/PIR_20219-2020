@@ -292,9 +292,8 @@ async function manageIdBuyer(id, account) {
         let encryptedEncodedReceived = !!eventEncryptedReceived.length;
         let hashSent = !!eventHashSent.length;
 
-        //TODO Coline : si key not 0, alors elle a ete envoyé, et peut etre l'affichee au client pour qu'il sache si il doit disputer ou non
-        let key = 0
-        let keyRefEvent = await EventsModule.ReferenceKeySent(id)
+        let key = 0;
+        let keyRefEvent = await EventsModule.ReferenceKeySent(id);
         if (keyRefEvent.length > 0) {
             const buffer = Buffer.from(web3.utils.hexToBytes(keyRefEvent[0].returnValues.referenceKey));
             key = buffer.toString('hex');
@@ -698,10 +697,17 @@ async function clientReadTLEs(id, account) {
 /*Function for a purchaser ro read all posted TLE's for a reference (case where the reference key is public)*/
 async function readFreeTLEs(id, account) {
     try {
+        // let SellerObject = await readwrite.ReadAsObjectRefClient(__dirname + '/../Database/RefBuyer' + id.toString() + '_' + account.address + '.txt');
+        //
+        // let K = crypto.OTP(SellerObject.K2, SellerObject.KxorK2);
+        // let pseudoRandomRefKey = crypto.pseudoRandomGenerator(web3.utils.bytesToHex(K), 59).slice(10); // To get a size of 49, a,d ,o 00's at the beginning
+        //
 
-        let KEvent = await EventsModule.ReferenceKeySent(id); //TODO this can be added to client side so he knows when to dispute
-        let K = web3.utils.bytesToHex(KEvent[0].returnValues.referenceKey);
-        let pseudoRandomRefKey = crypto.pseudoRandomGenerator(K, 59).slice(10); // To get a size of 49, a,d ,o 00's at the beginning
+        let KEvent = await EventsModule.ReferenceKeySent(id);
+        console.log(KEvent);
+        let K = Buffer.from(web3.utils.hexToBytes(KEvent[0].returnValues.referenceKey));
+        console.log(K);
+        let pseudoRandomRefKey = crypto.pseudoRandomGenerator(web3.utils.bytesToHex(K), 59).slice(10); // To get a size of 49, a,d ,o 00's at the beginning
 
         let rawTLES = await transactions.GetTLEs(account, id);
         let stringTLES = [];
@@ -720,7 +726,7 @@ async function readFreeTLEs(id, account) {
                 line2: stringResult[1]
             });
         }
-        return [K, stringTLES];
+        return [K.toString('hex'), stringTLES];
     } catch (e) {
         throw e;
     }
