@@ -165,12 +165,12 @@ async function sellReference(jsonInfo, account) {
     }
 }
 /*Function to get Completed purchases*/
-async function getCompletedPurchases(jsonInfo, account) {
+async function getCompletedPurchases(account) {
     try {
-        const IdsBoughtEvents = await EventsModule.GetBoughtRefs(req.session.Account);
+        const IdsBoughtEvents = await EventsModule.GetBoughtRefs(account);
         let IdsBoughtList = await EventsModule.EventsToIds(IdsBoughtEvents);
 
-        let IdsNoMoreActionsEvents = await EventsModule.ReferenceKeysSent();
+        let IdsNoMoreActionsEvents = await EventsModule.WithdrawFundsEventGeneral();
         let IdsNoMoreActionsList = await EventsModule.EventsToIds(IdsNoMoreActionsEvents)
 
         let IdsList = await EventsModule.ComputeInter(IdsNoMoreActionsList,IdsBoughtList)
