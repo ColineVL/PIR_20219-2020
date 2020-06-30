@@ -218,7 +218,6 @@ async function getForSaleRefs() {
         let BuyableRefIds = await EventsModule.ComputeLeft(RefsNotExpiredIdList,BecameFreeListIds);
 
         let BuyableRefsEvents = await EventsModule.GetRefs(BuyableRefIds); // Back to a list of the correct events (we had a list of id's before)
-
         return (BuyableRefsEvents);
     } catch (e) {
         throw e;
