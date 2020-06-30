@@ -232,6 +232,16 @@ module.exports = {
         }
         return res;
     },
+    /*Computes the list of elements in both list1 and list2*/
+    ComputeInter: function (list1, list2) {
+        let res = [];
+        for (let i = 0; i < list1.length; i++) {
+            if ((list2.indexOf(list1[i]) >= 0)) {
+                res.push(list1[i])
+            }
+        }
+        return res;
+    },
 
 
     /*Get the DH Public Key of a provider for a certain id*/

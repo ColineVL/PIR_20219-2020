@@ -173,7 +173,7 @@ async function getCompletedPurchases(jsonInfo, account) {
         let IdsNoMoreActionsEvents = await EventsModule.ReferenceKeysSent();
         let IdsNoMoreActionsList = await EventsModule.EventsToIds(IdsNoMoreActionsEvents)
 
-        let IdsList = await EventsModule.ComputeInter(IdsNoMoreActionsEvents,IdsBoughtList)
+        let IdsList = await EventsModule.ComputeInter(IdsNoMoreActionsList,IdsBoughtList)
         let Ids = await EventsModule.GetRefs(IdsList);
         return Ids;
     } catch (err) {
