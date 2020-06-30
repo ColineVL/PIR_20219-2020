@@ -805,4 +805,5 @@ module.exports = {
     getDeprecated,
     readFreeTLEs,
     getCompletedPurchases,
+    getForSaleRefs,
 };
