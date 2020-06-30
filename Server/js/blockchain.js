@@ -259,6 +259,15 @@ async function manageIdSeller(id, account) {
             let buffer = Buffer.from(web3.utils.hexToBytes(KeyEvent[0].returnValues[1]));
             Key = buffer.toString('hex'); // Eventually load the reference key we sent
         }
+
+        // To compute the time left
+        let d = new Date();
+        let n = d.getTime()/1000;
+        let timeLeft = reference.endTime -n ; //TODO Colline: c'est le temps restants avant la fin de la ref: donc entre autre pour devoiler sa clé et mettre le nombre min de ref
+
+        let TLESAddedEvents = await EventsModule.NewTLEEvent(id)
+        let numberTLES = TLESAddedEvents.length // TODO COline: c'est le nombre de TLE qu'il a deja ajouté.
+        let minNumberTLE = reference.minimumData // TODO Coline: c'est le nombre min qu'il avait promis
         return [reference, total_clients, num_clients_step1, num_clients_step2, Key];
 
     } catch (e) {
@@ -279,6 +288,8 @@ async function manageIdBuyer(id, account) {
         let decoderReceived = !!eventDecoderReceived.length;
         let encryptedEncodedReceived = !!eventEncryptedReceived.length;
         let hashSent = !!eventHashSent.length;
+
+        //TODO ZiaD add ref key when it is sent
         return [reference, hashSent, encryptedEncodedReceived, decoderReceived];
     } catch (e) {
         throw e;
