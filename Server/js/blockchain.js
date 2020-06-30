@@ -164,6 +164,23 @@ async function sellReference(jsonInfo, account) {
         throw err;
     }
 }
+/*Function to get Completed purchases*/
+async function getCompletedPurchases(jsonInfo, account) {
+    try {
+        const IdsBoughtEvents = await EventsModule.GetBoughtRefs(req.session.Account);
+        let IdsBoughtList = await EventsModule.EventsToIds(IdsBoughtEvents);
+
+        let IdsNoMoreActionsEvents = await EventsModule.ReferenceKeysSent();
+        let IdsNoMoreActionsList = await EventsModule.EventsToIds(IdsNoMoreActionsEvents)
+
+        let IdsList = await EventsModule.ComputeInter(IdsNoMoreActionsEvents,IdsBoughtList)
+        let Ids = await EventsModule.GetRefs(IdsList);
+        return Ids;
+    } catch (err) {
+        throw err;
+    }
+}
+
 
 /********************************
  * Buy an item
@@ -742,4 +759,5 @@ module.exports = {
 
     getDeprecated,
     readFreeTLEs,
+    getCompletedPurchases,
 };

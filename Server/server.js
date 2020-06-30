@@ -95,7 +95,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/getReferences/', async (req, res) => {
         try {
-            const Ids = await EventsModule.GetAvailableRefs();
+            const Ids = await EventsModule.GetAvailableRefs(); //TODO ZIad
             res.json(Ids);
         } catch (e) {
             res.status(500).json(e.message);
@@ -124,9 +124,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/getCompletedPurchases/', async (req, res) => {
         try {
-            const IdsEvents = await EventsModule.GetBoughtRefs(req.session.Account);
-            let IdsList = await EventsModule.EventsToIds(IdsEvents);
-            let Ids = await EventsModule.GetRefs(IdsList);
+            let Ids= await bc.getCompletedPurchases(req.session.Account)
             res.json(Ids);
         } catch (e) {
             console.error(e);
@@ -282,7 +280,6 @@ app.use('/public', express.static(__dirname + '/public'))
     .get('/manageIdSeller/:id', async (req, res) => {
         try {
             const result = await bc.manageIdSeller(req.params.id, req.session.Account);
-            // result = [reference, total_clients, num_clients_step1, num_clients_step2, Key]
             res.json(result);
         } catch (e) {
             console.log(e);
