@@ -202,6 +202,27 @@ async function buyReference(id, account) {
         throw e;
     }
 }
+async function getForSaleRefs(account) {
+    try {
+        let availableRefs = await EventsModule.GetAvailableRefs();
+
+        let RefsNotExpired = await EventsModule.FilterOnTime(availableRefs); // Check which ones are expired
+
+        let RefsNotExpiredIdList = await EventsModule.EventsToIds(RefsNotExpired); // Transformed in a list of ids
+
+        let BecameFreeEvents = await EventsModule.ReferenceKeysSent(); // Refs for which the reference key is already public
+        let BecameFreeListIds = await EventsModule.EventsToIds(BecameFreeEvents);  // Transformed in a list of ids
+
+        let BuyableRefIds = await EventsModule.ComputeLeft(RefsNotExpiredIdList,BecameFreeListIds);
+
+        let BuyableRefsEvents = await EventsModule.GetRefs(BuyableRefIds); // Back to a list of the correct events (we had a list of id's before)
+
+        return (BuyableRefsEvents);
+    } catch (e) {
+        throw e;
+    }
+}
+await EventsModule.GetAvailableRefs();
 
 /*Get the current price of a certain reference*/
 async function getCurrentPrice(account, id) {

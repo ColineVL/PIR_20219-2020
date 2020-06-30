@@ -29,9 +29,7 @@ const contractws = new web3ws.eth.Contract(abi, ContractAddress);
 
 module.exports = {
     /*Get all references */
-    // GetAvailableRefs: async function (endTime, priceMax, provider) {
     GetAvailableRefs: async function () {
-
         try {
             return await contractws.getPastEvents("newDataReference", {
                 fromBlock: 0,
@@ -242,6 +240,20 @@ module.exports = {
         }
         return res;
     },
+    /*Filters the References on todays time*/
+    FilterOnTime: function (refs) {
+        let res = [];
+        let d = new Date();
+        let currentTime = d.getTime() / 1000;
+
+        for (let i = 0; i < refs.length; i++) {
+            if (refs[i].returnValues.endTime < currentTime) {
+                res.push(refs[i])
+            }
+        }
+        return res;
+    },
+
 
 
     /*Get the DH Public Key of a provider for a certain id*/
