@@ -296,9 +296,10 @@ async function manageIdBuyer(id, account) {
         let key = 0
         let keyRefEvent = await EventsModule.ReferenceKeySent(id)
         if (keyRefEvent.length > 0) {
-            key = Buffer.from(web3.utils.hexToBytes(keyRefEvent[0].returnValues.referenceKey));
+            const buffer = Buffer.from(web3.utils.hexToBytes(keyRefEvent[0].returnValues.referenceKey));
+            key = buffer.toString('hex');
         }
-        return [reference, hashSent, encryptedEncodedReceived, decoderReceived];
+        return [reference, hashSent, encryptedEncodedReceived, decoderReceived, key];
     } catch (e) {
         throw e;
     }

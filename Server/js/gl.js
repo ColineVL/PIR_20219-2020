@@ -304,12 +304,12 @@ myLayout.registerComponent('ongoingPurchasesItem', function (container, state) {
 myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
     container.getElement().html(
         '<div class="container">' +
-        '<h3>Reference:</h3>' +
+        '<h3>Reference</h3>' +
         '<div id="manageIdBuyer_reference"></div>' +
 
         '<p id="manageIdBuyer_K"></p>' +
 
-        '<h3>To do:</h3>' +
+        '<h3>To do</h3>' +
 
         '<ul>' +
         '<li id="manageidBuyer_encryptedEncodedWaiting">Waiting for the encrypted encoded key</li>' +
@@ -319,6 +319,12 @@ myLayout.registerComponent('manageIdBuyerItem', function (container, state) {
         '<li id="manageidBuyer_decoderKeyReceived" onclick="computeK()">Decoder key received, compute K</li>' +
         '<li onclick="dispute()">Set a dispute or get a refund</li>' +
         '</ul>' +
+
+        '<div id="manageIdBuyer_keyIsReleased">' +
+        '<h3>This reference is public</h3>' +
+        '<p>The seller released the key:</p>' +
+        '<p id="manageIdBuyer_key"></p>' +
+        '</div>' +
 
         '<p class="message" id="manageIdBuyer_message"></p>' +
         '<button id="manageIdBuyer_seeTLES" onclick="seeTLEs()">See the TLEs</button>' +

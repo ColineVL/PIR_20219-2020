@@ -483,11 +483,19 @@ function getFreeReferenceInfo(id) {
 function callbackManageIdBuyer(param) {
     addItem(manageIdBuyerItem);
 
-    const [reference, hashSent, encryptedEncodedReceived, decoderReceived] = param;
+    const [reference, hashSent, encryptedEncodedReceived, decoderReceived, key] = param;
+    console.log(key);
     const keys = ["provider", "description"];
     const keysNames = ["Provider", "Description"];
     const tableReference = displayReferenceInfo(reference, keys, keysNames);
     $("#manageIdBuyer_reference").html(tableReference);
+
+    if (key != 0) {
+        $("#manageIdBuyer_keyIsReleased").show();
+        $("#manageIdBuyer_key").html(key);
+    } else {
+        $("#manageIdBuyer_keyIsReleased").hide();
+    }
 
     if (!encryptedEncodedReceived) {
         // Waiting for the encrypted encoded key

@@ -366,7 +366,6 @@ module.exports = {
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
             let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            console.log(res)
             return res;
         } catch (e) {
             throw e;
@@ -452,7 +451,6 @@ module.exports = {
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
             let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            console.log(res)
             return res;
         } catch (e) {
             throw e;
@@ -479,7 +477,6 @@ module.exports = {
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
             let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            console.log(res)
             return res;
         } catch (e) {
             throw e;
@@ -504,7 +501,6 @@ module.exports = {
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
             let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            console.log(res)
             return res;
         } catch (e) {
             throw e;
@@ -528,7 +524,6 @@ module.exports = {
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
             let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            console.log(res)
             return res;
         } catch (e) {
             throw e;
@@ -554,7 +549,6 @@ module.exports = {
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
             let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            console.log(res)
             return res;
         } catch (e) {
             throw e;
@@ -578,7 +572,6 @@ module.exports = {
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
             let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            console.log(res)
             return res;
         } catch (e) {
             throw e;
@@ -609,7 +602,6 @@ module.exports = {
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
             let funds = await web3.eth.sendSignedTransaction(rawTxHex);
-            console.log(funds)
             return funds;
         } catch (e) {
             throw e;
