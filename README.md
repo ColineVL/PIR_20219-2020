@@ -30,19 +30,19 @@ The full tutorial is available <a href="https://besu.hyperledger.org/en/stable/T
   <ol>
     <li>open 4 consoles,cd to the paths Node-1,-2,-3 and -4. </li>
     <li> start by launching the bootnode(Node-1), enter the following command : <br>
-      besu --data-path=data --genesis-file=../genesis.json --rpc-http-enabled  --rpc-http-api=ETH,NET,IBFT,WEB3,PRIV,PERM,ADMIN --host-whitelist="*" --rpc-http-cors-origins=“all”  </li>
+      besu --data-path=data --genesis-file=../genesis.json --rpc-http-enabled --rpc-ws-enabled --rpc-http-api=ETH,NET,IBFT,WEB3,PRIV,PERM,ADMIN --rpc-ws-api=ETH,NET,IBFT,WEB3,PRIV,PERM,ADMIN --host-whitelist="*" --rpc-http-cors-origins=“all”  </li>
     <li> in Node-2 : <br>
-      besu --data-path=data --genesis-file=../genesis.json --bootnodes=enode://39ac2c24db6c07ba5b2b39658d4fd1c9b51c813a4c5975ca53a0080520b7c6f5ce5d0f6e651193d216bfcfccbf378d4601266f8b58219e5f606ef0c0a1a6b4eb@127.0.0.1:30303 --p2p-port=30304 --rpc-http-enabled --rpc-http-api=ETH,NET,IBFT --host-whitelist="*" --rpc-http-cors-origins="all" --rpc-http-port=8546 </li>
+      besu --data-path=data --genesis-file=../genesis.json --bootnodes=enode://39ac2c24db6c07ba5b2b39658d4fd1c9b51c813a4c5975ca53a0080520b7c6f5ce5d0f6e651193d216bfcfccbf378d4601266f8b58219e5f606ef0c0a1a6b4eb@127.0.0.1:30303 --p2p-port=30304 --rpc-http-enabled --rpc-http-api=ETH,NET,IBFT --host-whitelist="*" --rpc-http-cors-origins="all" --rpc-http-port=8547 </li>
     <li> in 3 : <br>
-      besu --data-path=data --genesis-file=../genesis.json --bootnodes=enode://39ac2c24db6c07ba5b2b39658d4fd1c9b51c813a4c5975ca53a0080520b7c6f5ce5d0f6e651193d216bfcfccbf378d4601266f8b58219e5f606ef0c0a1a6b4eb@127.0.0.1:30303 --p2p-port=30305 --rpc-http-enabled --rpc-http-api=ETH,NET,IBFT --host-whitelist="*" --rpc-http-cors-origins="all" --rpc-http-port=8547  </li>
+      besu --data-path=data --genesis-file=../genesis.json --bootnodes=enode://39ac2c24db6c07ba5b2b39658d4fd1c9b51c813a4c5975ca53a0080520b7c6f5ce5d0f6e651193d216bfcfccbf378d4601266f8b58219e5f606ef0c0a1a6b4eb@127.0.0.1:30303 --p2p-port=30305 --rpc-http-enabled --rpc-http-api=ETH,NET,IBFT --host-whitelist="*" --rpc-http-cors-origins="all" --rpc-http-port=8548  </li>
     <li> 4 : <br>
-      besu --data-path=data --genesis-file=../genesis.json --bootnodes=enode://39ac2c24db6c07ba5b2b39658d4fd1c9b51c813a4c5975ca53a0080520b7c6f5ce5d0f6e651193d216bfcfccbf378d4601266f8b58219e5f606ef0c0a1a6b4eb@127.0.0.1:30303 --p2p-port=30306 --rpc-http-enabled --rpc-http-api=ETH,NET,IBFT --host-whitelist="*" --rpc-http-cors-origins="all" --rpc-http-port=8548   </li>
+      besu --data-path=data --genesis-file=../genesis.json --bootnodes=enode://39ac2c24db6c07ba5b2b39658d4fd1c9b51c813a4c5975ca53a0080520b7c6f5ce5d0f6e651193d216bfcfccbf378d4601266f8b58219e5f606ef0c0a1a6b4eb@127.0.0.1:30303 --p2p-port=30306 --rpc-http-enabled --rpc-http-api=ETH,NET,IBFT --host-whitelist="*" --rpc-http-cors-origins="all" --rpc-http-port=8549   </li>
   </ol>
    Finally, an easy to verify the blockhain is up and running, simply insert the following in a new console (should indicate 4 nodes): <br>
   curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' localhost:8545
   <br>
   
-  To further simplify launching the nodes, you can copy the command in INSERT LINK HERE, the previous steps will be done automatically.
+  To further simplify launching the nodes, you can copy the command in <a href="https://github.com/ColineVL/PIR/tree/master/Start_Nodes_Faster">Start_Nodes_Faster<a>, the previous steps will be done automatically.
 
 
 ### Start the Server
