@@ -53,6 +53,13 @@ Be sure the blockchain is up and running beforehand.
 The blockchain's address must coincide with the ones in the files.
 
 ### Using the Server
-Dans un navigateur, se connecter à adresseIP:8089/todo, où l'adresse IP est celle de l'ordinateur qui a lancé le serveur. 
+Simply connect to localhost:8089 (or IP_OF_THE_SERVER:8089), using a browser. 
 
-Sur Linux, pour obtenir son adresse IP privée, taper dans la console : hostname -I.
+You can the navigate through the server and try buying/selling references. To connect, you can use these three test accounts with pre-filled wallets. To correctly test functionnalities out, it is recommended to read the article prior to using this tool, and avoid buying from one self (sell from an account, then from another machine buy from another account).
+
+Test account private keys: (more details in the <a href="https://github.com/ColineVL/PIR/tree/master/IBFT-Network/genesis.json">Genesis<a>
+  <ul>
+  <li>"8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63"</li>
+  <li>"c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"</li>
+  <li>"ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f"</li>
+</ul>
