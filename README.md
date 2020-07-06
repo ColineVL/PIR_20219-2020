@@ -7,6 +7,8 @@ Développement d'une interface web pour interagir plus simplement avec une block
 
 [Launching the blockchain](#start-the-blockchain)
 
+[Deploying the Smart Contract](#deploy-the-smart-contract)
+
 [Start the Server](#start-the-server)
 
 [Using the server](#using-the-server)
@@ -44,6 +46,10 @@ The full tutorial is available <a href="https://besu.hyperledger.org/en/stable/T
   
   To further simplify launching the nodes, you can copy the command in <a href="https://github.com/ColineVL/PIR/tree/master/Start_Nodes_Faster">Start_Nodes_Faster<a>, the previous steps will be done automatically.
 
+### Deploy the Smart Contract
+
+The server's only use being to test and handle the smart contract, you must deploy it before using the server. A NodeJs (<a href="https://github.com/ColineVL/PIR/tree/master/Solidity/Deployment.js">here<a>) file has been added for this, you must simply launch <i>node Deployment.js</i>. If the blockchain is up and running, this will deploy the smart contract to an Ethereum address. Before continuing, please check that this address is the one in <a href="https://github.com/ColineVL/PIR/tree/master/Server/js/EventsModule.js">Events Module<a> and <a href="https://github.com/ColineVL/PIR/tree/master/Server/js/SignedTransactionModule.js">Signed Transaction Module<a> , if not replace these addresses. You can now proceed to Launch the server.
+
 
 ### Start the Server
 Simply open a new terminal window, navigate to the correct path and enter <i>node server.js</i>.
@@ -62,4 +68,14 @@ Test account private keys: (more details in the <a href="https://github.com/Coli
   <li>"8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63"</li>
   <li>"c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"</li>
   <li>"ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f"</li>
+</ul>
+
+A typical test could be :
+<ul>
+  <li>Sell from account 1</li>
+  <li>Buy from account 2</li>
+  <li>Respond honestly from account 1</li>
+  <li>Respond honestly from account 2</li>
+  <li>Finish the transaction from account 1 and release the key</li>
+  <li>Check to see you have the same key from 2's perspective</li>
 </ul>
