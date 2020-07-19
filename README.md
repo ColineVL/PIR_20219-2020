@@ -1,7 +1,5 @@
 # PIR
-Projet d'innovation recherche de 2A. <br>
-Développement d'une interface web pour interagir plus simplement avec une blockchain.
-
+Research project of second year of engineering school.
 # Menu
 [Prerequisites](#prerequisites)
 
@@ -40,7 +38,7 @@ The full tutorial is available <a href="https://besu.hyperledger.org/en/stable/T
     <li> 4 : <br>
       besu --data-path=data --genesis-file=../genesis.json --bootnodes=enode://39ac2c24db6c07ba5b2b39658d4fd1c9b51c813a4c5975ca53a0080520b7c6f5ce5d0f6e651193d216bfcfccbf378d4601266f8b58219e5f606ef0c0a1a6b4eb@127.0.0.1:30303 --p2p-port=30306 --rpc-http-enabled --rpc-http-api=ETH,NET,IBFT --host-whitelist="*" --rpc-http-cors-origins="all" --rpc-http-port=8549   </li>
   </ol>
-   Finally, an easy to verify the blockhain is up and running, simply insert the following in a new console (should indicate 4 nodes): <br>
+   Finally, an easy to verify the blockchain is up and running, simply insert the following in a new console (should indicate 4 nodes): <br>
   curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' localhost:8545
   <br>
   
@@ -48,7 +46,7 @@ The full tutorial is available <a href="https://besu.hyperledger.org/en/stable/T
 
 ### Deploy the Smart Contract
 
-The server's only use being to test and handle the smart contract, you must deploy it before using the server. A NodeJs (<a href="https://github.com/ColineVL/PIR/tree/master/Solidity/Deployment.js">here<a>) file has been added for this, you must simply launch <i>node Deployment.js</i>. If the blockchain is up and running, this will deploy the smart contract to an Ethereum address. Before continuing, please check that this address is the one in <a href="https://github.com/ColineVL/PIR/tree/master/Server/js/EventsModule.js">Events Module<a> and <a href="https://github.com/ColineVL/PIR/tree/master/Server/js/SignedTransactionModule.js">Signed Transaction Module<a> , if not replace these addresses. You can now proceed to Launch the server.
+The server's only use being to test and handle the smart contract, you must deploy it before using the server. A NodeJs (<a href="https://github.com/ColineVL/PIR/tree/master/Solidity/Deployment.js">here<a>) file has been added for this, you must simply launch <i>node Deployment.js</i>. If the blockchain is up and running, this will deploy the smart contract to an Ethereum address. Before continuing, please check that this address is the one in <a href="https://github.com/ColineVL/PIR/tree/master/Server/js/EventsModule.js">Events Module<a> and <a href="https://github.com/ColineVL/PIR/tree/master/Server/js/SignedTransactionModule.js">Signed Transaction Module<a> , if not replace these addresses. You can now proceed to launch the server.
 
 
 ### Start the Server
@@ -63,7 +61,7 @@ Simply connect to localhost:8089 (or IP_OF_THE_SERVER:8089), using a browser.
 
 You can the navigate through the server and try buying/selling references. To connect, you can use these three test accounts with pre-filled wallets. To correctly test functionnalities out, it is recommended to read the article prior to using this tool, and avoid buying from one self (sell from an account, then from another machine buy from another account).
 
-Test account private keys: (more details in the <a href="https://github.com/ColineVL/PIR/tree/master/IBFT-Network/genesis.json">Genesis<a>
+Test account private keys: (more details in the <a href="https://github.com/ColineVL/PIR/tree/master/IBFT-Network/genesis.json">Genesis<a>)
   <ul>
   <li>"8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63"</li>
   <li>"c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"</li>
