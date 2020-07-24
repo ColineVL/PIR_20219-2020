@@ -124,7 +124,7 @@ app.use('/public', express.static(__dirname + '/public'))
 
     .get('/getCompletedPurchases/', async (req, res) => {
         try {
-            let Ids = await bc.getCompletedPurchases(req.session.Account)
+            let Ids = await bc.getCompletedPurchases(req.session.Account);
             res.json(Ids);
         } catch (e) {
             console.error(e);
@@ -410,4 +410,3 @@ app.use('/public', express.static(__dirname + '/public'))
     .use(function (req, res) {
         res.redirect('/');
     });
-

@@ -1,10 +1,5 @@
-// Example de wikipédia anglais
-const exampleTitre = "ISS (ZARYA)";
-const example1 = "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927";
-const example2 = "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537";
-
 // Text or char
-function text2Binary(string, nbBits) {
+function text2Binary(string) {
     let result = "";
     for (let i = 0; i < string.length; i++) {
         let charInBin = string[i].charCodeAt(0).toString(2);
@@ -75,7 +70,7 @@ function string2BinaryLine1(line1) {
 
     // (3) Classification
     // (U, C, S), 8 bits
-    result += text2Binary(line1.substring(7, 8), 8);
+    result += text2Binary(line1.substring(7, 8));
     // Don't forget the space
 
     // (4) International Designator (last two digits of launch year)
@@ -88,7 +83,7 @@ function string2BinaryLine1(line1) {
 
     // (6) International Designator (piece of the launch)
     // 3 letters, 24 bits
-    result += text2Binary(line1.substring(14, 17), 24);
+    result += text2Binary(line1.substring(14, 17));
     // Don't forget the space
 
     // (7) Epoch year (last two digits of year)
@@ -373,12 +368,9 @@ function binary2StringLine2(byte2) {
 function convertStrToBin(line1, line2){
     // 32 bits --> 4 bytes
     let str = string2BinaryLine1(line1) + string2BinaryLine2(line2);
-
     let array = new Uint8Array((str.length/8));
-
     let num = 0;
     let concatStr;
-
     for(let i = 1; i <= (str.length/8); i++){
         concatStr = str.slice((i-1)*8,i*8);
         num = 0;
@@ -388,23 +380,22 @@ function convertStrToBin(line1, line2){
         }
         array[i-1] = num;
     }
-
     return array;
 }
 
 function convertBinToStr(Buffer){
     let str = "";
     for (let i = 0; i <Buffer.length ; i++) {
-        let n = Buffer[i].toString(2)
+        let n = Buffer[i].toString(2);
         str += "00000000".substr(n.length) + n;
     }
 
-    let TLE1 =  binary2StringLine1(str.slice(0,202))
-    let TLE2 =  binary2StringLine2(str.slice(202))
+    let TLE1 =  binary2StringLine1(str.slice(0,202));
+    let TLE2 =  binary2StringLine2(str.slice(202));
     return [TLE1,TLE2];
 }
 
 module.exports = {
     convertStrToBin,
     convertBinToStr
-}
+};

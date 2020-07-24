@@ -34,7 +34,6 @@ let prime;
  ********************************/
 let nodelistIDS = [];
 let blockslistNUMBERS = [];
-// TODO let the user change this ?
 const nbBlocksToPrint = 5;
 
 /********************************
@@ -143,7 +142,7 @@ async function sellReference(jsonInfo, account) {
     Diffie.PrivDH = keys[0];
     Diffie.PubDH = keys[1];
 
-    let K = crypto.RandomBytes(32); //Reference key with which data is encrypted. TODO use this on TLE
+    let K = crypto.RandomBytes(32); //Reference key with which data is encrypted.
 
     let priceInWei = web3.utils.toWei(initialPrice, 'ether');
 

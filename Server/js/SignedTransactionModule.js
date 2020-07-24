@@ -1,31 +1,9 @@
-// const readline = require('readline');
 const Web3 = require('web3');
 const Tx = require('ethereumjs-tx');
-
-
-// function toBinary(input) {
-//     let result = "";
-//     for (let i = 0; i < input.length; i++) {
-//         const bin = input[i].charCodeAt().toString(2);
-//         result += Array(8 - bin.length + 1).join("0") + bin;
-//     }
-//     return result;
-// }
-
-// const options = {
-//     defaultAccount: '0xfe3b557e8fb62b89f4916b721be55ceb828dbd73',
-//     defaultBlock: 'latest',
-//     defaultGas: 1,
-//     defaultGasPrice: 0,
-//     transactionBlockTimeout: 50,
-//     transactionConfirmationBlocks: 24,
-//     transactionPollingTimeout: 480,
-// };
 
 /* Providers */
 const provider = 'http://192.168.33.115:8545';
 const web3 = new Web3(new Web3.providers.HttpProvider(provider));
-// const web3ws = new Web3(new Web3.providers.WebsocketProvider('ws://192.168.33.115:8546'));
 
 
 let ContractAddress = '0x42699A7612A82f1d9C36148af9C77354759b210b';
@@ -314,9 +292,8 @@ let abi = [{
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
-}]
-//TODO: current abi :Provider
-const contract = new web3.eth.Contract(abi, ContractAddress); //TODO give correct address when available
+}];
+const contract = new web3.eth.Contract(abi, ContractAddress);
 
 
 module.exports = {
@@ -344,7 +321,6 @@ module.exports = {
     },
 
     BuyReference: async function (account, referenceId, pubKey1, pubKey2, pubKey3, pubKey4, currentPrice) {
-        // web3.transactionConfirmationBlocks = 1;
         try {
             let pubKey_bin1 = web3.utils.bytesToHex(pubKey1);
             let pubKey_bin2 = web3.utils.bytesToHex(pubKey2);
@@ -365,8 +341,7 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            return res;
+            return await web3.eth.sendSignedTransaction(rawTxHex);
         } catch (e) {
             throw e;
         }
@@ -398,7 +373,6 @@ module.exports = {
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
             return await web3.eth.sendSignedTransaction(rawTxHex)
-
         } catch (e) {
             throw e;
         }
@@ -438,7 +412,6 @@ module.exports = {
             const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
             const txnCount = await web3.eth.getTransactionCount(account.address, "pending");
             const dataref = contract.methods.setEncryptedEncodedKey(id, client_address, bin).encodeABI();
-
             const rawTx = {
                 nonce: web3.utils.numberToHex(txnCount),
                 gasPrice: web3.utils.numberToHex(1500),
@@ -450,8 +423,7 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            return res;
+            return await web3.eth.sendSignedTransaction(rawTxHex);
         } catch (e) {
             throw e;
         }
@@ -464,7 +436,6 @@ module.exports = {
             const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
             const txnCount = await web3.eth.getTransactionCount(account.address, "pending");
             const dataref = contract.methods.setKeyDecoder(id, client_address, bin).encodeABI();
-
             const rawTx = {
                 nonce: web3.utils.numberToHex(txnCount),
                 gasPrice: web3.utils.numberToHex(1500),
@@ -476,8 +447,7 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            return res;
+            return await web3.eth.sendSignedTransaction(rawTxHex);
         } catch (e) {
             throw e;
         }
@@ -500,12 +470,12 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            return res;
+            return await web3.eth.sendSignedTransaction(rawTxHex);
         } catch (e) {
             throw e;
         }
     },
+
     /*For a client to raise a dispute (or withdraw his money if still possible)*/
     RaiseDispute: async function (account, id) {
         try {
@@ -523,8 +493,7 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            return res;
+            return await web3.eth.sendSignedTransaction(rawTxHex);
         } catch (e) {
             throw e;
         }
@@ -548,8 +517,7 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            return res;
+            return await web3.eth.sendSignedTransaction(rawTxHex);
         } catch (e) {
             throw e;
         }
@@ -571,8 +539,7 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            let res = await web3.eth.sendSignedTransaction(rawTxHex)
-            return res;
+            return await web3.eth.sendSignedTransaction(rawTxHex);
         } catch (e) {
             throw e;
         }
@@ -588,7 +555,7 @@ module.exports = {
             let bin24 = web3.utils.bytesToHex(BuffTLE.slice(25, 49));
 
             const privateKey = new Buffer.from(account.privateKey.substring(2), 'hex');
-            const txnCount = await web3.eth.getTransactionCount(account.address, "pending")
+            const txnCount = await web3.eth.getTransactionCount(account.address, "pending");
             const dataref = contract.methods.setTLE(id, spaceObject, bin25, bin24).encodeABI();
             const rawTx = {
                 nonce: web3.utils.numberToHex(txnCount),
@@ -601,8 +568,7 @@ module.exports = {
             tx.sign(privateKey);
             const serializedTx = tx.serialize();
             const rawTxHex = '0x' + serializedTx.toString('hex');
-            let funds = await web3.eth.sendSignedTransaction(rawTxHex);
-            return funds;
+            return await web3.eth.sendSignedTransaction(rawTxHex);
         } catch (e) {
             throw e;
         }
@@ -611,8 +577,7 @@ module.exports = {
     /*Function to view the TLEs set for a certain reference*/
     GetTLEs: async function (account, id) {
         try {
-            let TLEs = await contract.methods.getTLEs(id).call({from: account.address});
-            return TLEs;
+            return await contract.methods.getTLEs(id).call({from: account.address});
         } catch (e) {
             throw e;
         }

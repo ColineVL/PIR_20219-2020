@@ -1,6 +1,5 @@
 const fs = require('fs');
 
-
 let DiffieSchema = { // Schema for storing Diffie-H keys
     PubDH: "", // Public key of Diffie-h
     PrivDH: "", // Private key of Diffie-h
@@ -25,15 +24,17 @@ function callbackError(err) {
 }
 
 module.exports = {
-    // GetAvailableRefs: async function (contractws, endTime, priceMax, provider) {
+
     Read: async function (path) {
         return fs.readFileSync(path, function (err, data) {
         });
     },
+
     Write: async function (name, data) {
         await fs.writeFile(name, data, callbackError);
         return 0;
     },
+
     ReadAsObjectDH: async function (path) {
         let res = await fs.readFileSync(path, function (err, data) {
         });
@@ -44,6 +45,7 @@ module.exports = {
         Diffie.PubDH = new Buffer.from(res_obj.PubDH.data, 'hex');
         return Diffie;
     },
+
     WriteAsRefSeller: async function (path, hash, K2) {
         try {
             const RefSeller = Object.create(Reference_SellerSchema);
@@ -74,6 +76,7 @@ module.exports = {
         await fs.writeFile(path, JSON.stringify(RefBuyer), callbackError);
         return 0;
     },
+
     ReadAsObjectRefSeller: async function (path) {
         let res = await fs.readFileSync(path, function (err, data) {
         });
@@ -84,6 +87,7 @@ module.exports = {
         Ref.K2 = new Buffer.from(res_obj.K2.data, 'hex');
         return Ref;
     },
+
     ReadAsObjectRefClient: async function (path) {
         let res = await fs.readFileSync(path, function (err, data) {
         });
@@ -103,14 +107,11 @@ module.exports = {
         Ref.K = new Buffer.from(res_obj.K.data, 'hex');
         return Ref.K;
     },
+
     ReadPrimeAndGen: async function (path) {
         let res = await fs.readFileSync(path, function (err, data) {
         });
         return JSON.parse(res);
     },
-    // WritePrimeAndGen: async function (path, primeh) {
-    //     await fs.writeFile(path, JSON.stringify(primeh), callbackError);
-    //     return 0;
-    // },
 
 };

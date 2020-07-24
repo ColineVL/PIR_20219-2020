@@ -108,7 +108,7 @@ contract Provider_Depreciation_Contract is Client_Depreciation_Contract {
     function withdrawFunds(uint _referenceId) onlyProvider(_referenceId) external {
 
         // Checks if the provider has waited for the time limit for clients to set a dispute
-        // !!!!!!!!!!!!!!! TODO CHANGE LATER TO 5 DAYS
+        // TODO change later to 5 days
         require(now > dataReferences[_referenceId].endTime + 30 seconds);
 
         // Checks that provider gave a key
